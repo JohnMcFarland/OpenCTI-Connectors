@@ -1,0 +1,602 @@
+import csv
+import io
+import json
+import os
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+from pycti import OpenCTIConnectorHelper
+
+APP_NAME = "Report Model QA (Non-Destructive)"
+APP_VERSION = "0.4.1"
+
+# Default in-container location (mount this from host)
+
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def safe_get(d: Dict[str, Any], *keys: str) -> Any:
+    for k in keys:
+        if k in d and d[k] is not None:
+            return d[k]
+    return None
+
+
+def normalize_rel_type(rel_type: str) -> str:
+    return (rel_type or "").strip().lower()
+
+
+def normalize_entity_type(t: str) -> str:
+    return (t or "").strip()
+
+
+def obj_display_name(obj: Optional[Dict[str, Any]], fallback_id: Optional[str] = None) -> str:
+    """
+    Only show IDs if unreadable and it's the only available identifier.
+    Prefer: <EntityType>:<Name> for readability.
+    """
+    if not obj:
+        return fallback_id or "(unreadable)"
+
+    et = safe_get(obj, "entity_type", "entityType")
+    name = safe_get(obj, "name", "value", "observable_value", "observableValue")
+
+    if et and name:
+        return f"{et}:{name}"
+    if name:
+        return str(name)
+
+    # If we have literally nothing but an id, only then show it
+    _id = safe_get(obj, "id") or fallback_id
+    return _id or "(unreadable)"
+
+
+    """
+    Loads allowed relationships from CSV columns:
+      source, relationship, target
+
+    Stored as tuples:
+      (SourceEntityType, relationship_type_lower, TargetEntityType)
+    """
+
+    def __init__(self, path: str):
+        self.path = path
+        self.allowed: Set[Tuple[str, str, str]] = set()
+        self._loaded = False
+
+    def load(self) -> None:
+        self.allowed.clear()
+        if not os.path.exists(self.path):
+            # Don't crash connector if matrix isn't present; just operate without it.
+            self._loaded = False
+            return
+
+        with open(self.path, "r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                s = normalize_entity_type((row.get("source") or "").strip())
+                r = normalize_rel_type((row.get("relationship") or "").strip())
+                t = normalize_entity_type((row.get("target") or "").strip())
+                if not s or not r or not t:
+                    continue
+                self.allowed.add((s, r, t))
+
+        self._loaded = True
+
+    def is_loaded(self) -> bool:
+        return self._loaded
+
+    def is_allowed(self, src_type: str, rel_type: str, tgt_type: str) -> bool:
+        return (normalize_entity_type(src_type), normalize_rel_type(rel_type), normalize_entity_type(tgt_type)) in self.allowed
+
+    def validate_with_fallbacks(
+        self, src_type: str, rel_type: str, tgt_type: str
+    ) -> Tuple[bool, str]:
+        """
+        Returns:
+          (is_valid, reason_or_recommendation)
+
+        Logic:
+          - If exact triple allowed: valid
+          - Else if swapped direction allowed: invalid, recommend swap
+          - Else if related-to allowed in either direction: invalid, recommend related-to (and swap if needed)
+          - Else: invalid, not in matrix
+        """
+        rel_type_n = normalize_rel_type(rel_type)
+
+        if self.is_allowed(src_type, rel_type_n, tgt_type):
+            return True, "Allowed by relationship matrix."
+
+        if self.is_allowed(tgt_type, rel_type_n, src_type):
+            return False, "Not allowed in this direction. If this was intended, swap source and target."
+
+        # related-to fallback
+        if self.is_allowed(src_type, "related-to", tgt_type):
+            return False, "Relationship type not allowed here. Use related-to (same direction)."
+        if self.is_allowed(tgt_type, "related-to", src_type):
+            return False, "Relationship type not allowed here. Swap source/target and use related-to."
+
+        return False, "Not allowed by relationship matrix (no valid direction/type found)."
+
+
+class ReportModelQAConnector:
+    def __init__(self) -> None:
+        self.helper = OpenCTIConnectorHelper({
+            "opencti_url": os.environ.get("OPENCTI_URL"),
+            "opencti_token": os.environ.get("OPENCTI_TOKEN"),
+            "connector_id": os.environ.get("CONNECTOR_ID"),
+            "connector_type": os.environ.get("CONNECTOR_TYPE", "INTERNAL_ENRICHMENT"),
+            "connector_name": os.environ.get("CONNECTOR_NAME", APP_NAME),
+            "connector_scope": os.environ.get("CONNECTOR_SCOPE", "report"),
+            "connector_confidence_level": int(os.environ.get("CONNECTOR_CONFIDENCE_LEVEL", "0")),
+            "connector_log_level": os.environ.get("CONNECTOR_LOG_LEVEL", "info"),
+        })
+
+
+        self.note_max_rows = int(os.environ.get("QA_NOTE_MAX_ROWS", "50"))
+        self.attach_json = os.environ.get("QA_ATTACH_JSON", "true").lower() in ("1", "true", "yes")
+        self.write_note = os.environ.get("QA_WRITE_NOTE", "true").lower() in ("1", "true", "yes")
+
+        self.helper.log_info(f"Starting {APP_NAME} v{APP_VERSION}")
+        else:
+
+    # -------------------------
+    # OpenCTI reads (tolerant)
+    # -------------------------
+
+    def _read_any_object(self, object_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Try multiple endpoints; return first non-null.
+        Works for domain objects, cyber observables, core objects, and sometimes relationships.
+        """
+        for fn in (
+            lambda: self.helper.api.stix_core_object.read(id=object_id),
+            lambda: self.helper.api.stix_domain_object.read(id=object_id),
+            lambda: self.helper.api.stix_cyber_observable.read(id=object_id),
+        ):
+            try:
+                obj = fn()
+                if obj:
+                    return obj
+            except Exception:
+                continue
+        return None
+
+    def _read_relationship(self, rel_id: str) -> Optional[Dict[str, Any]]:
+        try:
+            return self.helper.api.stix_core_relationship.read(id=rel_id)
+        except Exception:
+            return None
+
+    # -------------------------
+    # Note creation + attachments
+    # -------------------------
+
+    def _ensure_note_content(self, report_title: str, md: Optional[str]) -> str:
+        if md and str(md).strip():
+            return md
+        # absolute fallback; pycti rejects empty content
+        return (
+            f"QA: {report_title}\n"
+            f"Report Model QA\n"
+            f"Report: {report_title}\n"
+            f"Generated: {utc_now_iso()}\n\n"
+            "(No detailed content generated; check connector logs.)\n"
+        )
+
+    def _create_qa_note(self, report_internal_id: str, report_title: str, md: Optional[str]) -> Optional[str]:
+        if not self.write_note:
+            return None
+
+        content = self._ensure_note_content(report_title, md)
+
+        # Use the stable pycti helper API for notes
+        try:
+            note = self.helper.api.note.create(
+                content=content,
+                note_types=["QA"],
+                objects=[report_internal_id],  # internal UUID
+            )
+            note_id = safe_get(note or {}, "id")
+            if note_id:
+                self.helper.log_info("QA note created", {"note_id": note_id, "attached_to": report_internal_id})
+            return note_id
+        except Exception as e:
+            self.helper.log_error("Failed to create QA note", {"error": str(e)})
+            return None
+
+    def _upload_json_attachment(self, report_stix_id: str, report_title: str, payload: Dict[str, Any]) -> None:
+        """
+        Avoid push_list_export() because its signature varies across pycti versions.
+        Try several known upload methods; never crash the worker.
+        """
+        if not self.attach_json:
+            return
+
+        blob = json.dumps(payload, indent=2).encode("utf-8")
+        filename = "report-model-qa-findings.json"
+
+        # prefer explicit "add_file"/"upload_file" styles if present
+        sdo = self.helper.api.stix_domain_object
+
+        # Try a few variants. If none work, log and continue.
+        candidates = []
+
+        if hasattr(sdo, "add_file"):
+            # Many pycti versions: add_file(id, file_name, data, mime_type, file_markings=?)
+            candidates.append(("stix_domain_object.add_file", lambda: sdo.add_file(
+                id=report_stix_id,
+                file_name=filename,
+                data=blob,
+                mime_type="application/json",
+            )))
+
+        if hasattr(sdo, "upload_file"):
+            candidates.append(("stix_domain_object.upload_file", lambda: sdo.upload_file(
+                id=report_stix_id,
+                file_name=filename,
+                data=blob,
+                mime_type="application/json",
+            )))
+
+        # connector helper sometimes exposes upload through helper itself
+        if hasattr(self.helper, "api") and hasattr(self.helper.api, "stix_domain_object") and hasattr(self.helper.api.stix_domain_object, "push_export"):
+            candidates.append(("stix_domain_object.push_export", lambda: self.helper.api.stix_domain_object.push_export(
+                entity_id=report_stix_id,
+                file_name=filename,
+                data=blob,
+                mime_type="application/json",
+            )))
+
+        for label, fn in candidates:
+            try:
+                fn()
+                self.helper.log_info("Attached findings JSON", {"method": label, "report": report_title})
+                return
+            except Exception as e:
+                self.helper.log_debug("Attachment method failed", {"method": label, "error": str(e)})
+
+        self.helper.log_info("Could not attach findings JSON (non-fatal)", {"report": report_title})
+
+    # -------------------------
+    # QA rules
+    # -------------------------
+
+    def _check_markings_present(self, report: Dict[str, Any]) -> Tuple[bool, str]:
+        # any marking is acceptable
+        mids = safe_get(report, "objectMarkingIds", "objectMarkingIDs") or []
+        mobs = safe_get(report, "objectMarking") or []
+        has_any = bool(mids) or bool(mobs)
+        if has_any:
+            return True, "At least one marking definition is present."
+        return False, "Report has no marking definitions (objectMarking/objectMarkingIds empty)."
+
+    def _enumerate_report_object_ids(self, report: Dict[str, Any]) -> List[str]:
+        # objectsIds preferred; fall back to objects (list of dicts)
+        ids = safe_get(report, "objectsIds") or []
+        if ids:
+            return list(ids)
+        objs = safe_get(report, "objects") or []
+        out = []
+        for o in objs:
+            if isinstance(o, dict) and o.get("id"):
+                out.append(o["id"])
+            elif isinstance(o, str):
+                out.append(o)
+        return out
+
+    def _resolve_scope(self, obj_ids: List[str]) -> Tuple[Dict[str, Dict[str, Any]], List[str], List[str]]:
+        """
+        Returns:
+          resolved_objects: id -> object
+          relationship_ids: ids that are relationships (stix_core_relationship)
+          unreadable_ids: ids that could not be read as object or relationship
+        """
+        resolved: Dict[str, Dict[str, Any]] = {}
+        relationship_ids: List[str] = []
+        unreadable: List[str] = []
+
+        for oid in obj_ids:
+            obj = self._read_any_object(oid)
+            if obj:
+                resolved[oid] = obj
+                continue
+
+            rel = self._read_relationship(oid)
+            if rel:
+                relationship_ids.append(oid)
+                continue
+
+            unreadable.append(oid)
+
+        return resolved, relationship_ids, unreadable
+
+    def _relationship_required_fields(self, rel: Dict[str, Any]) -> List[str]:
+        missing = []
+        desc = safe_get(rel, "description")
+        if not desc or not str(desc).strip():
+            missing.append("description")
+
+        # author / createdBy
+        cb = safe_get(rel, "createdBy")
+        cbid = safe_get(rel, "createdById")
+        if not cb and not cbid:
+            missing.append("author")
+
+        # timestamps: created_at / created / updated_at / modified - accept any
+        ts = safe_get(rel, "created_at", "created", "updated_at", "modified")
+        if not ts:
+            missing.append("timestamp")
+
+        return missing
+
+    def _format_table(self, rows: List[Tuple[str, str, str, str]]) -> str:
+        # markdown table
+        out = []
+        out.append("| Source | Relationship | Target | Reason |")
+        out.append("|---|---|---|---|")
+        for s, r, t, why in rows[: self.note_max_rows]:
+            # escape pipes to keep table intact
+            s = s.replace("|", "\\|")
+            r = r.replace("|", "\\|")
+            t = t.replace("|", "\\|")
+            why = why.replace("|", "\\|")
+            out.append(f"| {s} | {r} | {t} | {why} |")
+        return "\n".join(out)
+
+    def _qa_relationships_after_4cs(
+        self,
+        resolved_objects: Dict[str, Dict[str, Any]],
+        relationship_ids: List[str],
+    ) -> List[Dict[str, Any]]:
+        """
+        New section after the 4 Cs:
+          - only validate: required fields + matrix legitimacy
+          - do not enforce other relationship rules you asked to ignore
+        """
+        findings: List[Dict[str, Any]] = []
+
+        if not relationship_ids:
+            return findings
+
+        rows_invalid: List[Tuple[str, str, str, str]] = []
+
+        for rid in relationship_ids:
+            rel = self._read_relationship(rid)
+            if not rel:
+                # unreadable relationship; we can only reference id
+                rows_invalid.append(("(unreadable)", f"(unreadable)", "(unreadable)", f"Relationship unreadable; id={rid}"))
+                continue
+
+            rtype = safe_get(rel, "relationship_type", "relationshipType") or "(unknown)"
+            from_id = safe_get(rel, "fromId", "from_id")
+            to_id = safe_get(rel, "toId", "to_id")
+
+            src_obj = resolved_objects.get(from_id) if from_id else None
+            tgt_obj = resolved_objects.get(to_id) if to_id else None
+
+            src_type = safe_get(src_obj or {}, "entity_type", "entityType") or "(unreadable)"
+            tgt_type = safe_get(tgt_obj or {}, "entity_type", "entityType") or "(unreadable)"
+
+            src_name = obj_display_name(src_obj, fallback_id=from_id)
+            tgt_name = obj_display_name(tgt_obj, fallback_id=to_id)
+            rel_name = str(rtype)
+
+            # 1) required fields
+            missing = self._relationship_required_fields(rel)
+
+            # 2) matrix legitimacy (if matrix loaded)
+            matrix_valid = True
+                matrix_valid, matrix_reason = self.matrix.validate_with_fallbacks(src_type, rtype, tgt_type)
+
+            # If anything wrong -> table row + finding
+            reasons = []
+            if missing:
+                reasons.append(f"Missing required fields: {', '.join(missing)}.")
+                reasons.append(matrix_reason)
+
+            if reasons:
+                rows_invalid.append((src_name, rel_name, tgt_name, " ".join(reasons)))
+
+        if rows_invalid:
+            findings.append({
+                "severity": "WARN",
+                "code": "QA.RELATIONSHIPS.001",
+                "title": "Relationship validation (required fields + matrix legitimacy)",
+                "message": "One or more relationships violate required-field expectations and/or your relationship matrix.",
+                "table": self._format_table(rows_invalid),
+                "count": len(rows_invalid),
+            })
+
+        return findings
+
+    def _qa_containment(self, obj_ids: List[str], resolved_objects: Dict[str, Dict[str, Any]], relationship_ids: List[str], unreadable: List[str]) -> Optional[Dict[str, Any]]:
+        if not obj_ids:
+            return {
+                "severity": "BLOCKER",
+                "code": "QA.CONTAINMENT.001",
+                "title": "Report-scope containment and reference resolution",
+                "message": "Report has zero referenced objects (no contained scope).",
+                "evidence": {"ref_count": 0},
+            }
+
+        # If we have unreadable ids, include a concise warning (no UUIDs unless necessary)
+        if unreadable:
+            sample = unreadable[: min(10, len(unreadable))]
+            return {
+                "severity": "WARN",
+                "code": "QA.CONTAINMENT.001",
+                "title": "Report-scope containment and reference resolution",
+                "message": "Report has referenced objects, but some references could not be resolved.",
+                "evidence": {
+                    "ref_count": len(obj_ids),
+                    "resolved_count": len(resolved_objects),
+                    "relationship_refs": len(relationship_ids),
+                    "unreadable_count": len(unreadable),
+                    "unreadable_ids": sample,
+                },
+            }
+
+        return None
+
+    # -------------------------
+    # Note composition
+    # -------------------------
+
+    def _compose_note(self, report: Dict[str, Any], verdict: str, findings: List[Dict[str, Any]], labels_section: Optional[str]) -> str:
+        title = safe_get(report, "name") or "(untitled report)"
+        report_stix = safe_get(report, "standard_id") or safe_get(report, "standardId") or safe_get(report, "id")
+        lines = []
+        lines.append(f"QA: {title}")
+        lines.append("Report Model QA")
+        lines.append(f"Report: {title}")
+        lines.append(f"Report ID: {report_stix}")
+        lines.append(f"Verdict: {verdict}")
+        lines.append(f"Generated: {utc_now_iso()}")
+        lines.append("")
+        # Summary
+        sev_counts = {"BLOCKER": 0, "ERROR": 0, "WARN": 0, "INFO": 0}
+        for f in findings:
+            sev = (f.get("severity") or "INFO").upper()
+            if sev not in sev_counts:
+                sev = "INFO"
+            sev_counts[sev] += 1
+
+        lines.append("Summary")
+        lines.append(f"BLOCKER: {sev_counts['BLOCKER']}")
+        lines.append(f"ERROR: {sev_counts['ERROR']}")
+        lines.append(f"WARN: {sev_counts['WARN']}")
+        lines.append(f"INFO: {sev_counts['INFO']}")
+        lines.append(f"Total findings: {sum(sev_counts.values())}")
+        lines.append("")
+        lines.append("Top Findings")
+
+        # Emit “top findings” in order (BLOCKER->ERROR->WARN->INFO)
+        order = {"BLOCKER": 0, "ERROR": 1, "WARN": 2, "INFO": 3}
+        findings_sorted = sorted(findings, key=lambda x: order.get((x.get("severity") or "INFO").upper(), 9))
+
+        for idx, f in enumerate(findings_sorted, start=1):
+            sev = (f.get("severity") or "INFO").upper()
+            code = f.get("code") or "QA.UNKNOWN"
+            title = f.get("title") or ""
+            msg = f.get("message") or ""
+            lines.append(f"{idx}. [{sev}] {code} — {title}")
+            lines.append(f"Message: {msg}")
+
+            # Optional table
+            if f.get("table"):
+                lines.append("")
+                lines.append(f.get("table"))
+                lines.append("")
+            else:
+                # Evidence is optional for non-table findings
+                ev = f.get("evidence")
+                if ev is not None:
+                    lines.append(f"Evidence: {json.dumps(ev)}")
+
+            lines.append("")
+
+        # Labels section (if you include it)
+        if labels_section:
+            lines.append("Labels")
+            lines.append(labels_section)
+            lines.append("")
+
+        return "\n".join(lines).strip() + "\n"
+
+    # -------------------------
+    # Main processing
+    # -------------------------
+
+    def _process_report(self, report_stix_id: str) -> str:
+        # Read report
+        report = self.helper.api.report.read(id=report_stix_id, withFiles=True)
+        if not report:
+            self.helper.log_error("Report not found", {"id": report_stix_id})
+            return "Report not found"
+
+        report_internal_id = safe_get(report, "id")
+        report_title = safe_get(report, "name") or "(untitled report)"
+
+        # Resolve scope ids
+        obj_ids = self._enumerate_report_object_ids(report)
+        resolved_objects, relationship_ids, unreadable_ids = self._resolve_scope(obj_ids)
+
+        self.helper.log_info("QA scope stats", {
+            "report_stix_id": report_stix_id,
+            "report_internal_id": report_internal_id,
+            "ref_count": len(obj_ids),
+            "resolved_objects": len(resolved_objects),
+            "relationship_refs": len(relationship_ids),
+            "unreadable_refs": len(unreadable_ids),
+            "enumeration_source": "objectsIds" if safe_get(report, "objectsIds") else "objects",
+        })
+
+        findings: List[Dict[str, Any]] = []
+
+        # ---- 4 Cs (existing conceptual section) ----
+        # 1) Containment
+        cont = self._qa_containment(obj_ids, resolved_objects, relationship_ids, unreadable_ids)
+        if cont:
+            findings.append(cont)
+
+        # 2) Markings presence
+        ok_mark, mark_msg = self._check_markings_present(report)
+        if not ok_mark:
+            findings.append({
+                "severity": "ERROR",
+                "code": "QA.MARKING.001",
+                "title": "Report marking definition present",
+                "message": mark_msg,
+                "evidence": {"objectMarkingIds": safe_get(report, "objectMarkingIds") or []},
+            })
+
+        # (Other existing 4C checks can stay here as you expand; this preserves your section boundary.)
+
+        # ---- New section AFTER 4 Cs: Relationship validation ----
+        findings.extend(self._qa_relationships_after_4cs(resolved_objects, relationship_ids))
+
+        # Verdict: FAIL only if any BLOCKER or ERROR
+        verdict = "PASS"
+        for f in findings:
+            if (f.get("severity") or "").upper() in ("BLOCKER", "ERROR"):
+                verdict = "FAIL"
+                break
+
+        # Note content
+        md = self._compose_note(report, verdict, findings, labels_section=None)
+        note_id = self._create_qa_note(report_internal_id, report_title, md)
+
+        # Attach JSON findings (non-fatal)
+        payload = {
+            "report": {"stix_id": report_stix_id, "internal_id": report_internal_id, "title": report_title},
+            "verdict": verdict,
+            "generated": utc_now_iso(),
+            "findings": findings,
+            "note": {"id": note_id},
+        }
+        self._upload_json_attachment(report_stix_id, report_title, payload)
+
+        return f"QA complete: {verdict}"
+
+    def _enrichment_handler(self, data: Dict[str, Any]) -> str:
+        """
+        Supports INTERNAL_ENRICHMENT messages for reports.
+        OpenCTI payloads vary; try multiple keys.
+        """
+        entity_id = safe_get(data, "entity_id", "entityId", "id")
+        if not entity_id:
+            return "No entity id in message"
+
+        # Some messages send internal UUID; report.read expects stix id for report domain objects.
+        # However in your logs, OpenCTI sends report standard_id (report--...), which is correct.
+        return self._process_report(entity_id)
+
+    def run(self) -> None:
+        self.helper.listen(message_callback=self._enrichment_handler)
+
+
+if __name__ == "__main__":
+    ReportModelQAConnector().run()

@@ -1,0 +1,286 @@
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from typing import Any, Dict, List
+
+
+def to_json(obj: Any) -> str:
+    return json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False, default=str)
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _severity_rank(sev: str) -> int:
+    ranks = {"BLOCKER": 0, "ERROR": 1, "WARN": 2, "INFO": 3}
+    return ranks.get((sev or "INFO").upper(), 9)
+
+
+def _counts_by_severity(findings: List[Dict[str, Any]]) -> Dict[str, int]:
+    out = {"BLOCKER": 0, "ERROR": 0, "WARN": 0, "INFO": 0}
+    for f in findings:
+        s = (f.get("severity") or "INFO").upper()
+        out[s] = out.get(s, 0) + 1
+    return out
+
+
+def _verdict(findings: List[Dict[str, Any]], fail_on_blockers: bool) -> str:
+    counts = _counts_by_severity(findings)
+    if fail_on_blockers and counts.get("BLOCKER", 0) > 0:
+        return "FAIL"
+    return "PASS"
+
+
+def _truncate(s: str, limit: int = 2000) -> str:
+    if not isinstance(s, str):
+        s = str(s)
+    if len(s) <= limit:
+        return s
+    return s[:limit] + "…"
+
+
+def _safe_entity_min(e: Any) -> Dict[str, Any]:
+    if isinstance(e, dict):
+        return {
+            "id": e.get("id"),
+            "entity_type": e.get("entity_type") or e.get("entityType"),
+            "name": e.get("name"),
+            "value": e.get("value"),
+        }
+    if isinstance(e, str):
+        # sometimes we only have an id string
+        return {"id": e, "entity_type": None, "name": None, "value": None}
+    return {"id": None, "entity_type": None, "name": None, "value": None}
+
+
+def _fmt_name_only_or_id(entity: Dict[str, Any]) -> str:
+    """
+    Prefer a human name/value. Only show the id if we don't have a usable name/value.
+    """
+    if not isinstance(entity, dict):
+        return "(unknown)"
+    name = entity.get("name") or entity.get("value")
+    if name:
+        return str(name)
+    # fallback: if we truly cannot resolve, show the id (last resort)
+    return str(entity.get("id") or "(unreadable-id)")
+
+
+def _fmt_rel_only_or_id(rel_type: str, rel_id: str | None) -> str:
+    """
+    Prefer the relationship type label. If it's missing, fall back to the id.
+    """
+    rel_type = (rel_type or "").strip()
+    if rel_type:
+        return rel_type
+    return str(rel_id or "(unreadable-rel-id)")
+
+
+def _wrap_text(text: str, width: int) -> List[str]:
+    if not text:
+        return [""]
+    words = str(text).split()
+    if not words:
+        return [""]
+    lines: List[str] = []
+    cur = words[0]
+    for w in words[1:]:
+        if len(cur) + 1 + len(w) <= width:
+            cur += " " + w
+        else:
+            lines.append(cur)
+            cur = w
+    lines.append(cur)
+    return lines
+
+
+def _ascii_table_rows(rels: List[Dict[str, Any]]) -> List[str]:
+    """
+    Fixed-width table rows inside a fenced code block so OpenCTI preserves spacing.
+    Columns (NAME-ONLY):
+      Source | Relationship | Target | Reason
+    Show IDs ONLY when name/type cannot be resolved.
+    """
+    # tuned to avoid horizontal scroll
+    W1, W2, W3, W4 = 34, 24, 34, 76
+
+    def cut(s: str, w: int) -> str:
+        s = s or ""
+        if len(s) <= w:
+            return s.ljust(w)
+        return (s[: w - 1] + "…")
+
+    header = (
+        cut("Source", W1) + " | " +
+        cut("Relationship", W2) + " | " +
+        cut("Target", W3) + " | " +
+        cut("Reason", W4)
+    )
+    sep = ("-" * W1) + "-+-" + ("-" * W2) + "-+-" + ("-" * W3) + "-+-" + ("-" * W4)
+
+    out: List[str] = [header, sep]
+
+    for r in rels[:50]:
+        if not isinstance(r, dict):
+            continue
+        r_id = r.get("id")
+        r_type = r.get("relationship_type") or r.get("relationshipType") or r.get("type")
+
+        frm = _safe_entity_min(r.get("from"))
+        to = _safe_entity_min(r.get("to"))
+        reason = r.get("flag_reason") or "Relationship object was included in report scope; scope should contain entities/observables, not relationships."
+
+        c1 = _fmt_name_only_or_id(frm)
+        c2 = _fmt_rel_only_or_id(str(r_type) if r_type is not None else "", str(r_id) if r_id is not None else None)
+        c3 = _fmt_name_only_or_id(to)
+
+        reason_lines = _wrap_text(reason, W4)
+        out.append(
+            cut(c1, W1) + " | " +
+            cut(c2, W2) + " | " +
+            cut(c3, W3) + " | " +
+            cut(reason_lines[0], W4)
+        )
+        for extra in reason_lines[1:]:
+            out.append(
+                (" " * W1) + " | " +
+                (" " * W2) + " | " +
+                (" " * W3) + " | " +
+                cut(extra, W4)
+            )
+
+    if len(rels) > 50:
+        out.append(f"(truncated: {len(rels) - 50} more relationship(s) not shown)")
+
+    return out
+
+
+def _render_evidence_expanded(evidence: Any) -> List[str]:
+    lines: List[str] = []
+    if not isinstance(evidence, dict):
+        if evidence is None:
+            return lines
+        lines.append(_truncate(to_json(evidence), 2000))
+        return lines
+
+    rels = evidence.get("relationships_in_scope")
+    if isinstance(rels, list) and rels:
+        lines.append("relationships_in_scope (table):")
+        lines.append("```text")
+        lines.extend(_ascii_table_rows(rels))
+        lines.append("```")
+        lines.append("")
+
+    for k in ("unreadable_ids", "unknown_ids"):
+        v = evidence.get(k)
+        if isinstance(v, list) and v:
+            lines.append(f"{k}:")
+            for x in v[:25]:
+                lines.append(f"- {x}")
+            if len(v) > 25:
+                lines.append(f"- (truncated: {len(v) - 25} more)")
+            lines.append("")
+
+    slim = dict(evidence)
+    if "relationships_in_scope" in slim and isinstance(rels, list):
+        slim["relationships_in_scope"] = f"<{len(rels)} relationship(s) rendered above>"
+    for k in ("unreadable_ids", "unknown_ids"):
+        if isinstance(slim.get(k), list):
+            slim[k] = f"<{len(slim[k])} id(s) rendered above>"
+    if "unreadable_details" in slim:
+        slim["unreadable_details"] = "<omitted (use attached JSON artifact)>"
+
+    if slim:
+        lines.append(_truncate(to_json(slim), 2000))
+
+    return lines
+
+
+def note_markdown(
+    report_title: str,
+    report_id: str,
+    config_snapshot: Dict[str, Any],
+    findings: List[Dict[str, Any]],
+    note_max_findings: int = 50,
+    emit_verdict_flag: bool = True,
+    fail_on_blockers: bool = True,
+) -> str:
+    counts = _counts_by_severity(findings)
+    verdict = _verdict(findings, fail_on_blockers) if emit_verdict_flag else "N/A"
+    generated = _now_iso()
+
+    sorted_findings = sorted(
+        findings,
+        key=lambda f: (_severity_rank((f.get("severity") or "INFO")), str(f.get("rule_id") or "")),
+    )
+
+    lines: List[str] = []
+    lines.append("Report Model QA")
+    lines.append(f"Report: {report_title}")
+    lines.append(f"Report ID: {report_id}")
+    lines.append(f"Verdict: {verdict}")
+    lines.append(f"Generated: {generated}")
+    lines.append("")
+    lines.append("Summary")
+    lines.append(f"BLOCKER: {counts.get('BLOCKER', 0)}")
+    lines.append(f"ERROR: {counts.get('ERROR', 0)}")
+    lines.append(f"WARN: {counts.get('WARN', 0)}")
+    lines.append(f"INFO: {counts.get('INFO', 0)}")
+    lines.append(f"Total findings: {len(findings)}")
+    lines.append("")
+    lines.append("Top Findings")
+    lines.append("")
+
+    show = sorted_findings[: max(0, int(note_max_findings))]
+    for i, f in enumerate(show, start=1):
+        sev = (f.get("severity") or "INFO").upper()
+        rid = f.get("rule_id") or "QA.UNKNOWN"
+        title = f.get("title") or f.get("rule_title") or "(no title)"
+        msg = f.get("message") or "(no message)"
+        rec = f.get("recommendation") or ""
+        obj_refs = f.get("object_refs") or f.get("objectRefs") or []
+        evidence = f.get("evidence")
+
+        lines.append(f"{i}. [{sev}] {rid} — {title}")
+        lines.append(f"Message: {msg}")
+
+        if isinstance(obj_refs, list) and obj_refs:
+            lines.append(f"Object refs: {', '.join([str(x) for x in obj_refs[:25]])}" + ("" if len(obj_refs) <= 25 else " …"))
+        elif obj_refs:
+            lines.append(f"Object refs: {obj_refs}")
+
+        if rec:
+            lines.append(f"Recommendation: {rec}")
+
+        ev_lines = _render_evidence_expanded(evidence)
+        if ev_lines:
+            lines.append("Evidence (expanded):")
+            lines.extend(ev_lines)
+
+        lines.append("")
+
+    lines.append("Connector Configuration Snapshot")
+    lines.append(_truncate(to_json(config_snapshot), 2500))
+
+    return "\n".join(lines).strip()
+
+
+def full_payload(
+    report_id: str,
+    report_title: str,
+    connector_name: str,
+    connector_version: str,
+    config_snapshot: Dict[str, Any],
+    findings: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    counts = _counts_by_severity(findings)
+    return {
+        "generated": _now_iso(),
+        "connector": {"name": connector_name, "version": connector_version},
+        "report": {"id": report_id, "title": report_title},
+        "summary": {"counts": counts, "total_findings": len(findings)},
+        "config_snapshot": config_snapshot,
+        "findings": findings,
+    }

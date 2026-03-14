@@ -1,0 +1,71 @@
+# Report Model QA Connector — standalone docker-compose
+#
+# Usage:
+#   cp .env.example .env
+#   # Edit .env with your values
+#   docker compose up -d
+#
+# To run as part of the main opencti-docker stack instead, add the
+# connector-report-model-qa service block to your docker-compose.override.yml
+# and set the environment variables via your stack's .env file.
+
+services:
+  connector-report-model-qa:
+    container_name: connector-report-model-qa
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: opencti/connector-report-model-qa:local
+    restart: unless-stopped
+    environment:
+      # ── Core ──────────────────────────────────────────────────────────────
+      - OPENCTI_URL=${OPENCTI_URL}
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${CONNECTOR_ID}
+      - CONNECTOR_NAME=Report Model QA (Non-Destructive)
+      - CONNECTOR_TYPE=INTERNAL_ENRICHMENT
+      - CONNECTOR_SCOPE=Report
+      - CONNECTOR_LOG_LEVEL=${CONNECTOR_LOG_LEVEL:-info}
+      - CONNECTOR_INTERVAL=${CONNECTOR_INTERVAL:-120}
+      - PYTHONPATH=/opt/connector/src
+
+      # ── QA output ─────────────────────────────────────────────────────────
+      - QA_WRITE_NOTE=${QA_WRITE_NOTE:-true}
+      - QA_ATTACH_JSON=${QA_ATTACH_JSON:-false}
+      - QA_NOTE_MAX_ROWS=${QA_NOTE_MAX_ROWS:-50}
+      - QA_FAIL_ON_BLOCKERS=${QA_FAIL_ON_BLOCKERS:-true}
+
+      # ── Entity Knowledge Base ──────────────────────────────────────────────
+      # How long (hours) before the in-memory KB is rebuilt from the graph.
+      # Lower = more current, higher = less API overhead on busy instances.
+      - QA_KB_TTL_HOURS=${QA_KB_TTL_HOURS:-24}
+
+      # ── Document extraction ────────────────────────────────────────────────
+      # Maximum pages to OCR when pdftotext and PyPDF2 both fail.
+      - QA_DOC_OCR_MAX_PAGES=${QA_DOC_OCR_MAX_PAGES:-6}
+      # Enable contextual smart-parse actor extraction from prose.
+      - QA_DOC_SMART_PARSE=${QA_DOC_SMART_PARSE:-true}
+      # Minimum confidence (0.0–1.0) for smart-parse actor candidates.
+      - QA_DOC_SMART_PARSE_MIN_CONFIDENCE=${QA_DOC_SMART_PARSE_MIN_CONFIDENCE:-0.70}
+      # Maximum smart-parse actor candidates per report.
+      - QA_DOC_SMART_PARSE_MAX_CANDIDATES=${QA_DOC_SMART_PARSE_MAX_CANDIDATES:-80}
+
+      # ── Provenance ────────────────────────────────────────────────────────
+      # Relationships created within this many hours of report.published
+      # are considered report-scoped and subject to provenance checks.
+      # Relationships older than this window are treated as pre-existing
+      # shared objects and skipped.
+      - QA_PROVENANCE_GRACE_HOURS=${QA_PROVENANCE_GRACE_HOURS:-24}
+
+      # ── Completeness thresholds ────────────────────────────────────────────
+      # Proportion of relationships with insufficient descriptions that triggers
+      # ERROR (FAIL). 0.0 = zero tolerance, 1.0 = never fail on descriptions.
+      - QA_REL_DESC_FAIL_THRESHOLD=${QA_REL_DESC_FAIL_THRESHOLD:-0.50}
+
+    networks:
+      - opencti
+
+networks:
+  opencti:
+    external: true
+    name: ${OPENCTI_NETWORK:-opencti-docker_default}
