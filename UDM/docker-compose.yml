@@ -1,0 +1,50 @@
+services:
+  connector-udm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: opencti-connector-udm:latest
+    environment:
+      # ── OpenCTI ───────────────────────────────────────────────────────────
+      # URL of your OpenCTI instance. Use the internal Docker service name
+      # if running in the same compose stack (e.g. http://opencti:8080).
+      - OPENCTI_URL=http://opencti:8080
+      # API token for a user with the Connector role in OpenCTI.
+      - OPENCTI_TOKEN=your-opencti-connector-token
+
+      # ── Connector identity ────────────────────────────────────────────────
+      # Generate a stable UUID: python3 -c "import uuid; print(uuid.uuid4())"
+      - CONNECTOR_ID=your-connector-uuid
+      - CONNECTOR_NAME=UDM
+      - CONNECTOR_LOG_LEVEL=INFO
+      # ISO 8601 duration between runs. Default PT6H (every 6 hours).
+      - CONNECTOR_INTERVAL=PT6H
+
+      # ── Marking definition ────────────────────────────────────────────────
+      # Instance-specific UUID of the TLP marking definition to apply to all
+      # created objects. Retrieve from OpenCTI: Settings > Marking Definitions.
+      - TLP_AMBER_STRICT_ID=your-tlp-marking-definition-uuid
+
+      # ── UDM Pro device ────────────────────────────────────────────────────
+      # IP address or hostname of your UDM Pro.
+      - UDM_HOST=192.168.1.1
+      # API key from the UDM Pro local admin interface.
+      - UDM_API_KEY=your-udm-api-key
+      # UniFi site name. 'default' unless you have multiple sites configured.
+      - UDM_SITE=default
+      # Set to false — UDM Pro uses a self-signed certificate.
+      - UDM_TLS_VERIFY=false
+      # Optional fallback WAN IP if automatic resolution via stat/device fails.
+      - UDM_WAN_IP=
+      # CIDR subnet used to classify destination IPs as internal hosts.
+      - UDM_INTERNAL_SUBNET=192.168.1.0/24
+
+      # ── Ingestion window ──────────────────────────────────────────────────
+      # Number of days to backfill on first run.
+      - UDM_BACKFILL_DAYS=30
+      # Number of flow records to fetch per API page. Max 500.
+      - UDM_PAGE_SIZE=500
+
+    restart: unless-stopped
+    depends_on:
+      - opencti

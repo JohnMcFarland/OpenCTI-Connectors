@@ -1,0 +1,21 @@
+opencti:
+  url: 'http://localhost:8080'
+  token: 'ChangeMe'
+
+connector:
+  id: 'ChangeMe'
+  name: 'UDM Connector'
+  log_level: 'INFO'
+  interval: 86400
+  tlp_amber_strict_id: 'ChangeMe'
+  author_id: 'ChangeMe'
+
+udm:
+  host: '192.168.0.1'
+  api_key: 'ChangeMe'
+  site: 'default'
+  tls_verify: false
+  wan_ip: '100.2.206.154'
+  internal_subnet: '192.168.0.0/24'
+  backfill_days: 30
+  page_size: 500

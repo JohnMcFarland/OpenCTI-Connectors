@@ -1,0 +1,5 @@
+pycti==6.9.13
+requests
+pyyaml
+urllib3
+pycountry
