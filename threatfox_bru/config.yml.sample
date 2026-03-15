@@ -1,0 +1,15 @@
+opencti:
+  url: "http://localhost:8080"
+  token: "YOUR_OPENCTI_TOKEN_HERE"
+
+connector:
+  id: "YOUR_CONNECTOR_UUID_HERE"
+  type: "EXTERNAL_IMPORT"
+  name: "ThreatFox"
+  scope: "threatfox"
+  log_level: "info"
+  interval: 360  # minutes (6 hours)
+
+threatfox:
+  auth_key: "YOUR_THREATFOX_AUTH_KEY_HERE"
+  days: 7

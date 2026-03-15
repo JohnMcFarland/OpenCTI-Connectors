@@ -1,0 +1,14 @@
+services:
+  connector-threatfox:
+    build: .
+    restart: unless-stopped
+    environment:
+      - OPENCTI_URL=${OPENCTI_URL:-http://opencti:8080}
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${CONNECTOR_THREATFOX_ID}
+      - CONNECTOR_NAME=${CONNECTOR_NAME:-ThreatFox}
+      - CONNECTOR_SCOPE=${CONNECTOR_SCOPE:-threatfox}
+      - CONNECTOR_LOG_LEVEL=${CONNECTOR_LOG_LEVEL:-info}
+      - CONNECTOR_INTERVAL=${CONNECTOR_INTERVAL:-360}
+      - THREATFOX_AUTH_KEY=${THREATFOX_AUTH_KEY}
+      - THREATFOX_DAYS=${THREATFOX_DAYS:-7}
