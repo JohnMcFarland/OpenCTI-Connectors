@@ -1,0 +1,4282 @@
+{
+  "3para rat": {
+    "external_id": "S0066",
+    "name": "3PARA RAT",
+    "type": "malware"
+  },
+  "3pararat": {
+    "external_id": "S0066",
+    "name": "3PARA RAT",
+    "type": "malware"
+  },
+  "4h rat": {
+    "external_id": "S0065",
+    "name": "4H RAT",
+    "type": "malware"
+  },
+  "4hrat": {
+    "external_id": "S0065",
+    "name": "4H RAT",
+    "type": "malware"
+  },
+  "aadinternals": {
+    "external_id": "S0677",
+    "name": "AADInternals",
+    "type": "tool"
+  },
+  "abk": {
+    "external_id": "S0469",
+    "name": "ABK",
+    "type": "malware"
+  },
+  "acidpour": {
+    "external_id": "S1167",
+    "name": "AcidPour",
+    "type": "malware"
+  },
+  "acidrain": {
+    "external_id": "S1125",
+    "name": "AcidRain",
+    "type": "malware"
+  },
+  "action rat": {
+    "external_id": "S1028",
+    "name": "Action RAT",
+    "type": "malware"
+  },
+  "actionrat": {
+    "external_id": "S1028",
+    "name": "Action RAT",
+    "type": "malware"
+  },
+  "adbupd": {
+    "external_id": "S0202",
+    "name": "adbupd",
+    "type": "malware"
+  },
+  "adfind": {
+    "external_id": "S0552",
+    "name": "AdFind",
+    "type": "tool"
+  },
+  "advstoreshell": {
+    "external_id": "S0045",
+    "name": "ADVSTORESHELL",
+    "type": "malware"
+  },
+  "agent tesla": {
+    "external_id": "S0331",
+    "name": "Agent Tesla",
+    "type": "malware"
+  },
+  "agent.btz": {
+    "external_id": "S0092",
+    "name": "Agent.btz",
+    "type": "malware"
+  },
+  "agenttesla": {
+    "external_id": "S0331",
+    "name": "Agent Tesla",
+    "type": "malware"
+  },
+  "akira": {
+    "external_id": "S1129",
+    "name": "Akira",
+    "type": "malware"
+  },
+  "akira _v2": {
+    "external_id": "S1194",
+    "name": "Akira _v2",
+    "type": "malware"
+  },
+  "akira_v2": {
+    "external_id": "S1194",
+    "name": "Akira _v2",
+    "type": "malware"
+  },
+  "amadey": {
+    "external_id": "S1025",
+    "name": "Amadey",
+    "type": "malware"
+  },
+  "anchor": {
+    "external_id": "S0504",
+    "name": "Anchor",
+    "type": "malware"
+  },
+  "andromeda": {
+    "external_id": "S1074",
+    "name": "ANDROMEDA",
+    "type": "malware"
+  },
+  "apostle": {
+    "external_id": "S1133",
+    "name": "Apostle",
+    "type": "malware"
+  },
+  "applejeus": {
+    "external_id": "S0584",
+    "name": "AppleJeus",
+    "type": "malware"
+  },
+  "appleseed": {
+    "external_id": "S0622",
+    "name": "AppleSeed",
+    "type": "malware"
+  },
+  "aria-body": {
+    "external_id": "S0456",
+    "name": "Aria-body",
+    "type": "malware"
+  },
+  "arp": {
+    "external_id": "S0099",
+    "name": "Arp",
+    "type": "tool"
+  },
+  "aspxspy": {
+    "external_id": "S0073",
+    "name": "ASPXSpy",
+    "type": "malware"
+  },
+  "astaroth": {
+    "external_id": "S0373",
+    "name": "Astaroth",
+    "type": "malware"
+  },
+  "asyncrat": {
+    "external_id": "S1087",
+    "name": "AsyncRAT",
+    "type": "tool"
+  },
+  "at": {
+    "external_id": "S0110",
+    "name": "at",
+    "type": "tool"
+  },
+  "attor": {
+    "external_id": "S0438",
+    "name": "Attor",
+    "type": "malware"
+  },
+  "attrib": {
+    "external_id": "S1176",
+    "name": "attrib",
+    "type": "tool"
+  },
+  "auditcred": {
+    "external_id": "S0347",
+    "name": "AuditCred",
+    "type": "malware"
+  },
+  "auto stealer": {
+    "external_id": "S1029",
+    "name": "AuTo Stealer",
+    "type": "malware"
+  },
+  "autoit backdoor": {
+    "external_id": "S0129",
+    "name": "AutoIt backdoor",
+    "type": "malware"
+  },
+  "autoitbackdoor": {
+    "external_id": "S0129",
+    "name": "AutoIt backdoor",
+    "type": "malware"
+  },
+  "autostealer": {
+    "external_id": "S1029",
+    "name": "AuTo Stealer",
+    "type": "malware"
+  },
+  "avaddon": {
+    "external_id": "S0640",
+    "name": "Avaddon",
+    "type": "malware"
+  },
+  "avenger": {
+    "external_id": "S0473",
+    "name": "Avenger",
+    "type": "malware"
+  },
+  "avoslocker": {
+    "external_id": "S1053",
+    "name": "AvosLocker",
+    "type": "malware"
+  },
+  "azorult": {
+    "external_id": "S0344",
+    "name": "Azorult",
+    "type": "malware"
+  },
+  "babuk": {
+    "external_id": "S0638",
+    "name": "Babuk",
+    "type": "malware"
+  },
+  "babyshark": {
+    "external_id": "S0414",
+    "name": "BabyShark",
+    "type": "malware"
+  },
+  "backconfig": {
+    "external_id": "S0475",
+    "name": "BackConfig",
+    "type": "malware"
+  },
+  "backdoor.oldrea": {
+    "external_id": "S0093",
+    "name": "Backdoor.Oldrea",
+    "type": "malware"
+  },
+  "backspace": {
+    "external_id": "S0031",
+    "name": "BACKSPACE",
+    "type": "malware"
+  },
+  "bad rabbit": {
+    "external_id": "S0606",
+    "name": "Bad Rabbit",
+    "type": "malware"
+  },
+  "badcall": {
+    "external_id": "S0245",
+    "name": "BADCALL",
+    "type": "malware"
+  },
+  "badflick": {
+    "external_id": "S0642",
+    "name": "BADFLICK",
+    "type": "malware"
+  },
+  "badhatch": {
+    "external_id": "S1081",
+    "name": "BADHATCH",
+    "type": "malware"
+  },
+  "badnews": {
+    "external_id": "S0128",
+    "name": "BADNEWS",
+    "type": "malware"
+  },
+  "badpatch": {
+    "external_id": "S0337",
+    "name": "BadPatch",
+    "type": "malware"
+  },
+  "badrabbit": {
+    "external_id": "S0606",
+    "name": "Bad Rabbit",
+    "type": "malware"
+  },
+  "bandook": {
+    "external_id": "S0234",
+    "name": "Bandook",
+    "type": "malware"
+  },
+  "bankshot": {
+    "external_id": "S0239",
+    "name": "Bankshot",
+    "type": "malware"
+  },
+  "bazar": {
+    "external_id": "S0534",
+    "name": "Bazar",
+    "type": "malware"
+  },
+  "bbk": {
+    "external_id": "S0470",
+    "name": "BBK",
+    "type": "malware"
+  },
+  "bbsrat": {
+    "external_id": "S0127",
+    "name": "BBSRAT",
+    "type": "malware"
+  },
+  "beavertail": {
+    "external_id": "S1246",
+    "name": "BeaverTail",
+    "type": "malware"
+  },
+  "bendybear": {
+    "external_id": "S0574",
+    "name": "BendyBear",
+    "type": "malware"
+  },
+  "bfg agonizer": {
+    "external_id": "S1136",
+    "name": "BFG Agonizer",
+    "type": "malware"
+  },
+  "bfgagonizer": {
+    "external_id": "S1136",
+    "name": "BFG Agonizer",
+    "type": "malware"
+  },
+  "biscuit": {
+    "external_id": "S0017",
+    "name": "BISCUIT",
+    "type": "malware"
+  },
+  "bisonal": {
+    "external_id": "S0268",
+    "name": "Bisonal",
+    "type": "malware"
+  },
+  "bitpaymer": {
+    "external_id": "S0570",
+    "name": "BitPaymer",
+    "type": "malware"
+  },
+  "bitsadmin": {
+    "external_id": "S0190",
+    "name": "BITSAdmin",
+    "type": "tool"
+  },
+  "black basta": {
+    "external_id": "S1070",
+    "name": "Black Basta",
+    "type": "malware"
+  },
+  "blackbasta": {
+    "external_id": "S1070",
+    "name": "Black Basta",
+    "type": "malware"
+  },
+  "blackbyte 2.0 ransomware": {
+    "external_id": "S1181",
+    "name": "BlackByte 2.0 Ransomware",
+    "type": "malware"
+  },
+  "blackbyte ransomware": {
+    "external_id": "S1180",
+    "name": "BlackByte Ransomware",
+    "type": "malware"
+  },
+  "blackbyte2.0ransomware": {
+    "external_id": "S1181",
+    "name": "BlackByte 2.0 Ransomware",
+    "type": "malware"
+  },
+  "blackbyteransomware": {
+    "external_id": "S1180",
+    "name": "BlackByte Ransomware",
+    "type": "malware"
+  },
+  "blackcat": {
+    "external_id": "S1068",
+    "name": "BlackCat",
+    "type": "malware"
+  },
+  "blackcoffee": {
+    "external_id": "S0069",
+    "name": "BLACKCOFFEE",
+    "type": "malware"
+  },
+  "blackenergy": {
+    "external_id": "S0089",
+    "name": "BlackEnergy",
+    "type": "malware"
+  },
+  "blackmould": {
+    "external_id": "S0564",
+    "name": "BlackMould",
+    "type": "malware"
+  },
+  "blindingcan": {
+    "external_id": "S0520",
+    "name": "BLINDINGCAN",
+    "type": "malware"
+  },
+  "bloodhound": {
+    "external_id": "S0521",
+    "name": "BloodHound",
+    "type": "tool"
+  },
+  "bluelight": {
+    "external_id": "S0657",
+    "name": "BLUELIGHT",
+    "type": "malware"
+  },
+  "boldmove": {
+    "external_id": "S1184",
+    "name": "BOLDMOVE",
+    "type": "malware"
+  },
+  "bonadan": {
+    "external_id": "S0486",
+    "name": "Bonadan",
+    "type": "malware"
+  },
+  "bondupdater": {
+    "external_id": "S0360",
+    "name": "BONDUPDATER",
+    "type": "malware"
+  },
+  "bookworm": {
+    "external_id": "S1226",
+    "name": "BOOKWORM",
+    "type": "malware"
+  },
+  "boombox": {
+    "external_id": "S0635",
+    "name": "BoomBox",
+    "type": "malware"
+  },
+  "boostwrite": {
+    "external_id": "S0415",
+    "name": "BOOSTWRITE",
+    "type": "malware"
+  },
+  "bootrash": {
+    "external_id": "S0114",
+    "name": "BOOTRASH",
+    "type": "malware"
+  },
+  "boxcaon": {
+    "external_id": "S0651",
+    "name": "BoxCaon",
+    "type": "malware"
+  },
+  "bpfdoor": {
+    "external_id": "S1161",
+    "name": "BPFDoor",
+    "type": "malware"
+  },
+  "brave prince": {
+    "external_id": "S0252",
+    "name": "Brave Prince",
+    "type": "malware"
+  },
+  "braveprince": {
+    "external_id": "S0252",
+    "name": "Brave Prince",
+    "type": "malware"
+  },
+  "briba": {
+    "external_id": "S0204",
+    "name": "Briba",
+    "type": "malware"
+  },
+  "brute ratel c4": {
+    "external_id": "S1063",
+    "name": "Brute Ratel C4",
+    "type": "tool"
+  },
+  "bruteratelc4": {
+    "external_id": "S1063",
+    "name": "Brute Ratel C4",
+    "type": "tool"
+  },
+  "bs2005": {
+    "external_id": "S0014",
+    "name": "BS2005",
+    "type": "malware"
+  },
+  "bubblewrap": {
+    "external_id": "S0043",
+    "name": "BUBBLEWRAP",
+    "type": "malware"
+  },
+  "build_downer": {
+    "external_id": "S0471",
+    "name": "build_downer",
+    "type": "malware"
+  },
+  "bumblebee": {
+    "external_id": "S1039",
+    "name": "Bumblebee",
+    "type": "malware"
+  },
+  "bundlore": {
+    "external_id": "S0482",
+    "name": "Bundlore",
+    "type": "malware"
+  },
+  "bushwalk": {
+    "external_id": "S1118",
+    "name": "BUSHWALK",
+    "type": "malware"
+  },
+  "cachedump": {
+    "external_id": "S0119",
+    "name": "Cachedump",
+    "type": "tool"
+  },
+  "caddywiper": {
+    "external_id": "S0693",
+    "name": "CaddyWiper",
+    "type": "malware"
+  },
+  "cadelspy": {
+    "external_id": "S0454",
+    "name": "Cadelspy",
+    "type": "malware"
+  },
+  "calendar": {
+    "external_id": "S0025",
+    "name": "CALENDAR",
+    "type": "malware"
+  },
+  "calisto": {
+    "external_id": "S0274",
+    "name": "Calisto",
+    "type": "malware"
+  },
+  "callme": {
+    "external_id": "S0077",
+    "name": "CallMe",
+    "type": "malware"
+  },
+  "cannon": {
+    "external_id": "S0351",
+    "name": "Cannon",
+    "type": "malware"
+  },
+  "canonstager": {
+    "external_id": "S1237",
+    "name": "CANONSTAGER",
+    "type": "malware"
+  },
+  "carbanak": {
+    "external_id": "S0030",
+    "name": "Carbanak",
+    "type": "malware"
+  },
+  "carberp": {
+    "external_id": "S0484",
+    "name": "Carberp",
+    "type": "malware"
+  },
+  "carbon": {
+    "external_id": "S0335",
+    "name": "Carbon",
+    "type": "malware"
+  },
+  "cardinal rat": {
+    "external_id": "S0348",
+    "name": "Cardinal RAT",
+    "type": "malware"
+  },
+  "cardinalrat": {
+    "external_id": "S0348",
+    "name": "Cardinal RAT",
+    "type": "malware"
+  },
+  "carrotball": {
+    "external_id": "S0465",
+    "name": "CARROTBALL",
+    "type": "tool"
+  },
+  "carrotbat": {
+    "external_id": "S0462",
+    "name": "CARROTBAT",
+    "type": "malware"
+  },
+  "castletap": {
+    "external_id": "S1224",
+    "name": "CASTLETAP",
+    "type": "malware"
+  },
+  "catchamas": {
+    "external_id": "S0261",
+    "name": "Catchamas",
+    "type": "malware"
+  },
+  "caterpillar webshell": {
+    "external_id": "S0572",
+    "name": "Caterpillar WebShell",
+    "type": "malware"
+  },
+  "caterpillarwebshell": {
+    "external_id": "S0572",
+    "name": "Caterpillar WebShell",
+    "type": "malware"
+  },
+  "ccbkdr": {
+    "external_id": "S0222",
+    "name": "CCBkdr",
+    "type": "malware"
+  },
+  "ccf32": {
+    "external_id": "S1043",
+    "name": "ccf32",
+    "type": "malware"
+  },
+  "cd00r": {
+    "external_id": "S1204",
+    "name": "cd00r",
+    "type": "malware"
+  },
+  "certutil": {
+    "external_id": "S0160",
+    "name": "certutil",
+    "type": "tool"
+  },
+  "chaes": {
+    "external_id": "S0631",
+    "name": "Chaes",
+    "type": "malware"
+  },
+  "chaos": {
+    "external_id": "S0220",
+    "name": "Chaos",
+    "type": "malware"
+  },
+  "charmpower": {
+    "external_id": "S0674",
+    "name": "CharmPower",
+    "type": "malware"
+  },
+  "chches": {
+    "external_id": "S0144",
+    "name": "ChChes",
+    "type": "malware"
+  },
+  "cheerscrypt": {
+    "external_id": "S1096",
+    "name": "Cheerscrypt",
+    "type": "malware"
+  },
+  "cherry picker": {
+    "external_id": "S0107",
+    "name": "Cherry Picker",
+    "type": "malware"
+  },
+  "cherrypicker": {
+    "external_id": "S0107",
+    "name": "Cherry Picker",
+    "type": "malware"
+  },
+  "chimneysweep": {
+    "external_id": "S1149",
+    "name": "CHIMNEYSWEEP",
+    "type": "malware"
+  },
+  "china chopper": {
+    "external_id": "S0020",
+    "name": "China Chopper",
+    "type": "malware"
+  },
+  "chinachopper": {
+    "external_id": "S0020",
+    "name": "China Chopper",
+    "type": "malware"
+  },
+  "chinoxy": {
+    "external_id": "S1041",
+    "name": "Chinoxy",
+    "type": "malware"
+  },
+  "chopstick": {
+    "external_id": "S0023",
+    "name": "CHOPSTICK",
+    "type": "malware"
+  },
+  "chrommme": {
+    "external_id": "S0667",
+    "name": "Chrommme",
+    "type": "malware"
+  },
+  "cipher.exe": {
+    "external_id": "S1205",
+    "name": "cipher.exe",
+    "type": "tool"
+  },
+  "claimloader": {
+    "external_id": "S1236",
+    "name": "CLAIMLOADER",
+    "type": "malware"
+  },
+  "clambling": {
+    "external_id": "S0660",
+    "name": "Clambling",
+    "type": "malware"
+  },
+  "clop": {
+    "external_id": "S0611",
+    "name": "Clop",
+    "type": "malware"
+  },
+  "cloudduke": {
+    "external_id": "S0054",
+    "name": "CloudDuke",
+    "type": "malware"
+  },
+  "cmd": {
+    "external_id": "S0106",
+    "name": "cmd",
+    "type": "tool"
+  },
+  "coathanger": {
+    "external_id": "S1105",
+    "name": "COATHANGER",
+    "type": "malware"
+  },
+  "cobalt strike": {
+    "external_id": "S0154",
+    "name": "Cobalt Strike",
+    "type": "malware"
+  },
+  "cobaltstrike": {
+    "external_id": "S0154",
+    "name": "Cobalt Strike",
+    "type": "malware"
+  },
+  "cobian rat": {
+    "external_id": "S0338",
+    "name": "Cobian RAT",
+    "type": "malware"
+  },
+  "cobianrat": {
+    "external_id": "S0338",
+    "name": "Cobian RAT",
+    "type": "malware"
+  },
+  "cointicker": {
+    "external_id": "S0369",
+    "name": "CoinTicker",
+    "type": "malware"
+  },
+  "comnie": {
+    "external_id": "S0244",
+    "name": "Comnie",
+    "type": "malware"
+  },
+  "comrat": {
+    "external_id": "S0126",
+    "name": "ComRAT",
+    "type": "malware"
+  },
+  "conficker": {
+    "external_id": "S0608",
+    "name": "Conficker",
+    "type": "malware"
+  },
+  "connectwise": {
+    "external_id": "S0591",
+    "name": "ConnectWise",
+    "type": "tool"
+  },
+  "conti": {
+    "external_id": "S0575",
+    "name": "Conti",
+    "type": "malware"
+  },
+  "cookieminer": {
+    "external_id": "S0492",
+    "name": "CookieMiner",
+    "type": "malware"
+  },
+  "coraldeck": {
+    "external_id": "S0212",
+    "name": "CORALDECK",
+    "type": "malware"
+  },
+  "coreshell": {
+    "external_id": "S0137",
+    "name": "CORESHELL",
+    "type": "malware"
+  },
+  "corklog": {
+    "external_id": "S1235",
+    "name": "CorKLOG",
+    "type": "malware"
+  },
+  "cosmicduke": {
+    "external_id": "S0050",
+    "name": "CosmicDuke",
+    "type": "malware"
+  },
+  "costabricks": {
+    "external_id": "S0614",
+    "name": "CostaBricks",
+    "type": "malware"
+  },
+  "covenant": {
+    "external_id": "S1155",
+    "name": "Covenant",
+    "type": "tool"
+  },
+  "cozycar": {
+    "external_id": "S0046",
+    "name": "CozyCar",
+    "type": "malware"
+  },
+  "crackmapexec": {
+    "external_id": "S0488",
+    "name": "CrackMapExec",
+    "type": "tool"
+  },
+  "creepydrive": {
+    "external_id": "S1023",
+    "name": "CreepyDrive",
+    "type": "malware"
+  },
+  "creepysnail": {
+    "external_id": "S1024",
+    "name": "CreepySnail",
+    "type": "malware"
+  },
+  "crimson": {
+    "external_id": "S0115",
+    "name": "Crimson",
+    "type": "malware"
+  },
+  "crossrat": {
+    "external_id": "S0235",
+    "name": "CrossRAT",
+    "type": "malware"
+  },
+  "crutch": {
+    "external_id": "S0538",
+    "name": "Crutch",
+    "type": "malware"
+  },
+  "cryptoistic": {
+    "external_id": "S0498",
+    "name": "Cryptoistic",
+    "type": "malware"
+  },
+  "cspy downloader": {
+    "external_id": "S0527",
+    "name": "CSPY Downloader",
+    "type": "tool"
+  },
+  "cspydownloader": {
+    "external_id": "S0527",
+    "name": "CSPY Downloader",
+    "type": "tool"
+  },
+  "cuba": {
+    "external_id": "S0625",
+    "name": "Cuba",
+    "type": "malware"
+  },
+  "cuckoo stealer": {
+    "external_id": "S1153",
+    "name": "Cuckoo Stealer",
+    "type": "malware"
+  },
+  "cuckoostealer": {
+    "external_id": "S1153",
+    "name": "Cuckoo Stealer",
+    "type": "malware"
+  },
+  "cyclops blink": {
+    "external_id": "S0687",
+    "name": "Cyclops Blink",
+    "type": "malware"
+  },
+  "cyclopsblink": {
+    "external_id": "S0687",
+    "name": "Cyclops Blink",
+    "type": "malware"
+  },
+  "dacls": {
+    "external_id": "S0497",
+    "name": "Dacls",
+    "type": "malware"
+  },
+  "danbot": {
+    "external_id": "S1014",
+    "name": "DanBot",
+    "type": "malware"
+  },
+  "darkcomet": {
+    "external_id": "S0334",
+    "name": "DarkComet",
+    "type": "malware"
+  },
+  "darkgate": {
+    "external_id": "S1111",
+    "name": "DarkGate",
+    "type": "malware"
+  },
+  "darkmoon": {
+    "external_id": "S0209",
+    "name": "Darkmoon",
+    "type": "malware"
+  },
+  "darktortilla": {
+    "external_id": "S1066",
+    "name": "DarkTortilla",
+    "type": "malware"
+  },
+  "darkwatchman": {
+    "external_id": "S0673",
+    "name": "DarkWatchman",
+    "type": "malware"
+  },
+  "daserf": {
+    "external_id": "S0187",
+    "name": "Daserf",
+    "type": "malware"
+  },
+  "dcsrv": {
+    "external_id": "S1033",
+    "name": "DCSrv",
+    "type": "malware"
+  },
+  "ddkong": {
+    "external_id": "S0255",
+    "name": "DDKONG",
+    "type": "malware"
+  },
+  "deadeye": {
+    "external_id": "S1052",
+    "name": "DEADEYE",
+    "type": "malware"
+  },
+  "deadwood": {
+    "external_id": "S1134",
+    "name": "DEADWOOD",
+    "type": "malware"
+  },
+  "dealerschoice": {
+    "external_id": "S0243",
+    "name": "DealersChoice",
+    "type": "malware"
+  },
+  "deathransom": {
+    "external_id": "S0616",
+    "name": "DEATHRANSOM",
+    "type": "malware"
+  },
+  "denis": {
+    "external_id": "S0354",
+    "name": "Denis",
+    "type": "malware"
+  },
+  "derusbi": {
+    "external_id": "S0021",
+    "name": "Derusbi",
+    "type": "malware"
+  },
+  "diavol": {
+    "external_id": "S0659",
+    "name": "Diavol",
+    "type": "malware"
+  },
+  "dipsind": {
+    "external_id": "S0200",
+    "name": "Dipsind",
+    "type": "malware"
+  },
+  "disco": {
+    "external_id": "S1088",
+    "name": "Disco",
+    "type": "malware"
+  },
+  "dnssystem": {
+    "external_id": "S1021",
+    "name": "DnsSystem",
+    "type": "malware"
+  },
+  "dogcall": {
+    "external_id": "S0213",
+    "name": "DOGCALL",
+    "type": "malware"
+  },
+  "dok": {
+    "external_id": "S0281",
+    "name": "Dok",
+    "type": "malware"
+  },
+  "doki": {
+    "external_id": "S0600",
+    "name": "Doki",
+    "type": "malware"
+  },
+  "donut": {
+    "external_id": "S0695",
+    "name": "Donut",
+    "type": "tool"
+  },
+  "down_new": {
+    "external_id": "S0472",
+    "name": "down_new",
+    "type": "malware"
+  },
+  "downdelph": {
+    "external_id": "S0134",
+    "name": "Downdelph",
+    "type": "malware"
+  },
+  "downpaper": {
+    "external_id": "S0186",
+    "name": "DownPaper",
+    "type": "malware"
+  },
+  "dratzarus": {
+    "external_id": "S0694",
+    "name": "DRATzarus",
+    "type": "malware"
+  },
+  "dridex": {
+    "external_id": "S0384",
+    "name": "Dridex",
+    "type": "malware"
+  },
+  "dropbook": {
+    "external_id": "S0547",
+    "name": "DropBook",
+    "type": "malware"
+  },
+  "drovorub": {
+    "external_id": "S0502",
+    "name": "Drovorub",
+    "type": "malware"
+  },
+  "dsquery": {
+    "external_id": "S0105",
+    "name": "dsquery",
+    "type": "tool"
+  },
+  "dtrack": {
+    "external_id": "S0567",
+    "name": "Dtrack",
+    "type": "malware"
+  },
+  "duqu": {
+    "external_id": "S0038",
+    "name": "Duqu",
+    "type": "malware"
+  },
+  "dustpan": {
+    "external_id": "S1158",
+    "name": "DUSTPAN",
+    "type": "malware"
+  },
+  "dusttrap": {
+    "external_id": "S1159",
+    "name": "DUSTTRAP",
+    "type": "malware"
+  },
+  "dustysky": {
+    "external_id": "S0062",
+    "name": "DustySky",
+    "type": "malware"
+  },
+  "dyre": {
+    "external_id": "S0024",
+    "name": "Dyre",
+    "type": "malware"
+  },
+  "ebury": {
+    "external_id": "S0377",
+    "name": "Ebury",
+    "type": "malware"
+  },
+  "eccentricbandwagon": {
+    "external_id": "S0593",
+    "name": "ECCENTRICBANDWAGON",
+    "type": "malware"
+  },
+  "ecipekac": {
+    "external_id": "S0624",
+    "name": "Ecipekac",
+    "type": "malware"
+  },
+  "egregor": {
+    "external_id": "S0554",
+    "name": "Egregor",
+    "type": "malware"
+  },
+  "ekans": {
+    "external_id": "S0605",
+    "name": "EKANS",
+    "type": "malware"
+  },
+  "elise": {
+    "external_id": "S0081",
+    "name": "Elise",
+    "type": "malware"
+  },
+  "elmer": {
+    "external_id": "S0064",
+    "name": "ELMER",
+    "type": "malware"
+  },
+  "embargo": {
+    "external_id": "S1247",
+    "name": "Embargo",
+    "type": "malware"
+  },
+  "emissary": {
+    "external_id": "S0082",
+    "name": "Emissary",
+    "type": "malware"
+  },
+  "emotet": {
+    "external_id": "S0367",
+    "name": "Emotet",
+    "type": "malware"
+  },
+  "empire": {
+    "external_id": "S0363",
+    "name": "Empire",
+    "type": "tool"
+  },
+  "envyscout": {
+    "external_id": "S0634",
+    "name": "EnvyScout",
+    "type": "malware"
+  },
+  "epic": {
+    "external_id": "S0091",
+    "name": "Epic",
+    "type": "malware"
+  },
+  "esentutl": {
+    "external_id": "S0404",
+    "name": "esentutl",
+    "type": "tool"
+  },
+  "evilbunny": {
+    "external_id": "S0396",
+    "name": "EvilBunny",
+    "type": "malware"
+  },
+  "evilgrab": {
+    "external_id": "S0152",
+    "name": "EvilGrab",
+    "type": "malware"
+  },
+  "evilnum": {
+    "external_id": "S0568",
+    "name": "EVILNUM",
+    "type": "malware"
+  },
+  "exaramel for linux": {
+    "external_id": "S0401",
+    "name": "Exaramel for Linux",
+    "type": "malware"
+  },
+  "exaramel for windows": {
+    "external_id": "S0343",
+    "name": "Exaramel for Windows",
+    "type": "malware"
+  },
+  "exaramelforlinux": {
+    "external_id": "S0401",
+    "name": "Exaramel for Linux",
+    "type": "malware"
+  },
+  "exaramelforwindows": {
+    "external_id": "S0343",
+    "name": "Exaramel for Windows",
+    "type": "malware"
+  },
+  "exbyte": {
+    "external_id": "S1179",
+    "name": "Exbyte",
+    "type": "malware"
+  },
+  "expand": {
+    "external_id": "S0361",
+    "name": "Expand",
+    "type": "tool"
+  },
+  "explosive": {
+    "external_id": "S0569",
+    "name": "Explosive",
+    "type": "malware"
+  },
+  "fakem": {
+    "external_id": "S0076",
+    "name": "FakeM",
+    "type": "malware"
+  },
+  "fallchill": {
+    "external_id": "S0181",
+    "name": "FALLCHILL",
+    "type": "malware"
+  },
+  "fatduke": {
+    "external_id": "S0512",
+    "name": "FatDuke",
+    "type": "malware"
+  },
+  "felismus": {
+    "external_id": "S0171",
+    "name": "Felismus",
+    "type": "malware"
+  },
+  "felixroot": {
+    "external_id": "S0267",
+    "name": "FELIXROOT",
+    "type": "malware"
+  },
+  "ferocious": {
+    "external_id": "S0679",
+    "name": "Ferocious",
+    "type": "malware"
+  },
+  "fgdump": {
+    "external_id": "S0120",
+    "name": "Fgdump",
+    "type": "tool"
+  },
+  "final1stspy": {
+    "external_id": "S0355",
+    "name": "Final1stspy",
+    "type": "malware"
+  },
+  "finfisher": {
+    "external_id": "S0182",
+    "name": "FinFisher",
+    "type": "malware"
+  },
+  "fivehands": {
+    "external_id": "S0618",
+    "name": "FIVEHANDS",
+    "type": "malware"
+  },
+  "flagpro": {
+    "external_id": "S0696",
+    "name": "Flagpro",
+    "type": "malware"
+  },
+  "flame": {
+    "external_id": "S0143",
+    "name": "Flame",
+    "type": "malware"
+  },
+  "flashflood": {
+    "external_id": "S0036",
+    "name": "FLASHFLOOD",
+    "type": "malware"
+  },
+  "flawedammyy": {
+    "external_id": "S0381",
+    "name": "FlawedAmmyy",
+    "type": "malware"
+  },
+  "flawedgrace": {
+    "external_id": "S0383",
+    "name": "FlawedGrace",
+    "type": "malware"
+  },
+  "flipside": {
+    "external_id": "S0173",
+    "name": "FLIPSIDE",
+    "type": "malware"
+  },
+  "foggyweb": {
+    "external_id": "S0661",
+    "name": "FoggyWeb",
+    "type": "malware"
+  },
+  "forfiles": {
+    "external_id": "S0193",
+    "name": "Forfiles",
+    "type": "tool"
+  },
+  "framesting": {
+    "external_id": "S1120",
+    "name": "FRAMESTING",
+    "type": "malware"
+  },
+  "frameworkpos": {
+    "external_id": "S0503",
+    "name": "FrameworkPOS",
+    "type": "malware"
+  },
+  "frp": {
+    "external_id": "S1144",
+    "name": "FRP",
+    "type": "tool"
+  },
+  "fruitfly": {
+    "external_id": "S0277",
+    "name": "FruitFly",
+    "type": "malware"
+  },
+  "ftp": {
+    "external_id": "S0095",
+    "name": "ftp",
+    "type": "tool"
+  },
+  "funnydream": {
+    "external_id": "S1044",
+    "name": "FunnyDream",
+    "type": "malware"
+  },
+  "fyanti": {
+    "external_id": "S0628",
+    "name": "FYAnti",
+    "type": "malware"
+  },
+  "fysbis": {
+    "external_id": "S0410",
+    "name": "Fysbis",
+    "type": "malware"
+  },
+  "gazer": {
+    "external_id": "S0168",
+    "name": "Gazer",
+    "type": "malware"
+  },
+  "gelsemium": {
+    "external_id": "S0666",
+    "name": "Gelsemium",
+    "type": "malware"
+  },
+  "geminiduke": {
+    "external_id": "S0049",
+    "name": "GeminiDuke",
+    "type": "malware"
+  },
+  "get2": {
+    "external_id": "S0460",
+    "name": "Get2",
+    "type": "malware"
+  },
+  "gh0st rat": {
+    "external_id": "S0032",
+    "name": "gh0st RAT",
+    "type": "malware"
+  },
+  "gh0strat": {
+    "external_id": "S0032",
+    "name": "gh0st RAT",
+    "type": "malware"
+  },
+  "glasstoken": {
+    "external_id": "S1117",
+    "name": "GLASSTOKEN",
+    "type": "malware"
+  },
+  "glooxmail": {
+    "external_id": "S0026",
+    "name": "GLOOXMAIL",
+    "type": "malware"
+  },
+  "gobear": {
+    "external_id": "S1197",
+    "name": "GoBear",
+    "type": "malware"
+  },
+  "gold dragon": {
+    "external_id": "S0249",
+    "name": "Gold Dragon",
+    "type": "malware"
+  },
+  "golddragon": {
+    "external_id": "S0249",
+    "name": "Gold Dragon",
+    "type": "malware"
+  },
+  "goldenspy": {
+    "external_id": "S0493",
+    "name": "GoldenSpy",
+    "type": "malware"
+  },
+  "goldfinder": {
+    "external_id": "S0597",
+    "name": "GoldFinder",
+    "type": "malware"
+  },
+  "goldmax": {
+    "external_id": "S0588",
+    "name": "GoldMax",
+    "type": "malware"
+  },
+  "gomir": {
+    "external_id": "S1198",
+    "name": "Gomir",
+    "type": "malware"
+  },
+  "goopy": {
+    "external_id": "S0477",
+    "name": "Goopy",
+    "type": "malware"
+  },
+  "gootloader": {
+    "external_id": "S1138",
+    "name": "Gootloader",
+    "type": "malware"
+  },
+  "grandoreiro": {
+    "external_id": "S0531",
+    "name": "Grandoreiro",
+    "type": "malware"
+  },
+  "gravityrat": {
+    "external_id": "S0237",
+    "name": "GravityRAT",
+    "type": "malware"
+  },
+  "green lambert": {
+    "external_id": "S0690",
+    "name": "Green Lambert",
+    "type": "malware"
+  },
+  "greenlambert": {
+    "external_id": "S0690",
+    "name": "Green Lambert",
+    "type": "malware"
+  },
+  "greyenergy": {
+    "external_id": "S0342",
+    "name": "GreyEnergy",
+    "type": "malware"
+  },
+  "griffon": {
+    "external_id": "S0417",
+    "name": "GRIFFON",
+    "type": "malware"
+  },
+  "grimagent": {
+    "external_id": "S0632",
+    "name": "GrimAgent",
+    "type": "malware"
+  },
+  "gsecdump": {
+    "external_id": "S0008",
+    "name": "gsecdump",
+    "type": "tool"
+  },
+  "guloader": {
+    "external_id": "S0561",
+    "name": "GuLoader",
+    "type": "malware"
+  },
+  "h1n1": {
+    "external_id": "S0132",
+    "name": "H1N1",
+    "type": "malware"
+  },
+  "hacking team uefi rootkit": {
+    "external_id": "S0047",
+    "name": "Hacking Team UEFI Rootkit",
+    "type": "malware"
+  },
+  "hackingteamuefirootkit": {
+    "external_id": "S0047",
+    "name": "Hacking Team UEFI Rootkit",
+    "type": "malware"
+  },
+  "halfbaked": {
+    "external_id": "S0151",
+    "name": "HALFBAKED",
+    "type": "malware"
+  },
+  "hammertoss": {
+    "external_id": "S0037",
+    "name": "HAMMERTOSS",
+    "type": "malware"
+  },
+  "hancitor": {
+    "external_id": "S0499",
+    "name": "Hancitor",
+    "type": "malware"
+  },
+  "hannotog": {
+    "external_id": "S1211",
+    "name": "Hannotog",
+    "type": "malware"
+  },
+  "happywork": {
+    "external_id": "S0214",
+    "name": "HAPPYWORK",
+    "type": "malware"
+  },
+  "hardrain": {
+    "external_id": "S0246",
+    "name": "HARDRAIN",
+    "type": "malware"
+  },
+  "havij": {
+    "external_id": "S0224",
+    "name": "Havij",
+    "type": "tool"
+  },
+  "havoc": {
+    "external_id": "S1229",
+    "name": "Havoc",
+    "type": "malware"
+  },
+  "hawkball": {
+    "external_id": "S0391",
+    "name": "HAWKBALL",
+    "type": "malware"
+  },
+  "hcdloader": {
+    "external_id": "S0071",
+    "name": "hcdLoader",
+    "type": "malware"
+  },
+  "hdoor": {
+    "external_id": "S0061",
+    "name": "HDoor",
+    "type": "malware"
+  },
+  "hellokitty": {
+    "external_id": "S0617",
+    "name": "HELLOKITTY",
+    "type": "malware"
+  },
+  "helminth": {
+    "external_id": "S0170",
+    "name": "Helminth",
+    "type": "malware"
+  },
+  "hermeticwiper": {
+    "external_id": "S0697",
+    "name": "HermeticWiper",
+    "type": "malware"
+  },
+  "hermeticwizard": {
+    "external_id": "S0698",
+    "name": "HermeticWizard",
+    "type": "malware"
+  },
+  "hexeval loader": {
+    "external_id": "S1249",
+    "name": "HexEval Loader",
+    "type": "malware"
+  },
+  "hexevalloader": {
+    "external_id": "S1249",
+    "name": "HexEval Loader",
+    "type": "malware"
+  },
+  "heyoka backdoor": {
+    "external_id": "S1027",
+    "name": "Heyoka Backdoor",
+    "type": "malware"
+  },
+  "heyokabackdoor": {
+    "external_id": "S1027",
+    "name": "Heyoka Backdoor",
+    "type": "malware"
+  },
+  "hi-zor": {
+    "external_id": "S0087",
+    "name": "Hi-Zor",
+    "type": "malware"
+  },
+  "hiddenwasp": {
+    "external_id": "S0394",
+    "name": "HiddenWasp",
+    "type": "malware"
+  },
+  "hidedrv": {
+    "external_id": "S0135",
+    "name": "HIDEDRV",
+    "type": "malware"
+  },
+  "hikit": {
+    "external_id": "S0009",
+    "name": "Hikit",
+    "type": "malware"
+  },
+  "hildegard": {
+    "external_id": "S0601",
+    "name": "Hildegard",
+    "type": "malware"
+  },
+  "hiupan": {
+    "external_id": "S1230",
+    "name": "HIUPAN",
+    "type": "malware"
+  },
+  "homefry": {
+    "external_id": "S0232",
+    "name": "HOMEFRY",
+    "type": "malware"
+  },
+  "hoplight": {
+    "external_id": "S0376",
+    "name": "HOPLIGHT",
+    "type": "malware"
+  },
+  "hotcroissant": {
+    "external_id": "S0431",
+    "name": "HotCroissant",
+    "type": "malware"
+  },
+  "htran": {
+    "external_id": "S0040",
+    "name": "HTRAN",
+    "type": "tool"
+  },
+  "httpbrowser": {
+    "external_id": "S0070",
+    "name": "HTTPBrowser",
+    "type": "malware"
+  },
+  "httpclient": {
+    "external_id": "S0068",
+    "name": "httpclient",
+    "type": "malware"
+  },
+  "hui loader": {
+    "external_id": "S1097",
+    "name": "HUI Loader",
+    "type": "malware"
+  },
+  "huiloader": {
+    "external_id": "S1097",
+    "name": "HUI Loader",
+    "type": "malware"
+  },
+  "hydraq": {
+    "external_id": "S0203",
+    "name": "Hydraq",
+    "type": "malware"
+  },
+  "hyperbro": {
+    "external_id": "S0398",
+    "name": "HyperBro",
+    "type": "malware"
+  },
+  "hyperstack": {
+    "external_id": "S0537",
+    "name": "HyperStack",
+    "type": "malware"
+  },
+  "iceapple": {
+    "external_id": "S1022",
+    "name": "IceApple",
+    "type": "malware"
+  },
+  "icedid": {
+    "external_id": "S0483",
+    "name": "IcedID",
+    "type": "malware"
+  },
+  "ifconfig": {
+    "external_id": "S0101",
+    "name": "ifconfig",
+    "type": "tool"
+  },
+  "ikitten": {
+    "external_id": "S0278",
+    "name": "iKitten",
+    "type": "malware"
+  },
+  "imaploader": {
+    "external_id": "S1152",
+    "name": "IMAPLoader",
+    "type": "malware"
+  },
+  "imminent monitor": {
+    "external_id": "S0434",
+    "name": "Imminent Monitor",
+    "type": "tool"
+  },
+  "imminentmonitor": {
+    "external_id": "S0434",
+    "name": "Imminent Monitor",
+    "type": "tool"
+  },
+  "impacket": {
+    "external_id": "S0357",
+    "name": "Impacket",
+    "type": "tool"
+  },
+  "inc ransomware": {
+    "external_id": "S1139",
+    "name": "INC Ransomware",
+    "type": "malware"
+  },
+  "incransomware": {
+    "external_id": "S1139",
+    "name": "INC Ransomware",
+    "type": "malware"
+  },
+  "industroyer": {
+    "external_id": "S0604",
+    "name": "Industroyer",
+    "type": "malware"
+  },
+  "industroyer2": {
+    "external_id": "S1072",
+    "name": "Industroyer2",
+    "type": "malware"
+  },
+  "innaputrat": {
+    "external_id": "S0259",
+    "name": "InnaputRAT",
+    "type": "malware"
+  },
+  "invisibleferret": {
+    "external_id": "S1245",
+    "name": "InvisibleFerret",
+    "type": "malware"
+  },
+  "invisimole": {
+    "external_id": "S0260",
+    "name": "InvisiMole",
+    "type": "malware"
+  },
+  "invoke-psimage": {
+    "external_id": "S0231",
+    "name": "Invoke-PSImage",
+    "type": "tool"
+  },
+  "ipconfig": {
+    "external_id": "S0100",
+    "name": "ipconfig",
+    "type": "tool"
+  },
+  "ipsec helper": {
+    "external_id": "S1132",
+    "name": "IPsec Helper",
+    "type": "malware"
+  },
+  "ipsechelper": {
+    "external_id": "S1132",
+    "name": "IPsec Helper",
+    "type": "malware"
+  },
+  "ironnetinjector": {
+    "external_id": "S0581",
+    "name": "IronNetInjector",
+    "type": "tool"
+  },
+  "isminjector": {
+    "external_id": "S0189",
+    "name": "ISMInjector",
+    "type": "malware"
+  },
+  "ixeshe": {
+    "external_id": "S0015",
+    "name": "Ixeshe",
+    "type": "malware"
+  },
+  "j-magic": {
+    "external_id": "S1203",
+    "name": "J-magic",
+    "type": "malware"
+  },
+  "janicab": {
+    "external_id": "S0163",
+    "name": "Janicab",
+    "type": "malware"
+  },
+  "javali": {
+    "external_id": "S0528",
+    "name": "Javali",
+    "type": "malware"
+  },
+  "jcry": {
+    "external_id": "S0389",
+    "name": "JCry",
+    "type": "malware"
+  },
+  "jhuhugit": {
+    "external_id": "S0044",
+    "name": "JHUHUGIT",
+    "type": "malware"
+  },
+  "jpin": {
+    "external_id": "S0201",
+    "name": "JPIN",
+    "type": "malware"
+  },
+  "jrat": {
+    "external_id": "S0283",
+    "name": "jRAT",
+    "type": "malware"
+  },
+  "jss loader": {
+    "external_id": "S0648",
+    "name": "JSS Loader",
+    "type": "malware"
+  },
+  "jssloader": {
+    "external_id": "S0648",
+    "name": "JSS Loader",
+    "type": "malware"
+  },
+  "jumbledpath": {
+    "external_id": "S1206",
+    "name": "JumbledPath",
+    "type": "malware"
+  },
+  "kapeka": {
+    "external_id": "S1190",
+    "name": "Kapeka",
+    "type": "malware"
+  },
+  "karae": {
+    "external_id": "S0215",
+    "name": "KARAE",
+    "type": "malware"
+  },
+  "kasidet": {
+    "external_id": "S0088",
+    "name": "Kasidet",
+    "type": "malware"
+  },
+  "kazuar": {
+    "external_id": "S0265",
+    "name": "Kazuar",
+    "type": "malware"
+  },
+  "kerrdown": {
+    "external_id": "S0585",
+    "name": "Kerrdown",
+    "type": "malware"
+  },
+  "kessel": {
+    "external_id": "S0487",
+    "name": "Kessel",
+    "type": "malware"
+  },
+  "kevin": {
+    "external_id": "S1020",
+    "name": "Kevin",
+    "type": "malware"
+  },
+  "keyboy": {
+    "external_id": "S0387",
+    "name": "KeyBoy",
+    "type": "malware"
+  },
+  "keydnap": {
+    "external_id": "S0276",
+    "name": "Keydnap",
+    "type": "malware"
+  },
+  "keymarble": {
+    "external_id": "S0271",
+    "name": "KEYMARBLE",
+    "type": "malware"
+  },
+  "keyplug": {
+    "external_id": "S1051",
+    "name": "KEYPLUG",
+    "type": "malware"
+  },
+  "kgh_spy": {
+    "external_id": "S0526",
+    "name": "KGH_SPY",
+    "type": "malware"
+  },
+  "killdisk": {
+    "external_id": "S0607",
+    "name": "KillDisk",
+    "type": "malware"
+  },
+  "kinsing": {
+    "external_id": "S0599",
+    "name": "Kinsing",
+    "type": "malware"
+  },
+  "kivars": {
+    "external_id": "S0437",
+    "name": "Kivars",
+    "type": "malware"
+  },
+  "koadic": {
+    "external_id": "S0250",
+    "name": "Koadic",
+    "type": "tool"
+  },
+  "kobalos": {
+    "external_id": "S0641",
+    "name": "Kobalos",
+    "type": "malware"
+  },
+  "koctopus": {
+    "external_id": "S0669",
+    "name": "KOCTOPUS",
+    "type": "malware"
+  },
+  "komplex": {
+    "external_id": "S0162",
+    "name": "Komplex",
+    "type": "malware"
+  },
+  "komprogo": {
+    "external_id": "S0156",
+    "name": "KOMPROGO",
+    "type": "malware"
+  },
+  "konni": {
+    "external_id": "S0356",
+    "name": "KONNI",
+    "type": "malware"
+  },
+  "kopiluwak": {
+    "external_id": "S1075",
+    "name": "KOPILUWAK",
+    "type": "malware"
+  },
+  "kwampirs": {
+    "external_id": "S0236",
+    "name": "Kwampirs",
+    "type": "malware"
+  },
+  "latrodectus": {
+    "external_id": "S1160",
+    "name": "Latrodectus",
+    "type": "malware"
+  },
+  "lazagne": {
+    "external_id": "S0349",
+    "name": "LaZagne",
+    "type": "tool"
+  },
+  "lightneuron": {
+    "external_id": "S0395",
+    "name": "LightNeuron",
+    "type": "malware"
+  },
+  "lightspy": {
+    "external_id": "S1185",
+    "name": "LightSpy",
+    "type": "malware"
+  },
+  "lightwire": {
+    "external_id": "S1119",
+    "name": "LIGHTWIRE",
+    "type": "malware"
+  },
+  "line dancer": {
+    "external_id": "S1186",
+    "name": "Line Dancer",
+    "type": "malware"
+  },
+  "line runner": {
+    "external_id": "S1188",
+    "name": "Line Runner",
+    "type": "malware"
+  },
+  "linedancer": {
+    "external_id": "S1186",
+    "name": "Line Dancer",
+    "type": "malware"
+  },
+  "linerunner": {
+    "external_id": "S1188",
+    "name": "Line Runner",
+    "type": "malware"
+  },
+  "linfo": {
+    "external_id": "S0211",
+    "name": "Linfo",
+    "type": "malware"
+  },
+  "linux rabbit": {
+    "external_id": "S0362",
+    "name": "Linux Rabbit",
+    "type": "malware"
+  },
+  "linuxrabbit": {
+    "external_id": "S0362",
+    "name": "Linux Rabbit",
+    "type": "malware"
+  },
+  "liteduke": {
+    "external_id": "S0513",
+    "name": "LiteDuke",
+    "type": "malware"
+  },
+  "litepower": {
+    "external_id": "S0680",
+    "name": "LitePower",
+    "type": "malware"
+  },
+  "littlelamb.wooltea": {
+    "external_id": "S1121",
+    "name": "LITTLELAMB.WOOLTEA",
+    "type": "malware"
+  },
+  "lizar": {
+    "external_id": "S0681",
+    "name": "Lizar",
+    "type": "malware"
+  },
+  "lockbit 2.0": {
+    "external_id": "S1199",
+    "name": "LockBit 2.0",
+    "type": "malware"
+  },
+  "lockbit 3.0": {
+    "external_id": "S1202",
+    "name": "LockBit 3.0",
+    "type": "malware"
+  },
+  "lockbit2.0": {
+    "external_id": "S1199",
+    "name": "LockBit 2.0",
+    "type": "malware"
+  },
+  "lockbit3.0": {
+    "external_id": "S1202",
+    "name": "LockBit 3.0",
+    "type": "malware"
+  },
+  "lockergoga": {
+    "external_id": "S0372",
+    "name": "LockerGoga",
+    "type": "malware"
+  },
+  "lofise": {
+    "external_id": "S1101",
+    "name": "LoFiSe",
+    "type": "malware"
+  },
+  "lojax": {
+    "external_id": "S0397",
+    "name": "LoJax",
+    "type": "malware"
+  },
+  "lokibot": {
+    "external_id": "S0447",
+    "name": "Lokibot",
+    "type": "malware"
+  },
+  "lookback": {
+    "external_id": "S0582",
+    "name": "LookBack",
+    "type": "malware"
+  },
+  "loudminer": {
+    "external_id": "S0451",
+    "name": "LoudMiner",
+    "type": "malware"
+  },
+  "lowball": {
+    "external_id": "S0042",
+    "name": "LOWBALL",
+    "type": "malware"
+  },
+  "lslsass": {
+    "external_id": "S0121",
+    "name": "Lslsass",
+    "type": "tool"
+  },
+  "lucifer": {
+    "external_id": "S0532",
+    "name": "Lucifer",
+    "type": "malware"
+  },
+  "lumma stealer": {
+    "external_id": "S1213",
+    "name": "Lumma Stealer",
+    "type": "malware"
+  },
+  "lummastealer": {
+    "external_id": "S1213",
+    "name": "Lumma Stealer",
+    "type": "malware"
+  },
+  "lunarloader": {
+    "external_id": "S1143",
+    "name": "LunarLoader",
+    "type": "malware"
+  },
+  "lunarmail": {
+    "external_id": "S1142",
+    "name": "LunarMail",
+    "type": "malware"
+  },
+  "lunarweb": {
+    "external_id": "S1141",
+    "name": "LunarWeb",
+    "type": "malware"
+  },
+  "lurid": {
+    "external_id": "S0010",
+    "name": "Lurid",
+    "type": "malware"
+  },
+  "machete": {
+    "external_id": "S0409",
+    "name": "Machete",
+    "type": "malware"
+  },
+  "macma": {
+    "external_id": "S1016",
+    "name": "MacMa",
+    "type": "malware"
+  },
+  "macos.osaminer": {
+    "external_id": "S1048",
+    "name": "macOS.OSAMiner",
+    "type": "malware"
+  },
+  "macspy": {
+    "external_id": "S0282",
+    "name": "MacSpy",
+    "type": "malware"
+  },
+  "mafalda": {
+    "external_id": "S1060",
+    "name": "Mafalda",
+    "type": "malware"
+  },
+  "magicrat": {
+    "external_id": "S1182",
+    "name": "MagicRAT",
+    "type": "malware"
+  },
+  "mailsniper": {
+    "external_id": "S0413",
+    "name": "MailSniper",
+    "type": "tool"
+  },
+  "mango": {
+    "external_id": "S1169",
+    "name": "Mango",
+    "type": "malware"
+  },
+  "manjusaka": {
+    "external_id": "S1156",
+    "name": "Manjusaka",
+    "type": "malware"
+  },
+  "markirat": {
+    "external_id": "S0652",
+    "name": "MarkiRAT",
+    "type": "malware"
+  },
+  "matryoshka": {
+    "external_id": "S0167",
+    "name": "Matryoshka",
+    "type": "malware"
+  },
+  "maze": {
+    "external_id": "S0449",
+    "name": "Maze",
+    "type": "malware"
+  },
+  "mcmd": {
+    "external_id": "S0500",
+    "name": "MCMD",
+    "type": "tool"
+  },
+  "mechaflounder": {
+    "external_id": "S0459",
+    "name": "MechaFlounder",
+    "type": "malware"
+  },
+  "medusa": {
+    "external_id": "S1220",
+    "name": "MEDUSA",
+    "type": "malware"
+  },
+  "medusa ransomware": {
+    "external_id": "S1244",
+    "name": "Medusa Ransomware",
+    "type": "malware"
+  },
+  "medusaransomware": {
+    "external_id": "S1244",
+    "name": "Medusa Ransomware",
+    "type": "malware"
+  },
+  "meek": {
+    "external_id": "S0175",
+    "name": "meek",
+    "type": "tool"
+  },
+  "megacortex": {
+    "external_id": "S0576",
+    "name": "MegaCortex",
+    "type": "malware"
+  },
+  "megazord": {
+    "external_id": "S1191",
+    "name": "Megazord",
+    "type": "malware"
+  },
+  "melcoz": {
+    "external_id": "S0530",
+    "name": "Melcoz",
+    "type": "malware"
+  },
+  "messagetap": {
+    "external_id": "S0443",
+    "name": "MESSAGETAP",
+    "type": "malware"
+  },
+  "metamain": {
+    "external_id": "S1059",
+    "name": "metaMain",
+    "type": "malware"
+  },
+  "metamorfo": {
+    "external_id": "S0455",
+    "name": "Metamorfo",
+    "type": "malware"
+  },
+  "meteor": {
+    "external_id": "S0688",
+    "name": "Meteor",
+    "type": "malware"
+  },
+  "mgbot": {
+    "external_id": "S1146",
+    "name": "MgBot",
+    "type": "malware"
+  },
+  "micropsia": {
+    "external_id": "S0339",
+    "name": "Micropsia",
+    "type": "malware"
+  },
+  "milan": {
+    "external_id": "S1015",
+    "name": "Milan",
+    "type": "malware"
+  },
+  "mimikatz": {
+    "external_id": "S0002",
+    "name": "Mimikatz",
+    "type": "tool"
+  },
+  "mimipenguin": {
+    "external_id": "S0179",
+    "name": "MimiPenguin",
+    "type": "tool"
+  },
+  "miner-c": {
+    "external_id": "S0133",
+    "name": "Miner-C",
+    "type": "malware"
+  },
+  "miniduke": {
+    "external_id": "S0051",
+    "name": "MiniDuke",
+    "type": "malware"
+  },
+  "miragefox": {
+    "external_id": "S0280",
+    "name": "MirageFox",
+    "type": "malware"
+  },
+  "mis-type": {
+    "external_id": "S0084",
+    "name": "Mis-Type",
+    "type": "malware"
+  },
+  "misdat": {
+    "external_id": "S0083",
+    "name": "Misdat",
+    "type": "malware"
+  },
+  "mispadu": {
+    "external_id": "S1122",
+    "name": "Mispadu",
+    "type": "malware"
+  },
+  "mivast": {
+    "external_id": "S0080",
+    "name": "Mivast",
+    "type": "malware"
+  },
+  "mobileorder": {
+    "external_id": "S0079",
+    "name": "MobileOrder",
+    "type": "malware"
+  },
+  "molenet": {
+    "external_id": "S0553",
+    "name": "MoleNet",
+    "type": "malware"
+  },
+  "moneybird": {
+    "external_id": "S1137",
+    "name": "Moneybird",
+    "type": "malware"
+  },
+  "mongall": {
+    "external_id": "S1026",
+    "name": "Mongall",
+    "type": "malware"
+  },
+  "moonwind": {
+    "external_id": "S0149",
+    "name": "MoonWind",
+    "type": "malware"
+  },
+  "mopsled": {
+    "external_id": "S1221",
+    "name": "MOPSLED",
+    "type": "malware"
+  },
+  "more_eggs": {
+    "external_id": "S0284",
+    "name": "More_eggs",
+    "type": "malware"
+  },
+  "mori": {
+    "external_id": "S1047",
+    "name": "Mori",
+    "type": "malware"
+  },
+  "mosquito": {
+    "external_id": "S0256",
+    "name": "Mosquito",
+    "type": "malware"
+  },
+  "multilayer wiper": {
+    "external_id": "S1135",
+    "name": "MultiLayer Wiper",
+    "type": "malware"
+  },
+  "multilayerwiper": {
+    "external_id": "S1135",
+    "name": "MultiLayer Wiper",
+    "type": "malware"
+  },
+  "murkytop": {
+    "external_id": "S0233",
+    "name": "MURKYTOP",
+    "type": "malware"
+  },
+  "mythic": {
+    "external_id": "S0699",
+    "name": "Mythic",
+    "type": "tool"
+  },
+  "naid": {
+    "external_id": "S0205",
+    "name": "Naid",
+    "type": "malware"
+  },
+  "nanhaishu": {
+    "external_id": "S0228",
+    "name": "NanHaiShu",
+    "type": "malware"
+  },
+  "nanocore": {
+    "external_id": "S0336",
+    "name": "NanoCore",
+    "type": "malware"
+  },
+  "nativezone": {
+    "external_id": "S0637",
+    "name": "NativeZone",
+    "type": "malware"
+  },
+  "navrat": {
+    "external_id": "S0247",
+    "name": "NavRAT",
+    "type": "malware"
+  },
+  "nbtscan": {
+    "external_id": "S0590",
+    "name": "NBTscan",
+    "type": "tool"
+  },
+  "nbtstat": {
+    "external_id": "S0102",
+    "name": "nbtstat",
+    "type": "tool"
+  },
+  "ndiskmonitor": {
+    "external_id": "S0272",
+    "name": "NDiskMonitor",
+    "type": "malware"
+  },
+  "nebulae": {
+    "external_id": "S0630",
+    "name": "Nebulae",
+    "type": "malware"
+  },
+  "neo-regeorg": {
+    "external_id": "S1189",
+    "name": "Neo-reGeorg",
+    "type": "malware"
+  },
+  "neoichor": {
+    "external_id": "S0691",
+    "name": "Neoichor",
+    "type": "malware"
+  },
+  "nerex": {
+    "external_id": "S0210",
+    "name": "Nerex",
+    "type": "malware"
+  },
+  "net": {
+    "external_id": "S0039",
+    "name": "Net",
+    "type": "tool"
+  },
+  "net crawler": {
+    "external_id": "S0056",
+    "name": "Net Crawler",
+    "type": "malware"
+  },
+  "netcrawler": {
+    "external_id": "S0056",
+    "name": "Net Crawler",
+    "type": "malware"
+  },
+  "neteagle": {
+    "external_id": "S0034",
+    "name": "NETEAGLE",
+    "type": "malware"
+  },
+  "netsh": {
+    "external_id": "S0108",
+    "name": "netsh",
+    "type": "tool"
+  },
+  "netstat": {
+    "external_id": "S0104",
+    "name": "netstat",
+    "type": "tool"
+  },
+  "nettraveler": {
+    "external_id": "S0033",
+    "name": "NetTraveler",
+    "type": "malware"
+  },
+  "netwalker": {
+    "external_id": "S0457",
+    "name": "Netwalker",
+    "type": "malware"
+  },
+  "netwire": {
+    "external_id": "S0198",
+    "name": "NETWIRE",
+    "type": "malware"
+  },
+  "nglite": {
+    "external_id": "S1106",
+    "name": "NGLite",
+    "type": "malware"
+  },
+  "ngrok": {
+    "external_id": "S0508",
+    "name": "ngrok",
+    "type": "tool"
+  },
+  "nicecurl": {
+    "external_id": "S1192",
+    "name": "NICECURL",
+    "type": "malware"
+  },
+  "nidiran": {
+    "external_id": "S0118",
+    "name": "Nidiran",
+    "type": "malware"
+  },
+  "nightclub": {
+    "external_id": "S1090",
+    "name": "NightClub",
+    "type": "malware"
+  },
+  "nightdoor": {
+    "external_id": "S1147",
+    "name": "Nightdoor",
+    "type": "malware"
+  },
+  "ninja": {
+    "external_id": "S1100",
+    "name": "Ninja",
+    "type": "malware"
+  },
+  "njrat": {
+    "external_id": "S0385",
+    "name": "njRAT",
+    "type": "malware"
+  },
+  "nkabuse": {
+    "external_id": "S1107",
+    "name": "NKAbuse",
+    "type": "malware"
+  },
+  "nltest": {
+    "external_id": "S0359",
+    "name": "Nltest",
+    "type": "tool"
+  },
+  "nokki": {
+    "external_id": "S0353",
+    "name": "NOKKI",
+    "type": "malware"
+  },
+  "notpetya": {
+    "external_id": "S0368",
+    "name": "NotPetya",
+    "type": "malware"
+  },
+  "nppspy": {
+    "external_id": "S1131",
+    "name": "NPPSPY",
+    "type": "tool"
+  },
+  "obliquerat": {
+    "external_id": "S0644",
+    "name": "ObliqueRAT",
+    "type": "malware"
+  },
+  "oceansalt": {
+    "external_id": "S0346",
+    "name": "OceanSalt",
+    "type": "malware"
+  },
+  "octopus": {
+    "external_id": "S0340",
+    "name": "Octopus",
+    "type": "malware"
+  },
+  "odagent": {
+    "external_id": "S1170",
+    "name": "ODAgent",
+    "type": "malware"
+  },
+  "oilbooster": {
+    "external_id": "S1172",
+    "name": "OilBooster",
+    "type": "malware"
+  },
+  "oilcheck": {
+    "external_id": "S1171",
+    "name": "OilCheck",
+    "type": "malware"
+  },
+  "okrum": {
+    "external_id": "S0439",
+    "name": "Okrum",
+    "type": "malware"
+  },
+  "oldbait": {
+    "external_id": "S0138",
+    "name": "OLDBAIT",
+    "type": "malware"
+  },
+  "olympic destroyer": {
+    "external_id": "S0365",
+    "name": "Olympic Destroyer",
+    "type": "malware"
+  },
+  "olympicdestroyer": {
+    "external_id": "S0365",
+    "name": "Olympic Destroyer",
+    "type": "malware"
+  },
+  "onionduke": {
+    "external_id": "S0052",
+    "name": "OnionDuke",
+    "type": "malware"
+  },
+  "oopsie": {
+    "external_id": "S0264",
+    "name": "OopsIE",
+    "type": "malware"
+  },
+  "orz": {
+    "external_id": "S0229",
+    "name": "Orz",
+    "type": "malware"
+  },
+  "osinfo": {
+    "external_id": "S0165",
+    "name": "OSInfo",
+    "type": "malware"
+  },
+  "osx/shlayer": {
+    "external_id": "S0402",
+    "name": "OSX/Shlayer",
+    "type": "malware"
+  },
+  "osx_oceanlotus.d": {
+    "external_id": "S0352",
+    "name": "OSX_OCEANLOTUS.D",
+    "type": "malware"
+  },
+  "out1": {
+    "external_id": "S0594",
+    "name": "Out1",
+    "type": "tool"
+  },
+  "outsteel": {
+    "external_id": "S1017",
+    "name": "OutSteel",
+    "type": "malware"
+  },
+  "owaauth": {
+    "external_id": "S0072",
+    "name": "OwaAuth",
+    "type": "malware"
+  },
+  "p.a.s. webshell": {
+    "external_id": "S0598",
+    "name": "P.A.S. Webshell",
+    "type": "malware"
+  },
+  "p.a.s.webshell": {
+    "external_id": "S0598",
+    "name": "P.A.S. Webshell",
+    "type": "malware"
+  },
+  "p2p zeus": {
+    "external_id": "S0016",
+    "name": "P2P ZeuS",
+    "type": "malware"
+  },
+  "p2pzeus": {
+    "external_id": "S0016",
+    "name": "P2P ZeuS",
+    "type": "malware"
+  },
+  "p8rat": {
+    "external_id": "S0626",
+    "name": "P8RAT",
+    "type": "malware"
+  },
+  "pacemaker": {
+    "external_id": "S1109",
+    "name": "PACEMAKER",
+    "type": "malware"
+  },
+  "pacu": {
+    "external_id": "S1091",
+    "name": "Pacu",
+    "type": "tool"
+  },
+  "paklog": {
+    "external_id": "S1233",
+    "name": "PAKLOG",
+    "type": "malware"
+  },
+  "pandora": {
+    "external_id": "S0664",
+    "name": "Pandora",
+    "type": "malware"
+  },
+  "pasam": {
+    "external_id": "S0208",
+    "name": "Pasam",
+    "type": "malware"
+  },
+  "pass-the-hash toolkit": {
+    "external_id": "S0122",
+    "name": "Pass-The-Hash Toolkit",
+    "type": "tool"
+  },
+  "pass-the-hashtoolkit": {
+    "external_id": "S0122",
+    "name": "Pass-The-Hash Toolkit",
+    "type": "tool"
+  },
+  "pay2key": {
+    "external_id": "S0556",
+    "name": "Pay2Key",
+    "type": "malware"
+  },
+  "pcexter": {
+    "external_id": "S1102",
+    "name": "Pcexter",
+    "type": "malware"
+  },
+  "pcshare": {
+    "external_id": "S1050",
+    "name": "PcShare",
+    "type": "tool"
+  },
+  "peirates": {
+    "external_id": "S0683",
+    "name": "Peirates",
+    "type": "tool"
+  },
+  "penquin": {
+    "external_id": "S0587",
+    "name": "Penquin",
+    "type": "malware"
+  },
+  "peppy": {
+    "external_id": "S0643",
+    "name": "Peppy",
+    "type": "malware"
+  },
+  "phoreal": {
+    "external_id": "S0158",
+    "name": "PHOREAL",
+    "type": "malware"
+  },
+  "pikabot": {
+    "external_id": "S1145",
+    "name": "Pikabot",
+    "type": "malware"
+  },
+  "pillowmint": {
+    "external_id": "S0517",
+    "name": "Pillowmint",
+    "type": "malware"
+  },
+  "pinchduke": {
+    "external_id": "S0048",
+    "name": "PinchDuke",
+    "type": "malware"
+  },
+  "ping": {
+    "external_id": "S0097",
+    "name": "Ping",
+    "type": "tool"
+  },
+  "pingpull": {
+    "external_id": "S1031",
+    "name": "PingPull",
+    "type": "malware"
+  },
+  "pipemon": {
+    "external_id": "S0501",
+    "name": "PipeMon",
+    "type": "malware"
+  },
+  "pisloader": {
+    "external_id": "S0124",
+    "name": "Pisloader",
+    "type": "malware"
+  },
+  "pitstop": {
+    "external_id": "S1123",
+    "name": "PITSTOP",
+    "type": "malware"
+  },
+  "plaintee": {
+    "external_id": "S0254",
+    "name": "PLAINTEE",
+    "type": "malware"
+  },
+  "playcrypt": {
+    "external_id": "S1162",
+    "name": "Playcrypt",
+    "type": "malware"
+  },
+  "plead": {
+    "external_id": "S0435",
+    "name": "PLEAD",
+    "type": "malware"
+  },
+  "plugx": {
+    "external_id": "S0013",
+    "name": "PlugX",
+    "type": "malware"
+  },
+  "pngdowner": {
+    "external_id": "S0067",
+    "name": "pngdowner",
+    "type": "malware"
+  },
+  "poetrat": {
+    "external_id": "S0428",
+    "name": "PoetRAT",
+    "type": "malware"
+  },
+  "poisonivy": {
+    "external_id": "S0012",
+    "name": "PoisonIvy",
+    "type": "malware"
+  },
+  "polyglotduke": {
+    "external_id": "S0518",
+    "name": "PolyglotDuke",
+    "type": "malware"
+  },
+  "pony": {
+    "external_id": "S0453",
+    "name": "Pony",
+    "type": "malware"
+  },
+  "pooraim": {
+    "external_id": "S0216",
+    "name": "POORAIM",
+    "type": "malware"
+  },
+  "poshc2": {
+    "external_id": "S0378",
+    "name": "PoshC2",
+    "type": "tool"
+  },
+  "poshspy": {
+    "external_id": "S0150",
+    "name": "POSHSPY",
+    "type": "malware"
+  },
+  "power loader": {
+    "external_id": "S0177",
+    "name": "Power Loader",
+    "type": "malware"
+  },
+  "powerduke": {
+    "external_id": "S0139",
+    "name": "PowerDuke",
+    "type": "malware"
+  },
+  "powerexchange": {
+    "external_id": "S1173",
+    "name": "PowerExchange",
+    "type": "malware"
+  },
+  "powerless": {
+    "external_id": "S1012",
+    "name": "PowerLess",
+    "type": "malware"
+  },
+  "powerloader": {
+    "external_id": "S0177",
+    "name": "Power Loader",
+    "type": "malware"
+  },
+  "powerpunch": {
+    "external_id": "S0685",
+    "name": "PowerPunch",
+    "type": "malware"
+  },
+  "powershower": {
+    "external_id": "S0441",
+    "name": "PowerShower",
+    "type": "malware"
+  },
+  "powersource": {
+    "external_id": "S0145",
+    "name": "POWERSOURCE",
+    "type": "malware"
+  },
+  "powersploit": {
+    "external_id": "S0194",
+    "name": "PowerSploit",
+    "type": "tool"
+  },
+  "powerstallion": {
+    "external_id": "S0393",
+    "name": "PowerStallion",
+    "type": "malware"
+  },
+  "powerstats": {
+    "external_id": "S0223",
+    "name": "POWERSTATS",
+    "type": "malware"
+  },
+  "powerton": {
+    "external_id": "S0371",
+    "name": "POWERTON",
+    "type": "malware"
+  },
+  "powgoop": {
+    "external_id": "S1046",
+    "name": "PowGoop",
+    "type": "malware"
+  },
+  "powruner": {
+    "external_id": "S0184",
+    "name": "POWRUNER",
+    "type": "malware"
+  },
+  "prestige": {
+    "external_id": "S1058",
+    "name": "Prestige",
+    "type": "malware"
+  },
+  "prikormka": {
+    "external_id": "S0113",
+    "name": "Prikormka",
+    "type": "malware"
+  },
+  "prolock": {
+    "external_id": "S0654",
+    "name": "ProLock",
+    "type": "malware"
+  },
+  "proton": {
+    "external_id": "S0279",
+    "name": "Proton",
+    "type": "malware"
+  },
+  "proxysvc": {
+    "external_id": "S0238",
+    "name": "Proxysvc",
+    "type": "malware"
+  },
+  "ps1": {
+    "external_id": "S0613",
+    "name": "PS1",
+    "type": "malware"
+  },
+  "psexec": {
+    "external_id": "S0029",
+    "name": "PsExec",
+    "type": "tool"
+  },
+  "psylo": {
+    "external_id": "S0078",
+    "name": "Psylo",
+    "type": "malware"
+  },
+  "pteranodon": {
+    "external_id": "S0147",
+    "name": "Pteranodon",
+    "type": "malware"
+  },
+  "pubload": {
+    "external_id": "S1228",
+    "name": "PUBLOAD",
+    "type": "malware"
+  },
+  "pulsecheck": {
+    "external_id": "S1108",
+    "name": "PULSECHECK",
+    "type": "malware"
+  },
+  "punchbuggy": {
+    "external_id": "S0196",
+    "name": "PUNCHBUGGY",
+    "type": "malware"
+  },
+  "punchtrack": {
+    "external_id": "S0197",
+    "name": "PUNCHTRACK",
+    "type": "malware"
+  },
+  "pupy": {
+    "external_id": "S0192",
+    "name": "Pupy",
+    "type": "tool"
+  },
+  "pwdump": {
+    "external_id": "S0006",
+    "name": "pwdump",
+    "type": "tool"
+  },
+  "pydcrypt": {
+    "external_id": "S1032",
+    "name": "PyDCrypt",
+    "type": "malware"
+  },
+  "pysa": {
+    "external_id": "S0583",
+    "name": "Pysa",
+    "type": "malware"
+  },
+  "qakbot": {
+    "external_id": "S0650",
+    "name": "QakBot",
+    "type": "malware"
+  },
+  "qilin": {
+    "external_id": "S1242",
+    "name": "Qilin",
+    "type": "malware"
+  },
+  "quadagent": {
+    "external_id": "S0269",
+    "name": "QUADAGENT",
+    "type": "malware"
+  },
+  "quasarrat": {
+    "external_id": "S0262",
+    "name": "QuasarRAT",
+    "type": "tool"
+  },
+  "quick assist": {
+    "external_id": "S1209",
+    "name": "Quick Assist",
+    "type": "tool"
+  },
+  "quickassist": {
+    "external_id": "S1209",
+    "name": "Quick Assist",
+    "type": "tool"
+  },
+  "quietcanary": {
+    "external_id": "S1076",
+    "name": "QUIETCANARY",
+    "type": "malware"
+  },
+  "quietexit": {
+    "external_id": "S1084",
+    "name": "QUIETEXIT",
+    "type": "malware"
+  },
+  "quietsieve": {
+    "external_id": "S0686",
+    "name": "QuietSieve",
+    "type": "malware"
+  },
+  "raccoon stealer": {
+    "external_id": "S1148",
+    "name": "Raccoon Stealer",
+    "type": "malware"
+  },
+  "raccoonstealer": {
+    "external_id": "S1148",
+    "name": "Raccoon Stealer",
+    "type": "malware"
+  },
+  "ragnar locker": {
+    "external_id": "S0481",
+    "name": "Ragnar Locker",
+    "type": "malware"
+  },
+  "ragnarlocker": {
+    "external_id": "S0481",
+    "name": "Ragnar Locker",
+    "type": "malware"
+  },
+  "raindrop": {
+    "external_id": "S0565",
+    "name": "Raindrop",
+    "type": "malware"
+  },
+  "rainyday": {
+    "external_id": "S0629",
+    "name": "RainyDay",
+    "type": "malware"
+  },
+  "ramsay": {
+    "external_id": "S0458",
+    "name": "Ramsay",
+    "type": "malware"
+  },
+  "ransomhub": {
+    "external_id": "S1212",
+    "name": "RansomHub",
+    "type": "malware"
+  },
+  "rapidpulse": {
+    "external_id": "S1113",
+    "name": "RAPIDPULSE",
+    "type": "malware"
+  },
+  "rarstone": {
+    "external_id": "S0055",
+    "name": "RARSTONE",
+    "type": "malware"
+  },
+  "raspberry robin": {
+    "external_id": "S1130",
+    "name": "Raspberry Robin",
+    "type": "malware"
+  },
+  "raspberryrobin": {
+    "external_id": "S1130",
+    "name": "Raspberry Robin",
+    "type": "malware"
+  },
+  "ratankba": {
+    "external_id": "S0241",
+    "name": "RATANKBA",
+    "type": "malware"
+  },
+  "rawdisk": {
+    "external_id": "S0364",
+    "name": "RawDisk",
+    "type": "tool"
+  },
+  "rawpos": {
+    "external_id": "S0169",
+    "name": "RawPOS",
+    "type": "malware"
+  },
+  "rclone": {
+    "external_id": "S1040",
+    "name": "Rclone",
+    "type": "tool"
+  },
+  "rcsession": {
+    "external_id": "S0662",
+    "name": "RCSession",
+    "type": "malware"
+  },
+  "rdat": {
+    "external_id": "S0495",
+    "name": "RDAT",
+    "type": "malware"
+  },
+  "rdfsniffer": {
+    "external_id": "S0416",
+    "name": "RDFSNIFFER",
+    "type": "malware"
+  },
+  "reaver": {
+    "external_id": "S0172",
+    "name": "Reaver",
+    "type": "malware"
+  },
+  "redleaves": {
+    "external_id": "S0153",
+    "name": "RedLeaves",
+    "type": "malware"
+  },
+  "redline stealer": {
+    "external_id": "S1240",
+    "name": "RedLine Stealer",
+    "type": "malware"
+  },
+  "redlinestealer": {
+    "external_id": "S1240",
+    "name": "RedLine Stealer",
+    "type": "malware"
+  },
+  "reg": {
+    "external_id": "S0075",
+    "name": "Reg",
+    "type": "tool"
+  },
+  "regduke": {
+    "external_id": "S0511",
+    "name": "RegDuke",
+    "type": "malware"
+  },
+  "regeorg": {
+    "external_id": "S1187",
+    "name": "reGeorg",
+    "type": "malware"
+  },
+  "regin": {
+    "external_id": "S0019",
+    "name": "Regin",
+    "type": "malware"
+  },
+  "remcos": {
+    "external_id": "S0332",
+    "name": "Remcos",
+    "type": "tool"
+  },
+  "remexi": {
+    "external_id": "S0375",
+    "name": "Remexi",
+    "type": "malware"
+  },
+  "remotecmd": {
+    "external_id": "S0166",
+    "name": "RemoteCMD",
+    "type": "malware"
+  },
+  "remoteutilities": {
+    "external_id": "S0592",
+    "name": "RemoteUtilities",
+    "type": "tool"
+  },
+  "remsec": {
+    "external_id": "S0125",
+    "name": "Remsec",
+    "type": "malware"
+  },
+  "reptile": {
+    "external_id": "S1219",
+    "name": "REPTILE",
+    "type": "malware"
+  },
+  "responder": {
+    "external_id": "S0174",
+    "name": "Responder",
+    "type": "tool"
+  },
+  "revenge rat": {
+    "external_id": "S0379",
+    "name": "Revenge RAT",
+    "type": "malware"
+  },
+  "revengerat": {
+    "external_id": "S0379",
+    "name": "Revenge RAT",
+    "type": "malware"
+  },
+  "revil": {
+    "external_id": "S0496",
+    "name": "REvil",
+    "type": "malware"
+  },
+  "rgdoor": {
+    "external_id": "S0258",
+    "name": "RGDoor",
+    "type": "malware"
+  },
+  "rifdoor": {
+    "external_id": "S0433",
+    "name": "Rifdoor",
+    "type": "malware"
+  },
+  "riflespine": {
+    "external_id": "S1222",
+    "name": "RIFLESPINE",
+    "type": "malware"
+  },
+  "riptide": {
+    "external_id": "S0003",
+    "name": "RIPTIDE",
+    "type": "malware"
+  },
+  "rising sun": {
+    "external_id": "S0448",
+    "name": "Rising Sun",
+    "type": "malware"
+  },
+  "risingsun": {
+    "external_id": "S0448",
+    "name": "Rising Sun",
+    "type": "malware"
+  },
+  "roadsweep": {
+    "external_id": "S1150",
+    "name": "ROADSWEEP",
+    "type": "malware"
+  },
+  "roadtools": {
+    "external_id": "S0684",
+    "name": "ROADTools",
+    "type": "tool"
+  },
+  "robbinhood": {
+    "external_id": "S0400",
+    "name": "RobbinHood",
+    "type": "malware"
+  },
+  "rockboot": {
+    "external_id": "S0112",
+    "name": "ROCKBOOT",
+    "type": "malware"
+  },
+  "roguerobin": {
+    "external_id": "S0270",
+    "name": "RogueRobin",
+    "type": "malware"
+  },
+  "rokrat": {
+    "external_id": "S0240",
+    "name": "ROKRAT",
+    "type": "malware"
+  },
+  "rotajakiro": {
+    "external_id": "S1078",
+    "name": "RotaJakiro",
+    "type": "malware"
+  },
+  "route": {
+    "external_id": "S0103",
+    "name": "route",
+    "type": "tool"
+  },
+  "rover": {
+    "external_id": "S0090",
+    "name": "Rover",
+    "type": "malware"
+  },
+  "royal": {
+    "external_id": "S1073",
+    "name": "Royal",
+    "type": "malware"
+  },
+  "rtm": {
+    "external_id": "S0148",
+    "name": "RTM",
+    "type": "malware"
+  },
+  "rubeus": {
+    "external_id": "S1071",
+    "name": "Rubeus",
+    "type": "tool"
+  },
+  "ruler": {
+    "external_id": "S0358",
+    "name": "Ruler",
+    "type": "tool"
+  },
+  "runningrat": {
+    "external_id": "S0253",
+    "name": "RunningRAT",
+    "type": "malware"
+  },
+  "ryuk": {
+    "external_id": "S0446",
+    "name": "Ryuk",
+    "type": "malware"
+  },
+  "s-type": {
+    "external_id": "S0085",
+    "name": "S-Type",
+    "type": "malware"
+  },
+  "sagerunex": {
+    "external_id": "S1210",
+    "name": "Sagerunex",
+    "type": "malware"
+  },
+  "saint bot": {
+    "external_id": "S1018",
+    "name": "Saint Bot",
+    "type": "malware"
+  },
+  "saintbot": {
+    "external_id": "S1018",
+    "name": "Saint Bot",
+    "type": "malware"
+  },
+  "sakula": {
+    "external_id": "S0074",
+    "name": "Sakula",
+    "type": "malware"
+  },
+  "samplecheck5000": {
+    "external_id": "S1168",
+    "name": "SampleCheck5000",
+    "type": "malware"
+  },
+  "samsam": {
+    "external_id": "S0370",
+    "name": "SamSam",
+    "type": "malware"
+  },
+  "samurai": {
+    "external_id": "S1099",
+    "name": "Samurai",
+    "type": "malware"
+  },
+  "sardonic": {
+    "external_id": "S1085",
+    "name": "Sardonic",
+    "type": "malware"
+  },
+  "schtasks": {
+    "external_id": "S0111",
+    "name": "schtasks",
+    "type": "tool"
+  },
+  "sdbbot": {
+    "external_id": "S0461",
+    "name": "SDBbot",
+    "type": "malware"
+  },
+  "sdelete": {
+    "external_id": "S0195",
+    "name": "SDelete",
+    "type": "tool"
+  },
+  "seaduke": {
+    "external_id": "S0053",
+    "name": "SeaDuke",
+    "type": "malware"
+  },
+  "seasalt": {
+    "external_id": "S0345",
+    "name": "Seasalt",
+    "type": "malware"
+  },
+  "seasharpee": {
+    "external_id": "S0185",
+    "name": "SEASHARPEE",
+    "type": "malware"
+  },
+  "servhelper": {
+    "external_id": "S0382",
+    "name": "ServHelper",
+    "type": "malware"
+  },
+  "seth-locker": {
+    "external_id": "S0639",
+    "name": "Seth-Locker",
+    "type": "malware"
+  },
+  "shadowpad": {
+    "external_id": "S0596",
+    "name": "ShadowPad",
+    "type": "malware"
+  },
+  "shamoon": {
+    "external_id": "S0140",
+    "name": "Shamoon",
+    "type": "malware"
+  },
+  "shark": {
+    "external_id": "S1019",
+    "name": "Shark",
+    "type": "malware"
+  },
+  "sharpdisco": {
+    "external_id": "S1089",
+    "name": "SharpDisco",
+    "type": "malware"
+  },
+  "sharpstage": {
+    "external_id": "S0546",
+    "name": "SharpStage",
+    "type": "malware"
+  },
+  "sharpstats": {
+    "external_id": "S0450",
+    "name": "SHARPSTATS",
+    "type": "malware"
+  },
+  "shimrat": {
+    "external_id": "S0444",
+    "name": "ShimRat",
+    "type": "malware"
+  },
+  "shimratreporter": {
+    "external_id": "S0445",
+    "name": "ShimRatReporter",
+    "type": "tool"
+  },
+  "shipshape": {
+    "external_id": "S0028",
+    "name": "SHIPSHAPE",
+    "type": "malware"
+  },
+  "shotput": {
+    "external_id": "S0063",
+    "name": "SHOTPUT",
+    "type": "malware"
+  },
+  "shrinklocker": {
+    "external_id": "S1178",
+    "name": "ShrinkLocker",
+    "type": "malware"
+  },
+  "shutterspeed": {
+    "external_id": "S0217",
+    "name": "SHUTTERSPEED",
+    "type": "malware"
+  },
+  "sibot": {
+    "external_id": "S0589",
+    "name": "Sibot",
+    "type": "malware"
+  },
+  "sidetwist": {
+    "external_id": "S0610",
+    "name": "SideTwist",
+    "type": "malware"
+  },
+  "silenttrinity": {
+    "external_id": "S0692",
+    "name": "SILENTTRINITY",
+    "type": "tool"
+  },
+  "siloscape": {
+    "external_id": "S0623",
+    "name": "Siloscape",
+    "type": "malware"
+  },
+  "skeleton key": {
+    "external_id": "S0007",
+    "name": "Skeleton Key",
+    "type": "malware"
+  },
+  "skeletonkey": {
+    "external_id": "S0007",
+    "name": "Skeleton Key",
+    "type": "malware"
+  },
+  "skidmap": {
+    "external_id": "S0468",
+    "name": "Skidmap",
+    "type": "malware"
+  },
+  "slightpulse": {
+    "external_id": "S1110",
+    "name": "SLIGHTPULSE",
+    "type": "malware"
+  },
+  "sliver": {
+    "external_id": "S0633",
+    "name": "Sliver",
+    "type": "tool"
+  },
+  "slothfulmedia": {
+    "external_id": "S0533",
+    "name": "SLOTHFULMEDIA",
+    "type": "malware"
+  },
+  "slowdrift": {
+    "external_id": "S0218",
+    "name": "SLOWDRIFT",
+    "type": "malware"
+  },
+  "slowpulse": {
+    "external_id": "S1104",
+    "name": "SLOWPULSE",
+    "type": "malware"
+  },
+  "small sieve": {
+    "external_id": "S1035",
+    "name": "Small Sieve",
+    "type": "malware"
+  },
+  "smallsieve": {
+    "external_id": "S1035",
+    "name": "Small Sieve",
+    "type": "malware"
+  },
+  "smoke loader": {
+    "external_id": "S0226",
+    "name": "Smoke Loader",
+    "type": "malware"
+  },
+  "smokedham": {
+    "external_id": "S0649",
+    "name": "SMOKEDHAM",
+    "type": "malware"
+  },
+  "smokeloader": {
+    "external_id": "S0226",
+    "name": "Smoke Loader",
+    "type": "malware"
+  },
+  "snappytcp": {
+    "external_id": "S1163",
+    "name": "SnappyTCP",
+    "type": "malware"
+  },
+  "snip3": {
+    "external_id": "S1086",
+    "name": "Snip3",
+    "type": "malware"
+  },
+  "snugride": {
+    "external_id": "S0159",
+    "name": "SNUGRIDE",
+    "type": "malware"
+  },
+  "socgholish": {
+    "external_id": "S1124",
+    "name": "SocGholish",
+    "type": "malware"
+  },
+  "socksbot": {
+    "external_id": "S0273",
+    "name": "Socksbot",
+    "type": "malware"
+  },
+  "sodamaster": {
+    "external_id": "S0627",
+    "name": "SodaMaster",
+    "type": "malware"
+  },
+  "solar": {
+    "external_id": "S1166",
+    "name": "Solar",
+    "type": "malware"
+  },
+  "sombrat": {
+    "external_id": "S0615",
+    "name": "SombRAT",
+    "type": "malware"
+  },
+  "sorefang": {
+    "external_id": "S0516",
+    "name": "SoreFang",
+    "type": "malware"
+  },
+  "soundbite": {
+    "external_id": "S0157",
+    "name": "SOUNDBITE",
+    "type": "malware"
+  },
+  "spaceship": {
+    "external_id": "S0035",
+    "name": "SPACESHIP",
+    "type": "malware"
+  },
+  "spark": {
+    "external_id": "S0543",
+    "name": "Spark",
+    "type": "malware"
+  },
+  "speakup": {
+    "external_id": "S0374",
+    "name": "SpeakUp",
+    "type": "malware"
+  },
+  "spica": {
+    "external_id": "S1140",
+    "name": "Spica",
+    "type": "malware"
+  },
+  "spicyomelette": {
+    "external_id": "S0646",
+    "name": "SpicyOmelette",
+    "type": "malware"
+  },
+  "splatcloak": {
+    "external_id": "S1234",
+    "name": "SplatCloak",
+    "type": "malware"
+  },
+  "splatdropper": {
+    "external_id": "S1232",
+    "name": "SplatDropper",
+    "type": "malware"
+  },
+  "spwebmember": {
+    "external_id": "S0227",
+    "name": "spwebmember",
+    "type": "tool"
+  },
+  "sqlmap": {
+    "external_id": "S0225",
+    "name": "sqlmap",
+    "type": "tool"
+  },
+  "sqlrat": {
+    "external_id": "S0390",
+    "name": "SQLRat",
+    "type": "malware"
+  },
+  "squirrelwaffle": {
+    "external_id": "S1030",
+    "name": "Squirrelwaffle",
+    "type": "malware"
+  },
+  "sslmm": {
+    "external_id": "S0058",
+    "name": "SslMM",
+    "type": "malware"
+  },
+  "starloader": {
+    "external_id": "S0188",
+    "name": "Starloader",
+    "type": "malware"
+  },
+  "starproxy": {
+    "external_id": "S1227",
+    "name": "StarProxy",
+    "type": "malware"
+  },
+  "starwhale": {
+    "external_id": "S1037",
+    "name": "STARWHALE",
+    "type": "malware"
+  },
+  "staticplugin": {
+    "external_id": "S1238",
+    "name": "STATICPLUGIN",
+    "type": "malware"
+  },
+  "steadypulse": {
+    "external_id": "S1112",
+    "name": "STEADYPULSE",
+    "type": "malware"
+  },
+  "stealbit": {
+    "external_id": "S1200",
+    "name": "StealBit",
+    "type": "malware"
+  },
+  "stonedrill": {
+    "external_id": "S0380",
+    "name": "StoneDrill",
+    "type": "malware"
+  },
+  "streamex": {
+    "external_id": "S0142",
+    "name": "StreamEx",
+    "type": "malware"
+  },
+  "strelastealer": {
+    "external_id": "S1183",
+    "name": "StrelaStealer",
+    "type": "malware"
+  },
+  "strifewater": {
+    "external_id": "S1034",
+    "name": "StrifeWater",
+    "type": "malware"
+  },
+  "strongpity": {
+    "external_id": "S0491",
+    "name": "StrongPity",
+    "type": "malware"
+  },
+  "stuxnet": {
+    "external_id": "S0603",
+    "name": "Stuxnet",
+    "type": "malware"
+  },
+  "sugardump": {
+    "external_id": "S1042",
+    "name": "SUGARDUMP",
+    "type": "malware"
+  },
+  "sugarush": {
+    "external_id": "S1049",
+    "name": "SUGARUSH",
+    "type": "malware"
+  },
+  "sunburst": {
+    "external_id": "S0559",
+    "name": "SUNBURST",
+    "type": "malware"
+  },
+  "sunspot": {
+    "external_id": "S0562",
+    "name": "SUNSPOT",
+    "type": "malware"
+  },
+  "supernova": {
+    "external_id": "S0578",
+    "name": "SUPERNOVA",
+    "type": "malware"
+  },
+  "svcready": {
+    "external_id": "S1064",
+    "name": "SVCReady",
+    "type": "malware"
+  },
+  "sykipot": {
+    "external_id": "S0018",
+    "name": "Sykipot",
+    "type": "malware"
+  },
+  "synack": {
+    "external_id": "S0242",
+    "name": "SynAck",
+    "type": "malware"
+  },
+  "synful knock": {
+    "external_id": "S0519",
+    "name": "SYNful Knock",
+    "type": "malware"
+  },
+  "synfulknock": {
+    "external_id": "S0519",
+    "name": "SYNful Knock",
+    "type": "malware"
+  },
+  "sys10": {
+    "external_id": "S0060",
+    "name": "Sys10",
+    "type": "malware"
+  },
+  "syscon": {
+    "external_id": "S0464",
+    "name": "SYSCON",
+    "type": "malware"
+  },
+  "systeminfo": {
+    "external_id": "S0096",
+    "name": "Systeminfo",
+    "type": "tool"
+  },
+  "sysupdate": {
+    "external_id": "S0663",
+    "name": "SysUpdate",
+    "type": "malware"
+  },
+  "t9000": {
+    "external_id": "S0098",
+    "name": "T9000",
+    "type": "malware"
+  },
+  "taidoor": {
+    "external_id": "S0011",
+    "name": "Taidoor",
+    "type": "malware"
+  },
+  "taintedscribe": {
+    "external_id": "S0586",
+    "name": "TAINTEDSCRIBE",
+    "type": "malware"
+  },
+  "tajmahal": {
+    "external_id": "S0467",
+    "name": "TajMahal",
+    "type": "malware"
+  },
+  "tamecat": {
+    "external_id": "S1193",
+    "name": "TAMECAT",
+    "type": "malware"
+  },
+  "tarrask": {
+    "external_id": "S1011",
+    "name": "Tarrask",
+    "type": "malware"
+  },
+  "tasklist": {
+    "external_id": "S0057",
+    "name": "Tasklist",
+    "type": "tool"
+  },
+  "tdtess": {
+    "external_id": "S0164",
+    "name": "TDTESS",
+    "type": "malware"
+  },
+  "teardrop": {
+    "external_id": "S0560",
+    "name": "TEARDROP",
+    "type": "malware"
+  },
+  "textmate": {
+    "external_id": "S0146",
+    "name": "TEXTMATE",
+    "type": "malware"
+  },
+  "thiefquest": {
+    "external_id": "S0595",
+    "name": "ThiefQuest",
+    "type": "malware"
+  },
+  "thincrust": {
+    "external_id": "S1223",
+    "name": "THINCRUST",
+    "type": "malware"
+  },
+  "threatneedle": {
+    "external_id": "S0665",
+    "name": "ThreatNeedle",
+    "type": "malware"
+  },
+  "tinyturla": {
+    "external_id": "S0668",
+    "name": "TinyTurla",
+    "type": "malware"
+  },
+  "tinytyphon": {
+    "external_id": "S0131",
+    "name": "TINYTYPHON",
+    "type": "malware"
+  },
+  "tinyzbot": {
+    "external_id": "S0004",
+    "name": "TinyZBot",
+    "type": "malware"
+  },
+  "tomiris": {
+    "external_id": "S0671",
+    "name": "Tomiris",
+    "type": "malware"
+  },
+  "toneshell": {
+    "external_id": "S1239",
+    "name": "TONESHELL",
+    "type": "malware"
+  },
+  "tor": {
+    "external_id": "S0183",
+    "name": "Tor",
+    "type": "tool"
+  },
+  "torisma": {
+    "external_id": "S0678",
+    "name": "Torisma",
+    "type": "malware"
+  },
+  "trailblazer": {
+    "external_id": "S0682",
+    "name": "TrailBlazer",
+    "type": "malware"
+  },
+  "translatext": {
+    "external_id": "S1201",
+    "name": "TRANSLATEXT",
+    "type": "malware"
+  },
+  "trickbot": {
+    "external_id": "S0266",
+    "name": "TrickBot",
+    "type": "malware"
+  },
+  "triton": {
+    "external_id": "S0609",
+    "name": "TRITON",
+    "type": "malware"
+  },
+  "trojan.karagany": {
+    "external_id": "S0094",
+    "name": "Trojan.Karagany",
+    "type": "malware"
+  },
+  "trojan.mebromi": {
+    "external_id": "S0001",
+    "name": "Trojan.Mebromi",
+    "type": "malware"
+  },
+  "troll stealer": {
+    "external_id": "S1196",
+    "name": "Troll Stealer",
+    "type": "malware"
+  },
+  "trollstealer": {
+    "external_id": "S1196",
+    "name": "Troll Stealer",
+    "type": "malware"
+  },
+  "truvasys": {
+    "external_id": "S0178",
+    "name": "Truvasys",
+    "type": "malware"
+  },
+  "tscookie": {
+    "external_id": "S0436",
+    "name": "TSCookie",
+    "type": "malware"
+  },
+  "turian": {
+    "external_id": "S0647",
+    "name": "Turian",
+    "type": "malware"
+  },
+  "turnedup": {
+    "external_id": "S0199",
+    "name": "TURNEDUP",
+    "type": "malware"
+  },
+  "typeframe": {
+    "external_id": "S0263",
+    "name": "TYPEFRAME",
+    "type": "malware"
+  },
+  "uacme": {
+    "external_id": "S0116",
+    "name": "UACMe",
+    "type": "tool"
+  },
+  "uboatrat": {
+    "external_id": "S0333",
+    "name": "UBoatRAT",
+    "type": "malware"
+  },
+  "umbreon": {
+    "external_id": "S0221",
+    "name": "Umbreon",
+    "type": "malware"
+  },
+  "unknown logger": {
+    "external_id": "S0130",
+    "name": "Unknown Logger",
+    "type": "malware"
+  },
+  "unknownlogger": {
+    "external_id": "S0130",
+    "name": "Unknown Logger",
+    "type": "malware"
+  },
+  "uppercut": {
+    "external_id": "S0275",
+    "name": "UPPERCUT",
+    "type": "malware"
+  },
+  "upstyle": {
+    "external_id": "S1164",
+    "name": "UPSTYLE",
+    "type": "malware"
+  },
+  "uroburos": {
+    "external_id": "S0022",
+    "name": "Uroburos",
+    "type": "malware"
+  },
+  "ursnif": {
+    "external_id": "S0386",
+    "name": "Ursnif",
+    "type": "malware"
+  },
+  "usbferry": {
+    "external_id": "S0452",
+    "name": "USBferry",
+    "type": "malware"
+  },
+  "usbstealer": {
+    "external_id": "S0136",
+    "name": "USBStealer",
+    "type": "malware"
+  },
+  "valak": {
+    "external_id": "S0476",
+    "name": "Valak",
+    "type": "malware"
+  },
+  "vaporrage": {
+    "external_id": "S0636",
+    "name": "VaporRage",
+    "type": "malware"
+  },
+  "vasport": {
+    "external_id": "S0207",
+    "name": "Vasport",
+    "type": "malware"
+  },
+  "vbshower": {
+    "external_id": "S0442",
+    "name": "VBShower",
+    "type": "malware"
+  },
+  "vermin": {
+    "external_id": "S0257",
+    "name": "VERMIN",
+    "type": "malware"
+  },
+  "versamem": {
+    "external_id": "S1154",
+    "name": "VersaMem",
+    "type": "malware"
+  },
+  "virtualpie": {
+    "external_id": "S1218",
+    "name": "VIRTUALPIE",
+    "type": "malware"
+  },
+  "virtualpita": {
+    "external_id": "S1217",
+    "name": "VIRTUALPITA",
+    "type": "malware"
+  },
+  "volgmer": {
+    "external_id": "S0180",
+    "name": "Volgmer",
+    "type": "malware"
+  },
+  "vpnfilter": {
+    "external_id": "S1010",
+    "name": "VPNFilter",
+    "type": "malware"
+  },
+  "wannacry": {
+    "external_id": "S0366",
+    "name": "WannaCry",
+    "type": "malware"
+  },
+  "warpwire": {
+    "external_id": "S1116",
+    "name": "WARPWIRE",
+    "type": "malware"
+  },
+  "warzonerat": {
+    "external_id": "S0670",
+    "name": "WarzoneRAT",
+    "type": "malware"
+  },
+  "wastedlocker": {
+    "external_id": "S0612",
+    "name": "WastedLocker",
+    "type": "malware"
+  },
+  "waterbear": {
+    "external_id": "S0579",
+    "name": "Waterbear",
+    "type": "malware"
+  },
+  "webc2": {
+    "external_id": "S0109",
+    "name": "WEBC2",
+    "type": "malware"
+  },
+  "wellmail": {
+    "external_id": "S0515",
+    "name": "WellMail",
+    "type": "malware"
+  },
+  "wellmess": {
+    "external_id": "S0514",
+    "name": "WellMess",
+    "type": "malware"
+  },
+  "wevtutil": {
+    "external_id": "S0645",
+    "name": "Wevtutil",
+    "type": "tool"
+  },
+  "whispergate": {
+    "external_id": "S0689",
+    "name": "WhisperGate",
+    "type": "malware"
+  },
+  "wiarp": {
+    "external_id": "S0206",
+    "name": "Wiarp",
+    "type": "malware"
+  },
+  "windows credential editor": {
+    "external_id": "S0005",
+    "name": "Windows Credential Editor",
+    "type": "tool"
+  },
+  "windowscredentialeditor": {
+    "external_id": "S0005",
+    "name": "Windows Credential Editor",
+    "type": "tool"
+  },
+  "windshield": {
+    "external_id": "S0155",
+    "name": "WINDSHIELD",
+    "type": "malware"
+  },
+  "windtail": {
+    "external_id": "S0466",
+    "name": "WindTail",
+    "type": "malware"
+  },
+  "winerack": {
+    "external_id": "S0219",
+    "name": "WINERACK",
+    "type": "malware"
+  },
+  "winexe": {
+    "external_id": "S0191",
+    "name": "Winexe",
+    "type": "tool"
+  },
+  "wingbird": {
+    "external_id": "S0176",
+    "name": "Wingbird",
+    "type": "malware"
+  },
+  "winmm": {
+    "external_id": "S0059",
+    "name": "WinMM",
+    "type": "malware"
+  },
+  "winnti for linux": {
+    "external_id": "S0430",
+    "name": "Winnti for Linux",
+    "type": "malware"
+  },
+  "winnti for windows": {
+    "external_id": "S0141",
+    "name": "Winnti for Windows",
+    "type": "malware"
+  },
+  "winntiforlinux": {
+    "external_id": "S0430",
+    "name": "Winnti for Linux",
+    "type": "malware"
+  },
+  "winntiforwindows": {
+    "external_id": "S0141",
+    "name": "Winnti for Windows",
+    "type": "malware"
+  },
+  "wiper": {
+    "external_id": "S0041",
+    "name": "Wiper",
+    "type": "malware"
+  },
+  "wirefire": {
+    "external_id": "S1115",
+    "name": "WIREFIRE",
+    "type": "malware"
+  },
+  "woody rat": {
+    "external_id": "S1065",
+    "name": "Woody RAT",
+    "type": "malware"
+  },
+  "woodyrat": {
+    "external_id": "S1065",
+    "name": "Woody RAT",
+    "type": "malware"
+  },
+  "xagentosx": {
+    "external_id": "S0161",
+    "name": "XAgentOSX",
+    "type": "malware"
+  },
+  "xbash": {
+    "external_id": "S0341",
+    "name": "Xbash",
+    "type": "malware"
+  },
+  "xcaon": {
+    "external_id": "S0653",
+    "name": "xCaon",
+    "type": "malware"
+  },
+  "xcmd": {
+    "external_id": "S0123",
+    "name": "xCmd",
+    "type": "tool"
+  },
+  "xcsset": {
+    "external_id": "S0658",
+    "name": "XCSSET",
+    "type": "malware"
+  },
+  "xloader": {
+    "external_id": "S1207",
+    "name": "XLoader",
+    "type": "malware"
+  },
+  "xorindex loader": {
+    "external_id": "S1248",
+    "name": "XORIndex Loader",
+    "type": "malware"
+  },
+  "xorindexloader": {
+    "external_id": "S1248",
+    "name": "XORIndex Loader",
+    "type": "malware"
+  },
+  "xtunnel": {
+    "external_id": "S0117",
+    "name": "XTunnel",
+    "type": "malware"
+  },
+  "yahoyah": {
+    "external_id": "S0388",
+    "name": "YAHOYAH",
+    "type": "malware"
+  },
+  "yty": {
+    "external_id": "S0248",
+    "name": "yty",
+    "type": "malware"
+  },
+  "zebrocy": {
+    "external_id": "S0251",
+    "name": "Zebrocy",
+    "type": "malware"
+  },
+  "zeroaccess": {
+    "external_id": "S0027",
+    "name": "Zeroaccess",
+    "type": "malware"
+  },
+  "zerocleare": {
+    "external_id": "S1151",
+    "name": "ZeroCleare",
+    "type": "malware"
+  },
+  "zerot": {
+    "external_id": "S0230",
+    "name": "ZeroT",
+    "type": "malware"
+  },
+  "zeus panda": {
+    "external_id": "S0330",
+    "name": "Zeus Panda",
+    "type": "malware"
+  },
+  "zeuspanda": {
+    "external_id": "S0330",
+    "name": "Zeus Panda",
+    "type": "malware"
+  },
+  "zipline": {
+    "external_id": "S1114",
+    "name": "ZIPLINE",
+    "type": "malware"
+  },
+  "zlib": {
+    "external_id": "S0086",
+    "name": "ZLib",
+    "type": "malware"
+  },
+  "zox": {
+    "external_id": "S0672",
+    "name": "Zox",
+    "type": "malware"
+  },
+  "zwshell": {
+    "external_id": "S0350",
+    "name": "zwShell",
+    "type": "malware"
+  },
+  "zxshell": {
+    "external_id": "S0412",
+    "name": "ZxShell",
+    "type": "malware"
+  },
+  "zxxz": {
+    "external_id": "S1013",
+    "name": "ZxxZ",
+    "type": "malware"
+  }
+}
