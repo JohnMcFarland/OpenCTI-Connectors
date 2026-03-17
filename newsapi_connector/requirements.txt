@@ -1,0 +1,4 @@
+pycti==6.9.13
+requests>=2.31.0
+python-dateutil>=2.9.0
+weasyprint>=61.0

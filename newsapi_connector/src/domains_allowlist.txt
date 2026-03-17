@@ -1,0 +1,68 @@
+# Domains allowlist for NewsAPI connector
+# Exact match or subdomain match is allowed (e.g., www.bbc.com matches bbc.com).
+
+# Wires / international
+reuters.com
+apnews.com
+bbc.co.uk
+bbc.com
+aljazeera.com
+
+# Business / finance
+economist.com
+ft.com
+wsj.com
+bloomberg.com
+fortune.com
+businessinsider.com
+
+# Major US nationals
+nytimes.com
+washingtonpost.com
+politico.com
+axios.com
+cnn.com
+cbsnews.com
+nbcnews.com
+abcnews.go.com
+usatoday.com
+time.com
+nymag.com
+
+# Major EU / international papers
+theguardian.com
+spiegel.de
+lemonde.fr
+elpais.com
+
+# Asia-Pacific
+nikkei.com
+scmp.com
+japantimes.co.jp
+straitstimes.com
+
+# Technology
+arstechnica.com
+engadget.com
+techcrunch.com
+wired.com
+
+# Science
+newscientist.com
+
+# Sports
+espn.com
+foxsports.com
+football-italia.net
+
+# Entertainment
+ew.com
+polygon.com
+
+# Opinion / political
+theamericanconservative.com
+foxnews.com
+
+# Added per request earlier
+nypost.com
+gcaptain.com
