@@ -1,0 +1,66 @@
+services:
+  connector-newsapi-custom:
+    build: .
+    image: newsapi_connector:latest
+    restart: unless-stopped
+    environment:
+      # --- OpenCTI ---
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=                          # OpenCTI service account token for this connector
+
+      # --- Connector identity ---
+      - CONNECTOR_ID=                           # Generate: python3 -c "import uuid; print(uuid.uuid4())"
+      - CONNECTOR_NAME=NewsAPI_Custom
+      - CONNECTOR_SCOPE=report
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_LOG_LEVEL=info
+      - CONNECTOR_REFRESH_INTERVAL=3600         # Seconds between runs (default: 1 hour)
+      - CONNECTOR_RUN_AND_TERMINATE=false
+
+      # --- NewsAPI ---
+      - NEWSAPI_API_KEY=                        # Your NewsAPI.org API key
+
+      # --- Query behavior ---
+      - NEWSAPI_LANGUAGE=en
+      - NEWSAPI_SORT_BY=publishedAt             # publishedAt | relevancy | popularity
+      - NEWSAPI_PAGE_SIZE=50                    # Max 100 (NewsAPI limit)
+      - NEWSAPI_LOOKBACK_HOURS=24               # How far back to fetch on first run or cursor miss
+      - NEWSAPI_MAX_PAGES_PER_RUN=1             # Pages to fetch per profile per run
+      - NEWSAPI_DAILY_REQUEST_BUDGET=90         # Max API requests per calendar day
+      - NEWSAPI_MIN_SECONDS_BETWEEN_REQUESTS=2  # Rate limiting floor
+      - NEWSAPI_MAX_RETRIES=5                   # Retries on 429/transient errors
+
+      # --- Report metadata ---
+      # NEWSAPI_REPORT_TYPE must exist in your OpenCTI report_types vocabulary.
+      # Standard value: threat-report. Custom value example: Open Source Report
+      - NEWSAPI_REPORT_TYPE=threat-report
+      # NEWSAPI_MARKING must match an existing marking definition name in your instance.
+      # Common values: TLP:WHITE, TLP:CLEAR, TLP:GREEN
+      - NEWSAPI_MARKING=TLP:WHITE
+      - NEWSAPI_CONFIDENCE=15                   # 0-100
+      - NEWSAPI_CR_LABELS=                      # Comma-separated collection requirement labels (optional)
+      - NEWSAPI_TECHNICAL_CREATOR=[C]NewsAPI    # Identity label used in markdown attachments
+
+      # --- PDF attachment ---
+      - NEWSAPI_ATTACH_PDF=true                 # Render and attach article PDF to each report
+      - NEWSAPI_PDF_MAX_MB=12                   # Skip PDF upload if render exceeds this size
+      - NEWSAPI_PDF_TIMEOUT=30                  # HTTP timeout for article fetch (seconds)
+
+      # --- Runtime config (volume-mounted files) ---
+      - NEWSAPI_DOMAINS_ALLOWLIST_FILE=/opt/connector/config/domains_allowlist.txt
+      - NEWSAPI_QUERY_PROFILES_FILE=/opt/connector/config/query_profiles.json
+
+    volumes:
+      # Persistent state (cursors, dedup cache, daily budget tracking)
+      - ./state:/opt/connector/state
+      # Runtime config — edit these files without rebuilding the image
+      - ./src/domains_allowlist.txt:/opt/connector/config/domains_allowlist.txt:ro
+      - ./src/query_profiles.json:/opt/connector/config/query_profiles.json:ro
+
+    networks:
+      - default
+
+networks:
+  default:
+    external: true
+    name: opencti-docker_default  # Replace with your OpenCTI Docker network name
