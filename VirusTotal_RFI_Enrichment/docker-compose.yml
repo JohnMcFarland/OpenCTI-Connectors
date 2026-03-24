@@ -1,0 +1,70 @@
+version: "3"
+services:
+  connector-virustotal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custom/connector-virustotal:latest
+    environment:
+      # ── Core ──────────────────────────────────────────────────────────────
+      - OPENCTI_URL=http://localhost:8080
+      - OPENCTI_TOKEN=ChangeMe
+      - CONNECTOR_ID=ChangeMe
+      - CONNECTOR_NAME=VirusTotal
+      - CONNECTOR_TYPE=INTERNAL_ENRICHMENT
+      # Scope is Case-Rfi — the connector triggers on RFI containers and
+      # iterates over all new observables within them since the last run.
+      - CONNECTOR_SCOPE=Case-Rfi
+      - CONNECTOR_LOG_LEVEL=info
+      - CONNECTOR_CONFIDENCE_LEVEL=50
+      # CONNECTOR_AUTO=false — enrichment is analyst-initiated from the RFI
+      # container enrichment panel. Set to true only if you want automatic
+      # enrichment on every new RFI container creation.
+      - CONNECTOR_AUTO=false
+      - CONNECTOR_ONLY_CONTEXTUAL=false
+
+      # ── VirusTotal API ─────────────────────────────────────────────────────
+      - VIRUSTOTAL_TOKEN=ChangeMe
+      # If true, overwrite a higher existing OpenCTI score with VT's lower value.
+      # Default false — preserve the higher score.
+      - VIRUSTOTAL_REPLACE_WITH_LOWER_SCORE=false
+
+      # ── Rate limiting ──────────────────────────────────────────────────────
+      # Delay in seconds between VT API calls within a container run.
+      # 15 = safe for free tier (4 req/min). Set to 1 for premium API keys.
+      - VIRUSTOTAL_REQUEST_DELAY_SECONDS=15
+
+      # ── State file ─────────────────────────────────────────────────────────
+      # Tracks last-run timestamp per RFI container ID.
+      # Must match the volume mount path below.
+      - VIRUSTOTAL_STATE_PATH=/opt/connector/state/virustotal_state.json
+
+      # ── File / Artifact settings ───────────────────────────────────────────
+      # Create a supplemental per-engine analysis note (in addition to the
+      # structured assessment note) for file observables.
+      - VIRUSTOTAL_FILE_CREATE_NOTE_FULL_REPORT=true
+      # Import crowdsourced YARA rules as stix2.Indicator objects (pattern_type=yara).
+      # YARA rules are the ONLY Indicator type this connector creates.
+      - VIRUSTOTAL_FILE_IMPORT_YARA=true
+      # Upload artifacts to VT if not already in their database.
+      # Only applies to Artifact entities (not StixFile). Default false.
+      - VIRUSTOTAL_FILE_UPLOAD_UNSEEN_ARTIFACTS=false
+
+      # ── IP settings ────────────────────────────────────────────────────────
+      # Create ASN (belongs-to) and Country (located-at) relationships for IPs.
+      - VIRUSTOTAL_IP_ADD_RELATIONSHIPS=true
+
+      # ── Domain settings ────────────────────────────────────────────────────
+      # Create passive-DNS IPv4 observables with resolves-to relationships.
+      - VIRUSTOTAL_DOMAIN_ADD_RELATIONSHIPS=true
+
+      # ── URL settings ───────────────────────────────────────────────────────
+      # Submit unseen URLs to VT for analysis before enriching. Default false.
+      - VIRUSTOTAL_URL_UPLOAD_UNSEEN=false
+
+    volumes:
+      # State directory — persists last-run timestamps across container restarts.
+      # Create this directory on the host before starting the connector.
+      - ./state:/opt/connector/state
+
+    restart: always
