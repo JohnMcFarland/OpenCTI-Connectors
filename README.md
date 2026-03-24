@@ -1,6 +1,6 @@
 # OpenCTI Custom Connectors
 
-A suite of production-grade connectors for a self-hosted [OpenCTI](https://github.com/OpenCTI-Platform/opencti) instance. This repository centralizes all custom external import and enrichment connectors built against the OpenCTI 6.x platform API.
+A suite of production-grade connectors for a self-hosted [OpenCTI](https://github.com/OpenCTI-Platform/opencti) instance. This repository centralizes all custom external import and enrichment connectors built against the OpenCTI 6.9.13 platform API.
 
 ---
 
