@@ -1,0 +1,48 @@
+# docker-compose.yml — Synthient Enrichment Connector
+#
+# Standalone compose file for the Synthient Enrichment connector.
+# Integrate this into your OpenCTI deployment by merging it into your
+# docker-compose.override.yml, or reference it directly:
+#
+#   sudo docker compose -f docker-compose.yml -f /path/to/this/docker-compose.yml up -d
+#
+# Required placeholders (must be replaced before use):
+#   OPENCTI_URL         Base URL of your OpenCTI instance
+#   OPENCTI_TOKEN       API token for the connector service account
+#   CONNECTOR_ID        Generate with: python3 -c "import uuid; print(uuid.uuid4())"
+#   SYNTHIENT_API_KEY   Your Synthient v3 API key
+
+version: "3"
+
+services:
+
+  synthient-enrich:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: synthient-enrich:latest
+    restart: unless-stopped
+    environment:
+      # ── OpenCTI connection ────────────────────────────────────────────────
+      - OPENCTI_URL=http://opencti:8080             # Internal Docker network URL
+      - OPENCTI_TOKEN=                              # Connector service account token
+
+      # ── Connector identity ────────────────────────────────────────────────
+      - CONNECTOR_ID=                               # UUID -- generate before use
+      - CONNECTOR_NAME=Synthient Enrichment         # Display name in OpenCTI
+      - CONNECTOR_LOG_LEVEL=info                    # debug | info | warning | error
+
+      # ── Synthient API ─────────────────────────────────────────────────────
+      - SYNTHIENT_API_KEY=                          # Synthient v3 API key
+
+      # ── Enrichment behaviour ──────────────────────────────────────────────
+      - SYNTHIENT_DAYS=90                           # Lookback window in days
+      - SYNTHIENT_TLP=TLP:AMBER+STRICT              # TLP marking for all created objects
+      - SYNTHIENT_CONFIDENCE=90                     # Confidence score 0-100
+
+    networks:
+      - opencti_default                             # Must match your OpenCTI network name
+
+networks:
+  opencti_default:
+    external: true
