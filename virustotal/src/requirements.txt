@@ -1,4 +1,0 @@
-pycti==6.6.8
-plyara~=2.2.1
-
-pycountry
