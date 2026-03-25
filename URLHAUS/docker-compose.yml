@@ -1,0 +1,44 @@
+services:
+  connector-urlhaus:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # ── OpenCTI connection ─────────────────────────────────────────────────
+      # Base URL of your OpenCTI instance. Use the internal Docker network name
+      # if running in the same Compose stack (e.g., http://opencti:8080).
+      - OPENCTI_URL=
+
+      # API token for the dedicated URLHaus connector service account.
+      # Create a user in OpenCTI Settings → Security → Users with the Connector
+      # role, then copy the token from that user's detail page.
+      - OPENCTI_TOKEN=
+
+      # ── Connector identity ─────────────────────────────────────────────────
+      # Generate a UUID for this connector instance:
+      #   python3 -c "import uuid; print(uuid.uuid4())"
+      # This ID must be unique across all connectors in your OpenCTI instance.
+      - CONNECTOR_ID=
+
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=URLHaus
+      - CONNECTOR_SCOPE=urlhaus
+      - CONNECTOR_AUTO=true
+      - CONNECTOR_LOG_LEVEL=info
+
+      # ── URLHaus settings ───────────────────────────────────────────────────
+      # Your URLHaus API key. Obtain one from: https://urlhaus.abuse.ch/api/
+      # Account email verification is required before the key activates.
+      - URLHAUS_API_KEY=
+
+      # Poll interval in hours. 24 is recommended — aligns with daily containers
+      # and stays well within URLHaus API fair use limits.
+      - URLHAUS_INTERVAL_HOURS=24
+
+      # Set to true to run immediately on startup. Default false prevents
+      # redundant same-day runs when the container is restarted mid-day.
+      - URLHAUS_RUN_ON_STARTUP=false
+
+    restart: unless-stopped
+    depends_on:
+      - opencti
