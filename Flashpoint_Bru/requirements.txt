@@ -1,0 +1,26 @@
+# =============================================================================
+# requirements.txt — Flashpoint Ignite Connector
+# =============================================================================
+# Pin pycti to the exact instance version. Mismatches cause schema errors.
+# The instance is running OpenCTI 6.9.13 — pycti must match exactly.
+# After any OpenCTI platform upgrade, this pin must be updated to match.
+pycti==6.9.13
+
+# STIX 2.1 object construction and serialisation.
+stix2
+
+# HTTP client for Flashpoint Ignite API calls.
+requests
+
+# YAML configuration file parsing.
+pyyaml
+
+# Robust datetime string parsing for Flashpoint API date fields.
+# dateparser handles a wider variety of formats than stdlib dateutil alone.
+dateparser
+
+# ISO8601 datetime parsing and timezone handling for state cursor management.
+python-dateutil
+
+# UTC timezone handling for datetime objects throughout the connector.
+pytz

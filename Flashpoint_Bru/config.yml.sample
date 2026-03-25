@@ -1,0 +1,114 @@
+# =============================================================================
+# config.yml.sample — Flashpoint Ignite Connector
+# =============================================================================
+# Copy this file to config.yml and populate all CHANGEME values before
+# running the connector locally. In Docker deployments, these values are
+# set as environment variables in docker-compose.override.yml instead —
+# config.yml is not required when all variables are set via environment.
+#
+# PRECEDENCE: Environment variables override config.yml values.
+# =============================================================================
+
+opencti:
+  # URL of the OpenCTI instance. Use the internal Docker network URL
+  # when running via docker-compose (http://opencti:8080), or the
+  # external URL for local development.
+  url: 'http://localhost:8080'
+
+  # OpenCTI API token for connector authentication. Find or generate this
+  # in OpenCTI: Settings → Connectors → (create a connector token).
+  # Use a dedicated connector token, not the admin token.
+  token: 'CHANGEME'
+
+connector:
+  # UUIDv4 for this connector instance. Generate with: python3 -c "import uuid; print(uuid.uuid4())"
+  # Must be unique per connector in the OpenCTI instance. Do not reuse
+  # UUIDs from other connectors.
+  id: 'CHANGEME_UUID4'
+
+  type: 'EXTERNAL_IMPORT'
+  name: 'Flashpoint'
+  scope: 'flashpoint'
+  log_level: 'info'   # debug | info | warning | error
+
+  # Run interval in ISO-8601 duration format.
+  # PT6H = every 6 hours. PT1H = every hour. P1D = every day.
+  # Recommended: PT6H for most environments. Reduce for higher-volume
+  # monitoring requirements. The scheduler will skip a run if the connector
+  # queue exceeds CONNECTOR_QUEUE_THRESHOLD (default 500MB).
+  duration_period: 'PT6H'
+
+flashpoint:
+  # Flashpoint Ignite API key. Generate in Ignite: Settings → APIs & Integrations.
+  # Required permissions:
+  #   IGNITE_API, IGNITE_CTI_REPORTS, dat.rp.ass.r, dat.med.r, dat.ind.r
+  # For credential alerts, the API key's associated user must also be a
+  # member of the CCMC group (group-gated, not permission-gated).
+  api_key: 'CHANGEME'
+
+  # ISO-8601 datetime for the initial backfill start.
+  # On first run, each dataset fetches from this date forward.
+  # After first run, per-dataset cursors take over — this value is only
+  # used when no cursor exists for a given dataset.
+  import_start_date: '2024-01-01T00:00:00Z'
+
+  # ── Dataset toggles ────────────────────────────────────────────────────────
+  # Each dataset can be independently enabled or disabled. Toggle off
+  # any dataset that is not relevant or where the API key lacks permissions.
+
+  # Finished Intelligence Reports: analyst-written Tier-1 threat intelligence.
+  # Creates individual Report containers (activity-roundup) per report.
+  import_reports: true
+
+  # Alerts: rule-based notifications from configured Flashpoint alert rules.
+  # Routes to IR containers (org-domain matches) or daily batch Reports.
+  # Requires alert rules to be configured in Flashpoint Ignite.
+  import_alerts: true
+
+  # Communities: dark web forum and community post search results.
+  # Defaults to false — requires communities_queries to be configured.
+  # Enable only when meaningful search terms are set.
+  import_communities: false
+
+  # Credentials: compromised credential exposure records.
+  # NOTE: This dataset is STUBBED — not yet implemented.
+  # Setting true will log a warning per run but ingest nothing.
+  # Set to false to suppress the warning until implementation is complete.
+  import_credentials: true
+
+  # ── Communities configuration ──────────────────────────────────────────────
+  # Comma-separated keyword search terms for dark web community monitoring.
+  # Each term is searched independently against Flashpoint's community
+  # datasets and produces its own daily batch Report container.
+  # Examples: 'ransomware', 'CVE-2024-1234', 'your-org-name'
+  # Tip: include your organisation name, product names, and relevant CVEs.
+  communities_queries: 'cybersecurity,cyberattack'
+
+  # ── Org domain bifurcation ─────────────────────────────────────────────────
+  # Comma-separated list of your organisation's domains.
+  # Alerts and credential records where this domain appears anywhere in
+  # the alert resource data are routed to Incident Response containers.
+  # All other alerts go to daily batch Report containers.
+  # Example: 'example.com,subsidiary.example.com'
+  # Leave empty to route all alerts to batch Reports (no IR routing).
+  org_domains: ''
+
+  # ── Confidence defaults ────────────────────────────────────────────────────
+  # Confidence scores (0-100) applied to objects from each dataset.
+  # These reflect the epistemological reliability of each source.
+  # Adjust based on your assessment of Flashpoint's source quality.
+
+  # Finished Intelligence Reports: analyst-written Tier-1 intelligence.
+  report_confidence: 75
+
+  # Keyword-match alerts: unvalidated rule hits.
+  alert_confidence: 50
+
+  # Org-domain credential alerts: deterministic domain match = higher signal.
+  alert_org_confidence: 70
+
+  # Communities posts: raw unvalidated dark web content.
+  communities_confidence: 30
+
+  # Compromised credentials: direct credential match = higher signal.
+  credential_confidence: 70
