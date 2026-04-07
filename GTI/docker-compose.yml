@@ -1,0 +1,29 @@
+version: '3'
+services:
+  connector-gti-reports:
+    image: opencti/connector-gti-reports:latest
+    environment:
+      # ---- OpenCTI platform connection ----------------------------------
+      - OPENCTI_URL=                          # e.g. http://localhost:8080
+      - OPENCTI_TOKEN=                        # Connector service account token
+
+      # ---- Connector identity -------------------------------------------
+      - CONNECTOR_ID=                         # Generate a fresh UUID4
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=GTI Reports
+      - CONNECTOR_SCOPE=report
+      - CONNECTOR_CONFIDENCE_LEVEL=85         # 0–100; 85 = High (Tier-1 default)
+      - CONNECTOR_UPDATE_EXISTING_DATA=false
+      - CONNECTOR_LOG_LEVEL=info
+
+      # ---- GTI API credentials ------------------------------------------
+      - GTI_API_KEY=                          # Your GTI / VirusTotal API key
+
+      # ---- Import configuration -----------------------------------------
+      - GTI_IMPORT_START_DATE=2024-01-01      # ISO date for cold-start lower bound
+      - GTI_INTERVAL=60                       # Polling interval in minutes
+      - GTI_IMPORT_LIMIT=40                   # Max reports per run (GTI ceiling: 40)
+      - GTI_REPORT_FILTER=collection_type:report  # VT intelligence filter string
+      - GTI_CONFIDENCE=85                     # Confidence on created Report containers
+      - GTI_MARKING_DEFINITION=TLP:AMBER+STRICT   # Comma-separated; must exist in platform
+    restart: always

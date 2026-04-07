@@ -1,0 +1,21 @@
+opencti:
+  url: 'ChangeMe'
+  token: 'ChangeMe'
+
+connector:
+  id: 'ChangeMe'                       # Generate a fresh UUID4 for your instance
+  type: 'EXTERNAL_IMPORT'
+  name: 'GTI Reports'
+  scope: 'report'
+  confidence_level: 85                 # 0–100; 85 = High (Tier-1 source default)
+  update_existing_data: false
+  log_level: 'info'
+
+gti:
+  api_key: 'ChangeMe'                  # GTI/VirusTotal API key (x-apikey)
+  import_start_date: '2024-01-01'      # ISO date; lower bound for cold-start import
+  interval: 60                         # Polling interval in minutes
+  import_limit: 40                     # Max reports per run (GTI ceiling is 40/call)
+  report_filter: 'collection_type:report'   # GTI VT-intelligence filter string
+  confidence: 85                       # Confidence applied to created Report containers
+  marking_definition: 'TLP:AMBER+STRICT'    # Comma-separated; must exist in OpenCTI

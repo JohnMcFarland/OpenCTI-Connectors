@@ -1,0 +1,4 @@
+pycti==6.9.13
+requests>=2.31.0
+pyyaml>=6.0.1
+markdown>=3.5.0
