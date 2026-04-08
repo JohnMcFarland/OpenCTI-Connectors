@@ -1,0 +1,4 @@
+pycti==6.9.13
+crowdstrike-falconpy>=1.4.0
+stix2
+pyyaml
