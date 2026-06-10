@@ -1,0 +1,129 @@
+# =============================================================================
+# IC Reports Connector — Configuration Template
+# Copy to config.yml and populate before deployment.
+# All sensitive values should be injected via docker-compose environment
+# overrides rather than hardcoded here.
+# =============================================================================
+
+opencti:
+  url: "${OPENCTI_URL}"               # e.g. http://localhost:8080
+  token: "${OPENCTI_CONNECTOR_TOKEN}" # Connector-specific token (not admin)
+
+connector:
+  id: "ic-reports-connector"
+  type: "EXTERNAL_IMPORT"
+  name: "IC Reports"
+  scope: "application/pdf"
+  log_level: "info"
+  # Seconds between full ingestion cycles. Default: 86400 (24h)
+  # ODNI/DIA/CIA publish infrequently; 24h is appropriate.
+  # CISA publishes daily; set lower (e.g. 3600) if CISA-only.
+  run_interval: 86400
+  auto_commit: true
+
+# =============================================================================
+# Plugin configuration
+# Each key matches plugin.name.lower().replace(" ", "_")
+# Set enabled: false to disable a plugin entirely.
+# =============================================================================
+
+plugins:
+
+  # ---------------------------------------------------------------------------
+  # CISA — RSS-native, most structured and highest-frequency source
+  # ---------------------------------------------------------------------------
+  cisa:
+    enabled: true
+    # Override default feeds (leave empty to use defaults)
+    feeds:
+      - "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+      - "https://www.cisa.gov/cybersecurity-advisories/ics-advisories.xml"
+    # Maximum reports to process per run cycle
+    max_per_run: 20
+    # Rate limit: seconds between HTTP requests
+    rate_limit_delay: 1.0
+
+  # ---------------------------------------------------------------------------
+  # ODNI — HTML scraping, infrequent publisher (~5-10 reports/year)
+  # ---------------------------------------------------------------------------
+  odni:
+    enabled: true
+    # Listing pages to scrape (can add year-specific pages here)
+    listing_pages:
+      - "https://www.dni.gov/index.php/newsroom/reports-publications"
+      - "https://www.dni.gov/index.php/newsroom/reports-publications/reports-publications-2024"
+      - "https://www.dni.gov/index.php/newsroom/reports-publications/reports-publications-2023"
+    max_per_run: 15
+    rate_limit_delay: 2.0
+
+  # ---------------------------------------------------------------------------
+  # CIA — FOIA Reading Room and CSI publications
+  # ---------------------------------------------------------------------------
+  cia:
+    enabled: true
+    # Enable/disable sub-sources independently
+    enable_csi: true      # CSI publications (Studies in Intelligence, etc.)
+    enable_foia: false    # FOIA search — enable with specific search terms
+    # FOIA search terms — only queried if enable_foia: true
+    # Scope carefully; broad terms return thousands of documents
+    foia_search_terms:
+      - "cyber"
+      - "espionage"
+      - "signals intelligence"
+    # CSI listing pages
+    listing_pages:
+      - "https://www.cia.gov/resources/csi/studies-in-intelligence/"
+      - "https://www.cia.gov/resources/csi/historical-collections/"
+    max_per_run: 10
+    rate_limit_delay: 2.0
+
+  # ---------------------------------------------------------------------------
+  # NSA — Cybersecurity advisories, HTML scraping
+  # ---------------------------------------------------------------------------
+  nsa:
+    enabled: true
+    listing_url: "https://www.nsa.gov/Press-Room/Cybersecurity-Advisories-Guidance/"
+    max_per_run: 15
+    rate_limit_delay: 1.5
+
+  # ---------------------------------------------------------------------------
+  # DIA — Military Power publications and news articles
+  # ---------------------------------------------------------------------------
+  dia:
+    enabled: true
+    listing_pages:
+      - "https://www.dia.mil/News-Features/Articles/"
+      - "https://www.dia.mil/Military-Power-Publications/"
+    max_per_run: 10
+    rate_limit_delay: 2.0
+
+  # ---------------------------------------------------------------------------
+  # State Department — Country reports on terrorism, human rights, trafficking
+  # ---------------------------------------------------------------------------
+  state_dept:
+    enabled: true
+    enable_rss: true
+    enable_scraping: true
+    rss_feeds:
+      - "https://www.state.gov/category/intelligence-bureau/feed/"
+    landing_pages:
+      - "https://www.state.gov/reports/country-reports-on-terrorism/"
+      - "https://www.state.gov/reports/trafficking-in-persons-report/"
+      - "https://www.state.gov/reports/2024-country-reports-on-human-rights-practices/"
+    max_per_run: 10
+    rate_limit_delay: 1.5
+
+  # ---------------------------------------------------------------------------
+  # NASA — OIG audit reports and (optionally) NTRS technical reports
+  # ---------------------------------------------------------------------------
+  nasa:
+    enabled: true
+    enable_oig: true      # NASA Inspector General (recommended: true)
+    enable_ntrs: false    # NTRS is voluminous — only enable with tight search terms
+    ntrs_search_terms:
+      - "cybersecurity"
+      - "information security"
+      - "insider threat"
+    ntrs_max_per_term: 5
+    max_per_run: 10
+    rate_limit_delay: 1.5

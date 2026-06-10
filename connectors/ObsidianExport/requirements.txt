@@ -1,0 +1,4 @@
+# pycti must match the OpenCTI instance version exactly.
+# Version mismatches cause schema errors at ingest time.
+# Update this pin atomically with any platform upgrade.
+pycti==6.9.13

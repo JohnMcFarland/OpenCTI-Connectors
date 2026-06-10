@@ -1,0 +1,14 @@
+# Environment — never commit credentials
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Docker build artefacts
+*.log

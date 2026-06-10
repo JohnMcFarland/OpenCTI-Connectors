@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Backups and scratch
+*.bak*
+*.unused
+
+# Runtime state
+state/
+*_state.json
+
+# Secrets - never commit real values
+.env
+docker-compose.override.yml

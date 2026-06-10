@@ -1,0 +1,37 @@
+version: "3"
+services:
+  report_enrichment:
+    build:
+      # Build context is connectors/custom/ so the Dockerfile can access
+      # both report_enrichment/ and the shared report_model_qa/ modules.
+      context: ..
+      dockerfile: report_enrichment/Dockerfile
+    environment:
+      - OPENCTI_URL=                        # OpenCTI base URL, e.g. http://localhost:8080
+      - OPENCTI_TOKEN=                      # Service account token for this connector
+      - CONNECTOR_ID=                       # Unique UUID for this connector instance
+      - CONNECTOR_TYPE=INTERNAL_ENRICHMENT
+      - CONNECTOR_NAME=Report Enrichment
+      - CONNECTOR_SCOPE=Report
+      - CONNECTOR_CONFIDENCE_LEVEL=50
+      - CONNECTOR_LOG_LEVEL=info
+
+      # --- Enrichment behaviour ---
+      - ENRICHMENT_DRY_RUN=false            # true = write preview note only, create nothing
+      - ENRICHMENT_SMART_CONFIDENCE_THRESHOLD=0.85  # min smart-parse confidence to create entity
+      - ENRICHMENT_CREATE_OBSERVABLES=true  # create Observable-type entities (IPs, domains, hashes)
+      - ENRICHMENT_CREATE_SDO=true          # create SDO-type entities (Intrusion Sets, Malware, etc.)
+      - ENRICHMENT_PARAGRAPH_COOCCURRENCE=true  # infer relationships from paragraph co-occurrence
+      - ENRICHMENT_ASSESSMENT_NOTES=true    # extract and create Assessment Notes
+      - ENRICHMENT_TEMPORAL_HINTS=true      # extract date proximity metadata
+      - ENRICHMENT_VICTIM_EXTRACTION=true   # extract victim organisations from cue phrases
+      - ENRICHMENT_CUE_RELATIONS=true       # extract both sides of cue phrases for relationships
+      - ENRICHMENT_OBSERVABLE_CHAINS=true   # draw resolves-to / belongs-to observable chains
+      - ENRICHMENT_WRITE_SUMMARY_NOTE=true  # write enrichment summary note on completion
+
+      # --- KB cache ---
+      - QA_KB_TTL_HOURS=24                  # how long to cache the entity KB before refreshing
+      - QA_DOC_SMART_PARSE=true
+      - QA_DOC_SMART_PARSE_MIN_CONFIDENCE=0.70
+      - QA_DOC_SMART_PARSE_MAX_CANDIDATES=80
+    restart: unless-stopped

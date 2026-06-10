@@ -1,0 +1,68 @@
+version: "3"
+
+# Obsidian Export Connector — INTERNAL_EXPORT_FILE
+# ================================================
+# Triggered from the Export button on any Report or Case container in the
+# OpenCTI UI. Returns a structured Obsidian-compatible Markdown note to the
+# entity's Data tab.
+#
+# DEPLOYMENT:
+#   1. Copy this file to your connector directory
+#   2. Create a docker-compose.override.yml alongside it with actual values
+#      for all empty environment variables below
+#   3. Generate a new UUID4 for CONNECTOR_ID (e.g. python -c "import uuid; print(uuid.uuid4())")
+#   4. Deploy: sudo docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+#
+# This file contains NO credentials, tokens, UUIDs, or instance-specific values.
+# All sensitive values belong in docker-compose.override.yml which is never committed.
+
+services:
+  obsidian_export:
+    build: .
+    environment:
+      # -----------------------------------------------------------------------
+      # OpenCTI connection
+      # -----------------------------------------------------------------------
+
+      # Base URL of your OpenCTI instance (e.g. http://localhost:8080)
+      - OPENCTI_URL=
+
+      # Service account token for this connector.
+      # Create a dedicated service account in OpenCTI Settings > Security > Users
+      # with the Connector role. Do not use the admin token.
+      - OPENCTI_TOKEN=
+
+      # -----------------------------------------------------------------------
+      # Connector identity
+      # -----------------------------------------------------------------------
+
+      # Unique UUID4 for this connector instance. Generate once and keep stable.
+      # Changing this creates a duplicate connector registration in OpenCTI.
+      # Generate: python -c "import uuid; print(uuid.uuid4())"
+      - CONNECTOR_ID=
+
+      # Display name shown in the OpenCTI connectors list and export dialog
+      - CONNECTOR_NAME=Obsidian Export
+
+      # MIME type this connector produces. OpenCTI uses this to register the
+      # connector as an available export format in the Export dialog.
+      # Do not change unless you have a specific reason to use a different MIME type.
+      - CONNECTOR_SCOPE=text/markdown
+
+      # Log verbosity. Set to DEBUG for troubleshooting the upload mechanism.
+      - CONNECTOR_LOG_LEVEL=INFO
+
+      # -----------------------------------------------------------------------
+      # Export behaviour
+      # -----------------------------------------------------------------------
+
+      # Maximum number of contained objects fetched per container.
+      # Objects beyond this limit are logged and truncated — they are not lost
+      # from OpenCTI, only absent from the exported note.
+      - EXPORT_MAX_OBJECTS=500
+
+      # Whether to include SCO Observables (IPs, domains, hashes, etc.) in the
+      # export. Set to false for SDO-only exports on very observable-heavy reports.
+      - EXPORT_INCLUDE_OBSERVABLES=true
+
+    restart: unless-stopped

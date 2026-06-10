@@ -1,0 +1,39 @@
+# Bellingcat OpenCTI connector — GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  bellingcat:
+    build: .
+    container_name: opencti-connector-bellingcat
+    environment:
+      # --- OpenCTI platform connection ---
+      # Resolution A: OPENCTI_URL is the canonical platform pointer (pycti
+      # opencti.url). Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: BELLINGCAT_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Bellingcat
+      - CONNECTOR_SCOPE=bellingcat
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - BELLINGCAT_BASE_URL=https://www.bellingcat.com
+      # Category SLUGS to ingest. Provisional: confirm against
+      # /wp-json/wp/v2/categories on first deploy. Unresolved slugs are skipped.
+      - BELLINGCAT_CATEGORIES=news,open-source-in-short,resources
+      - BELLINGCAT_POLL_INTERVAL=21600     # seconds between full enumeration runs (6h)
+      - BELLINGCAT_REQUEST_DELAY=3         # seconds between successive renders
+      - BELLINGCAT_MAX_POSTS=0             # 0 = unlimited; set to 3 for a bounded test run
+      - PLAYWRIGHT_NAV_TIMEOUT=60000       # ms; replaces the weasyprint render-timeout wrap
+      - BELLINGCAT_RENDER_RETRIES=3
+      - BELLINGCAT_CONFIDENCE=60           # OpenCTI confidence 0-100 (Medium band)
+      - BELLINGCAT_REPORT_TYPE=open-source-reporting
+      - BELLINGCAT_TLP=TLP:CLEAR
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g

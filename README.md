@@ -32,11 +32,11 @@ All ingestion and enrichment logic is governed by the **Four Cs** framework, whi
 | **Containment** | Every entity and observable must exist inside a container (Report, Incident Response). No orphan objects. |
 | **Contextualization** | Entities are only meaningful through their relationships. Every ingested object must carry at least one relationship that defines its analytical role. |
 | **Completeness** | Connectors represent the full assertional scope of their source. Partial ingestion and cherry-picking are explicitly prohibited. |
-| **Categorization** | Every object is classified — marked with a TLP definition, attributed to an author identity, and typed correctly. |
+| **Categorization** | Every object is classified ??? marked with a TLP definition, attributed to an author identity, and typed correctly. |
 
 ### Core Constraints
 
-**Non-destructive by default.** Connectors never delete, overwrite, or purge existing graph data. Deduplication is handled via External Reference URL lookup — if a record already exists, it is updated or skipped; never replaced.
+**Non-destructive by default.** Connectors never delete, overwrite, or purge existing graph data. Deduplication is handled via External Reference URL lookup ??? if a record already exists, it is updated or skipped; never replaced.
 
 **Data model authority.** The OpenCTI STIX 2.1 data model is the single source of truth. No connector silently bypasses schema constraints. Modeling conflicts are surfaced as warnings, not suppressed.
 
@@ -59,7 +59,7 @@ The data model used across all connectors is a strict subset of STIX 2.1 as impl
 | Entity | Usage |
 |---|---|
 | **Threat Actor Group** | Real-world adversary organizations (e.g., Reconnaissance General Bureau, Cozy Bear). Not a proxy for an Intrusion Set. |
-| **Intrusion Set** | Analyst-constructed cluster of activity attributed to a threat actor. APT29 ≠ SVR. |
+| **Intrusion Set** | Analyst-constructed cluster of activity attributed to a threat actor. APT29 ??? SVR. |
 | **Malware** | Purpose-built offensive software (e.g., Emotet, KEYPLUG). Distinct from Tool. |
 | **Tool** | Legitimate software repurposed by attackers (e.g., AnyDesk, Mimikatz). |
 | **Infrastructure** | Named, organized adversary infrastructure (e.g., C2 clusters, staging environments). Not raw IPs or domains. |
@@ -70,7 +70,7 @@ The data model used across all connectors is a strict subset of STIX 2.1 as impl
 | **Narrative** | Overarching theme or messaging used by a threat actor (e.g., Ghostwriter NATO narratives). |
 | **Course of Action** | Defensive recommendation, preferably MITRE-defined. |
 | **Individual** | Named real-world person. Dual-modeled with Threat Actor Group when the individual is an adversary. |
-| **Organization** | Real-world organization — victim, vendor, or infrastructure provider. |
+| **Organization** | Real-world organization ??? victim, vendor, or infrastructure provider. |
 | **Sector** | Industry vertical (e.g., Energy, Finance). |
 | **Location** | Geographic region, country, or city. |
 | **Incident** | Used exclusively within Incident Response containers to represent the adversary activity cluster under investigation. Not a synonym for "event." |
@@ -78,7 +78,7 @@ The data model used across all connectors is a strict subset of STIX 2.1 as impl
 
 ### Observables
 
-Observables are atomic technical markers extracted from source data. They are the raw material of technical correlation — not intelligence assertions on their own. All observables must be anchored to at least one named Identity via `related-to`.
+Observables are atomic technical markers extracted from source data. They are the raw material of technical correlation ??? not intelligence assertions on their own. All observables must be anchored to at least one named Identity via `related-to`.
 
 | Observable | Notes |
 |---|---|
@@ -103,22 +103,22 @@ Observables are atomic technical markers extracted from source data. They are th
 
 All relationships must be semantically grounded in source assertions or strong analytical implication. The full relationship matrix is in [`Data_Model_Relationship_Guide.csv`](./Data_Model_Relationship_Guide.csv). Core patterns are summarized below.
 
-| Relationship | Source → Target | Meaning |
+| Relationship | Source ??? Target | Meaning |
 |---|---|---|
-| `uses` | Threat Actor / Intrusion Set → Malware / Tool / Infrastructure | Attribution of capability |
-| `attributed-to` | Intrusion Set → Threat Actor Group | Analytical attribution claim |
-| `targets` | Intrusion Set / Malware → Organization / Sector / Vulnerability | Targeting assertion |
-| `originates-from` | Threat Actor → Location | Geographic nexus claim |
-| `communicates-with` | Threat Actor → Channel | Adversary communication vector |
-| `has` | Channel → Narrative | Narrative carried by a channel |
-| `related-to` | Any → Any | Contextual association (catch-all; required for Observable anchoring) |
-| `exploits` | Malware → Vulnerability | Technical exploitation assertion |
-| `delivers` | Infrastructure → Malware | Delivery mechanism |
-| `resolves-to` | Domain Name → IPv4 | DNS resolution |
-| `belongs-to` | IPv4 → Autonomous System | Network ownership |
-| `part-of` | System → Infrastructure / Individual → Organization | Membership or composition |
-| `sighted-at` | Observable / Indicator → System / Organization | Internal observation (IR containers only) |
-| `references` | Report → External Reference | Source provenance chain |
+| `uses` | Threat Actor / Intrusion Set ??? Malware / Tool / Infrastructure | Attribution of capability |
+| `attributed-to` | Intrusion Set ??? Threat Actor Group | Analytical attribution claim |
+| `targets` | Intrusion Set / Malware ??? Organization / Sector / Vulnerability | Targeting assertion |
+| `originates-from` | Threat Actor ??? Location | Geographic nexus claim |
+| `communicates-with` | Threat Actor ??? Channel | Adversary communication vector |
+| `has` | Channel ??? Narrative | Narrative carried by a channel |
+| `related-to` | Any ??? Any | Contextual association (catch-all; required for Observable anchoring) |
+| `exploits` | Malware ??? Vulnerability | Technical exploitation assertion |
+| `delivers` | Infrastructure ??? Malware | Delivery mechanism |
+| `resolves-to` | Domain Name ??? IPv4 | DNS resolution |
+| `belongs-to` | IPv4 ??? Autonomous System | Network ownership |
+| `part-of` | System ??? Infrastructure / Individual ??? Organization | Membership or composition |
+| `sighted-at` | Observable / Indicator ??? System / Organization | Internal observation (IR containers only) |
+| `references` | Report ??? External Reference | Source provenance chain |
 
 **Observable-to-Identity anchoring rule:** The Observable is always the relationship source. The Identity (Threat Actor, Intrusion Set, or Organization) is always the target. Relationship type is always `related-to`.
 
@@ -126,8 +126,8 @@ All relationships must be semantically grounded in source assertions or strong a
 
 | Container | Scope | Contains Sightings? |
 |---|---|---|
-| **Report** | External source reporting — what the world says | No |
-| **Incident Response** | Internal investigations and sensor alerts — what we observe | Yes |
+| **Report** | External source reporting ??? what the world says | No |
+| **Incident Response** | Internal investigations and sensor alerts ??? what we observe | Yes |
 
 Sightings are strictly scoped to Incident Response containers and must target a System, Individual, or Organization. They are never created inside Report containers.
 
@@ -149,10 +149,10 @@ All connectors deduplicate via **External Reference URL lookup**. If an object w
 ### Identity Inheritance
 
 Every object created by a connector inherits:
-- `createdBy` — the connector's registered author identity
-- `objectMarking` — TLP marking definitions (explicitly initialized; never left as empty list)
-- `confidence` — source-derived, connector-configurable
-- `created` / `modified` — source publication timestamps where available
+- `createdBy` ??? the connector's registered author identity
+- `objectMarking` ??? TLP marking definitions (explicitly initialized; never left as empty list)
+- `confidence` ??? source-derived, connector-configurable
+- `created` / `modified` ??? source publication timestamps where available
 
 ### Deterministic IDs
 
@@ -160,7 +160,7 @@ Connectors generate deterministic STIX IDs via `pycti`'s `generate_id` utilities
 
 ### Error Handling
 
-Connectors do not fail silently. All graph write errors are logged at `ERROR` level with the full object payload. Partial bundle failures do not abort the run — the connector continues and reports a summary at completion.
+Connectors do not fail silently. All graph write errors are logged at `ERROR` level with the full object payload. Partial bundle failures do not abort the run ??? the connector continues and reports a summary at completion.
 
 ### Configuration
 

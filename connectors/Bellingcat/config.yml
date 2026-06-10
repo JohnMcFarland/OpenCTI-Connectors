@@ -1,0 +1,23 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Bellingcat'
+  scope: 'bellingcat'
+  log_level: 'info'
+bellingcat:
+  base_url: 'https://www.bellingcat.com'
+  categories: 'news,open-source-in-short,resources'
+  poll_interval: 21600
+  request_delay: 3
+  max_posts: 0
+  playwright_nav_timeout: 60000
+  render_retries: 3
+  confidence: 60
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'

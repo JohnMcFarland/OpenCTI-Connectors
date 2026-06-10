@@ -1,0 +1,4 @@
+pycti==6.9.13
+PyPDF2==3.0.1
+python-magic==0.4.27
+requests>=2.32.0

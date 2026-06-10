@@ -1,0 +1,25 @@
+# =============================================================================
+# CISA Connector — Configuration
+# =============================================================================
+
+opencti:
+  url: "${OPENCTI_URL}"
+  token: "${IC_OPENCTI_CONNECTOR_TOKEN}"
+
+connector:
+  id: "7f3a9c2e-4b81-4d7e-9f3a-2c5e8b1d6f4a"
+  type: "EXTERNAL_IMPORT"
+  name: "CISA"
+  scope: "application/pdf"
+  log_level: "info"
+  run_interval: 86400
+  auto_commit: true
+
+plugins:
+  cisa:
+    enabled: true
+    feeds:
+      - "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+      - "https://www.cisa.gov/cybersecurity-advisories/ics-advisories.xml"
+    max_per_run: 20
+    rate_limit_delay: 1.0

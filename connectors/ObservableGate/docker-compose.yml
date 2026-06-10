@@ -1,0 +1,60 @@
+version: "3"
+
+services:
+  connector-observable-gate:
+    image: opencti/connector-observable-gate:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      # ---------------------------------------------------------------
+      # OpenCTI Platform Connection
+      # Required. The connector authenticates as the user bound to this token.
+      # All connector-created objects will carry this user as createdBy.
+      # ---------------------------------------------------------------
+      - OPENCTI_BASE_URL=           # e.g. http://opencti:8080
+      - OPENCTI_TOKEN=              # Connector service account token
+
+      # ---------------------------------------------------------------
+      # Connector Identity
+      # CONNECTOR_ID must be a stable UUID v4 (generate once with uuidgen).
+      # Reusing a UUID across connectors will cause registration conflicts.
+      # ---------------------------------------------------------------
+      - CONNECTOR_ID=               # UUID v4 -- generate with: uuidgen
+      - CONNECTOR_NAME=ObservableGate
+      - CONNECTOR_SCOPE=application/json
+      - CONNECTOR_LOG_LEVEL=info    # debug | info | warning | error
+
+      # ---------------------------------------------------------------
+      # Gate Parameters
+      # ---------------------------------------------------------------
+      # Seconds between full promotion + reconciliation cycles.
+      - GATE_POLL_INTERVAL=3600
+
+      # Confidence score assigned to Indicators with Attack Pattern context only
+      # (no adversary or victim relationships on the source Observable).
+      # Matches the platform OSINT confidence baseline.
+      - GATE_CONFIDENCE_FLOOR=15
+
+      # Confidence score assigned when adversary or victim relationship context
+      # is present on the source Observable. Reserved below 100 to distinguish
+      # machine-promoted from analyst-reviewed Indicators.
+      - GATE_CONFIDENCE_CEILING=85
+
+      # Days before a decaying Indicator (qualifying condition lapsed) is revoked.
+      # During this window valid_until signals downstream TAXII consumers
+      # that the detection rule is in sunset.
+      - GATE_DECAY_DAYS=30
+
+      # Dry run mode. When true, all write operations are logged but not
+      # committed. Set to true for pre-flight simulation on first deployment.
+      - GATE_DRY_RUN=false
+
+      # Per-cycle error threshold. If exceeded, the active pass is aborted.
+      - GATE_MAX_ERRORS=50
+
+      # Additional Observable entity_types to exclude beyond the hardcoded
+      # Network-Traffic exclusion. Comma-separated, e.g. "Process,Directory".
+      - GATE_EXCLUDED_OBSERVABLE_TYPES=
+
+    restart: unless-stopped
