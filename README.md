@@ -170,7 +170,7 @@ All configuration is externalized via Docker Compose environment overrides. No s
 
 ## Deployment
 
-All connectors are deployed as Docker Compose services alongside the OpenCTI stack at `/home/siii/opencti-docker`.
+All connectors are deployed as Docker Compose services alongside the OpenCTI stack.
 
 **Add a connector to the stack:**
 
