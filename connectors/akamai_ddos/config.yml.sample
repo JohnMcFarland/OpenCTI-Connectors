@@ -1,0 +1,36 @@
+# Akamai DDoS connector — sample config.
+# Copy to config.yml (gitignored) OR set the equivalent environment variables.
+# Env vars take precedence over this file.
+
+opencti:
+  url: "http://localhost:8080"
+  token: "ChangeMe"
+
+connector:
+  id: "ChangeMe-uuid"
+  name: "Akamai DDoS"
+  scope: "incident"
+  duration_period: "PT1H"
+  log_level: "info"
+
+akamai:
+  # EdgeGrid auth — either point at an .edgerc file...
+  edgerc_path: ""
+  # ...or supply the four discrete credentials:
+  host: ""
+  client_token: ""
+  client_secret: ""
+  access_token: ""
+
+  prolexic_enabled: true
+  prolexic_contract: ""
+
+  siem_enabled: true
+  siem_config_ids: ""        # comma-separated config IDs
+  siem_ddos_rule_tags: ""    # comma-separated rule tags that count as DDoS
+
+  initial_lookback_days: 7
+  source_ip_top_n: 1000
+  target_org_name: ""        # Organization that owns the targeted assets
+  tlp: "TLP:AMBER+STRICT"
+  confidence: 80

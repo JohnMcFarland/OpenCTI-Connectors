@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.env
+config.yml
+.edgerc
+state/
+*.log
+.venv/

@@ -1,0 +1,31 @@
+services:
+  connector-akamai-ddos:
+    build: .
+    container_name: connector-akamai-ddos
+    restart: always
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${AKAMAI_DDOS_CONNECTOR_ID}
+      - CONNECTOR_NAME=Akamai DDoS
+      - CONNECTOR_SCOPE=incident
+      - CONNECTOR_DURATION_PERIOD=PT1H
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Akamai EdgeGrid ---
+      - AKAMAI_HOST=${AKAMAI_HOST}
+      - AKAMAI_CLIENT_TOKEN=${AKAMAI_CLIENT_TOKEN}
+      - AKAMAI_CLIENT_SECRET=${AKAMAI_CLIENT_SECRET}
+      - AKAMAI_ACCESS_TOKEN=${AKAMAI_ACCESS_TOKEN}
+      # --- Prolexic (L3/L4) ---
+      - AKAMAI_PROLEXIC_ENABLED=true
+      - AKAMAI_PROLEXIC_CONTRACT=${AKAMAI_PROLEXIC_CONTRACT}
+      # --- SIEM (L7) ---
+      - AKAMAI_SIEM_ENABLED=true
+      - AKAMAI_SIEM_CONFIG_IDS=${AKAMAI_SIEM_CONFIG_IDS}
+      - AKAMAI_SIEM_DDOS_RULE_TAGS=${AKAMAI_SIEM_DDOS_RULE_TAGS}
+      # --- behavior ---
+      - AKAMAI_INITIAL_LOOKBACK_DAYS=7
+      - AKAMAI_SOURCE_IP_TOP_N=1000
+      - AKAMAI_TARGET_ORG_NAME=${AKAMAI_TARGET_ORG_NAME}
+      - AKAMAI_TLP=TLP:AMBER+STRICT
+      - AKAMAI_CONFIDENCE=80
