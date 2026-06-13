@@ -1,0 +1,37 @@
+# ScienceDaily OpenCTI connector — GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  sciencedaily:
+    build: .
+    container_name: opencti-connector-sciencedaily
+    environment:
+      # --- OpenCTI platform connection ---
+      # OPENCTI_URL is the canonical platform pointer (pycti opencti.url).
+      # Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: SCIENCEDAILY_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=ScienceDaily
+      - CONNECTOR_SCOPE=sciencedaily
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - SCIENCEDAILY_BASE_URL=https://www.sciencedaily.com
+      - SCIENCEDAILY_POLL_INTERVAL=86400      # seconds between enumeration runs (24h)
+      - SCIENCEDAILY_REQUEST_DELAY=2          # seconds between successive renders / fetches
+      - SCIENCEDAILY_MAX_REPORTS=0            # 0 = unlimited; set to 3 for a bounded test run
+      - SCIENCEDAILY_BACKFILL_START_YEAR=0    # 0 = earliest year in the sitemap (full corpus)
+      - PLAYWRIGHT_NAV_TIMEOUT=60000          # ms; page navigation timeout
+      - SCIENCEDAILY_RENDER_RETRIES=3
+      - SCIENCEDAILY_CONFIDENCE=50            # OpenCTI confidence 0-100 (Medium band)
+      - SCIENCEDAILY_REPORT_TYPE=open-source-reporting
+      - SCIENCEDAILY_TLP=TLP:CLEAR
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g
