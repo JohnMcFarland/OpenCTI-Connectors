@@ -1,0 +1,36 @@
+# The DFIR Report OpenCTI connector — GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  dfir-report:
+    build: .
+    container_name: opencti-connector-dfir-report
+    environment:
+      # --- OpenCTI platform connection ---
+      # OPENCTI_URL is the canonical platform pointer (pycti opencti.url).
+      # Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: DFIR_REPORT_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=The DFIR Report
+      - CONNECTOR_SCOPE=dfir-report
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - DFIR_REPORT_BASE_URL=https://thedfirreport.com
+      - DFIR_REPORT_POLL_INTERVAL=86400    # seconds between full enumeration runs (24h)
+      - DFIR_REPORT_REQUEST_DELAY=3        # seconds between successive renders / API pages
+      - DFIR_REPORT_MAX_REPORTS=0          # 0 = unlimited; set to 3 for a bounded test run
+      - PLAYWRIGHT_NAV_TIMEOUT=60000       # ms; page navigation timeout
+      - DFIR_REPORT_RENDER_RETRIES=3
+      - DFIR_REPORT_CONFIDENCE=80          # OpenCTI confidence 0-100 (High band)
+      - DFIR_REPORT_TYPE=open-source-reporting
+      - DFIR_REPORT_TLP=TLP:CLEAR
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g
