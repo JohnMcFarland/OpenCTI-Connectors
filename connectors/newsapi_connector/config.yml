@@ -1,0 +1,42 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.yml (env vars) or a local override,
+# which is never committed. Environment variables take precedence over anything
+# set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'NewsAPI'
+  scope: 'report'
+  log_level: 'info'
+newsapi:
+  api_key: ''
+  # --- Query behaviour ---
+  language: 'en'
+  sort_by: 'publishedAt'            # publishedAt | relevancy | popularity
+  page_size: 50                     # max 100 (NewsAPI limit)
+  lookback_hours: 24                # window on first run / cursor miss
+  max_pages_per_run: 1              # pages fetched per profile per run
+  daily_request_budget: 90          # max NewsAPI requests per calendar day
+  min_seconds_between_requests: 2   # rate-limit floor
+  max_retries: 5                    # retries on 429 / transient errors
+  max_posts: 0                      # 0 = unlimited; set small for a bounded test
+  # --- Report fields ---
+  report_type: 'open-source-reporting'
+  marking: 'TLP:CLEAR'
+  confidence: 15                    # 0-100; low for unverified OSINT
+  cr_labels: ''                     # comma-separated collection-requirement labels
+  # --- Rendering (Playwright) ---
+  poll_interval: 3600               # seconds between runs
+  request_delay: 3                  # seconds between successive renders
+  playwright_nav_timeout: 60000     # ms navigation timeout
+  render_retries: 3                 # live-render attempts before metadata fallback
+  pdf_max_mb: 12                    # live PDF over this size falls back to metadata render
+  # --- Runtime files / state (defaults resolve next to main.py) ---
+  state_file: ''
+  query_profiles_file: ''
+  domains_allowlist_file: ''
+  paywall_domains_file: ''           # one domain/line; replaces the built-in paywall set
+  sectors_map_file: ''

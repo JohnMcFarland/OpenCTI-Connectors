@@ -1,24 +1,22 @@
-FROM python:3.11-slim
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-WORKDIR /opt/connector
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-     ca-certificates \
-     libmagic1 \
-     libglib2.0-0 \
-     libpango-1.0-0 \
-     libpangoft2-1.0-0 \
-     libpangocairo-1.0-0 \
-     libcairo2 \
-     libfontconfig1 \
-     libgdk-pixbuf-2.0-0 \
-     shared-mime-info \
-     fonts-dejavu-core \
-  && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt /opt/connector/requirements.txt
-RUN pip install --no-cache-dir -r /opt/connector/requirements.txt
-COPY src/ /opt/connector/src/
-RUN mkdir -p /opt/connector/state
-ENV PYTHONPATH="/opt/connector/src"
-CMD ["python", "-u", "/opt/connector/src/connector.py"]
+# Playwright base image: ships a version-matched Chromium plus all browser
+# system dependencies. Keep the pip playwright version (requirements.txt) equal
+# to the image tag below.
+FROM mcr.microsoft.com/playwright/python:v1.49.0-jammy
+
+# libmagic1 before pip: required by python-magic, a pycti dependency that imports
+# the native library at import time.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagic1 && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Browsers are present in the base image; this is a belt-and-suspenders ensure.
+RUN playwright install chromium
+
+COPY . .
+
+# Persistent state (cursors, daily budget, dedup cache) is mounted here.
+RUN mkdir -p /app/state
+CMD ["python", "main.py"]

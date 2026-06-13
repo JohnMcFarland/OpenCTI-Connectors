@@ -1,61 +1,70 @@
+# NewsAPI OpenCTI connector — template compose file.
+# Contains NO credentials, tokens, or instance-specific values. Supply real
+# values via a local docker-compose.override.yml (never committed).
 services:
-  connector-newsapi-custom:
+  connector-newsapi:
     build: .
     image: newsapi_connector:latest
-    restart: unless-stopped
+    container_name: opencti-connector-newsapi
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g
     environment:
-      # --- OpenCTI ---
+      # --- OpenCTI platform connection ---
       - OPENCTI_URL=http://opencti:8080
-      - OPENCTI_TOKEN=                          # OpenCTI service account token for this connector
+      - OPENCTI_TOKEN=                          # connector service-account token
 
       # --- Connector identity ---
-      - CONNECTOR_ID=                           # Generate: python3 -c "import uuid; print(uuid.uuid4())"
-      - CONNECTOR_NAME=NewsAPI_Custom
+      - CONNECTOR_ID=                           # generate once: python3 -c "import uuid; print(uuid.uuid4())"
+      - CONNECTOR_NAME=NewsAPI
       - CONNECTOR_SCOPE=report
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
       - CONNECTOR_LOG_LEVEL=info
-      - CONNECTOR_REFRESH_INTERVAL=3600         # Seconds between runs (default: 1 hour)
-      - CONNECTOR_RUN_AND_TERMINATE=false
 
       # --- NewsAPI ---
-      - NEWSAPI_API_KEY=                        # Your NewsAPI.org API key
+      - NEWSAPI_API_KEY=                        # your NewsAPI.org API key
 
-      # --- Query behavior ---
+      # --- Query behaviour ---
       - NEWSAPI_LANGUAGE=en
       - NEWSAPI_SORT_BY=publishedAt             # publishedAt | relevancy | popularity
-      - NEWSAPI_PAGE_SIZE=50                    # Max 100 (NewsAPI limit)
-      - NEWSAPI_LOOKBACK_HOURS=24               # How far back to fetch on first run or cursor miss
-      - NEWSAPI_MAX_PAGES_PER_RUN=1             # Pages to fetch per profile per run
-      - NEWSAPI_DAILY_REQUEST_BUDGET=90         # Max API requests per calendar day
-      - NEWSAPI_MIN_SECONDS_BETWEEN_REQUESTS=2  # Rate limiting floor
-      - NEWSAPI_MAX_RETRIES=5                   # Retries on 429/transient errors
+      - NEWSAPI_PAGE_SIZE=50                    # max 100 (NewsAPI limit)
+      - NEWSAPI_LOOKBACK_HOURS=24               # window on first run / cursor miss
+      - NEWSAPI_MAX_PAGES_PER_RUN=1             # pages per profile per run
+      - NEWSAPI_DAILY_REQUEST_BUDGET=90         # max NewsAPI requests per calendar day
+      - NEWSAPI_MIN_SECONDS_BETWEEN_REQUESTS=2  # rate-limit floor
+      - NEWSAPI_MAX_RETRIES=5                   # retries on 429 / transient errors
+      - NEWSAPI_MAX_POSTS=0                     # 0 = unlimited; set to e.g. 3 for a bounded test
 
       # --- Report metadata ---
-      # NEWSAPI_REPORT_TYPE must exist in your OpenCTI report_types vocabulary.
-      # Standard value: threat-report. Custom value example: Open Source Report
-      - NEWSAPI_REPORT_TYPE=threat-report
-      # NEWSAPI_MARKING must match an existing marking definition name in your instance.
-      # Common values: TLP:WHITE, TLP:CLEAR, TLP:GREEN
-      - NEWSAPI_MARKING=TLP:WHITE
+      # NEWSAPI_REPORT_TYPE is registered in the report_types vocabulary at startup.
+      - NEWSAPI_REPORT_TYPE=open-source-reporting
+      # NEWSAPI_MARKING must match a marking definition name in your instance.
+      - NEWSAPI_MARKING=TLP:CLEAR
       - NEWSAPI_CONFIDENCE=15                   # 0-100
-      - NEWSAPI_CR_LABELS=                      # Comma-separated collection requirement labels (optional)
-      - NEWSAPI_TECHNICAL_CREATOR=[C]NewsAPI    # Identity label used in markdown attachments
+      - NEWSAPI_CR_LABELS=                      # comma-separated collection-requirement labels (optional)
 
-      # --- PDF attachment ---
-      - NEWSAPI_ATTACH_PDF=true                 # Render and attach article PDF to each report
-      - NEWSAPI_PDF_MAX_MB=12                   # Skip PDF upload if render exceeds this size
-      - NEWSAPI_PDF_TIMEOUT=30                  # HTTP timeout for article fetch (seconds)
+      # --- Rendering (Playwright) ---
+      - NEWSAPI_POLL_INTERVAL=3600              # seconds between runs
+      - NEWSAPI_REQUEST_DELAY=3                 # seconds between successive renders
+      - PLAYWRIGHT_NAV_TIMEOUT=60000            # ms navigation timeout
+      - NEWSAPI_RENDER_RETRIES=3                # live-render attempts before metadata fallback
+      - NEWSAPI_PDF_MAX_MB=12                   # live PDF over this size falls back to metadata render
 
-      # --- Runtime config (volume-mounted files) ---
-      - NEWSAPI_DOMAINS_ALLOWLIST_FILE=/opt/connector/config/domains_allowlist.txt
-      - NEWSAPI_QUERY_PROFILES_FILE=/opt/connector/config/query_profiles.json
+      # --- Runtime config files (baked into the image; override paths if mounting) ---
+      - NEWSAPI_STATE_FILE=/app/state/state.json
+      - NEWSAPI_QUERY_PROFILES_FILE=/app/query_profiles.json
+      - NEWSAPI_DOMAINS_ALLOWLIST_FILE=/app/domains_allowlist.txt
+      # Optional: one paywalled domain per line; if set, replaces the built-in
+      # paywall list (those domains skip live render and use a metadata PDF).
+      # - NEWSAPI_PAYWALL_DOMAINS_FILE=/app/paywall_domains.txt
 
     volumes:
-      # Persistent state (cursors, dedup cache, daily budget tracking)
-      - ./state:/opt/connector/state
-      # Runtime config — edit these files without rebuilding the image
-      - ./src/domains_allowlist.txt:/opt/connector/config/domains_allowlist.txt:ro
-      - ./src/query_profiles.json:/opt/connector/config/query_profiles.json:ro
+      # Persistent state (cursors, dedup cache, daily budget tracking).
+      - ./state:/app/state
+      # Edit collection scope without rebuilding the image.
+      - ./query_profiles.json:/app/query_profiles.json:ro
+      - ./domains_allowlist.txt:/app/domains_allowlist.txt:ro
 
     networks:
       - default
@@ -63,4 +72,4 @@ services:
 networks:
   default:
     external: true
-    name: opencti-docker_default  # Replace with your OpenCTI Docker network name
+    name: opencti-docker_default  # replace with your OpenCTI Docker network name
