@@ -1,0 +1,22 @@
+opencti:
+  url: 'ChangeMe'
+  token: 'ChangeMe'
+  ssl_verify: False
+
+connector:
+  id: 'CHANGE_ME'
+  type: 'EXTERNAL_IMPORT'
+  name: 'CrowdStrike True Detections'
+  scope: 'crowdstrike_true_detections'
+  confidence_level: 100 # From 0 (Unknown) to 100 (Fully trusted)
+  update_existing_data: true
+  log_level: 'info'
+
+crowdstrike_true_detections:
+  interval:  1,
+  client_id: 'CHANGEME'
+  client_secret: 'CHANGEME'
+  organization_name: 'ChangeMe'
+  organizations_marking_definitions: 'TLP:CLEAR'
+  attack_patterns_marking_definitions: 'TLP:CLEAR'
+  default_marking_definitions: 'TLP:RED'
