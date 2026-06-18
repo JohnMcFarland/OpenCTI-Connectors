@@ -94,7 +94,7 @@ docker compose logs -f
 
 Each run produces a `report` SDO titled `Threat Fox Feed YYYY-MM-DD`. The report:
 - Is typed `report_types: ["observable-feed"]` — a deliberate open-vocabulary value distinguishing this automated observable feed from analyst-authored `threat-report` products (see `CONNECTOR_SCOPE.md`)
-- Is authored by the `[C]ThreatFox` system identity
+- Is authored by the `ThreatFox` organization identity
 - Contains `object_refs` for all objects produced in the run
 - Uses a deterministic UUID keyed on the date — same-day re-runs merge into the same report
 

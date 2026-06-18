@@ -17,7 +17,7 @@ The connector ingests recent IOC data from the ThreatFox API (abuse.ch) and conv
 - Creation of reporter identity entities from the ThreatFox `reporter` field
 - Creation of autonomous system entities from ASN tags
 - Creation of port-only network-traffic SCOs for `ip:port` IOCs
-- Report container creation per calendar day, authored by `[C]ThreatFox`
+- Report container creation per calendar day, authored by `ThreatFox`
 - Stateful incremental polling with delta-based lookback
 - Cross-feed observable deduplication via STIX-standard deterministic UUIDs
 
@@ -80,7 +80,7 @@ The connector was designed against the platform's custom relationship guide. The
 
 ### Identity authorship
 
-The `[C]ThreatFox` system identity (`identity_class: organization`) is the `created_by_ref` on all Report containers. Individual reporter identities are the `created_by_ref` on their respective Observables, reflecting that the observable was submitted to ThreatFox by that reporter.
+The `ThreatFox` organization identity (`identity_class: organization`) is the `created_by_ref` on all Report containers. (This identity was previously named `[C]ThreatFox`; existing reports were re-authored via `scripts/migrate_threatfox_reports.py`.) Individual reporter identities are the `created_by_ref` on their respective Observables, reflecting that the observable was submitted to ThreatFox by that reporter.
 
 ---
 
@@ -112,4 +112,4 @@ ThreatFox reporters are community-sourced handles of variable quality. Many repo
 
 ### No TLP escalation
 
-All objects are marked `TLP:CLEAR`, consistent with ThreatFox's public feed policy. The connector has no mechanism to apply higher TLP markings to specific IOC subsets.
+All objects are marked `TLP:CLEAR`, consistent with ThreatFox's public feed policy. Objects reference the platform's canonical TLP:CLEAR marking id (`marking-definition--613f2e26-407d-48c7-9eca-b8e91df99dc9`); the connector does not emit its own marking-definition SDO. (An earlier version fabricated a TLP:CLEAR marking under a non-canonical id, creating a duplicate marking distinct from the platform's — corrected.) The connector has no mechanism to apply higher TLP markings to specific IOC subsets.

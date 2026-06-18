@@ -13,7 +13,11 @@ THREATFOX_MAX_DAYS = 7  # API hard cap — get_iocs does not return data older t
 CONFIDENCE_MULTIPLIER = 0.8
 
 # --- TLP Marking ---
-TLP_CLEAR_ID = "marking-definition--94868c89-83c2-464b-929b-a1a8aa3c8487"
+# Canonical STIX 2.1 / OpenCTI built-in TLP:CLEAR (formerly TLP:WHITE) marking ID.
+# Referencing this id makes OpenCTI link to its shipped TLP:CLEAR marking. Do NOT
+# substitute a custom UUID — a non-canonical id fabricates a duplicate TLP:CLEAR
+# marking distinct from the platform's, which is the bug this value replaced.
+TLP_CLEAR_ID = "marking-definition--613f2e26-407d-48c7-9eca-b8e91df99dc9"
 
 # --- OpenCTI Connector Config (from env) ---
 OPENCTI_URL = os.environ.get("OPENCTI_URL", "http://localhost:8080")
@@ -24,15 +28,18 @@ CONNECTOR_SCOPE = os.environ.get("CONNECTOR_SCOPE", "threatfox")
 CONNECTOR_LOG_LEVEL = os.environ.get("CONNECTOR_LOG_LEVEL", "info")
 CONNECTOR_INTERVAL = int(os.environ.get("CONNECTOR_INTERVAL", "360"))  # minutes
 
-# --- [C]ThreatFox connector identity ---
-# Deterministic identity SDO for the connector itself.
-# Used as created_by_ref on Report containers.
-# The namespace UUID is stable and non-sensitive — it is a synthetic identifier,
-# not a credential. It should not be changed after first deployment as it anchors
-# the [C]ThreatFox identity's deterministic UUID in the graph.
+# --- ThreatFox connector identity ---
+# Deterministic identity SDO for the connector itself, used as created_by_ref on
+# Report containers. The author was renamed from "[C]ThreatFox" to "ThreatFox";
+# the deterministic id is keyed on 'threatfox' so the emitted SDO carries a fresh
+# stix id rather than one historically bound to the old [C]ThreatFox node (which
+# would risk OpenCTI matching/renaming the stale node). OpenCTI reconciles this
+# identity by its name-derived standard_id, so the authoritative key is the name.
+# The namespace UUID is a stable, non-sensitive synthetic identifier (not a
+# credential).
 _THREATFOX_NAMESPACE = uuid.UUID("ab12c3d4-e5f6-7890-abcd-ef1234567890")
-CTHREATFOX_IDENTITY_ID = f"identity--{uuid.uuid5(_THREATFOX_NAMESPACE, 'cthreatfox')}"
-CTHREATFOX_IDENTITY_NAME = "[C]ThreatFox"
+THREATFOX_IDENTITY_ID = f"identity--{uuid.uuid5(_THREATFOX_NAMESPACE, 'threatfox')}"
+THREATFOX_IDENTITY_NAME = "ThreatFox"
 
 # --- Reporters to skip identity creation for ---
 ANONYMOUS_REPORTERS = {"unknown", "anonymous", "", "0"}

@@ -12,7 +12,7 @@ from pycti import OpenCTIConnectorHelper
 
 from . import config
 from .mitre_lookup import MitreLookup
-from .stix_converter import StixConverter, CTHREATFOX_IDENTITY
+from .stix_converter import StixConverter
 from .threatfox_client import ThreatFoxClient
 from .uuid_generator import report_id
 
@@ -116,10 +116,10 @@ class ThreatFoxConnector:
         content_ids = [
             obj["id"] for obj in stix_objects
             if obj.get("type") not in ("marking-definition",)
-            and obj.get("id") != config.CTHREATFOX_IDENTITY_ID
+            and obj.get("id") != config.THREATFOX_IDENTITY_ID
         ]
 
-        # Resolve the internal OpenCTI ID for the [C]ThreatFox identity.
+        # Resolve the internal OpenCTI ID for the ThreatFox identity.
         # pycti report.create() createdBy requires the internal UUID, not the STIX ID.
         # Use name-based lookup — standard_id may diverge from computed value due to
         # OpenCTI worker-side ID derivation differences.
@@ -129,7 +129,7 @@ class ThreatFoxConnector:
                 filters={
                     "mode": "and",
                     "filters": [
-                        {"key": "name", "values": [config.CTHREATFOX_IDENTITY_NAME],
+                        {"key": "name", "values": [config.THREATFOX_IDENTITY_NAME],
                          "operator": "eq", "mode": "or"},
                         {"key": "entity_type", "values": ["Organization"],
                          "operator": "eq", "mode": "or"},
@@ -140,11 +140,11 @@ class ThreatFoxConnector:
             )
             if isinstance(identities, list) and identities:
                 created_by_internal_id = identities[0]["id"]
-                logger.info("Resolved [C]ThreatFox identity: %s", created_by_internal_id)
+                logger.info("Resolved ThreatFox identity: %s", created_by_internal_id)
             else:
-                logger.warning("Could not resolve [C]ThreatFox identity by name — createdBy will be unset")
+                logger.warning("Could not resolve ThreatFox identity by name — createdBy will be unset")
         except Exception as e:
-            logger.warning("Could not resolve [C]ThreatFox identity ID: %s", e)
+            logger.warning("Could not resolve ThreatFox identity ID: %s", e)
 
         # Resolve the internal OpenCTI ID for TLP:CLEAR marking definition.
         marking_internal_id = None

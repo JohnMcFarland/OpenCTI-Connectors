@@ -35,21 +35,16 @@ from .uuid_generator import (
 
 logger = logging.getLogger(__name__)
 
-TLP_CLEAR = {
-    "type": "marking-definition",
-    "spec_version": "2.1",
-    "id": config.TLP_CLEAR_ID,
-    "created": "2017-01-20T00:00:00.000Z",
-    "definition_type": "tlp",
-    "definition": {"tlp": "clear"},
-    "name": "TLP:CLEAR",
-}
+# TLP:CLEAR is platform-shipped. Every object references the canonical marking id
+# (config.TLP_CLEAR_ID) and the connector does NOT emit a marking-definition SDO:
+# emitting one previously fabricated a duplicate TLP:CLEAR under a non-standard id.
+# OpenCTI resolves the canonical id to its built-in marking on ingest.
 
-CTHREATFOX_IDENTITY = {
+THREATFOX_IDENTITY = {
     "type": "identity",
     "spec_version": "2.1",
-    "id": config.CTHREATFOX_IDENTITY_ID,
-    "name": config.CTHREATFOX_IDENTITY_NAME,
+    "id": config.THREATFOX_IDENTITY_ID,
+    "name": config.THREATFOX_IDENTITY_NAME,
     "identity_class": "organization",
     "object_marking_refs": [config.TLP_CLEAR_ID],
 }
@@ -105,7 +100,7 @@ class StixConverter:
                 except Exception as exc:
                     logger.warning("Skipping IOC %s: %s", ioc_id, exc)
 
-        all_objects: list[dict] = [TLP_CLEAR, CTHREATFOX_IDENTITY]
+        all_objects: list[dict] = [THREATFOX_IDENTITY]
         all_objects.extend(self._identities.values())
         all_objects.extend(self._malware_sdos.values())
         all_objects.extend(self._autonomous_systems.values())
