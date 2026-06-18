@@ -166,7 +166,7 @@ class ThreatFoxConnector:
                     "sourced from the ThreatFox abuse.ch feed."
                 ),
                 "published": ts,
-                "report_types": ["threat-report"],
+                "report_types": ["observable-feed"],
                 "stix_id": report_id(date_str),
                 "update": True,
             }

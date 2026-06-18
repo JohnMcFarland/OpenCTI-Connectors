@@ -41,6 +41,10 @@ The connector models ThreatFox IOCs as STIX Cyber Observables (SCOs) rather than
 
 All objects produced by each run are referenced in a dated Report container (`Threat Fox Feed YYYY-MM-DD`). This ensures every observable and relationship in the graph is traceable to its source event, supports access control scoping, and enables lifecycle management by report date.
 
+### Report typing: `observable-feed`
+
+The Report container is typed `report_types: ["observable-feed"]` rather than the OpenCTI default `threat-report`. `report_types` is an OpenCTI open vocabulary, so `observable-feed` is a deliberately defined value, not a platform-provided one — OpenCTI auto-creates the vocabulary entry on first ingest. The distinction is analytical, not cosmetic: these containers are automated, machine-generated aggregations of community-sourced observables, not finished analyst-authored intelligence products. Typing them `observable-feed` keeps them separable from `threat-report` products in filters, dashboards, and access policies, and signals to consumers that the container asserts containment of feed data, not a vetted assessment. The container entity type remains **Report** (external intelligence), consistent with the repository container rules; only the open-vocab type label differs.
+
 ### Deterministic identity
 
 All STIX IDs are generated via UUIDv5 with stable namespace keys. This provides:
