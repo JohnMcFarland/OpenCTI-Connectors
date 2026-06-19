@@ -2,7 +2,7 @@
 URLHaus connector for OpenCTI.
 
 Ingests active malware distribution URLs and associated payload hashes
-from abuse.ch URLHaus into OpenCTI as a daily scoped threat-report container.
+from abuse.ch URLHaus into OpenCTI as a daily scoped observable-feed Report container.
 
 Data model compliance:
   - No Indicator objects created (createIndicator=False on all observables)
@@ -13,7 +13,8 @@ Data model compliance:
       Observable → related-to → Software      (Any → Any)
       Observable → related-to → Organization  (Any → Any)
       Observable → related-to → Observable    (Any → Any)
-  - abuse.ch Identity resolved at startup; reused across ThreatFox and URLHaus
+  - URLHaus Organization identity resolved/created at startup; authors the
+    daily report container and every ingested object
   - Large object_refs handled via report.create() + per-object
     add_stix_object_or_stix_relationship() — never via send_stix2_bundle
 
@@ -229,7 +230,7 @@ class URLHausConnector:
         self.client = URLHausClient(api_key=self.api_key)
 
         self._tlp_clear_id: str = self._resolve_tlp_clear()
-        self._abuse_ch_id: str = self._resolve_abuse_ch_identity()
+        self._urlhaus_id: str = self._resolve_urlhaus_identity()
 
         # Per-type TTL-aware caches: normalized_name → (opencti_id, monotonic_ts)
         self._malware_cache:  dict[str, tuple[str, float]] = {}
@@ -263,34 +264,33 @@ class URLHausConnector:
         )
         return result["id"]
 
-    def _resolve_abuse_ch_identity(self) -> str:
+    def _resolve_urlhaus_identity(self) -> str:
         existing = self.helper.api.identity.read(
             filters={
                 "mode": "and",
-                "filters": [{"key": "name", "values": ["abuse.ch"]}],
+                "filters": [{"key": "name", "values": ["URLHaus"]}],
                 "filterGroups": [],
             }
         )
         if existing:
             self.helper.connector_logger.info(
-                "Resolved existing abuse.ch identity", {"id": existing["id"]}
+                "Resolved existing URLHaus identity", {"id": existing["id"]}
             )
             return existing["id"]
 
         created = self.helper.api.identity.create(
             type="Organization",
-            name="abuse.ch",
+            name="URLHaus",
             description=(
-                "Swiss nonprofit tracking malicious internet infrastructure, "
-                "including botnet C2 servers, malware distribution URLs, and "
-                "phishing sites. Operates URLHaus, ThreatFox, Feodo Tracker, "
-                "SSL Blacklist, and YARA."
+                "URLHaus is the abuse.ch project tracking malware distribution "
+                "URLs and their payloads. Authoring identity for the URLHaus "
+                "feed's report containers and ingested objects."
             ),
             objectMarking=[self._tlp_clear_id],
             confidence=CONFIDENCE,
         )
         self.helper.connector_logger.info(
-            "Created abuse.ch Organization identity", {"id": created["id"]}
+            "Created URLHaus Organization identity", {"id": created["id"]}
         )
         return created["id"]
 
@@ -425,8 +425,8 @@ class URLHausConnector:
         result = self.helper.api.report.create(
             name=name,
             published=published,
-            report_types=["threat-report"],
-            createdBy=self._abuse_ch_id,
+            report_types=["observable-feed"],
+            createdBy=self._urlhaus_id,
             objectMarking=[self._tlp_clear_id],
             confidence=CONFIDENCE,
             description=(
@@ -509,7 +509,7 @@ class URLHausConnector:
                     f"Threat category: {threat}. Status at ingestion: online."
                 ),
             },
-            createdBy=self._abuse_ch_id,
+            createdBy=self._urlhaus_id,
             objectMarking=[self._tlp_clear_id],
             createIndicator=False,
         )
@@ -517,7 +517,7 @@ class URLHausConnector:
         object_ids.append(url_id)
         processed_url_ids[url_value] = url_id
 
-        rel = self._create_rel("related-to", url_id, self._abuse_ch_id, date_added_iso)
+        rel = self._create_rel("related-to", url_id, self._urlhaus_id, date_added_iso)
         if rel:
             object_ids.append(rel)
 
@@ -532,7 +532,7 @@ class URLHausConnector:
                     rel = self._create_rel("related-to", url_id, host_id, date_added_iso)
                     if rel:
                         object_ids.append(rel)
-                    rel = self._create_rel("related-to", host_id, self._abuse_ch_id, date_added_iso)
+                    rel = self._create_rel("related-to", host_id, self._urlhaus_id, date_added_iso)
                     if rel:
                         object_ids.append(rel)
 
@@ -661,14 +661,14 @@ class URLHausConnector:
 
         file_obs = self.helper.api.stix_cyber_observable.create(
             observableData=obs_data,
-            createdBy=self._abuse_ch_id,
+            createdBy=self._urlhaus_id,
             objectMarking=[self._tlp_clear_id],
             createIndicator=False,
         )
         file_id = file_obs["id"]
         object_ids.append(file_id)
 
-        rel = self._create_rel("related-to", file_id, self._abuse_ch_id, firstseen_iso)
+        rel = self._create_rel("related-to", file_id, self._urlhaus_id, firstseen_iso)
         if rel:
             object_ids.append(rel)
 
@@ -701,7 +701,7 @@ class URLHausConnector:
                     "value": host,
                     "x_opencti_score": OBSERVABLE_SCORE,
                 },
-                createdBy=self._abuse_ch_id,
+                createdBy=self._urlhaus_id,
                 objectMarking=[self._tlp_clear_id],
                 createIndicator=False,
             )
@@ -751,7 +751,7 @@ class URLHausConnector:
         try:
             result = self.helper.api.tool.create(
                 name=canonical_name,
-                createdBy=self._abuse_ch_id,
+                createdBy=self._urlhaus_id,
                 objectMarking=[self._tlp_clear_id],
                 confidence=CONFIDENCE,
             )
@@ -815,7 +815,7 @@ class URLHausConnector:
                         f"submission context."
                     ),
                 },
-                createdBy=self._abuse_ch_id,
+                createdBy=self._urlhaus_id,
                 objectMarking=[self._tlp_clear_id],
                 createIndicator=False,
             )
@@ -869,7 +869,7 @@ class URLHausConnector:
             result = self.helper.api.malware.create(
                 name=name,
                 is_family=True,
-                createdBy=self._abuse_ch_id,
+                createdBy=self._urlhaus_id,
                 objectMarking=[self._tlp_clear_id],
                 confidence=CONFIDENCE,
             )
@@ -897,7 +897,7 @@ class URLHausConnector:
                 "fromId": from_id,
                 "toId": to_id,
                 "relationship_type": rel_type,
-                "createdBy": self._abuse_ch_id,
+                "createdBy": self._urlhaus_id,
                 "objectMarking": [self._tlp_clear_id],
                 "confidence": CONFIDENCE,
             }
