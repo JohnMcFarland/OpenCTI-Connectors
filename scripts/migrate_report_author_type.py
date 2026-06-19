@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Backfill migration: retype and re-author existing ThreatFox Report containers.
+"""Backfill migration: retype and re-author existing feed Report containers.
 
-Brings already-ingested ThreatFox Report containers in line with the current
-connector convention:
+Generic tool for bringing already-ingested Report containers in line with a
+connector's current convention:
 
-  * report_types : <whatever>      ->  ["observable-feed"]
-  * created_by   : "[C]ThreatFox"  ->  "ThreatFox"
+  * report_types : <whatever>   ->  --report-type   (default: ["observable-feed"])
+  * created_by   : --old-author ->  --new-author
+
+It is connector-agnostic — point it at any feed's reports via --old-author /
+--new-author / --name-prefix. Used so far for ThreatFox and URLHaus (see
+scripts/README.md for exact invocations).
 
 This script mutates existing data in the OpenCTI knowledge graph. It is built to
 be safe to run against a persistent, long-lived graph:
@@ -16,8 +20,8 @@ be safe to run against a persistent, long-lived graph:
                                 re-running changes nothing.
   * Non-destructive          -- it edits only two fields on Report SDOs. It
                                 creates no relationships, deletes nothing, and
-                                never touches the old "[C]ThreatFox" identity
-                                (left orphaned, not removed).
+                                never touches the old author identity (left
+                                orphaned, not removed).
   * Auditable / reversible   -- in --apply mode it writes a JSONL journal of
                                 each report's prior (report_types, created_by)
                                 BEFORE the change, so the operation can be
@@ -26,21 +30,25 @@ be safe to run against a persistent, long-lived graph:
 Selection
 ---------
 Reports are selected by their authoring identity, not by free-text name: every
-Report whose created_by is the old author ("[C]ThreatFox", the migration
-source) or already the new author ("ThreatFox", so re-runs can still fix the
-type). A name-prefix guard (default "Threat Fox Feed") is then applied
-in-process as a second safety filter, so the script cannot touch a same-authored
-report that is not part of the ThreatFox feed.
+Report whose created_by is --old-author (the migration source) or already
+--new-author (so re-runs can still fix the type). A --name-prefix guard is then
+applied in-process as a second safety filter, so the script cannot touch a
+same-authored report that is not part of the target feed.
+
+Scope note: this migrates *Report containers only*. Observables and other SDOs
+that were authored by --old-author are NOT re-authored. If a connector stamps
+created_by on every object (e.g. URLHaus), those objects keep the old author
+until separately remapped.
 
 Environment
 -----------
-  OPENCTI_URL or OPENCTI_BASE_URL   OpenCTI base URL. The ThreatFox connector
-                                    uses OPENCTI_URL; both names are accepted
-                                    here because the repo-wide URL/BASE_URL
-                                    naming is an open cross-connector decision
-                                    and this script does not silently force one.
-                                    When run inside the OpenCTI Docker network
-                                    this is typically http://opencti:8080.
+  OPENCTI_URL or OPENCTI_BASE_URL   OpenCTI base URL. Connectors here use
+                                    OPENCTI_URL; both names are accepted because
+                                    the repo-wide URL/BASE_URL naming is an open
+                                    cross-connector decision and this script does
+                                    not silently force one. Inside the OpenCTI
+                                    Docker network this is usually
+                                    http://opencti:8080.
   OPENCTI_TOKEN                     API token with write access.
 
 See scripts/README.md for how to run this inside the OpenCTI Docker network.
@@ -93,7 +101,7 @@ def resolve_url() -> str:
 
 
 def identity_filter(name: str) -> dict:
-    """Match an Organization identity by exact name (mirrors the connector)."""
+    """Match an Organization identity by exact name (mirrors the connectors)."""
     return {
         "mode": "and",
         "filters": [
@@ -125,10 +133,7 @@ def ensure_new_identity(client: OpenCTIApiClient, name: str, apply: bool) -> dic
     created = client.identity.create(
         type="Organization",
         name=name,
-        description=(
-            "ThreatFox (abuse.ch) feed source. Authoring identity for ThreatFox "
-            "observable-feed report containers."
-        ),
+        description=f"Authoring identity for {name} feed report containers.",
     )
     if not (created and created.get("id")):
         sys.exit(f"ERROR: failed to create target author identity '{name}'")
@@ -172,21 +177,26 @@ def collect_reports(client: OpenCTIApiClient, author_ids: list[str],
     return found
 
 
+def _slug(text: str) -> str:
+    return "".join(c if c.isalnum() else "_" for c in text).strip("_").lower() or "feed"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Retype and re-author existing ThreatFox Report containers.",
+        description="Retype and re-author existing feed Report containers.",
     )
-    parser.add_argument("--apply", action="store_true",
-                        help="Perform the mutation. Without this flag the script is a dry run.")
+    parser.add_argument("--old-author", required=True,
+                        help="Current author identity name (migration source), "
+                             "e.g. '[C]ThreatFox' or 'abuse.ch'.")
+    parser.add_argument("--new-author", required=True,
+                        help="Target author identity name, e.g. 'ThreatFox' or 'URLHaus'.")
+    parser.add_argument("--name-prefix", required=True,
+                        help="Only touch reports whose name starts with this "
+                             "(safety guard), e.g. 'Threat Fox Feed' or 'URLHaus Feed'.")
     parser.add_argument("--report-type", default="observable-feed",
                         help="Target report_types value (default: observable-feed).")
-    parser.add_argument("--old-author", default="[C]ThreatFox",
-                        help="Current author identity name (default: [C]ThreatFox).")
-    parser.add_argument("--new-author", default="ThreatFox",
-                        help="Target author identity name (default: ThreatFox).")
-    parser.add_argument("--name-prefix", default="Threat Fox Feed",
-                        help="Only touch reports whose name starts with this "
-                             "(safety guard; default: 'Threat Fox Feed').")
+    parser.add_argument("--apply", action="store_true",
+                        help="Perform the mutation. Without this flag the script is a dry run.")
     parser.add_argument("--batch-size", type=int, default=100,
                         help="Reports per API page (default: 100).")
     parser.add_argument("--journal",
@@ -200,7 +210,7 @@ def main() -> int:
     if not token:
         sys.exit("ERROR: set OPENCTI_TOKEN")
 
-    print(f"== ThreatFox report migration ({mode}) ==")
+    print(f"== report author/type migration ({mode}) ==")
     print(f"  OpenCTI         : {url}")
     print(f"  report_types -> : [{args.report_type!r}]")
     print(f"  author       -> : {args.old_author!r} => {args.new_author!r}")
@@ -233,7 +243,8 @@ def main() -> int:
     journal_fh = None
     if args.apply:
         journal_path = args.journal or (
-            f"threatfox_migration_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.jsonl"
+            f"migrate_{_slug(args.new_author)}_"
+            f"{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.jsonl"
         )
         journal_fh = open(journal_path, "a", encoding="utf-8")
         print(f"  journal         : {journal_path}")

@@ -80,7 +80,7 @@ The connector was designed against the platform's custom relationship guide. The
 
 ### Identity authorship
 
-The `ThreatFox` organization identity (`identity_class: organization`) is the `created_by_ref` on all Report containers. (This identity was previously named `[C]ThreatFox`; existing reports were re-authored via `scripts/migrate_threatfox_reports.py`.) Individual reporter identities are the `created_by_ref` on their respective Observables, reflecting that the observable was submitted to ThreatFox by that reporter.
+The `ThreatFox` organization identity (`identity_class: organization`) is the `created_by_ref` on all Report containers. (This identity was previously named `[C]ThreatFox`; existing reports were re-authored via `scripts/migrate_report_author_type.py`.) Individual reporter identities are the `created_by_ref` on their respective Observables, reflecting that the observable was submitted to ThreatFox by that reporter.
 
 ---
 
