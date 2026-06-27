@@ -1,0 +1,4 @@
+pycti==6.9.13
+playwright==1.49.0
+requests==2.32.3
+PyYAML==6.0.2

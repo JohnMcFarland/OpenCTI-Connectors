@@ -1,0 +1,25 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'The Jamestown Foundation'
+  scope: 'jamestown'
+  log_level: 'info'
+jamestown:
+  base_url: 'https://jamestown.org'
+  post_types: 'posts,brief,report,interview,book'
+  publications: ''            # empty = all series; else comma slugs, e.g. 'tm,mlm,cb'
+  poll_interval: 86400
+  request_delay: 2
+  max_reports: 0
+  playwright_nav_timeout: 60000
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'The Jamestown Foundation'
