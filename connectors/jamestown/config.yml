@@ -12,9 +12,8 @@ connector:
   log_level: 'info'
 jamestown:
   base_url: 'https://jamestown.org'
-  post_types: 'posts,brief,report,interview,book'
-  publications: ''            # empty = all series; else comma slugs, e.g. 'tm,mlm,cb'
-  poll_interval: 86400
+  feed_url: ''                # empty = {base_url}/feed/
+  poll_interval: 3600
   request_delay: 2
   max_reports: 0
   playwright_nav_timeout: 60000

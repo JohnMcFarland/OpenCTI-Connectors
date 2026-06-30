@@ -1,82 +1,124 @@
-# CONNECTOR_SCOPE — The Jamestown Foundation
+# CONNECTOR_SCOPE - The Jamestown Foundation
 
 Decision log for `connectors/jamestown/`. Authoritative for this connector;
 supersedes conversation memory after compaction.
 
-## What it is
+## What it is (current model)
 
-EXTERNAL_IMPORT connector. Ingests the **entire Jamestown Foundation corpus**
-(https://jamestown.org) as container-only OpenCTI **Reports**, one per article,
-each with the live source page attached as a Playwright-rendered PDF. Adapts the
-house style of [DFIR Report] (WordPress REST API enumeration) and
-[ScienceDaily]/[arXiv] (full-corpus, persisted positional cursor, container-only).
+EXTERNAL_IMPORT connector. Ingests new analytical articles from
+https://jamestown.org as container-only OpenCTI Reports, one per RSS feed item, each
+with the live source page attached as a Playwright-rendered PDF. Collection is a
+single forward poll of the main RSS feed. It is forward-only: there is no historical
+backfill on this origin.
 
-## Locked decisions (confirmed with user, 2026-06-26)
+Fixed field mapping (unchanged from the original design):
 
-- **Entire corpus.** All publication series across the `posts` stream (~51.5k items
-  back to ~2004) **plus** the content-bearing custom post types `brief` (921),
-  `report` (83), `interview` (31), `book` (31). User was shown the per-series
-  breakdown and the multi-day Playwright-crawl cost and chose full breadth — the
-  same deliberate choice made for ScienceDaily and arXiv. **Do not narrow to a CTI
-  subset in a future session.** Levers to scope without code edits:
-  `JAMESTOWN_POST_TYPES` (which types) and `JAMESTOWN_PUBLICATIONS` (which series,
-  comma slugs, `posts` only — server-side `?publications=<id>` filter).
-- **Playwright render.** Articles are HTML with no native per-article PDF; each
-  Report gets a full-fidelity rendered PDF (house style). Render failure → skip +
-  advance cursor (logged, never revisited); never a Report without its PDF.
-- **Confidence 50 (Medium).** Expert secondary analysis on primary sources — above
-  press aggregators (would-be lower), at the open-source-reporting baseline shared
-  with ScienceDaily/arXiv. (DFIR is 80 for first-party incident forensics.)
-- **Container-only.** Report containers only — no Observables / SDOs / SROs / labels.
-  Named-entity / IOC extraction is an explicit out-of-scope downstream phase. Keeps
-  the connector purely additive and non-contaminating at full scale. No Labels
-  (reserved for collection requirements).
-- **TLP:CLEAR**, author = single `The Jamestown Foundation` Organization (series
-  identity carried on the External Reference, not as an Organization fan-out),
-  `report_type = open-source-reporting`.
+- Container type: Report (external intelligence). Never Incident Response.
+- TLP: CLEAR. Confidence: 50 (Medium band). report_type: open-source-reporting.
+- Author: the single "The Jamestown Foundation" Organization identity.
+- Name: verbatim feed title. published: RSS pubDate (RFC 822) parsed to ISO 8601.
+- Exactly one External Reference per Report (the article URL).
+- Container-only: no Observables, Domain Objects, Relationships, or Labels. Zero
+  relationships emitted; the relationship CSV is not implicated.
 
-## Collection mechanics
+## Revision 2026-06-30: API/sitemap model superseded by forward-only RSS
 
-- **Enumeration:** WordPress REST API, per post type:
-  `GET /wp-json/wp/v2/<rest_base>?per_page=100&page=N&order=asc&orderby=date`.
-  One pass yields id, link, slug, date_gmt, rendered title/excerpt, and the
-  `class_list` (encodes series/topic/region). Series/topic/region are recorded in
-  the article's External Reference description (`publications-*`, `topic-*`,
-  `region-*` body classes; series names resolved from the `publications` taxonomy).
-- **Cursor (positional, NOT date-valued):** `state[<post_type>] = {page, index}` in
-  OpenCTI connector state, walked ascending one article at a time. A **positional**
-  cursor is mandatory: ~2,300 legacy articles share an identical `1970-01-01`
-  placeholder date (CMS-migration loss), which a date cursor cannot disambiguate.
-  Backfill resumes within the current page; steady state rests at each type's
-  partial tail page and re-checks it each poll for appended articles, rolling to a
-  new page when one fills. One code path for backfill + steady state.
-- **Dedup:** graph-driven via External Reference URL (`external_reference.read` on
-  `url`) before any render. The cursor is the efficiency layer; the graph check is
-  the correctness backstop — idempotent even if state is lost.
-- **Date:** `published = date_gmt + "+00:00"`. The ~2,300 epoch-dated legacy posts
-  are ingested faithfully (no fabricated date).
+This revision is a STRUCTURAL change. It records why the prior model was abandoned
+and what replaced it.
 
-## Known tradeoffs / caveats
+### (a) Supersession of the 2026-06-26 entire-corpus lock
 
-- **Forward-only cursor.** If an old article is *deleted* upstream, ascending page
-  positions shift and an item could be skipped on the affected page. Jamestown is an
-  archive; deletions of decades-old articles are rare. Graph-dedup prevents
-  duplicates on the (common) re-read case; the (rare) skip case is the accepted
-  tradeoff, identical to ScienceDaily. Wiping connector state forces a full
-  re-enumeration that the graph check makes idempotent.
-- **Deep pagination.** The `posts` type is ~516 pages at 100/page; deep WP offsets
-  are O(offset) server-side. `JAMESTOWN_REQUEST_DELAY` paces page fetches to stay
-  polite. Acceptable for a once-through backfill that then rests at the tail.
-- **Series filter is `posts`-only.** The `publications` taxonomy is registered on
-  the main post stream; the custom types (`brief`/`report`/…) are not series-filtered.
+The 2026-06-26 decision (below) locked "ingest the entire corpus" via the WordPress
+REST API plus a positional page/index cursor, with the XML sitemap as the fallback
+enumeration surface. That model is not achievable on this origin and is superseded.
+Reason: the origin blocks both structured enumeration surfaces (see
+BLOCKED-AT-ORIGIN). The RSS feed is the only reachable structured surface, and RSS is
+a recent-items window rather than an archive, so collection is forward-only from
+turn-on. Full historical backfill is not achievable here.
+
+### (b) Four chosen decisions
+
+1. Posts stream only. The main feed is the WordPress posts stream. No custom post
+   types (brief / report / interview / book), no per-series feeds.
+2. Single main feed, take everything. Every item in the main feed window becomes a
+   Report. No series scoping, no category filtering.
+3. Hourly poll. JAMESTOWN_POLL_INTERVAL default 3600. The window is sampled often
+   enough to keep the burst-day margin (see (d)) wide.
+4. Category terms observed, not bound. Each item's category terms are parsed and the
+   distinct set is logged once per cycle ("Distinct feed categories observed (not
+   bound to Reports): [...]"). They are not written to Reports, Labels, or the
+   External Reference. The intent is to surface the full term set in logs before any
+   later binding decision.
+
+### (c) Finding-2 fix: dedup keyed on deterministic Report id
+
+The prior connector keyed dedup on the External Reference, created before the Report,
+which permanently suppressed an article if the process crashed between the two writes
+(the orphan reference made the URL look "done" with no Report). Additionally, the
+reports GraphQL nested filter on externalReferences.url is unsupported on this
+platform build, so dedup cannot query Reports by reference URL at all.
+
+Fix: derive a deterministic Report STIX id from the article URL
+("report--" + uuid5(NAMESPACE_URL, link)). Dedup checks report.read(id) before
+rendering (so duplicates never trigger a wasted render). A new item creates the
+External Reference (upsert-safe), then the Report with that stix_id (update=True),
+then attaches the PDF. Because the existence check keys on the Report id and not on
+the External Reference, every sub-write is idempotent: a crash anywhere leaves the
+item still "not done" per report.read, and the next poll re-enters and completes it
+while the item is still in the feed window. No compensating deletes, no
+orphan-marker suppression.
+
+### (d) Open failure mode: burst-day feed-window risk
+
+The feed window has a fixed, shallow depth (a small number of most-recent items). If
+a single interval produces more new articles than fit in the window before the next
+poll, the overflow rolls off and is dropped silently. The hourly poll keeps the
+margin wide but does not eliminate the risk. This is the connector's one accepted
+open failure mode, documented rather than mitigated this pass.
+
+## BLOCKED-AT-ORIGIN
+
+The Jamestown origin (nginx behind Cloudflare) blocks the structured enumeration
+surfaces that the original design depended on:
+
+- /wp-json/ (WordPress REST API): HTTP 403.
+- /sitemap*.xml (XML sitemaps): HTTP 403.
+
+The 403 was confirmed three ways: to curl (plain HTTP client), to headless Chromium,
+and to a cleared same-origin in-page fetch. The RSS feed at {base_url}/feed/ is
+reachable (HTTP 200, valid RSS 2.0) with a plain HTTP client, and article pages
+render at HTTP 200. This is the origin constraint that forces the forward-only RSS
+model above. If the origin later unblocks /wp-json/, revisiting the entire-corpus
+model would require re-opening the 2026-06-26 decision deliberately.
+
+## Superseded: 2026-06-26 entire-corpus decision (kept for history)
+
+Recorded here for the decision-log trail; superseded by the 2026-06-30 revision
+above. Do not re-implement without re-opening it deliberately.
+
+- Entire corpus: all publication series across the posts stream (~51.5k items back to
+  ~2004) plus the custom post types brief / report / interview / book. Confirmed with
+  user 2026-06-26 after showing the per-series breakdown and crawl cost.
+- Enumeration: WordPress REST API per post type
+  (GET /wp-json/wp/v2/<rest_base>?per_page=100&page=N&order=asc&orderby=date), with a
+  positional {page, index} cursor (positional because ~2,300 legacy posts share an
+  identical 1970-01-01 placeholder date that a date cursor cannot disambiguate), and
+  the XML sitemap as the fallback surface.
+- Series/topic/region were read from each post's class_list and recorded on the
+  External Reference.
+
+All of that machinery has been removed (not patched): the page-walk, the
+cursor/state usage, the publications-taxonomy and series-slug code, and the
+JAMESTOWN_POST_TYPES and JAMESTOWN_PUBLICATIONS variables. The parked orderby/cursor
+finding is moot because the code is gone.
 
 ## Enforcement-gate caveat
 
-As recorded for [arXiv]: the gate tooling CLAUDE.md names (`scripts/preflight.py`,
-the `datamodel/` package, the pytest scaffolding) is absent from this checkout, and
-`data_model/` holds `Data_Model_Relationship_Guide5.csv`. Relationship validation is
-**vacuous here** — the connector emits zero relationships (container-only). Hygiene
-(pin/base/secrets/state) checked manually. Flagged, not silently resolved.
+As recorded for arXiv: the gate tooling CLAUDE.md names (scripts/preflight.py, the
+datamodel/ package, the pytest scaffolding) is absent from this checkout, and
+data_model/ holds Data_Model_Relationship_Guide5.csv. Relationship validation is
+vacuous here: the connector emits zero relationships (container-only). Hygiene
+(pin/base/secrets) checked manually. Flagged, not silently resolved.
 
 [DFIR Report]: ../dfir_report/
 [ScienceDaily]: ../sciencedaily/

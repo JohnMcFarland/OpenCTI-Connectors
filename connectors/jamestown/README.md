@@ -1,69 +1,68 @@
 # The Jamestown Foundation OpenCTI Connector
 
-External-import connector that ingests the entire
-[Jamestown Foundation](https://jamestown.org) corpus into OpenCTI as Report
-containers, one per article, each with the source page attached as a full-fidelity
-PDF.
+External-import connector that ingests new analytical articles from
+[The Jamestown Foundation](https://jamestown.org) into OpenCTI as Report
+containers, one per RSS feed item, each with the source page attached as a
+full-fidelity PDF.
 
 ## Functionality
 
-Enumerates every published item across the configured WordPress post types
-(`posts`, `brief`, `report`, `interview`, `book`) through the site's WordPress REST
-API (`/wp-json/wp/v2/<type>`, ascending by date, paginated to the
-`X-WP-TotalPages` boundary) and creates one OpenCTI **Report** per article. Each
-Report carries the verbatim title, source publication date (`date_gmt`), the
-"The Jamestown Foundation" organization as author, TLP:CLEAR marking, the
-`open-source-reporting` report-type, a Medium-band confidence, and an External
-Reference to the canonical article URL. The live article is rendered to PDF with
-headless Chromium (Playwright) and attached to the Report.
+Polls the site's main RSS feed (`{base_url}/feed/`) on a fixed interval and creates
+one OpenCTI **Report** per feed item. Each Report carries the verbatim title, the
+source publication date (RSS `pubDate`), the "The Jamestown Foundation" organization
+as author, a TLP:CLEAR marking, the `open-source-reporting` report-type, a
+Medium-band confidence, and an External Reference to the canonical article URL. The
+live article page is rendered to PDF with headless Chromium (Playwright) and attached
+to the Report.
 
-The corpus spans every Jamestown publication series — **Eurasia Daily Monitor,
-China Brief, Terrorism Monitor, Militant Leadership Monitor, North Caucasus Weekly,
-Terrorism Focus, Prism, Spotlight on Terror, Jamestown Perspectives**, and the rest.
-The series, topics, and regions for each article (read from the post's WordPress
-`class_list`) are recorded in the Report's External Reference description, preserving
-series provenance without fanning out author identities or applying Labels.
+The feed fetch uses a plain HTTP client (browser User-Agent); Playwright is used
+only to render article pages, never to fetch the feed.
 
-Because the REST API supplies title, publication date, and excerpt directly,
-Playwright is used **only** to render the page to PDF — there is no on-page metadata
-scraping.
+## Collection model (forward-only RSS)
+
+The Jamestown origin (nginx behind Cloudflare) blocks the WordPress REST API
+(`/wp-json/`) and the XML sitemaps (`/sitemap*.xml`): both return HTTP 403 to a plain
+HTTP client, to headless Chromium, and to a cleared same-origin in-page fetch. The
+RSS feed is the only reachable structured surface, and article pages render at 200.
+
+Consequences, stated plainly:
+
+- **Posts stream only.** The main feed is the WordPress posts stream. There is no
+  custom-post-type ingestion (brief / report / interview / book) and no per-series
+  feed polling.
+- **No historical backfill.** RSS exposes only a recent-items window, not the
+  archive. Collection is **forward-only from the moment the connector is turned on**.
+  Articles published before turn-on are not retrievable on this origin.
+- **Burst-day window risk.** The feed window has a fixed depth (a small number of
+  most-recent items). If a single interval produces more new articles than fit in the
+  window before the next poll, the overflow items roll off the window and are dropped
+  silently. The hourly default keeps this margin wide, but a heavy publishing burst
+  between two polls can still drop items. This is the connector's one accepted
+  failure mode.
+
+### Deduplication and crash-safety
+
+Deduplication keys on a **deterministic Report STIX id** derived from the article URL
+(`uuid5` over the URL). Before rendering, the connector checks `report.read(id)` and
+skips if the Report already exists (so duplicate feed items never trigger a wasted
+render). For a new item it creates the External Reference (upsert-safe), then the
+Report (with the deterministic `stix_id`), then attaches the PDF. Because the
+existence check keys on the Report id and not on the External Reference, every
+sub-write is idempotent: a crash at any point leaves the item still "not done", and
+the next poll re-enters and completes it while the item is still in the feed window.
+No compensating deletes and no orphan-marker suppression.
 
 ## Design philosophy
 
 **Container-only.** The connector creates Report containers and nothing else: no
-Domain Objects, no Observables, no Relationships. Jamestown analysis is narrative
-geopolitical and counterterrorism reporting; named-entity / IOC extraction is a
-separate, out-of-scope downstream phase. Keeping the connector container-only makes
-it purely additive to the knowledge graph and prevents it from acting as a
-contamination vector, even across the full ~51k-item corpus.
+Domain Objects, no Observables, no Relationships, no Labels. Named-entity / IOC
+extraction is a separate, out-of-scope downstream phase. Keeping the connector
+container-only makes it purely additive to the knowledge graph and prevents it from
+acting as a contamination vector.
 
-## Collection model
-
-- **Enumeration via the WordPress REST API**, per post type, ascending by date.
-- **Positional cursor**, persisted in OpenCTI connector state as
-  `{<post_type>: {page, index}}`, advancing one article at a time. A positional
-  (page/index) cursor is used rather than a date cursor because ~2,300 legacy
-  articles share an identical `1970-01-01` placeholder date (lost in a CMS
-  migration) that a date cursor cannot disambiguate. An interrupted multi-day
-  backfill resumes within the current page; steady state rests at each type's tail
-  page and re-checks it each poll for newly-appended articles. One code path covers
-  backfill and steady state.
-- **Graph-driven deduplication** via External Reference URL lookup, performed before
-  any render. The cursor is the efficiency layer; the graph check is the correctness
-  backstop — idempotent even if connector state is lost.
-- **Failed render means the article is skipped** (logged, cursor advanced), never a
-  Report without its PDF.
-
-## Key decisions
-
-- **Report, not Incident Response.** Jamestown is third-party assertion (external
-  intelligence), never first-hand observation. No Sightings.
-- **Author is the "The Jamestown Foundation" organization**, never the connector
-  service account. A single author for every series; series identity is carried on
-  the External Reference, not as an Organization fan-out.
-- **TLP:CLEAR** — the content is free and publicly published.
-- **Confidence 50 (Medium)** — expert secondary analysis built on primary sources.
-- **No Labels** — reserved for explicit collection requirements.
+Category terms on each feed item are parsed and the distinct set is logged once per
+poll cycle for visibility, but they are **not** bound to Reports, Labels, or the
+External Reference.
 
 ## Configuration
 
@@ -73,19 +72,18 @@ All configuration is supplied via environment variables (in
 
 | Variable | Type | Default | Description |
 |---|---|---|---|
-| `OPENCTI_URL` | string | — | Platform URL (pycti `opencti.url`). |
-| `OPENCTI_TOKEN` | string | — | Connector service-account token. |
-| `CONNECTOR_ID` | uuid | — | Unique connector ID (`uuidgen`). |
+| `OPENCTI_URL` | string | (none) | Platform URL (pycti `opencti.url`). |
+| `OPENCTI_TOKEN` | string | (none) | Connector service-account token. |
+| `CONNECTOR_ID` | uuid | (none) | Unique connector ID (`uuidgen`). |
 | `CONNECTOR_TYPE` | string | `EXTERNAL_IMPORT` | Connector type. |
 | `CONNECTOR_NAME` | string | `The Jamestown Foundation` | Connector name. |
 | `CONNECTOR_SCOPE` | string | `jamestown` | Connector scope. |
 | `CONNECTOR_LOG_LEVEL` | string | `info` | Log verbosity. |
 | `JAMESTOWN_BASE_URL` | string | `https://jamestown.org` | Source site root. |
-| `JAMESTOWN_POST_TYPES` | csv | `posts,brief,report,interview,book` | WP post types (rest_base) to enumerate. |
-| `JAMESTOWN_PUBLICATIONS` | csv | _(empty)_ | Restrict the `posts` stream to these series slugs (e.g. `tm,mlm,cb`). Empty = all series. Server-side filter; `posts` type only. |
-| `JAMESTOWN_POLL_INTERVAL` | int (s) | `86400` | Seconds between full enumeration runs (24h). |
-| `JAMESTOWN_REQUEST_DELAY` | int (s) | `2` | Delay between successive renders / API pages. |
-| `JAMESTOWN_MAX_REPORTS` | int | `0` | Per-run cap on new Reports across all types. `0` = unlimited. Set small for a bounded test. |
+| `JAMESTOWN_FEED_URL` | string | (empty) | RSS feed URL. Empty resolves to `{base_url}/feed/`. |
+| `JAMESTOWN_POLL_INTERVAL` | int (s) | `3600` | Seconds between forward feed polls (1h). |
+| `JAMESTOWN_REQUEST_DELAY` | int (s) | `2` | Delay between successive renders. |
+| `JAMESTOWN_MAX_REPORTS` | int | `0` | Per-run cap on new Reports. `0` = unlimited. Set small for a bounded test. |
 | `PLAYWRIGHT_NAV_TIMEOUT` | int (ms) | `60000` | Page navigation timeout. |
 | `JAMESTOWN_RENDER_RETRIES` | int | `3` | Render attempts before skipping an article. |
 | `JAMESTOWN_CONFIDENCE` | int | `50` | OpenCTI confidence 0-100 (Medium band). |
@@ -93,44 +91,30 @@ All configuration is supplied via environment variables (in
 | `JAMESTOWN_TLP` | string | `TLP:CLEAR` | Marking applied to every Report. |
 | `JAMESTOWN_AUTHOR_NAME` | string | `The Jamestown Foundation` | Author Organization name. |
 
-### Series slugs (for `JAMESTOWN_PUBLICATIONS`)
-
-`edm` (Eurasia Daily Monitor), `cb` (China Brief), `tm` (Terrorism Monitor),
-`mlm` (Militant Leadership Monitor), `ncw` (North Caucasus Weekly),
-`tf` (Terrorism Focus), `prism`, `st` (Spotlight on Terror),
-`jamestown-perspectives`, `is`/`in-a-fortnight`/`fir`, `hot-issues`, … (the full
-list is enumerable at `/wp-json/wp/v2/publications`).
-
 ## Deployment
 
 1. Place under `~/opencti-docker/connectors/custom/jamestown/`.
 2. Add the service to `docker-compose.override.yml` with real values
    (`OPENCTI_URL`, `OPENCTI_TOKEN`, `CONNECTOR_ID`).
-3. Build with `--no-cache` and bring up; tail logs and watch for the resolved
-   author and marking UUIDs, the loaded series-term count, and the per-type
-   `resuming at page=…` lines.
-4. Validate with a bounded test (`JAMESTOWN_MAX_REPORTS=3`) before the full backfill
-   (`=0`). To scope, set `JAMESTOWN_PUBLICATIONS` (e.g. `tm,mlm,cb`) and/or trim
-   `JAMESTOWN_POST_TYPES`.
+3. Build with `--no-cache` and bring up; tail logs and watch for the resolved author
+   and marking UUIDs, the feed item count, and the distinct-categories line.
+4. Validate with a bounded test (`JAMESTOWN_MAX_REPORTS=3`) before running unbounded
+   (`=0`) on the hourly interval.
 
 ## Known limitations
 
-- **Full backfill is large.** ~51k items at one Playwright render each is a
-  multi-day, multi-hundred-GB crawl. This breadth is intentional (see
-  `CONNECTOR_SCOPE.md`); narrow with `JAMESTOWN_PUBLICATIONS` / `JAMESTOWN_POST_TYPES`
-  if a subset is wanted.
-- **Forward-only cursor.** An upstream *deletion* of an old article shifts ascending
-  page positions and could skip an item on the affected page; deletions of
-  decades-old archive articles are rare. Wiping connector state forces a full,
-  graph-idempotent re-enumeration.
-- **Legacy dates.** ~2,300 pre-migration posts carry a `1970-01-01` placeholder
-  publication date; these are ingested faithfully rather than given a fabricated date.
-- **Series filter is `posts`-only.** The custom post types are not series-filtered.
+- **Forward-only, no backfill.** Pre-turn-on articles are not retrievable (origin
+  blocks the API and sitemaps). See Collection model.
+- **Burst-day window risk.** A publishing burst that exceeds the feed window between
+  two polls drops the overflow items silently. The hourly poll keeps the margin wide
+  but does not eliminate the risk.
+- **Posts stream only.** No custom post types and no per-series scoping.
+- **Items without a parseable pubDate are skipped** (logged), never dated to
+  ingestion time.
 - **Live-page rendering** archives current page state, which can drift from the
   publication snapshot (consent banners, late edits).
-- **Cloudflare.** Large first-run backfills may trigger rate limiting or bot
-  challenges; the connector backs off, skips a persistently blocked article, and
-  picks it up on a later poll.
+- **Cloudflare.** A transient challenge backs off and retries; a persistently blocked
+  article is skipped and retried on the next poll while it remains in the window.
 
 ## License note
 

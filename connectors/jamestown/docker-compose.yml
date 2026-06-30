@@ -1,4 +1,4 @@
-# The Jamestown Foundation OpenCTI connector — GitHub template compose file.
+# The Jamestown Foundation OpenCTI connector - GitHub template compose file.
 # Contains NO credentials, tokens, UUIDs, or instance-specific values.
 # The local docker-compose.override.yml supplies real values and is never
 # committed.
@@ -22,10 +22,9 @@ services:
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - JAMESTOWN_BASE_URL=https://jamestown.org
-      - JAMESTOWN_POST_TYPES=posts,brief,report,interview,book  # which WP post types to ingest
-      - JAMESTOWN_PUBLICATIONS=                 # empty = all series; else comma slugs e.g. tm,mlm,cb
-      - JAMESTOWN_POLL_INTERVAL=86400           # seconds between full enumeration runs (24h)
-      - JAMESTOWN_REQUEST_DELAY=2               # seconds between successive renders / API pages
+      - JAMESTOWN_FEED_URL=                     # empty = {base_url}/feed/
+      - JAMESTOWN_POLL_INTERVAL=3600            # seconds between forward feed polls (1h)
+      - JAMESTOWN_REQUEST_DELAY=2               # seconds between successive renders
       - JAMESTOWN_MAX_REPORTS=0                 # 0 = unlimited; set to 3 for a bounded test run
       - PLAYWRIGHT_NAV_TIMEOUT=60000            # ms; page navigation timeout
       - JAMESTOWN_RENDER_RETRIES=3

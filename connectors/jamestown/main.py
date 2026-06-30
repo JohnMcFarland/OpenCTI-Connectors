@@ -3,71 +3,63 @@ The Jamestown Foundation OpenCTI connector.
 
 Purpose
 -------
-External-import connector that ingests the entire Jamestown Foundation corpus
-(https://jamestown.org) — every analytical article across all publication series
-(Eurasia Daily Monitor, China Brief, Terrorism Monitor, Militant Leadership
-Monitor, North Caucasus Weekly, Terrorism Focus, Prism, Spotlight on Terror,
-Jamestown Perspectives, and the rest) plus the Briefs, Reports, Interviews, and
-Books custom post types — and creates one OpenCTI Report container per item, with
-the source page attached as a full-fidelity PDF.
+External-import connector that ingests new analytical articles from
+https://jamestown.org as container-only OpenCTI Reports, one per feed item, with
+the live source page attached as a full-fidelity PDF.
 
-Collection model
-----------------
-Jamestown runs WordPress and exposes a live WordPress REST API, so collection
-enumerates each post type directly through the API rather than scraping front-end
-archives (mirrors The DFIR Report's API-first approach, at ~550x the scale):
+Collection model (forward-only RSS)
+-----------------------------------
+The Jamestown origin (nginx behind Cloudflare) blocks the WordPress REST API
+(/wp-json/) and the XML sitemaps (/sitemap*.xml): both return HTTP 403 to a plain
+HTTP client, to headless Chromium, and to a cleared same-origin in-page fetch. The
+only reachable structured surface is the main RSS feed at {base_url}/feed/
+(HTTP 200, valid RSS 2.0), and individual article pages render at 200.
 
-  - GET /wp-json/wp/v2/<rest_base>?per_page=100&page=N&order=asc&orderby=date
-    paginated to the X-WP-TotalPages boundary, for each configured post type
-    (posts, brief, report, interview, book). The API returns a stable post id,
-    canonical link, slug, date_gmt, rendered title/excerpt, and the term
-    class_list (which encodes the publication series, topics, and regions) in a
-    single pass.
+Collection is therefore a single forward poll of the main feed:
 
-Enumeration is ASCENDING (oldest -> newest) behind a persisted, *positional*
-cursor {<post_type>: {page, index}} held in OpenCTI connector state. A positional
-(page/index) cursor is required rather than a date cursor because ~2,300 legacy
-articles share an identical 1970-01-01 placeholder date (lost in a CMS migration),
-which a date-valued cursor cannot disambiguate. The cursor advances one article at
-a time, so an interrupted multi-day backfill resumes within the current page rather
-than restarting. The same cursor drives steady state: once a type's newest page is
-exhausted the cursor rests at its tail, and each subsequent poll re-fetches that
-page to pick up freshly-appended articles, rolling onto a new page when one fills.
-One uniform code path covers both backfill and steady state, per post type.
+  - GET {base_url}/feed/ with a plain requests.Session (browser UA), parsed with
+    feedparser. Per item the connector reads link, title, summary/description,
+    pubDate, and category terms.
 
-Per-article publication date comes from the API field date_gmt (naive UTC, marked
-+00:00 on use); title and description come from the rendered title/excerpt fields;
-the publication series, topics, and regions come from the post's class_list and are
-recorded on the article's External Reference. Playwright is used purely to render
-the live page to PDF — there is no on-page metadata scraping, because the API
-already supplies everything.
+RSS exposes only a recent-items window, not the archive, so collection is
+FORWARD-ONLY from the moment the connector is turned on. Full historical backfill
+is not achievable on this origin. This supersedes the prior (2026-06-26) decision
+to ingest the entire corpus via the API/sitemap (see CONNECTOR_SCOPE.md).
+
+Per-item publication date comes from the RSS pubDate (RFC 822), parsed to a
+timezone-aware datetime and emitted as ISO 8601. An item with no parseable pubDate
+is skipped (never dated to ingestion time). Playwright is used purely to render the
+article page to PDF: the feed fetch itself never goes through Playwright.
+
+Deduplication and crash-safety
+------------------------------
+Dedup keys on a deterministic Report STIX id derived from the article URL
+(uuid5 over the URL). Before rendering, the connector checks report.read(id) and
+skips if the Report already exists. For a new item it creates the External
+Reference (upsert-safe), then the Report (with the deterministic stix_id), then
+attaches the PDF. Because the existence check keys on the Report id (not on the
+External Reference), every sub-write is idempotent and a crash anywhere leaves the
+item still "not done"; the next poll re-enters and completes it while the item is
+still in the feed window. No compensating deletes, no orphan-marker suppression.
 
 Design philosophy
 -----------------
 Container-only. Creates Report containers and nothing else: no Domain Objects, no
-Observables, no Relationships. Jamestown analysis is narrative geopolitical and
-counterterrorism reporting; named-entity / IOC extraction is a separate, explicitly
-out-of-scope downstream phase. Keeping this connector container-only makes it purely
-additive and prevents it from acting as a graph-contamination vector, even across
-the full ~51k-item corpus.
+Observables, no Relationships, no Labels. Named-entity / IOC extraction is a
+separate, out-of-scope downstream phase. Keeping this connector container-only
+makes it purely additive and prevents it from acting as a graph-contamination
+vector.
 
 Key decisions (see CONNECTOR_SCOPE.md)
 --------------------------------------
 - Container type: Report (external intelligence). Never Incident Response.
 - TLP: CLEAR (free, publicly published think-tank source).
-- Author: the "The Jamestown Foundation" Organization identity (single author for
-  every series — series identity is carried on the External Reference, not as a
-  fan-out of Organization identities). Never the connector account.
+- Author: the single "The Jamestown Foundation" Organization identity. Never the
+  connector account.
 - report_type: "open-source-reporting" (custom open-vocabulary value).
-- Confidence: a single blanket value (Medium band — expert secondary analysis built
-  on primary sources; above press aggregators, below first-party incident forensics).
-- Scope levers (no code edits): JAMESTOWN_POST_TYPES selects which post types to
-  ingest; JAMESTOWN_PUBLICATIONS (comma slugs, posts type only) restricts to chosen
-  series server-side. Empty == entire corpus.
-- Deduplication: graph-driven via External Reference URL lookup, backed by the
-  persisted positional cursor. The graph lookup is the correctness backstop
-  (idempotent even if state is lost); the cursor is the efficiency layer that avoids
-  re-reading the whole corpus from the graph every poll.
+- Confidence: a single blanket value (Medium band: expert secondary analysis built
+  on primary sources).
+- Category terms are observed (logged once per cycle) but NOT bound to Reports.
 
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
@@ -77,8 +69,11 @@ import re
 import sys
 import time
 import html
+import uuid
+from email.utils import parsedate_to_datetime
 
 import requests
+import feedparser
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
@@ -90,21 +85,13 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 # Constants
 # --------------------------------------------------------------------------- #
 
-# Browser User-Agent for BOTH the API HTTP client and the Playwright context. A
-# realistic UA keeps enumeration and rendering consistent and avoids UA gating
+# Browser User-Agent for BOTH the feed HTTP client and the Playwright context. A
+# realistic UA keeps fetching and rendering consistent and avoids UA gating
 # (Jamestown is Cloudflare-fronted).
 BROWSER_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
-
-# WordPress REST API page size. The API caps per_page at 100.
-API_PER_PAGE = 100
-
-# Hard ceiling on API pages walked PER post type, a safety stop against a
-# pagination bug that never returns a terminating (empty/short) page. The largest
-# type (posts) is ~516 pages at 100/page; this leaves ample headroom.
-MAX_API_PAGES = 5000
 
 # Recycle the Chromium browser after this many renders to cap memory growth on a
 # host that co-locates Elasticsearch.
@@ -112,20 +99,6 @@ BROWSER_RECYCLE_EVERY = 50
 
 # Substrings indicating a Cloudflare interstitial rather than article content.
 CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
-
-# Post types ingested by default: the main article stream plus the four
-# content-bearing custom post types. (analyst/event/career/press-releases and the
-# volume-* index types are deliberately excluded — they are people/calendar/index
-# objects, not analytical articles.)
-DEFAULT_POST_TYPES = "posts,brief,report,interview,book"
-
-# class_list term prefixes that carry the metadata we record on the External
-# Reference: publication series, topic, and region.
-CLASS_PREFIXES = {
-    "publications-": "series",
-    "topic-": "topic",
-    "region-": "region",
-}
 
 
 def _strip_html(value: str) -> str:
@@ -143,20 +116,13 @@ def _strip_html(value: str) -> str:
     return html.unescape(no_tags).strip()
 
 
-def _humanize(slug: str) -> str:
-    """Turn a taxonomy slug into a readable label ('military-security' -> 'Military
-    Security'). Used as a fallback when a slug is not in a resolved name map.
-    """
-    return " ".join(part for part in slug.replace("_", "-").split("-") if part).title()
-
-
 class JamestownConnector:
-    """External-import connector that mirrors Jamestown articles into Reports."""
+    """External-import connector that mirrors Jamestown feed items into Reports."""
 
     def __init__(self):
         """Load configuration, build the OpenCTI helper, and prepare the HTTP
-        client. Fixed graph references and the publication-series name map are
-        resolved later in run() via _resolve_graph_references().
+        client. Fixed graph references are resolved later in run() via
+        _resolve_graph_references().
         """
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
         config = (
@@ -173,36 +139,28 @@ class JamestownConnector:
             default="https://jamestown.org",
         ).rstrip("/")
 
-        # Post types to enumerate (WP rest_base values), comma-separated.
-        post_types_raw = get_config_variable(
-            "JAMESTOWN_POST_TYPES", ["jamestown", "post_types"], config,
-            default=DEFAULT_POST_TYPES,
-        ) or DEFAULT_POST_TYPES
-        self.post_types = [t.strip() for t in post_types_raw.split(",") if t.strip()]
-
-        # Optional publication-series restriction (comma slugs, e.g. "tm,mlm,cb").
-        # Applied server-side to the 'posts' type only (the publications taxonomy is
-        # registered on posts). Empty == every series.
-        publications_raw = get_config_variable(
-            "JAMESTOWN_PUBLICATIONS", ["jamestown", "publications"], config,
+        # Main RSS feed. Defaults to {base_url}/feed/; overridable for testing or
+        # if the origin moves the feed.
+        self.feed_url = get_config_variable(
+            "JAMESTOWN_FEED_URL", ["jamestown", "feed_url"], config,
             default="",
-        ) or ""
-        self.publication_slugs = [s.strip() for s in publications_raw.split(",") if s.strip()]
+        ) or f"{self.base_url}/feed/"
 
-        # Poll interval (seconds) between full enumeration runs.
+        # Poll interval (seconds) between forward feed polls. Hourly by default so
+        # the recent-items window is sampled often enough to avoid dropping items.
         self.poll_interval = get_config_variable(
             "JAMESTOWN_POLL_INTERVAL", ["jamestown", "poll_interval"], config,
-            isNumber=True, default=86400,  # 24 hours
+            isNumber=True, default=3600,  # 1 hour
         )
 
-        # Politeness delay (seconds) between successive HTTP/render operations.
+        # Politeness delay (seconds) between successive renders.
         self.request_delay = get_config_variable(
             "JAMESTOWN_REQUEST_DELAY", ["jamestown", "request_delay"], config,
             isNumber=True, default=2,
         )
 
-        # Per-run cap on new Reports across all post types. 0 == unlimited. Set
-        # small (e.g. 3) for a bounded test before the full backfill.
+        # Per-run cap on new Reports. 0 == unlimited. Set small (e.g. 3) for a
+        # bounded test.
         self.max_reports = get_config_variable(
             "JAMESTOWN_MAX_REPORTS", ["jamestown", "max_reports"], config,
             isNumber=True, default=0,
@@ -220,7 +178,7 @@ class JamestownConnector:
 
         # --- Report field configuration ------------------------------------ #
         # OpenCTI confidence 0-100. Medium band: expert secondary analysis on
-        # primary sources (above press aggregators, below incident forensics).
+        # primary sources.
         self.confidence = get_config_variable(
             "JAMESTOWN_CONFIDENCE", ["jamestown", "confidence"], config,
             isNumber=True, default=50,
@@ -238,30 +196,34 @@ class JamestownConnector:
             default="The Jamestown Foundation",
         )
 
-        # WP REST API base, derived from the configured base_url.
-        self.api_base = f"{self.base_url}/wp-json/wp/v2"
-
-        # HTTP session for API enumeration, browser UA + JSON accept.
+        # HTTP session for the feed fetch: browser UA + feed/XML accept.
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": BROWSER_UA, "Accept": "application/json"})
+        self.session.headers.update({
+            "User-Agent": BROWSER_UA,
+            "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        })
 
         # Resolved at startup.
         self.author_id = None          # author Organization internal UUID
         self.marking_id = None         # TLP marking internal UUID
-        self.series_names = {}         # publications slug -> display name
-        self.series_ids = {}           # publications slug -> term id (for filtering)
 
     # ------------------------------------------------------------------ #
     # Initialisation
     # ------------------------------------------------------------------ #
 
     def _resolve_graph_references(self):
-        """Resolve fixed graph objects, load the series name map, and verify the
-        API is reachable.
+        """Resolve fixed graph objects and probe the feed.
+
+        Resolves internal OpenCTI UUIDs for the author identity and the TLP
+        marking, registers the report_type vocabulary value, and probes the feed
+        once. The marking resolution is fail-closed (raises). The feed probe is
+        NOT fail-closed: the feed is known-good, so a transient Cloudflare blip at
+        startup is logged and the connector enters the poll loop anyway rather than
+        crash-looping the container.
 
         Raises:
-            RuntimeError: if the marking cannot be resolved or the API is not
-                reachable, since neither can be silently tolerated.
+            RuntimeError: if the marking cannot be resolved, since Reports must not
+                be created without a resolved marking UUID.
         """
         # Author: identity.create is upsert-safe (returns existing if present).
         author = self.helper.api.identity.create(
@@ -305,164 +267,77 @@ class JamestownConnector:
                 f"Add it under Settings -> Taxonomies -> Report types if missing."
             )
 
-        # Publication-series name/id map (the 'publications' taxonomy). Best-effort:
-        # used only to label External References and to translate configured series
-        # slugs into term ids for server-side filtering. A failure degrades to
-        # humanized slugs and (if filtering was requested) an aborted run.
-        self._load_series_map()
-        if self.publication_slugs:
-            missing = [s for s in self.publication_slugs if s not in self.series_ids]
-            if missing:
-                raise RuntimeError(
-                    f"JAMESTOWN_PUBLICATIONS names unknown series slug(s) {missing}; "
-                    f"known slugs: {sorted(self.series_ids)}."
-                )
+        # Feed probe (non-fatal). Logs reachability and the item count.
+        feed = self._fetch_feed()
+        if feed is None:
+            self.helper.log_error(
+                f"Feed {self.feed_url} unreachable at startup; entering poll loop "
+                f"anyway and retrying next cycle."
+            )
+        else:
             self.helper.log_info(
-                f"Series filter active (posts only): {self.publication_slugs}"
+                f"Feed reachable at {self.feed_url}: {len(feed.entries)} items in window."
             )
 
-        # API reachability: confirm the collection surface is up and exposes the
-        # backlog count header on the primary post type.
-        probe_url = f"{self.api_base}/{self.post_types[0]}"
-        try:
-            resp = self.session.get(probe_url, params={"per_page": 1}, timeout=30)
-        except Exception as exc:  # noqa: BLE001
-            raise RuntimeError(f"WordPress REST API unreachable at {probe_url} ({exc}).")
-        if resp.status_code != 200 or "X-WP-Total" not in resp.headers:
-            raise RuntimeError(
-                f"WordPress REST API at {probe_url} returned HTTP {resp.status_code} "
-                f"without an X-WP-Total header; refusing to run."
-            )
-        self.helper.log_info(
-            f"WP REST API reachable: {resp.headers.get('X-WP-Total')} items in "
-            f"'{self.post_types[0]}'. Enumerating types: {self.post_types}."
-        )
+    # ------------------------------------------------------------------ #
+    # Feed fetch and helpers
+    # ------------------------------------------------------------------ #
 
-    def _load_series_map(self):
-        """Populate self.series_names / self.series_ids from the publications
-        taxonomy. Best-effort; logs and continues on failure.
+    def _fetch_feed(self):
+        """Fetch and parse the main RSS feed with the plain HTTP session.
+
+        The feed fetch deliberately does NOT use Playwright (Playwright is for
+        rendering article pages only).
+
+        Returns:
+            feedparser.FeedParserDict on success, or None on any fetch/HTTP error.
         """
         try:
-            resp = self.session.get(
-                f"{self.api_base}/publications",
-                params={"per_page": 100, "_fields": "id,name,slug"},
-                timeout=30,
-            )
+            resp = self.session.get(self.feed_url, timeout=60)
             resp.raise_for_status()
-            for term in resp.json():
-                slug = term.get("slug")
-                if not slug:
-                    continue
-                self.series_names[slug] = _strip_html(term.get("name") or "") or _humanize(slug)
-                self.series_ids[slug] = term.get("id")
-            self.helper.log_info(f"Loaded {len(self.series_names)} publication-series terms.")
-        except Exception as exc:  # noqa: BLE001 - non-fatal
-            self.helper.log_warning(
-                f"Could not load publications taxonomy ({exc}); series labels will be "
-                f"derived from slugs and series filtering is unavailable."
-            )
+        except Exception as exc:  # noqa: BLE001 - cycle is skipped on failure
+            self.helper.log_error(f"Failed to fetch feed {self.feed_url}: {exc}")
+            return None
+        return feedparser.parse(resp.content)
 
-    # ------------------------------------------------------------------ #
-    # Post enumeration (WordPress REST API)
-    # ------------------------------------------------------------------ #
+    @staticmethod
+    def _report_id(link):
+        """Deterministic Report STIX id derived from the article URL.
 
-    def _fetch_page(self, post_type, page):
-        """Fetch one page of a post type, ascending by date.
+        Same URL always maps to the same Report id, which makes the existence
+        check and every write idempotent.
+        """
+        return "report--" + str(uuid.uuid5(uuid.NAMESPACE_URL, link))
 
-        Args:
-            post_type: WP rest_base (e.g. "posts", "brief").
-            page: 1-based page number.
+    @staticmethod
+    def _published_iso(entry):
+        """Parse the RSS pubDate (RFC 822) to a timezone-aware ISO 8601 string.
 
         Returns:
-            list[dict]: enumerated posts (possibly empty past the last page). Each
-            dict has keys: link, slug, date_gmt, title, excerpt, class_list.
-
-        Raises:
-            requests.HTTPError: on a non-200, non-400-past-end response.
+            str ISO 8601 timestamp, or None if there is no parseable pubDate.
         """
-        params = {
-            "per_page": API_PER_PAGE,
-            "page": page,
-            "order": "asc",
-            "orderby": "date",
-            "_fields": "id,link,slug,date_gmt,title,excerpt,class_list",
-        }
-        # Server-side series filter applies to the main post stream only.
-        if post_type == "posts" and self.publication_slugs:
-            params["publications"] = ",".join(
-                str(self.series_ids[s]) for s in self.publication_slugs
-            )
+        raw = entry.get("published") or entry.get("updated")
+        if not raw:
+            return None
+        try:
+            dt = parsedate_to_datetime(raw)
+        except (TypeError, ValueError):
+            return None
+        if dt is None:
+            return None
+        return dt.isoformat()
 
-        resp = self.session.get(f"{self.api_base}/{post_type}", params=params, timeout=60)
-        # Past the last page WP returns 400 (rest_post_invalid_page_number).
-        if resp.status_code == 400 and page > 1:
-            return []
-        resp.raise_for_status()
-        posts = resp.json()
-        if not isinstance(posts, list):
-            return []
-        return [
-            {
-                "post_type": post_type,
-                "link": p.get("link"),
-                "slug": p.get("slug"),
-                "date_gmt": p.get("date_gmt"),
-                "title": (p.get("title") or {}).get("rendered", ""),
-                "excerpt": (p.get("excerpt") or {}).get("rendered", ""),
-                "class_list": p.get("class_list") or [],
-            }
-            for p in posts
-        ]
-
-    def _already_ingested(self, url):
-        """Return True if this article URL already has an External Reference.
-
-        Deduplication is graph-driven and keys off the External Reference this
-        connector creates for each article. external_reference creation is the
-        first write in _create_report and is keyed on url, so the presence of an
-        external reference for a url is the connector's idempotency marker. The
-        positional cursor is only an efficiency layer; this graph check is the
-        correctness backstop, idempotent even if cursor state is lost.
-
-        Args:
-            url: canonical article URL.
-
-        Returns:
-            bool: True if an External Reference with this url already exists.
+    @staticmethod
+    def _entry_categories(entry):
+        """Distinct category terms on a feed item (feedparser maps <category> to
+        entry.tags[*].term).
         """
-        existing_ref = self.helper.api.external_reference.read(
-            filters={
-                "mode": "and",
-                "filters": [{"key": "url", "values": [url]}],
-                "filterGroups": [],
-            }
-        )
-        return existing_ref is not None
-
-    def _parse_class_list(self, class_list):
-        """Extract publication series / topics / regions from a post's class_list.
-
-        Args:
-            class_list: list of WP body-class strings (e.g. "publications-cb",
-                "topic-foreign-policy", "region-china").
-
-        Returns:
-            dict with keys 'series', 'topic', 'region', each a list of display
-            labels (series via the resolved name map, others humanized from slug).
-        """
-        out = {"series": [], "topic": [], "region": []}
-        for cls in class_list or []:
-            for prefix, kind in CLASS_PREFIXES.items():
-                if cls.startswith(prefix):
-                    slug = cls[len(prefix):]
-                    if not slug:
-                        break
-                    if kind == "series":
-                        out["series"].append(self.series_names.get(slug) or _humanize(slug))
-                    else:
-                        out[kind].append(_humanize(slug))
-                    break
-        return out
+        terms = []
+        for tag in entry.get("tags", []) or []:
+            term = (tag.get("term") or "").strip()
+            if term:
+                terms.append(term)
+        return terms
 
     # ------------------------------------------------------------------ #
     # PDF rendering (Playwright)
@@ -564,46 +439,31 @@ class JamestownConnector:
     # Report creation
     # ------------------------------------------------------------------ #
 
-    def _create_report(self, post, pdf_bytes):
-        """Create one Report container for an article and attach its PDF.
+    def _create_report(self, entry, published, pdf_bytes):
+        """Create one Report container for a feed item and attach its PDF.
 
-        Container-only: no object_refs, so the single-step report.create path is
-        used. The publication series, topics, and regions parsed from the post's
-        class_list are recorded in the External Reference description so the
-        series provenance is preserved without fanning out Organization identities
-        or applying Labels.
+        Container-only: no object_refs. The Report carries a deterministic stix_id
+        derived from the article URL so the write is idempotent. Category terms are
+        deliberately NOT written to the Report or the External Reference.
 
         Args:
-            post: enumerated post dict.
+            entry: feedparser entry.
+            published: ISO 8601 published timestamp (already validated non-None).
             pdf_bytes: rendered article PDF.
         """
-        url = post["link"]
-        name = _strip_html(post.get("title") or "") or (post.get("slug") or "report")
-        description = _strip_html(post.get("excerpt") or "")
-
-        # date_gmt is naive UTC (e.g. "2025-12-17T14:00:00"); mark it explicitly.
-        # Note: ~2,300 legacy posts carry a 1970-01-01 placeholder date from a CMS
-        # migration; we ingest that faithfully rather than fabricating a date.
-        date_gmt = post.get("date_gmt")
-        published = f"{date_gmt}+00:00" if date_gmt else None
-
-        meta = self._parse_class_list(post.get("class_list"))
-        ref_bits = []
-        if meta["series"]:
-            ref_bits.append(", ".join(dict.fromkeys(meta["series"])))
-        if meta["topic"]:
-            ref_bits.append("Topics: " + ", ".join(dict.fromkeys(meta["topic"])))
-        if meta["region"]:
-            ref_bits.append("Regions: " + ", ".join(dict.fromkeys(meta["region"])))
-        ref_description = " · ".join(ref_bits) if ref_bits else "Source article on jamestown.org"
+        url = entry.get("link")
+        name = _strip_html(entry.get("title") or "") or url
+        description = _strip_html(entry.get("summary") or "")
+        report_id = self._report_id(url)
 
         external_reference = self.helper.api.external_reference.create(
             source_name=self.author_name,
             url=url,
-            description=ref_description,
+            description="Source article on jamestown.org",
         )
 
         report = self.helper.api.report.create(
+            stix_id=report_id,
             name=name,
             description=description,
             published=published,
@@ -615,7 +475,8 @@ class JamestownConnector:
             update=True,
         )
 
-        file_name = f"jamestown-{post.get('post_type', 'post')}-{post.get('slug') or 'report'}.pdf"
+        slug = url.rstrip("/").rsplit("/", 1)[-1] or "report"
+        file_name = f"jamestown-{slug}.pdf"
         self.helper.api.stix_domain_object.add_file(
             id=report["id"],
             file_name=file_name,
@@ -629,123 +490,91 @@ class JamestownConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
-        """Execute one enumeration-and-ingest pass across all configured post types.
+        """Execute one forward poll of the feed.
 
-        Each post type is walked ascending from its persisted {page, index} cursor.
-        The cursor advances one article at a time; when a type's last (partial) page
-        is reached the cursor rests there so the next poll re-checks it for appended
-        articles. Render failures advance the cursor (the article is logged and not
-        revisited). Returns when every type is exhausted or max_reports is hit.
+        Fetches the feed, logs the distinct category terms observed this cycle
+        (not bound to Reports), then for each item: dedup-checks by deterministic
+        Report id, renders new items, and creates Reports. Order is immaterial
+        because dedup is per-item.
         """
         from playwright.sync_api import sync_playwright  # lazy import
 
-        state = self.helper.get_state() or {}
+        feed = self._fetch_feed()
+        if feed is None:
+            self.helper.log_warning("Feed fetch failed; skipping this cycle.")
+            return
+
+        entries = list(feed.entries)
         work_id = self.helper.api.work.initiate_work(
-            self.helper.connect_id, "The Jamestown Foundation enumeration run"
+            self.helper.connect_id, "The Jamestown Foundation feed poll"
+        )
+        self.helper.log_info(f"Fetched {len(entries)} feed items from {self.feed_url}.")
+
+        # Observe category terms across the cycle; surface them once, bind nothing.
+        observed = sorted({t for e in entries for t in self._entry_categories(e)})
+        self.helper.log_info(
+            f"Distinct feed categories observed (not bound to Reports): {observed}"
         )
 
         processed = 0   # new Reports created
         skipped = 0     # already present in the graph
-        failed = 0      # render failed
-        stop = False
+        failed = 0      # render failed or unparseable date
 
         with sync_playwright() as pw:
             browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
             renders_since_recycle = 0
             try:
-                for post_type in self.post_types:
-                    if stop:
-                        break
-                    tstate = state.get(post_type) or {}
-                    page = max(1, int(tstate.get("page", 1)))
-                    index = max(0, int(tstate.get("index", 0)))
-                    self.helper.log_info(
-                        f"[{post_type}] resuming at page={page}, index={index}."
-                    )
+                for entry in entries:
+                    url = entry.get("link")
+                    if not url:
+                        continue
 
-                    for _ in range(MAX_API_PAGES):
-                        posts = self._fetch_page(post_type, page)
-                        if not posts:
-                            # Past the end. Rest the cursor at this empty page so the
-                            # next poll re-checks here for newly-appended articles.
-                            state[post_type] = {"page": page, "index": 0}
-                            self.helper.set_state(state)
-                            break
-
-                        for idx in range(index, len(posts)):
-                            post = posts[idx]
-                            url = post.get("link")
-
-                            if self.max_reports and processed >= self.max_reports:
-                                self.helper.log_info(
-                                    f"Reached JAMESTOWN_MAX_REPORTS={self.max_reports}; stopping run."
-                                )
-                                stop = True
-                                break
-
-                            if not url:
-                                state[post_type] = {"page": page, "index": idx + 1}
-                                self.helper.set_state(state)
-                                continue
-
-                            if self._already_ingested(url):
-                                skipped += 1
-                                state[post_type] = {"page": page, "index": idx + 1}
-                                self.helper.set_state(state)
-                                continue
-
-                            if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
-                                browser.close()
-                                browser = pw.chromium.launch(
-                                    args=["--no-sandbox", "--disable-dev-shm-usage"]
-                                )
-                                renders_since_recycle = 0
-
-                            pdf_bytes = self._render_with_retry(browser, url)
-                            renders_since_recycle += 1
-
-                            if pdf_bytes is None:
-                                failed += 1
-                                self.helper.log_warning(
-                                    f"Skipping {url}: render failed after retries."
-                                )
-                                state[post_type] = {"page": page, "index": idx + 1}
-                                self.helper.set_state(state)
-                                continue
-
-                            self._create_report(post, pdf_bytes)
-                            processed += 1
-                            state[post_type] = {"page": page, "index": idx + 1}
-                            self.helper.set_state(state)
-                            time.sleep(self.request_delay)
-
-                        if stop:
-                            break
-
-                        if len(posts) < API_PER_PAGE:
-                            # Partial last page: rest here (cursor at the tail) so the
-                            # next poll picks up articles appended to this page.
-                            state[post_type] = {"page": page, "index": len(posts)}
-                            self.helper.set_state(state)
-                            break
-
-                        # Full page consumed: advance to the next page.
-                        page += 1
-                        index = 0
-                        state[post_type] = {"page": page, "index": 0}
-                        self.helper.set_state(state)
-                        time.sleep(self.request_delay)  # politeness between API pages
-                    else:
-                        self.helper.log_warning(
-                            f"[{post_type}] hit MAX_API_PAGES={MAX_API_PAGES} without a "
-                            f"terminating page; the list may be incomplete."
+                    if self.max_reports and processed >= self.max_reports:
+                        self.helper.log_info(
+                            f"Reached JAMESTOWN_MAX_REPORTS={self.max_reports}; stopping run."
                         )
+                        break
+
+                    # Dedup BEFORE rendering, keyed on the deterministic Report id.
+                    report_id = self._report_id(url)
+                    if self.helper.api.report.read(id=report_id) is not None:
+                        skipped += 1
+                        continue
+
+                    # Skip items without a parseable pubDate rather than date them
+                    # to ingestion time.
+                    published = self._published_iso(entry)
+                    if not published:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {url}: no parseable pubDate."
+                        )
+                        continue
+
+                    if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
+                        browser.close()
+                        browser = pw.chromium.launch(
+                            args=["--no-sandbox", "--disable-dev-shm-usage"]
+                        )
+                        renders_since_recycle = 0
+
+                    pdf_bytes = self._render_with_retry(browser, url)
+                    renders_since_recycle += 1
+
+                    if pdf_bytes is None:
+                        failed += 1
+                        self.helper.log_warning(f"Skipping {url}: render failed after retries.")
+                        continue
+
+                    self._create_report(entry, published, pdf_bytes)
+                    processed += 1
+                    time.sleep(self.request_delay)
             finally:
                 browser.close()
 
         message = (
             f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render)."
+            f"{failed} failed (render or unparseable date)."
         )
         self.helper.api.work.to_processed(work_id, message)
         self.helper.log_info(message)
