@@ -1,0 +1,42 @@
+# Hellenic Shipping News OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  hellenic_shipping_news:
+    build: .
+    container_name: opencti-connector-hellenic-shipping-news
+    environment:
+      # --- OpenCTI platform connection ---
+      # OPENCTI_URL is the canonical platform pointer (pycti opencti.url).
+      # Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: HSN_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Hellenic Shipping News
+      - CONNECTOR_SCOPE=hellenic_shipping_news
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - HSN_BASE_URL=https://www.hellenicshippingnews.com
+      - HSN_CATEGORIES=27,101,103,105,107,108,109,112,113,115,118,122,124,125   # security/legal/risk + geopolitics/energy/economy + shipping-ops (120 dropped: 100% ticker tables)
+      - HSN_BACKFILL_START_DATE=                # empty = full corpus; ABSOLUTE date for a bounded backfill, e.g. 2023-07-19 for 2 years
+      # Drops recurring machine-generated data/listing series (~2.7/day); editorial recurring series are kept. Empty = off.
+      - HSN_TITLE_EXCLUDE=Baltic Dry Index|HOT PORT NEWS from GAC|World Container Index|Intra-Asia Container Index|Container Report|^ENGINE:|Bidding Announcement|Fujairah.*Inventor
+      - HSN_PER_PAGE=100
+      - HSN_POLL_INTERVAL=86400                 # seconds between enumeration runs (24h)
+      - HSN_REQUEST_DELAY=30                    # seconds between renders; honors robots Crawl-Delay: 30
+      - HSN_MAX_REPORTS=0                       # 0 = unlimited; set to 3 for a bounded test run
+      - PLAYWRIGHT_NAV_TIMEOUT=60000            # ms; page navigation timeout
+      - HSN_RENDER_RETRIES=3
+      - HSN_CONFIDENCE=50                       # OpenCTI confidence 0-100 (Medium band)
+      - HSN_REPORT_TYPE=open-source-reporting
+      - HSN_TLP=TLP:CLEAR
+      - HSN_AUTHOR_NAME=Hellenic Shipping News
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g

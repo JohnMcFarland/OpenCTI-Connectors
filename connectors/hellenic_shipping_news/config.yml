@@ -1,0 +1,42 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Hellenic Shipping News'
+  scope: 'hellenic_shipping_news'
+  log_level: 'info'
+hsn:
+  base_url: 'https://www.hellenicshippingnews.com'
+  # WordPress category ids to ingest (server-side OR filter). Default =
+  # security/legal/risk + geopolitics/energy/economy + shipping-operations
+  # tiers, 14 categories (~82.2k posts full corpus). 120 Report/Analysis
+  # dropped (verified 100% recurring charter-estimate tables, no analysis).
+  categories: '27,101,103,105,107,108,109,112,113,115,118,122,124,125'
+  # Backfill floor. Empty = full filtered corpus (oldest post onward). For a
+  # two-year backfill set an ABSOLUTE date two years before deployment, e.g.
+  # '2023-07-19'. Must be absolute (not a rolling window) so the positional
+  # cursor stays stable across restarts.
+  backfill_start_date: ''
+  # Client-side title-exclusion filter: a single case-insensitive regex; any post
+  # whose title matches is skipped before render. Empty = off. Default drops the
+  # recurring machine-generated data/listing series that share a category with
+  # substantive posts (~2.7/day): Baltic Dry Index tickers, GAC port bulletins,
+  # container indices/weekly Container Reports, ENGINE bunker outlooks, vessel
+  # auction listings, Fujairah inventory reports. Editorial recurring series (ING
+  # Commodities Feed, The Week in Alt Fuels, GTT newbuild-order PRs) are kept.
+  title_exclude: 'Baltic Dry Index|HOT PORT NEWS from GAC|World Container Index|Intra-Asia Container Index|Container Report|^ENGINE:|Bidding Announcement|Fujairah.*Inventor'
+  per_page: 100
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 30           # seconds between renders; honors robots Crawl-Delay: 30
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  playwright_nav_timeout: 60000
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Hellenic Shipping News'
