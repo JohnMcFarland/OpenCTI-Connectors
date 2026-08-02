@@ -1,0 +1,27 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Unit 42'
+  scope: 'unit42'
+  log_level: 'info'
+unit42:
+  base_url: 'https://unit42.paloaltonetworks.com'
+  # WordPress category slug to ingest (server-side filtered by the RSS feed).
+  # Default = the flagship "threat-research" umbrella category (~915 posts).
+  category: 'threat-research'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 3            # seconds between renders / page fetches
+  max_reports: 0             # 0 = unlimited; set to 3 for a bounded test
+  max_pages: 500             # safety bound on feed pages per run (real count ~61)
+  playwright_nav_timeout: 60000
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Unit 42'
