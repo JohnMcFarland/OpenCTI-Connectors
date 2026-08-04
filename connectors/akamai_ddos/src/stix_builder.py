@@ -5,15 +5,15 @@ Encodes the data_model/ rules in code. See CONNECTOR_SCOPE.md §5.
 Hard rules enforced here:
   * Container = Incident Response (Case-Incident). Sightings are ONLY emitted here.
   * NO Indicators are ever created (OpenCTI auto-promotes Observables).
-  * Network-Traffic objects carry a SINGLE port only — no protocol/refs/bps/pps.
+  * Network-Traffic objects carry a SINGLE port only (no protocol/refs/bps/pps).
   * Every relationship type is checked against ALLOWED_EDGES (fail-closed allow-list).
   * Relationships carry description + confidence + start/stop dates.
   * Times are SOURCE times; markings default TLP:AMBER+STRICT.
   * Country is looked up, never created. Prolexic Incidents are source-less.
 
 Objects are emitted as plain dicts (not stix2 classes) so the single-port
-Network-Traffic SCO — which is intentionally non-conformant to strict STIX 2.1
-required properties — can be represented. The connector wraps them in a bundle.
+Network-Traffic SCO (which is intentionally non-conformant to strict STIX 2.1
+required properties) can be represented. The connector wraps them in a bundle.
 """
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ import uuid
 import stix2
 from pycti import (
     AttackPattern,
+    CaseIncident,
     Identity,
     Incident,
     Note,
@@ -73,12 +74,18 @@ class AkamaiStixBuilder:
     # -- one-time setup ----------------------------------------------------
 
     def prepare(self) -> None:
-        """Resolve the default marking id once (per the data model, must exist)."""
+        """Resolve the default marking id once (per the data model, must exist).
+
+        F-10: fail closed. Emitting unmarked first-party sensor data is worse than not
+        ingesting, so an unresolved marking is a hard startup failure, not a warning.
+        """
         self.marking_id = self._resolve_marking(self.settings.akamai_tlp)
         if not self.marking_id:
-            self.helper.connector_logger.error(
-                "Default marking not found; objects will be unmarked",
-                {"tlp": self.settings.akamai_tlp},
+            raise RuntimeError(
+                "Configured TLP marking could not be resolved "
+                f"({self.settings.akamai_tlp}); refusing to start. Emitting unmarked "
+                "first-party sensor data is not permitted. Verify the marking exists "
+                "in OpenCTI and that the marking_definition filter key is correct."
             )
 
     # -- public ------------------------------------------------------------
@@ -105,7 +112,7 @@ class AkamaiStixBuilder:
         incident = self._incident(event)
         inc_id = add(incident)
 
-        # 2. Attack Pattern(s) — only if classified DDoS (decision D)
+        # 2. Attack Pattern(s): only if classified DDoS (decision D)
         if event.is_ddos:
             for tid, name in map_vectors(event.vectors, layer):
                 ap_id = add(self._attack_pattern(tid, name))
@@ -151,7 +158,7 @@ class AkamaiStixBuilder:
                     self._rel(objects, refs, url_id, "url", "related-to", dom_id, "domain-name",
                              f"Request URL targeting {host}.", created, stop)
 
-        # 7. Note — provenance + peak summary; assessment of aggregation
+        # 7. Note: provenance + peak summary; assessment of aggregation
         add(self._note(event, inc_id))
 
         # 8. Relationships were appended as members above; finally the container
@@ -205,7 +212,7 @@ class AkamaiStixBuilder:
         })
 
     def _network_traffic(self, port: int) -> dict:
-        # SINGLE PORT ONLY — see memory: network-traffic-single-port. Deterministic id
+        # SINGLE PORT ONLY (see memory: network-traffic-single-port). Deterministic id
         # so the same port dedups across runs. No protocol/refs/bps/pps by house rule.
         nt_id = f"network-traffic--{uuid.uuid5(_SCO_NS, f'dst_port={port}')}"
         return self._base({"type": "network-traffic", "id": nt_id, "dst_port": port})
@@ -247,23 +254,24 @@ class AkamaiStixBuilder:
         return self._base({
             "type": "note",
             "id": Note.generate_id(content, event.start_time.isoformat()),
-            "abstract": f"Akamai DDoS provenance — {event.attack_id}",
+            "abstract": f"Akamai DDoS provenance: {event.attack_id}",
             "content": content,
             "object_refs": [incident_id],
         })
 
     def _container(self, event: AttackEvent, refs: list[str]) -> dict:
         # Incident Response container (Case-Incident). Sightings live only here.
+        # F-03: let pycti own the id so its prefix (case-incident--) matches the emitted
+        # type; a hand-rolled x-opencti-case-incident-- id was rejected on ingest, which
+        # silently dropped the container and orphaned every member.
         name = event.display_name()
         return self._base({
             "type": "case-incident",
-            "id": "x-opencti-case-incident--" + str(uuid.uuid5(_SCO_NS, "ir:" + name)),
+            "id": CaseIncident.generate_id(name, event.start_time.isoformat()),
             "name": name,
             "description": self._incident_description(event),
             "created": event.start_time.isoformat(),
             "object_refs": refs,
-            # TODO(live): confirm pycti CaseIncident custom-object type/id ('case-incident'
-            # vs 'x-opencti-case-incident') against the running OpenCTI 6.9.x version.
         })
 
     # -- relationships (fail-closed) --------------------------------------

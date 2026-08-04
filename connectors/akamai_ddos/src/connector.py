@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 
 from .akamai_client import AkamaiClient
 from .config import Settings
+from .models import cap_seen_ids
 from .prolexic import ProlexicPoller
 from .siem import SiemPoller
 from .stix_builder import AkamaiStixBuilder
@@ -39,7 +40,7 @@ class AkamaiDdosConnector:
         now = datetime.now(timezone.utc)
         state = self.helper.get_state() or {}
         work_id = self.helper.api.work.initiate_work(
-            self.helper.connector_id, f"Akamai DDoS run @ {now.isoformat()}"
+            self.helper.connect_id, f"Akamai DDoS run @ {now.isoformat()}"
         )
         try:
             if self.settings.akamai_prolexic_enabled:
@@ -47,7 +48,7 @@ class AkamaiDdosConnector:
             if self.settings.akamai_siem_enabled:
                 self._run_siem(state, now, work_id)
             self.helper.set_state(state)
-        except Exception as exc:  # noqa: BLE001 — log + let the scheduler retry next period
+        except Exception as exc:  # noqa: BLE001 - log + let the scheduler retry next period
             self.helper.connector_logger.error("Run failed", {"error": str(exc)})
             raise
         finally:
@@ -57,30 +58,39 @@ class AkamaiDdosConnector:
 
     def _run_prolexic(self, state: dict, now: datetime, work_id: str) -> None:
         pstate = state.setdefault("prolexic", {})
-        seen = set(pstate.get("seen_attack_ids", []))
+        seen_list = list(pstate.get("seen_attack_ids", []))
+        seen = set(seen_list)  # membership test only; ordering carried by seen_list
         start = self._window_start(pstate.get("last_end"), now)
         events = self.prolexic.fetch(start, now, seen)
         self.helper.connector_logger.info("Prolexic attacks", {"count": len(events)})
+        new_ids: list[str] = []
         for event in events:
             self._emit(event, work_id)
-            seen.add(event.attack_id)
+            new_ids.append(event.attack_id)
         pstate["last_end"] = now.isoformat()
-        pstate["seen_attack_ids"] = list(seen)[-5000:]  # cap retained ids
+        # F-05: insertion-ordered cap; evict the OLDEST 5000+, not an arbitrary subset.
+        pstate["seen_attack_ids"] = cap_seen_ids(seen_list, new_ids, 5000)
 
     def _run_siem(self, state: dict, now: datetime, work_id: str) -> None:
         sstate = state.setdefault("siem", {})
-        from_ts = int(self._window_start(None, now).timestamp())
         for config_id in self.settings.siem_config_id_list:
-            offset = sstate.get(config_id)
-            events, next_offset = self.siem.fetch(
-                config_id, offset, None if offset else from_ts, None
-            )
+            # Per-config state: {"offset": <token>, "last_end": <iso>}. F-06: when the
+            # offset is present it drives incremental fetch; when it is absent (genuine
+            # first run OR a lost/invalidated offset) resume from last_end, falling back
+            # to initial_lookback_days only when there is no recorded boundary.
+            cstate = sstate.setdefault(config_id, {})
+            offset = cstate.get("offset")
+            from_ts = None
+            if not offset:
+                from_ts = int(self._window_start(cstate.get("last_end"), now).timestamp())
+            events, next_offset = self.siem.fetch(config_id, offset, from_ts, None)
             self.helper.connector_logger.info(
                 "SIEM episodes", {"config_id": config_id, "count": len(events)}
             )
             for event in events:
                 self._emit(event, work_id)
-            sstate[config_id] = next_offset
+            cstate["offset"] = next_offset
+            cstate["last_end"] = now.isoformat()
 
     # -- emit --------------------------------------------------------------
 
@@ -89,6 +99,21 @@ class AkamaiDdosConnector:
         objects = self.builder.build(event)
         if not objects:
             return
+        # F-04: object_refs above the platform bundle threshold can be truncated
+        # silently, producing an incomplete container with no error signal. Chunked
+        # container emission is NOT yet implemented; until it is, surface the count so
+        # a silent partial write becomes visible. Must be closed before SIEM at scale.
+        count = len(objects)
+        if count > self.settings.akamai_max_bundle_objects:
+            self.helper.connector_logger.warning(
+                "Bundle object count exceeds threshold; OpenCTI may silently truncate "
+                "object_refs (F-04: chunked emission not yet implemented)",
+                {
+                    "attack_id": event.attack_id,
+                    "object_count": count,
+                    "threshold": self.settings.akamai_max_bundle_objects,
+                },
+            )
         bundle = json.dumps({
             "type": "bundle",
             "id": f"bundle--{uuid.uuid4()}",

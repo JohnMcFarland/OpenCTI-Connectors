@@ -1,4 +1,4 @@
-# Akamai DDoS connector — sample config.
+# Akamai DDoS connector: sample config.
 # Copy to config.yml (gitignored) OR set the equivalent environment variables.
 # Env vars take precedence over this file.
 
@@ -14,7 +14,7 @@ connector:
   log_level: "info"
 
 akamai:
-  # EdgeGrid auth — either point at an .edgerc file...
+  # EdgeGrid auth: either point at an .edgerc file...
   edgerc_path: ""
   # ...or supply the four discrete credentials:
   host: ""
@@ -31,6 +31,7 @@ akamai:
 
   initial_lookback_days: 7
   source_ip_top_n: 1000
+  max_bundle_objects: 2000   # warn above this per-episode object count (F-04 truncation guard)
   target_org_name: ""        # Organization that owns the targeted assets
   tlp: "TLP:AMBER+STRICT"
   confidence: 80

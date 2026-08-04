@@ -1,4 +1,4 @@
-"""SIEM Integration poller — application-layer (L7) DoS / rate / Slow-POST events.
+"""SIEM Integration poller: application-layer (L7) DoS / rate / Slow-POST events.
 
 Endpoint: GET /siem/v1/configs/{configId}  (NDJSON stream)
   incremental via the returned `offset` token (last NDJSON line is an offset-context
@@ -159,7 +159,7 @@ def decode_facet(value: str) -> list[str]:
         try:
             pad = token + "=" * (-len(token) % 4)
             out.append(base64.b64decode(pad).decode("utf-8", "replace"))
-        except Exception:  # noqa: BLE001 — keep raw token if it isn't valid base64
+        except Exception:  # noqa: BLE001 - keep raw token if it isn't valid base64
             out.append(token)
     return out
 

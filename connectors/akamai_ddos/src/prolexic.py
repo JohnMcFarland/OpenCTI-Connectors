@@ -1,4 +1,4 @@
-"""Prolexic Analytics poller — network-layer (L3/L4) DDoS attack reports.
+"""Prolexic Analytics poller: network-layer (L3/L4) DDoS attack reports.
 
 Endpoints (base path /prolexic-analytics/v2):
   GET /attack-reports/contract/{contract}/start/{start}/end/{end}   list in window
@@ -13,7 +13,7 @@ Confirmed payload shape (see tests/fixtures/attack-reports-get.json):
       "destinations": [ {"netmask": int, "ip": str} ]   # the TARGET/victim assets
   } ] }
 
-IMPORTANT: Prolexic attack reports carry NO attacker source IPs — `ip`/`destinations`
+IMPORTANT: Prolexic attack reports carry NO attacker source IPs; `ip`/`destinations`
 are the *target*. Source top-talkers exist only in /events (eventInfo.topSourceIPs),
 under a different, non-correlatable id namespace, and are typically spoofed for L3/L4.
 So AttackEvent.source_ips is left empty here unless /events enrichment is enabled.
@@ -56,7 +56,7 @@ class ProlexicPoller:
                 continue
             try:
                 events.append(self._normalize(raw, attack_id))
-            except Exception as exc:  # noqa: BLE001 — skip a malformed row, keep the run
+            except Exception as exc:  # noqa: BLE001 - skip a malformed row, keep the run
                 self.logger.warning("Skipping unparseable Prolexic attack",
                                     {"attack_id": attack_id, "error": str(exc)})
         return events

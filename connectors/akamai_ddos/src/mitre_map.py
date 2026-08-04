@@ -1,6 +1,6 @@
 """Map Akamai attack vectors / SIEM rule tags to MITRE ATT&CK DDoS techniques.
 
-Decision D: classification is binary — if an event is DDoS, attach the matching
+Decision D: classification is binary; if an event is DDoS, attach the matching
 DDoS technique. We map to the Network/Endpoint DoS family and pick the most
 specific sub-technique the vector supports, defaulting to the parent.
 

@@ -6,8 +6,25 @@ source-agnostic. Times are SOURCE times (never ingestion time).
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
+
+
+def cap_seen_ids(existing: list[str], new_ids: Iterable[str], cap: int) -> list[str]:
+    """Insertion-ordered dedup + cap for the seen-attack-id state.
+
+    Retains the last `cap` ids in insertion order, evicting the OLDEST first. A set
+    is used only for membership testing; ordering is carried by the list. This is the
+    fix for F-05: slicing list(set) discarded an arbitrary subset, not the oldest.
+    """
+    seen = set(existing)
+    out = list(existing)
+    for i in new_ids:
+        if i not in seen:
+            seen.add(i)
+            out.append(i)
+    return out[-cap:] if cap >= 0 else out
 
 
 @dataclass
@@ -44,4 +61,4 @@ class AttackEvent:
         vec = ", ".join(self.vectors[:3]) or "DDoS"
         tgt = (self.target_hostnames or self.target_ips or ["unknown target"])[0]
         day = self.start_time.date().isoformat()
-        return f"Akamai {self.source_system} DDoS — {vec} vs {tgt} — {day}"
+        return f"Akamai {self.source_system} DDoS: {vec} vs {tgt} ({day})"

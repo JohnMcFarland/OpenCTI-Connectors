@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     # --- behavior ---
     akamai_initial_lookback_days: int = Field(7, alias="AKAMAI_INITIAL_LOOKBACK_DAYS")
     akamai_source_ip_top_n: int = Field(1000, alias="AKAMAI_SOURCE_IP_TOP_N")
+    akamai_max_bundle_objects: int = Field(2000, alias="AKAMAI_MAX_BUNDLE_OBJECTS")
     akamai_target_org_name: str = Field("", alias="AKAMAI_TARGET_ORG_NAME")
     akamai_tlp: str = Field("TLP:AMBER+STRICT", alias="AKAMAI_TLP")
     akamai_confidence: int = Field(80, alias="AKAMAI_CONFIDENCE")
