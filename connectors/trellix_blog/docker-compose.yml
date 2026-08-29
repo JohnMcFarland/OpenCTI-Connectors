@@ -1,0 +1,41 @@
+# Trellix Blog OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  trellix_blog:
+    build: .
+    container_name: opencti-connector-trellix-blog
+    environment:
+      # --- OpenCTI platform connection ---
+      # OPENCTI_URL is the canonical platform pointer (pycti opencti.url).
+      # Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: TRELLIX_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Trellix Blog
+      - CONNECTOR_SCOPE=trellix_blog
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - TRELLIX_BASE_URL=https://www.trellix.com
+      # Sole enumeration surface; empty = derived from TRELLIX_BASE_URL.
+      - TRELLIX_SITEMAP_URL=
+      # Comma-separated category slugs. Add 'perspectives' for corporate content.
+      - TRELLIX_CATEGORIES=research,platform
+      - TRELLIX_POLL_INTERVAL=86400             # seconds between enumeration runs (24h)
+      - TRELLIX_REQUEST_DELAY=3                 # seconds between article page loads
+      - TRELLIX_MAX_REPORTS=0                   # 0 = unlimited; set to 3 for a bounded test run
+      - PLAYWRIGHT_NAV_TIMEOUT=60000            # ms; page navigation timeout
+      - TRELLIX_RENDER_RETRIES=3
+      - TRELLIX_CONFIDENCE=50                   # OpenCTI confidence 0-100 (Medium band)
+      - TRELLIX_REPORT_TYPE=open-source-reporting
+      - TRELLIX_TLP=TLP:CLEAR
+      - TRELLIX_AUTHOR_NAME=Trellix
+    restart: always
+    # Caps Chromium memory to protect Elasticsearch co-located on the OpenCTI
+    # host. Tune to verified RAM headroom on the target VM.
+    mem_limit: 2g
