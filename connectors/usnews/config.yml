@@ -1,0 +1,26 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'US News'
+  scope: 'usnews'
+  log_level: 'info'
+usnews:
+  # Comma-separated feed keys to poll. Available: money, news, health,
+  # education, opinion, travel. Default = the four editorial sections
+  # relevant for economic intelligence and threat motivation.
+  feeds: 'money,health,education,opinion'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 3            # seconds between article page loads
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  playwright_nav_timeout: 60000
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'US News'
