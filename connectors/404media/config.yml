@@ -1,0 +1,22 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: '404 Media'
+  scope: '404media'
+  log_level: 'info'
+four04media:
+  base_url: 'https://www.404media.co'
+  poll_interval: 21600
+  request_delay: 3
+  max_posts: 0
+  render_retries: 3
+  early_stop_skips: 24
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'

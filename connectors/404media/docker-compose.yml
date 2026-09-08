@@ -1,0 +1,26 @@
+version: '3'
+services:
+  404media:
+    build: .
+    container_name: opencti-connector-404media
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=404 Media
+      - CONNECTOR_SCOPE=404media
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - FOUR04MEDIA_BASE_URL=https://www.404media.co
+      - FOUR04MEDIA_POLL_INTERVAL=21600     # seconds between full enumeration runs (6h)
+      - FOUR04MEDIA_REQUEST_DELAY=3         # seconds between successive fetches
+      - FOUR04MEDIA_MAX_POSTS=0             # 0 = unlimited; set to 3 for a bounded test run
+      - FOUR04MEDIA_RENDER_RETRIES=3
+      - FOUR04MEDIA_EARLY_STOP_SKIPS=24     # consecutive already-ingested before stopping; 0 = walk all
+      - FOUR04MEDIA_CONFIDENCE=50           # OpenCTI confidence 0-100 (Medium band)
+      - FOUR04MEDIA_REPORT_TYPE=open-source-reporting
+      - FOUR04MEDIA_TLP=TLP:CLEAR
+    restart: always
