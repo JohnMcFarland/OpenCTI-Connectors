@@ -32,7 +32,6 @@ Upload mechanism (confirmed against pycti 6.9.13 source):
   destination for INTERNAL_EXPORT_FILE connector output.
 """
 
-import io
 import sys
 
 from pycti import OpenCTIConnectorHelper, get_config_variable

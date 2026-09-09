@@ -77,11 +77,6 @@ def defang_value(value: str, entity_type: str) -> str:
     return value
 
 
-def defang_entity_name(name: str, entity_type: str) -> str:
-    """Convenience wrapper — delegates to defang_value()."""
-    return defang_value(name, entity_type)
-
-
 def defang_text_block(text: str) -> str:
     """
     Defang observable-looking values within a freeform text block.

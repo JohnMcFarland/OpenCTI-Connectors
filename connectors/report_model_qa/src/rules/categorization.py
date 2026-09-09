@@ -4,17 +4,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from util.graph import extract_relationship_endpoints, normalize_rel_type, obj_display_name, resolve_endpoint, safe_get
-
-
-def _parse_iso(ts: Optional[str]) -> Optional[datetime]:
-    if not ts:
-        return None
-    try:
-        s = ts.strip().replace("Z", "+00:00")
-        return datetime.fromisoformat(s)
-    except Exception:
-        return None
+from util.graph import extract_relationship_endpoints, normalize_rel_type, obj_display_name, parse_iso, resolve_endpoint, safe_get
 
 
 def _is_report_scoped(rel_created_at: Optional[str], report_published: Optional[str], grace_hours: int) -> bool:
@@ -30,8 +20,8 @@ def _is_report_scoped(rel_created_at: Optional[str], report_published: Optional[
       - rel created_at predates report published by more than grace_hours
         (pre-existing shared relationship)
     """
-    rel_dt = _parse_iso(rel_created_at)
-    pub_dt = _parse_iso(report_published)
+    rel_dt = parse_iso(rel_created_at)
+    pub_dt = parse_iso(report_published)
 
     if not rel_dt or not pub_dt:
         return True  # can't determine — enforce conservatively

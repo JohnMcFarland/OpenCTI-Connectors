@@ -199,12 +199,13 @@ def _extract_before(text: str, cue_start: int) -> str:
     result = " ".join(words)
 
     # Reject sentence-opener words that happen to be capitalised but are
-    # not entity names. A single-word result in _SENTENCE_OPENER_STOP is
-    # a clear false positive (e.g. "While", "Following", "Western").
+    # not entity names. Only single-word results are rejected — multi-word
+    # phrases starting with a stop word (e.g. "Western Digital") are valid
+    # entity names and must not be discarded.
     if not result:
         return ""
-    first_word = result.split()[0].lower()
-    if first_word in _SENTENCE_OPENER_STOP:
+    words = result.split()
+    if len(words) == 1 and words[0].lower() in _SENTENCE_OPENER_STOP:
         return ""
 
     return result
@@ -342,7 +343,7 @@ def extract_cue_relations(text: str, report_author: str) -> List[Dict[str, Any]]
 
 
 _RESOLVES_RE = re.compile(
-    r"\b(?P<domain>[a-zA-Z0-9][a-zA-Z0-9\-]{0,62}\.[a-zA-Z]{2,})\b"
+    r"\b(?P<domain>[a-zA-Z0-9][a-zA-Z0-9\-]{0,62}(?:\.[a-zA-Z0-9][a-zA-Z0-9\-]{0,62})*\.[a-zA-Z]{2,})\b"
     r".{0,60}"
     r"\b(?:resolv(?:es?|ed|ing)\s+to|resolved?\s+to|pointing\s+to|points?\s+to)\b"
     r".{0,60}"

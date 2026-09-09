@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 from typing import Any, Dict, Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,17 @@ def safe_get(d: Dict[str, Any], *keys: str) -> Any:
                 logger.debug("safe_get: used fallback key '%s' (primary '%s' not present)", k, keys[0])
             return d[k]
     return None
+
+
+def parse_iso(ts: Optional[str]) -> Optional[datetime]:
+    """Parse an ISO-8601 timestamp string into a datetime, or None on failure."""
+    if not ts:
+        return None
+    try:
+        s = ts.strip().replace("Z", "+00:00")
+        return datetime.fromisoformat(s)
+    except Exception:
+        return None
 
 
 def normalize_rel_type(rel_type: str) -> str:

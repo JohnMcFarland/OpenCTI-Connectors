@@ -120,11 +120,11 @@ class BellingcatConnector:
         # Classic config bootstrap: optional config.yml so the module runs both
         # in-container (env only) and locally (yaml) unchanged.
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -623,57 +623,62 @@ class BellingcatConnector:
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "Bellingcat enumeration run"
         )
+        try:
 
-        urls = self._all_article_urls()
-        processed = 0   # new Reports created
-        skipped = 0     # already present in the graph
-        failed = 0      # render failed, or no published date extracted
+            urls = self._all_article_urls()
+            processed = 0   # new Reports created
+            skipped = 0     # already present in the graph
+            failed = 0      # render failed, or no published date extracted
 
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
-            renders_since_recycle = 0
-            try:
-                for url in urls:
-                    if self.max_posts and processed >= self.max_posts:
-                        self.helper.log_info(f"Reached BELLINGCAT_MAX_POSTS={self.max_posts}; stopping run.")
-                        break
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+                renders_since_recycle = 0
+                try:
+                    for url in urls:
+                        if self.max_posts and processed >= self.max_posts:
+                            self.helper.log_info(f"Reached BELLINGCAT_MAX_POSTS={self.max_posts}; stopping run.")
+                            break
 
-                    if self._already_ingested(url):
-                        skipped += 1
-                        continue
+                        if self._already_ingested(url):
+                            skipped += 1
+                            continue
 
-                    if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
-                        browser.close()
-                        browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
-                        renders_since_recycle = 0
+                        if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
+                            browser.close()
+                            browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+                            renders_since_recycle = 0
 
-                    pdf_bytes, meta = self._render_with_retry(browser, url)
-                    renders_since_recycle += 1
+                        pdf_bytes, meta = self._render_with_retry(browser, url)
+                        renders_since_recycle += 1
 
-                    if pdf_bytes is None:
-                        failed += 1
-                        self.helper.log_warning(f"Skipping {url}: render failed after retries.")
-                        continue
+                        if pdf_bytes is None:
+                            failed += 1
+                            self.helper.log_warning(f"Skipping {url}: render failed after retries.")
+                            continue
 
-                    # A Report without a source publication date would corrupt
-                    # temporal queries; skip rather than backfill a wrong date.
-                    if not meta or not meta.get("published"):
-                        failed += 1
-                        self.helper.log_warning(f"Skipping {url}: no published date in page metadata.")
-                        continue
+                        # A Report without a source publication date would corrupt
+                        # temporal queries; skip rather than backfill a wrong date.
+                        if not meta or not meta.get("published"):
+                            failed += 1
+                            self.helper.log_warning(f"Skipping {url}: no published date in page metadata.")
+                            continue
 
-                    self._create_report(url, meta, pdf_bytes)
-                    processed += 1
-                    time.sleep(self.request_delay)
-            finally:
-                browser.close()
+                        self._create_report(url, meta, pdf_bytes)
+                        processed += 1
+                        time.sleep(self.request_delay)
+                finally:
+                    browser.close()
 
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render or missing date)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render or missing date)."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
+        except Exception as e:
+            self.helper.log_error(f"Error processing: {e}")
+            self.helper.api.work.to_processed(work_id, str(e), in_error=True)
+            raise
 
     def run(self):
         """Connector entrypoint: resolve references once, then poll forever."""

@@ -38,6 +38,8 @@ class VirusTotalBuilderTest(unittest.TestCase):
             {"id": "fakeid"},
             {"id": "fakeid"},
             self.load_file("vt_test_file.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
         self.assertEqual(len(builder.bundle), 1)
         self.assertEqual(builder.bundle[0].name, "VirusTotal")
@@ -52,6 +54,8 @@ class VirusTotalBuilderTest(unittest.TestCase):
             {"id": "fakeid"},
             {"id": "fakeid"},
             self.load_file("vt_test_file.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
         attributes = self.load_file("vt_test_file.json")["data"]["attributes"]
         self.assertEqual(builder._compute_score(attributes["last_analysis_stats"]), 72)
@@ -70,6 +74,8 @@ class VirusTotalBuilderTest(unittest.TestCase):
             stix_entity,
             observable,
             self.load_file("vt_test_ipv4.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
         builder.create_asn_belongs_to()
         # Bundle should have 3 elements: the author, the asn and the relationship.
@@ -99,8 +105,10 @@ class VirusTotalBuilderTest(unittest.TestCase):
             stix_entity=stix_entity,
             opencti_entity=observable,
             data=self.load_file("vt_test_domain.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
-        builder.create_ip_resolves_to(ipv4)
+        builder.create_ip_resolves_to({"value": ipv4})
         # Bundle should have 3 elements: the author, the asn and the relationship.
         self.assertEqual(len(builder.bundle), 4)
         self.assertEqual(builder.bundle[2].value, ipv4)
@@ -125,6 +133,8 @@ class VirusTotalBuilderTest(unittest.TestCase):
             stix_entity=stix_entity,
             opencti_entity=observable,
             data=self.load_file("vt_test_ipv4.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
         builder.create_location_located_at()
         # Bundle should have 3 elements: the author, the asn and the relationship.
@@ -138,7 +148,7 @@ class VirusTotalBuilderTest(unittest.TestCase):
         )
         self.assertEqual(builder.bundle[3].target_ref, builder.bundle[2].id)
 
-    def test_create_notes(self):
+    def test_create_assessment_note(self):
         observable = {
             "standard_id": "url--94a2e4e9-bb9a-544a-b379-44923d37ca82",
             "id": "94a2e4e9-bb9a-544a-b379-44923d37ca82",
@@ -152,22 +162,16 @@ class VirusTotalBuilderTest(unittest.TestCase):
             stix_entity=stix_entity,
             opencti_entity=observable,
             data=self.load_file("vt_test_url.json")["data"],
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
-        builder.create_notes()
-        # Bundle should have 3 elements: the author, the asn and the relationship.
-        self.assertEqual(len(builder.bundle), 4)
-        self.assertEqual(builder.bundle[2].abstract, "VirusTotal Results")
-        self.assertTrue("Sangfor" in builder.bundle[2].content)
+        builder.create_assessment_note()
+        # Bundle should have 3 elements: the stix_entity, the author, and the note.
+        self.assertEqual(len(builder.bundle), 3)
+        self.assertEqual(builder.bundle[2].abstract, "VirusTotal Enrichment Assessment")
         self.assertEqual(builder.bundle[2].created_by_ref, self.author.id)
         self.assertTrue(
             "url--94a2e4e9-bb9a-544a-b379-44923d37ca82" in builder.bundle[2].object_refs
-        )
-        self.assertEqual(builder.bundle[3].abstract, "VirusTotal Categories")
-        self.assertTrue("Sophos" in builder.bundle[3].content)
-        self.assertEqual(builder.bundle[2].created_by_ref, self.author.id)
-        self.assertEqual(builder.bundle[3].created_by_ref, self.author.id)
-        self.assertTrue(
-            "url--94a2e4e9-bb9a-544a-b379-44923d37ca82" in builder.bundle[3].object_refs
         )
 
     def test_create_yara(self):
@@ -185,6 +189,8 @@ class VirusTotalBuilderTest(unittest.TestCase):
             stix_entity=stix_entity,
             opencti_entity=observable,
             data=data,
+            rfi_container_id="fake-rfi-id",
+            tlp_green_id="marking-definition--34098fce-860f-48ae-8e50-ebd3cc5e41da",
         )
         yara = data["attributes"]["crowdsourced_yara_results"][0]
         ruleset = self.load_file("vt_test_yara.json")

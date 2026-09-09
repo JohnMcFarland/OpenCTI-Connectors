@@ -30,6 +30,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from urllib.error import URLError, HTTPError
+from urllib.parse import urlparse, unquote
 
 from pycti import OpenCTIConnectorHelper
 
@@ -43,7 +44,6 @@ CIA_LISTING_URL_DEFAULT = "https://www.cia.gov/resources/csi/studies-in-intellig
 
 @dataclass(frozen=True)
 class Config:
-    connector_name: str
     interval_seconds: int
 
     seed_file_path: str
@@ -63,8 +63,6 @@ class Config:
 
     @staticmethod
     def from_env() -> "Config":
-        name = os.getenv("CONNECTOR_NAME", "cis_pdf_connector")
-
         interval = int(os.getenv("CONNECTOR_RUN_INTERVAL", "60"))
         if interval < 5:
             interval = 5
@@ -90,7 +88,6 @@ class Config:
             max_ingest = 0
 
         return Config(
-            connector_name=name,
             interval_seconds=interval,
             seed_file_path=seed_file,
             state_dir=state_dir,
@@ -207,7 +204,8 @@ class CISPdfConnector:
 
     @staticmethod
     def _safe_filename_from_url(url: str) -> str:
-        base = url.split("?")[0].rstrip("/").split("/")[-1].strip()
+        parsed = urlparse(url)
+        base = unquote(parsed.path.rstrip("/").split("/")[-1]).strip()
         if base.lower().endswith(".pdf") and len(base) >= 5:
             return base
         h = hashlib.sha256(url.encode("utf-8")).hexdigest()[:16]
@@ -323,10 +321,10 @@ class CISPdfConnector:
             if hasattr(self.helper.api, "identity") and hasattr(self.helper.api.identity, "list"):
                 fg = self._filter_group_name_equals(self.cfg.author_name)
                 results = self.helper.api.identity.list(filters=fg)
-                if results and isinstance(results, dict):
-                    edges = results.get("edges") or []
-                    if edges and edges[0].get("node", {}).get("id"):
-                        return edges[0]["node"]["id"]
+                if results and isinstance(results, list) and len(results) > 0:
+                    first = results[0]
+                    if isinstance(first, dict) and first.get("id"):
+                        return first["id"]
 
             # Create via GraphQL
             mutation = """
@@ -588,8 +586,6 @@ class CISPdfConnector:
     def run_monthly_check(self, author_id: str, marking_id: Optional[str] = None) -> None:
         self.log.info("Running monthly check", {"listing_url": self.cfg.listing_url})
         pdf_urls = self.fetch_listing_pdf_urls()
-        self.state.last_monthly_check_ts = int(time.time())
-        self.state.save()
 
         if not pdf_urls:
             self.log.warning("Monthly check: no PDF URLs found.")
@@ -598,13 +594,22 @@ class CISPdfConnector:
         most_recent = pdf_urls[0]
         if self.url_already_ingested(most_recent):
             self.log.info("Monthly check: most recent already ingested.", {"url": most_recent})
+            self.state.last_monthly_check_ts = int(time.time())
+            self.state.save()
             return
 
-        ok, reason = self.ingest_one_url(most_recent, author_id, marking_id=marking_id)
+        try:
+            ok, reason = self.ingest_one_url(most_recent, author_id, marking_id=marking_id)
+        except Exception as e:
+            self.log.error(f"Monthly check: exception during ingest: {e}", {"url": most_recent, "exc_info": True})
+            return
+
         if ok:
+            self.state.last_monthly_check_ts = int(time.time())
+            self.state.save()
             self.log.info("Monthly check: ingested most recent.", {"url": most_recent, "reason": reason})
         else:
-            self.log.error("Monthly check: failed ingest.", {"url": most_recent, "reason": reason})
+            self.log.error("Monthly check: failed ingest, will retry next check.", {"url": most_recent, "reason": reason})
 
     # -----------------------
     # Seed ingestion
@@ -641,19 +646,24 @@ class CISPdfConnector:
 
         processed = 0
         for u in batch:
-            ok, reason = self.ingest_one_url(u, author_id, marking_id=marking_id)
-            processed += 1
-            cursor += 1
-            self.state.seed_cursor = cursor
-            self.state.save()
+            try:
+                ok, reason = self.ingest_one_url(u, author_id, marking_id=marking_id)
+            except Exception as e:
+                self.log.error(f"Seed ingest item exception: {e}", {"url": u, "exc_info": True})
+                self.log.warning(f"Failed to ingest {u}, will retry next run")
+                break
 
-            # If a single ingest fails, continue; seed list is large and we want progress.
-            if not ok:
-                self.log.error("Seed ingest item failed", {"url": u, "reason": reason})
-            else:
+            processed += 1
+            if ok:
+                cursor += 1
+                self.state.seed_cursor = cursor
+                self.state.save()
                 # reduce log spam for "already_ingested"
                 if reason != "already_ingested":
                     self.log.info("Seed ingest item ok", {"url": u, "reason": reason})
+            else:
+                self.log.warning(f"Failed to ingest {u}, will retry next run", {"reason": reason})
+                break  # stop advancing, retry from this point
 
         if cursor >= len(urls):
             self.state.seed_complete = True
@@ -669,12 +679,19 @@ class CISPdfConnector:
     def run(self) -> None:
         self.log.info("cis_pdf_connector started (full scope).")
 
-        author_id = self.ensure_author_identity()
-        if not author_id:
-            self.log.error("Cannot proceed without author identity ID.")
-            while True:
-                self.log.info("Heartbeat", {"iteration": 0})
-                time.sleep(self.cfg.interval_seconds)
+        author_id = None
+        retry_delay = 30
+        max_retry_delay = 600
+        while not author_id:
+            author_id = self.ensure_author_identity()
+            if not author_id:
+                self.log.error(
+                    f"Cannot resolve author identity, retrying in {retry_delay}s.",
+                    {"retry_delay": retry_delay},
+                )
+                time.sleep(retry_delay)
+                retry_delay = min(retry_delay * 2, max_retry_delay)
+        self.log.info("Author identity resolved.", {"author_id": author_id})
 
         # Resolve marking definition (TLP:CLEAR for all CIA CSI public documents)
         marking_id = self.ensure_marking_id("TLP:CLEAR")

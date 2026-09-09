@@ -15,9 +15,10 @@ def load_helper() -> tuple[OpenCTIConnectorHelper, ConfigLoader]:
             return helper, config
         except ValueError as e:
             if "OpenCTI API is not reachable" not in e.args[0]:
-                raise e
+                raise
             logging.warning("Failed to connect to OpenCTI API. Retying in 30 seconds.")
             time.sleep(30)
+    raise RuntimeError("Failed to connect to OpenCTI after 10 retries")
 
 
 if __name__ == "__main__":

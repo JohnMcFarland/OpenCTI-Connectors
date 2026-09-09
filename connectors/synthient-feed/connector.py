@@ -370,11 +370,11 @@ class SynthientFeedConnector:
                     self.helper.log_debug(f"Skipping malformed JSONL: {raw[:80]}")
                     continue
 
-                ip       = rec.get("ip_address", "").strip()
-                provider = rec.get("provider",    "").strip().upper()
-                category = rec.get("category",    "").strip().upper()
-                last_obs = rec.get("last_observed", "").strip()
-                country  = rec.get("country_code", "").strip().upper()
+                ip       = (rec.get("ip_address") or "").strip()
+                provider = (rec.get("provider") or "").strip().upper()
+                category = (rec.get("category") or "").strip().upper()
+                last_obs = (rec.get("last_observed") or "").strip()
+                country  = (rec.get("country_code") or "").strip().upper()
 
                 if not ip or not provider:
                     continue
@@ -671,7 +671,7 @@ class SynthientFeedConnector:
     # ────────────────────────────────────────────────────────────────────
 
     def _process(self) -> None:
-        run_ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        run_ts = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         run_date = run_ts[:10]
         self.helper.log_info(f"{'='*60}")
         self.helper.log_info(f"Synthient Feed run started: {run_ts}")
@@ -772,8 +772,6 @@ if __name__ == "__main__":
     import traceback
     try:
         SynthientFeedConnector().start()
-    except Exception as e:
-        with open("/tmp/crash.txt", "w") as f:
-            f.write(traceback.format_exc())
+    except Exception:
         print(traceback.format_exc(), flush=True)
         raise

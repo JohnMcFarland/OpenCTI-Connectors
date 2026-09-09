@@ -28,6 +28,17 @@ class VirusTotalClient:
             "accept": "application/json",
         }
 
+        # Reusable session with retry strategy — avoids creating a new
+        # TCP connection and retry adapter on every single API call.
+        retry_strategy = Retry(
+            total=3,
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=["HEAD", "GET", "OPTIONS", "POST"],
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session = requests.Session()
+        self.session.mount("https://", adapter)
+
     def _query(self, url):
         """
         Execute a query to the Virustotal api.
@@ -47,18 +58,9 @@ class VirusTotalClient:
         JSON or None
             The result of the query, as JSON or None in case of failure.
         """
-        # Configure the adapter for the retry strategy.
-        retry_strategy = Retry(
-            total=3,
-            status_forcelist=[429, 500, 502, 503, 504],
-            allowed_methods=["HEAD", "GET", "OPTIONS"],
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        http = requests.Session()
-        http.mount("https://", adapter)
         response = None
         try:
-            response = http.get(
+            response = self.session.get(
                 url, headers=self.headers | {"content-type": "application/json"}
             )
             response.raise_for_status()
@@ -77,9 +79,12 @@ class VirusTotalClient:
         except Exception as err:
             self.helper.log_error(f"[VirusTotal] Unknown error {err}")
             self.helper.metric.inc("client_error_count")
+        if response is None:
+            return None
         try:
-            self.helper.log_debug(f"[VirusTotal] data retrieved: {response.json()}")
-            return response.json()
+            data = response.json()
+            self.helper.log_debug(f"[VirusTotal] data retrieved: {data}")
+            return data
         except json.JSONDecodeError as err:
             self.helper.log_error(
                 f"[VirusTotal] Error decoding the json: {err} - {response.text}"
@@ -114,7 +119,7 @@ class VirusTotalClient:
             else self.headers | additional_headers
         )
         try:
-            response = requests.post(
+            response = self.session.post(
                 url, data=data, files=files, headers=headers, timeout=60
             )
             response.raise_for_status()
@@ -133,9 +138,12 @@ class VirusTotalClient:
         except Exception as err:
             self.helper.log_error(f"[VirusTotal] Unknown error {err}")
             self.helper.metric.inc("client_error_count")
+        if response is None:
+            return None
         try:
-            self.helper.log_debug(f"[VirusTotal] data retrieved: {response.json()}")
-            return response.json()
+            data = response.json()
+            self.helper.log_debug(f"[VirusTotal] data retrieved: {data}")
+            return data
         except json.JSONDecodeError as err:
             self.helper.log_error(
                 f"[VirusTotal] Error decoding the json: {err} - {response.text}"
@@ -178,7 +186,10 @@ class VirusTotalClient:
         """
         url = f"{self.url}/files"
         files = {"file": (artifact_name, artifact)}
-        return self._post(url, files=files)["data"]["id"]
+        result = self._post(url, files=files)
+        if result is None:
+            return None
+        return result["data"]["id"]
 
     def get_yara_ruleset(self, ruleset_id) -> dict:
         """
@@ -247,6 +258,8 @@ class VirusTotalClient:
         """
         base64_url = f"{self.url}/urls/{VirusTotalClient.base64_encode_no_padding(url)}"
         results = self._query(base64_url)
+        if results is None:
+            return None
         if "error" in results:
             sha256_url = f"{self.url}/urls/{hashlib.sha256(url.encode()).hexdigest()}"
             results = self._query(sha256_url)
@@ -269,9 +282,10 @@ class VirusTotalClient:
         endpoint_url = f"{self.url}/urls"
         payload = f"url={urllib.parse.quote(url, safe='')}"
         headers = {"content-type": "application/x-www-form-urlencoded"}
-        return self._post(endpoint_url, data=payload, additional_headers=headers)[
-            "data"
-        ]["id"]
+        result = self._post(endpoint_url, data=payload, additional_headers=headers)
+        if result is None:
+            return None
+        return result["data"]["id"]
 
     def check_upload_status(self, upload_type, name, analysis_id):
         """
@@ -293,7 +307,11 @@ class VirusTotalClient:
         total_attempts = 10
         i = 0
         while i < total_attempts:
-            current_status = self._query(url)["data"]["attributes"]["status"]
+            result = self._query(url)
+            if result is None or "data" not in result:
+                current_status = "error"
+            else:
+                current_status = result["data"]["attributes"]["status"]
             current_retry_delay = min(
                 (i * retry_delay + minimum_retry_delay), maximum_retry_delay
             )

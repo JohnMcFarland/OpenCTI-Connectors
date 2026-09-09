@@ -1,12 +1,9 @@
 import os
-from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from pycti import OpenCTIConnectorHelper
 
-
-def _utc_now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+from connector import _utc_now_iso
 
 
 def create_report_from_item(helper: OpenCTIConnectorHelper, item: Dict, now_iso: Optional[str] = None) -> str:
@@ -54,12 +51,6 @@ def create_report_from_item(helper: OpenCTIConnectorHelper, item: Dict, now_iso:
 
     report_name = f"{report_prefix} | {title}"
 
-    data = {
-        "type": "report",
-        "spec_version": "2.1",
-        "x_opencti_internal_id": external_id,
-    }
-
     report_id = helper.api.report.create(
         name=report_name,
         description=f"Ingested by NSA Published Reports connector. Source PDF: {pdf_url}" if pdf_url else "Ingested by NSA Published Reports connector.",
@@ -71,7 +62,6 @@ def create_report_from_item(helper: OpenCTIConnectorHelper, item: Dict, now_iso:
         createdBy=helper.api.identity.create(type="Organization", name=author) if author else None,
         objectMarking=marking_ids,
         externalReferences=external_references if external_references else None,
-        x_opencti_stix_ids=[external_id],
     )
 
     return report_id["id"]

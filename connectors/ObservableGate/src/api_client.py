@@ -20,7 +20,8 @@ action instead. Callers can branch on the return value (True in dry_run)
 without needing to know about dry_run themselves.
 """
 
-from typing import Any, Dict, List, Optional, Set
+import hashlib
+from typing import Any, Dict, List, Optional
 
 # ---------------------------------------------------------------------------
 # GraphQL query definitions
@@ -450,7 +451,7 @@ class ObservableGateAPIClient:
                     result[observable_id] = {
                         "observable": from_entity,
                         "attack_patterns": [],
-                        "min_rel_confidence": node.get("confidence", 50),
+                        "min_rel_confidence": node.get("confidence") or 50,
                         "earliest_rel_date": node.get("created_at"),
                     }
 
@@ -686,7 +687,7 @@ class ObservableGateAPIClient:
                 f"| types={indicator_types}"
             )
             # Return a synthetic dict so callers can continue normally.
-            return {"id": f"dry-run-{abs(hash(pattern))}"}
+            return {"id": f"dry-run-{hashlib.sha256(pattern.encode()).hexdigest()[:12]}"}
 
         try:
             indicator = self.helper.api.indicator.create(

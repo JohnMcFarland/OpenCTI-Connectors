@@ -1,5 +1,6 @@
 """Trellix blog OpenCTI connector (curl_cffi + BS4 + WeasyPrint, no Playwright)."""
 
+import html
 import os
 import re
 import sys
@@ -38,13 +39,7 @@ _MONTHS = {
 
 
 def _escape_html(value):
-    return (
-        str(value)
-        .replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace('"', "&quot;")
-    )
+    return html.escape(str(value))
 
 
 def _local_name(tag):
@@ -91,11 +86,11 @@ class TrellixBlogConnector:
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "config.yml"
         )
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
