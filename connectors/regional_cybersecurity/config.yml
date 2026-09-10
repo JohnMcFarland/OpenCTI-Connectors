@@ -1,0 +1,26 @@
+opencti:
+  url: ''
+  token: ''
+
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Regional Cybersecurity'
+  scope: 'regional-cybersecurity'
+  log_level: 'info'
+
+regional_cybersecurity:
+  poll_interval: 21600          # seconds between runs (default 6 hours)
+  request_delay: 2              # seconds between HTTP requests
+  confidence: 85
+  report_type: 'industry-alert'
+  tlp: 'TLP:CLEAR'
+  max_per_source: 20            # max new reports per source per run (0 = unlimited)
+  # Comma-separated source keys to enable (blank = all).
+  # Phase 1 feeds: cisa, ncsc_uk, cccs, acsc, cert_eu, jpcert, ncsc_fi
+  # Phase 2 feeds: cert_pl, cert_at, govcert_ch, cert_be, cert_lv, govcert_hk
+  # Phase 2 scrapers: enisa, cert_in
+  # Phase 3 Europe: cert_fr, cert_bund, cert_se, cfcs_dk, csirt_it, si_cert, cert_hr, govcert_bg, cert_ee
+  # Phase 3 Americas: cert_cc, cert_br, first
+  # Phase 3 Asia-Pacific: cert_ua, krcert, twcert, thaicert
+  enabled_sources: ''

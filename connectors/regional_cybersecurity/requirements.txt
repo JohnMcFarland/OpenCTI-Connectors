@@ -1,0 +1,7 @@
+pycti==6.9.13
+pyyaml
+requests
+feedparser
+playwright==1.49.0
+beautifulsoup4
+lxml

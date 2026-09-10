@@ -1,0 +1,25 @@
+services:
+  regional-cybersecurity:
+    build: .
+    restart: always
+    environment:
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      - CONNECTOR_ID=
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Regional Cybersecurity
+      - CONNECTOR_SCOPE=regional-cybersecurity
+      - CONNECTOR_LOG_LEVEL=info
+      - REGIONAL_CYBERSECURITY_POLL_INTERVAL=21600
+      - REGIONAL_CYBERSECURITY_REQUEST_DELAY=2
+      - REGIONAL_CYBERSECURITY_CONFIDENCE=85
+      - REGIONAL_CYBERSECURITY_REPORT_TYPE=industry-alert
+      - REGIONAL_CYBERSECURITY_TLP=TLP:CLEAR
+      - REGIONAL_CYBERSECURITY_MAX_PER_SOURCE=20
+      # Comma-separated source keys (blank = all):
+      # Phase 1: cisa, ncsc_uk, cccs, acsc, cert_eu, jpcert, ncsc_fi
+      # Phase 2: cert_pl, cert_at, govcert_ch, cert_be, cert_lv, govcert_hk, enisa, cert_in
+      # Phase 3 Europe: cert_fr, cert_bund, cert_se, cfcs_dk, csirt_it, si_cert, cert_hr, govcert_bg, cert_ee
+      # Phase 3 Americas: cert_cc, cert_br, first
+      # Phase 3 Asia-Pacific: cert_ua, krcert, twcert, thaicert
+      - REGIONAL_CYBERSECURITY_ENABLED_SOURCES=
