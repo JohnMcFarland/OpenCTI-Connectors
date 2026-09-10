@@ -1,0 +1,29 @@
+version: '3'
+services:
+  microsoft-security-research:
+    build: .
+    container_name: opencti-connector-microsoft-security-research
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Microsoft Security Research
+      - CONNECTOR_SCOPE=microsoft_security_research
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - MICROSOFT_SECURITY_RESEARCH_BASE_URL=https://www.microsoft.com/en-us/security/blog
+      - MICROSOFT_SECURITY_RESEARCH_CONTENT_TYPE_ID=3663      # WP custom taxonomy term id for "Research"
+      - MICROSOFT_SECURITY_RESEARCH_POLL_INTERVAL=86400        # seconds between enumeration runs (24h)
+      - MICROSOFT_SECURITY_RESEARCH_REQUEST_DELAY=3            # seconds between successive fetches
+      - MICROSOFT_SECURITY_RESEARCH_MAX_REPORTS=0              # 0 = unlimited; set to 3 for a bounded test run
+      - MICROSOFT_SECURITY_RESEARCH_RENDER_RETRIES=3
+      - PLAYWRIGHT_NAV_TIMEOUT=60000                           # ms before a Playwright navigation times out
+      - MICROSOFT_SECURITY_RESEARCH_CONFIDENCE=50              # OpenCTI confidence 0-100 (Medium band)
+      - MICROSOFT_SECURITY_RESEARCH_REPORT_TYPE=open-source-reporting
+      - MICROSOFT_SECURITY_RESEARCH_TLP=TLP:CLEAR
+      - MICROSOFT_SECURITY_RESEARCH_AUTHOR_NAME=Microsoft Security Research
+    mem_limit: 2g
+    restart: always

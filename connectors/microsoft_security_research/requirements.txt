@@ -1,0 +1,4 @@
+pycti==6.9.13
+pyyaml
+requests
+playwright

@@ -1,0 +1,24 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Microsoft Security Research'
+  scope: 'microsoft_security_research'
+  log_level: 'info'
+microsoft_security_research:
+  base_url: 'https://www.microsoft.com/en-us/security/blog'
+  content_type_id: 3663
+  poll_interval: 86400
+  request_delay: 3
+  max_reports: 0
+  render_retries: 3
+  playwright_nav_timeout: 60000
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Microsoft Security Research'
