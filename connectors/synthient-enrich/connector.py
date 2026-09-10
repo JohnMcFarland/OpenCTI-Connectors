@@ -679,7 +679,10 @@ class SynthientEnrichConnector:
             if not rfi:
                 self.helper.log_warning(f"RFI {rfi_id} not found.")
                 return observables
-            for obj in rfi.get("objects", []):
+            objects = rfi.get("objects", [])
+            if isinstance(objects, dict) and "edges" in objects:
+                objects = [edge.get("node", {}) for edge in objects.get("edges", [])]
+            for obj in objects:
                 if obj.get("entity_type", "") in ip_types:
                     observables.append(obj)
         except Exception as e:
@@ -721,7 +724,8 @@ class SynthientEnrichConnector:
 
         for obs in observables:
             obs_id      = obs["id"]
-            obs_stix_id = obs.get("standard_id") or obs.get("stixIds", [None])[0]
+            stix_ids = obs.get("stixIds") or []
+            obs_stix_id = obs.get("standard_id") or (stix_ids[0] if stix_ids else None)
             obs_value   = obs.get("value") or obs.get("observable_value", "")
 
             if not obs_value:

@@ -533,7 +533,7 @@ class VirusTotalBuilder:
         # domain entity's last_analysis_date as the best available proxy.
         last_analysis_ts = self.attributes.get("last_analysis_date")
         last_seen: Optional[datetime.datetime] = (
-            datetime.datetime.utcfromtimestamp(last_analysis_ts)
+            datetime.datetime.fromtimestamp(last_analysis_ts, tz=datetime.timezone.utc)
             if last_analysis_ts
             else None
         )
@@ -859,8 +859,7 @@ class VirusTotalBuilder:
           - A clear statement that VT returned NotFoundError
           - Guidance for the analyst on next steps
         """
-        import datetime
-        lookup_time = datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+        lookup_time = datetime.datetime.now(tz=datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
         header = self._build_observable_header()
         content = (
@@ -1032,6 +1031,14 @@ class VirusTotalBuilder:
             f"from ruleset {yara.get('ruleset_name', 'unknown')}"
         )
 
+        # Guard against None or malformed ruleset responses.
+        if not ruleset or "data" not in ruleset:
+            self.helper.log_warning(
+                f"[VirusTotal] Ruleset for rule '{rule_name}' is empty or "
+                "malformed. Skipping."
+            )
+            return []
+
         # Parse the full ruleset to extract the specific matching rule.
         parser = plyara.Plyara()
         rules = parser.parse_string(ruleset["data"]["attributes"]["rules"])
@@ -1049,7 +1056,7 @@ class VirusTotalBuilder:
         valid_from_date = (
             datetime.datetime.min
             if valid_from is None
-            else datetime.datetime.utcfromtimestamp(valid_from)
+            else datetime.datetime.fromtimestamp(valid_from, tz=datetime.timezone.utc)
         )
 
         # Build a structured description from all available ruleset metadata.

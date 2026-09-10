@@ -200,9 +200,6 @@ class ProcedureDeconstructionConnector:
             )
             return None
 
-    def _create_component(self, comp: ComponentType, report_id: str, process_id: str) -> Optional[str]:
-        return self._create_observable(comp, report_id, process_id)
-
     def _add_to_report(self, report_id: str, object_id: str) -> None:
         try:
             self.api.report.add_stix_object_or_stix_relationship(
@@ -335,7 +332,7 @@ class ProcedureDeconstructionConnector:
             ]
 
             for comp in components:
-                oid    = self._create_component(comp, entity_id, proc_id)
+                oid    = self._create_observable(comp, entity_id, proc_id)
                 badge  = _ROLE_BADGE.get(comp.component_role, "🔹")
                 status = f"✅ `{oid}`" if oid else "❌ FAILED"
                 note_lines.append(

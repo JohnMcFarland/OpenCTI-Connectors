@@ -117,11 +117,11 @@ class DFIRReportConnector:
         # Classic config bootstrap: optional config.yml so the module runs both
         # in-container (env only) and locally (yaml) unchanged.
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 

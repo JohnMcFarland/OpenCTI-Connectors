@@ -179,6 +179,29 @@ def _as_pattern(obs: Dict[str, Any]) -> Optional[str]:
         return None
 
 
+def _normalize_hashes(raw_hashes: list) -> Dict[str, str]:
+    """
+    Normalize a list of hash dicts from OpenCTI into a consistent lookup.
+
+    Algorithm names are uppercased and space-delimited variants are hyphenated
+    to handle the forms OpenCTI produces ('SHA-256', 'sha-256', 'Sha256',
+    'SHA 256'). Hash values are stripped of surrounding whitespace.
+
+    Args:
+        raw_hashes: List of dicts with 'algorithm' and 'hash' keys.
+
+    Returns:
+        Dict mapping normalized algorithm name to stripped hash value.
+    """
+    hashes: Dict[str, str] = {}
+    for entry in raw_hashes:
+        algo = str(entry.get("algorithm", "")).upper().replace(" ", "-")
+        value = str(entry.get("hash", "")).strip()
+        if algo and value:
+            hashes[algo] = value
+    return hashes
+
+
 def _file_pattern(obs: Dict[str, Any]) -> Optional[str]:
     """
     Build a File STIX 2.1 pattern using the highest-quality available hash.
@@ -206,15 +229,7 @@ def _file_pattern(obs: Dict[str, Any]) -> Optional[str]:
         STIX pattern for the best available hash, or None if no recognized
         hash type is present.
     """
-    raw_hashes = obs.get("hashes") or []
-
-    # Normalize algorithm names: uppercase, ensure hyphenation.
-    hashes: Dict[str, str] = {}
-    for entry in raw_hashes:
-        algo = str(entry.get("algorithm", "")).upper().replace(" ", "-")
-        value = str(entry.get("hash", "")).strip()
-        if algo and value:
-            hashes[algo] = value
+    hashes = _normalize_hashes(obs.get("hashes") or [])
 
     # Attempt in priority order.
     for algo, stix_field in [("SHA-256", "SHA-256"), ("SHA-1", "SHA-1"), ("MD5", "MD5")]:
@@ -240,11 +255,7 @@ def _x509_pattern(obs: Dict[str, Any]) -> Optional[str]:
     Returns:
         STIX pattern string, or None if neither hash nor serial number present.
     """
-    raw_hashes = obs.get("hashes") or []
-    hashes: Dict[str, str] = {
-        str(h.get("algorithm", "")).upper(): str(h.get("hash", ""))
-        for h in raw_hashes
-    }
+    hashes = _normalize_hashes(obs.get("hashes") or [])
 
     sha256 = hashes.get("SHA-256")
     if sha256:
@@ -280,7 +291,3 @@ _PATTERN_FACTORIES: Dict[str, Any] = {
     "Mac-Addr":             _macaddr_pattern,
     "Directory":            _directory_pattern,
 }
-
-# Exposed for callers that need to enumerate supported types without
-# instantiating a pattern (e.g. for logging or config validation).
-SUPPORTED_OBSERVABLE_TYPES: frozenset = frozenset(_PATTERN_FACTORIES.keys())

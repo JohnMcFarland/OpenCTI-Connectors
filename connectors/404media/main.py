@@ -513,58 +513,63 @@ class FourZeroFourMediaConnector:
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "404 Media enumeration run"
         )
+        try:
 
-        processed = 0
-        skipped = 0
-        failed = 0
-        consecutive_skips = 0
+            processed = 0
+            skipped = 0
+            failed = 0
+            consecutive_skips = 0
 
-        for url in self._walk_listing_pages():
-            if self.max_posts and processed >= self.max_posts:
-                self.helper.log_info(
-                    f"Reached FOUR04MEDIA_MAX_POSTS={self.max_posts}; stopping run."
-                )
-                break
-
-            if self._already_ingested(url):
-                skipped += 1
-                consecutive_skips += 1
-                if (
-                    self.early_stop_skips
-                    and consecutive_skips >= self.early_stop_skips
-                ):
+            for url in self._walk_listing_pages():
+                if self.max_posts and processed >= self.max_posts:
                     self.helper.log_info(
-                        f"Hit {consecutive_skips} consecutive already-ingested "
-                        f"articles; stopping incremental walk."
+                        f"Reached FOUR04MEDIA_MAX_POSTS={self.max_posts}; stopping run."
                     )
                     break
-                continue
 
-            try:
-                meta, pdf_bytes = self._load_with_retry(url)
-            except _SkipArticle as exc:
-                failed += 1
-                self.helper.log_warning(f"Skipping {url}: {exc}")
-                continue
+                if self._already_ingested(url):
+                    skipped += 1
+                    consecutive_skips += 1
+                    if (
+                        self.early_stop_skips
+                        and consecutive_skips >= self.early_stop_skips
+                    ):
+                        self.helper.log_info(
+                            f"Hit {consecutive_skips} consecutive already-ingested "
+                            f"articles; stopping incremental walk."
+                        )
+                        break
+                    continue
 
-            if pdf_bytes is None:
-                failed += 1
-                self.helper.log_warning(
-                    f"Skipping {url}: load failed after retries."
-                )
-                continue
+                try:
+                    meta, pdf_bytes = self._load_with_retry(url)
+                except _SkipArticle as exc:
+                    failed += 1
+                    self.helper.log_warning(f"Skipping {url}: {exc}")
+                    continue
 
-            self._create_report(url, meta, pdf_bytes)
-            processed += 1
-            consecutive_skips = 0
-            time.sleep(self.request_delay)
+                if pdf_bytes is None:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Skipping {url}: load failed after retries."
+                    )
+                    continue
 
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+                self._create_report(url, meta, pdf_bytes)
+                processed += 1
+                consecutive_skips = 0
+                time.sleep(self.request_delay)
+
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
+        except Exception as e:
+            self.helper.log_error(f"Error processing: {e}")
+            self.helper.api.work.to_processed(work_id, str(e), in_error=True)
+            raise
 
     def run(self):
         self._resolve_graph_references()

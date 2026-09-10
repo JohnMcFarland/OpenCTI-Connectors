@@ -25,7 +25,7 @@ import re
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Optional
-from urllib.parse import urljoin, urlparse
+from urllib.parse import unquote, urljoin, urlparse
 
 import feedparser
 from bs4 import BeautifulSoup
@@ -105,7 +105,7 @@ class CISAPlugin(BasePlugin):
         pdf_bytes, pdf_filename = self._find_and_download_pdf(soup, raw.url)
         summary = self._extract_summary(soup) or raw.summary
         published = self._resolve_date(soup) or raw.published
-        labels = self._extract_labels(soup, raw)
+        labels = self._extract_labels(raw)
 
         return EnrichedReport(
             raw=raw,
@@ -190,7 +190,7 @@ class CISAPlugin(BasePlugin):
             self.log.debug("Found advisory PDF link: %s", pdf_url)
             pdf_bytes = fetch_pdf(self.session, pdf_url)
             if pdf_bytes:
-                filename = pdf_url.split("/")[-1]
+                filename = unquote(urlparse(pdf_url).path.rstrip("/").split("/")[-1]).strip()
                 return pdf_bytes, filename
 
         return None, None
@@ -245,7 +245,7 @@ class CISAPlugin(BasePlugin):
                         continue
         return None
 
-    def _extract_labels(self, soup: BeautifulSoup, raw: RawReport) -> list[str]:
+    def _extract_labels(self, raw: RawReport) -> list[str]:
         """
         Derive OpenCTI labels from URL structure and RSS tags.
         Labels help analysts filter by advisory type in the UI.

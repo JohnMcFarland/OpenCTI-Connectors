@@ -411,7 +411,10 @@ class URLHausConnector:
         existing = self.helper.api.report.read(
             filters={
                 "mode": "and",
-                "filters": [{"key": "name", "values": [name]}],
+                "filters": [
+                    {"key": "name", "values": [name]},
+                    {"key": "createdBy", "values": [self._urlhaus_id]},
+                ],
                 "filterGroups": [],
             }
         )
@@ -487,6 +490,7 @@ class URLHausConnector:
         the URL observable and the host observable (if present).
         """
         object_ids: list[str] = []
+        object_ids_set: set[str] = set()
 
         url_value = (entry.get("url") or "").strip()
         if not url_value:
@@ -548,8 +552,9 @@ class URLHausConnector:
             if name in TAG_TOOL_MAP:
                 entity_id = self._get_or_create_tool(name)
                 if entity_id:
-                    if entity_id not in object_ids:
+                    if entity_id not in object_ids_set:
                         object_ids.append(entity_id)
+                        object_ids_set.add(entity_id)
                     rel = self._create_rel("related-to", url_id, entity_id, date_added_iso)
                     if rel:
                         object_ids.append(rel)
@@ -563,8 +568,9 @@ class URLHausConnector:
             if name in TAG_SOFTWARE_MAP:
                 entity_id = self._get_or_create_software(name)
                 if entity_id:
-                    if entity_id not in object_ids:
+                    if entity_id not in object_ids_set:
                         object_ids.append(entity_id)
+                        object_ids_set.add(entity_id)
                     rel = self._create_rel("related-to", url_id, entity_id, date_added_iso)
                     if rel:
                         object_ids.append(rel)
@@ -577,8 +583,9 @@ class URLHausConnector:
             # Step 4: Malware SDO (default path for unrecognized family tags).
             malware_id = self._get_or_create_malware(name)
             if malware_id:
-                if malware_id not in object_ids:
+                if malware_id not in object_ids_set:
                     object_ids.append(malware_id)
+                    object_ids_set.add(malware_id)
                 rel = self._create_rel("related-to", url_id, malware_id, date_added_iso)
                 if rel:
                     object_ids.append(rel)
@@ -630,6 +637,7 @@ class URLHausConnector:
         not user-submitted tags, so Tool/Software routing does not apply.
         """
         object_ids: list[str] = []
+        object_ids_set: set[str] = set()
 
         sha256 = (entry.get("sha256_hash") or "").strip()
         if not sha256:
@@ -675,8 +683,9 @@ class URLHausConnector:
         if signature:
             malware_id = self._get_or_create_malware(signature)
             if malware_id:
-                if malware_id not in object_ids:
+                if malware_id not in object_ids_set:
                     object_ids.append(malware_id)
+                    object_ids_set.add(malware_id)
                 rel = self._create_rel("related-to", file_id, malware_id, firstseen_iso)
                 if rel:
                     object_ids.append(rel)

@@ -99,9 +99,3 @@ def fetch_pdf(session: requests.Session, url: str) -> Optional[bytes]:
         logger.debug("URL does not appear to be a PDF: %s (Content-Type: %s)", url, content_type)
         return None
     return resp.content
-
-
-def is_pdf_response(response: requests.Response) -> bool:
-    """Check if a response contains PDF content."""
-    content_type = response.headers.get("Content-Type", "")
-    return "pdf" in content_type.lower()

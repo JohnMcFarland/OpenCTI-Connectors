@@ -585,7 +585,7 @@ class NoteBuilder:
             ]
         for ref in ext_refs:
             url = ref.get("url") or ""
-            if url.startswith("http"):
+            if url.startswith("http://") or url.startswith("https://"):
                 return url
         return ""
 
@@ -618,4 +618,4 @@ class NoteBuilder:
     @staticmethod
     def _yaml_escape(text: str) -> str:
         """Escape string for YAML double-quoted scalar values."""
-        return text.replace("\\", "\\\\").replace('"', '\\"')
+        return text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")

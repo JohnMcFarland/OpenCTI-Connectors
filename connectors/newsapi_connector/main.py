@@ -321,11 +321,11 @@ class NewsAPIConnector:
         # in-container (env only) and locally (yaml) unchanged. Environment
         # variables take precedence over config.yml.
         config_file_path = os.path.join(BASE_DIR, "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 

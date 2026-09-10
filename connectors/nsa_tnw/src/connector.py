@@ -95,10 +95,16 @@ def run_once() -> None:
         ext = it.get("external_id") or it.get("pdf_url")
         pdf = it.get("pdf_url")
         _log(f"Creating Report external_id={ext} pdf={pdf}")
-        report_id = create_report_from_item(helper, it, now_iso=now_iso)
-        _log(f"Created Report id={report_id}")
-
-        known.add(ext)
+        try:
+            report_id = create_report_from_item(helper, it, now_iso=now_iso)
+            _log(f"Created Report id={report_id}")
+            known.add(ext)
+            # Persist dedup state after each success to avoid re-processing on crash
+            state["known_external_ids"] = sorted(list(known))
+            _write_state(state_path, state)
+        except Exception as e:
+            _log(f"Failed to process item {ext}: {e}", level="ERROR")
+            continue
 
     state["known_external_ids"] = sorted(list(known))
     state["last_run"] = now_iso

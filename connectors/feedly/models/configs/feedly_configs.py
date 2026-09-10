@@ -25,8 +25,10 @@ class _ConfigLoaderFeedly(ConfigBaseSettings):
         default="TLP:CLEAR",
         description="Marking definition to apply to all ingested objects.",
     )
-    confidence: PositiveInt = Field(
+    confidence: int = Field(
         default=50,
+        ge=0,
+        le=100,
         description="Confidence score (0-100) applied to all ingested objects.",
     )
     attach_pdf: bool = Field(

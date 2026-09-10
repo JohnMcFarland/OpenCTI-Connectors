@@ -63,6 +63,8 @@ class CrowdStrikeDetectionsConnector:
 
         self.client_secret = client_secret
 
+        self.falcon_client = Detects(client_id=client_id, client_secret=client_secret)
+
         self.cti_author = self.get_author("Crowdstrike")
 
         self.cs_author = self.get_author("Crowdstrike Endpoint Detection")
@@ -574,7 +576,8 @@ class CrowdStrikeDetectionsConnector:
                     f"relationship found"
                     f" from '{from_id}' to '{to_id}'"
                 )
-                if first_seen and first_seen < relationship.get("start_time"):
+                existing_start = relationship.get("start_time")
+                if first_seen and existing_start is not None and first_seen < existing_start:
                     self.helper.api.stix_core_relationship.update_field(
                         id=relationship.get("id"),
                         input={"key": "start_time", "value": first_seen},
@@ -584,7 +587,8 @@ class CrowdStrikeDetectionsConnector:
                         f"Existing relationship found"
                         f" from '{from_id}' to '{to_id}' with different start time"
                     )
-                if last_seen and last_seen > relationship.get("stop_time"):
+                existing_stop = relationship.get("stop_time")
+                if last_seen and existing_stop is not None and last_seen > existing_stop:
                     self.helper.api.stix_core_relationship.update_field(
                         id=relationship.get("id"),
                         input={"key": "stop_time", "value": last_seen},
@@ -752,7 +756,7 @@ class CrowdStrikeDetectionsConnector:
             A list of detections
         """
 
-        falcon_detects = Detects(client_id=client_id, client_secret=client_secret)
+        falcon_detects = self.falcon_client
         search_filter = (
             f"status:'{self.detection_status}'+date_updated:>'{search_time}'"
         )
@@ -839,10 +843,11 @@ class CrowdStrikeDetectionsConnector:
                 additional_names.add(sha256_value)
                 name = sha256_value
 
-            if not sha256_value and md5_value:
+            if md5_value:
                 hashes["MD5"] = md5_value
                 additional_names.add(md5_value)
-                name = md5_value
+                if not sha256_value:
+                    name = md5_value
 
             if parsed_file_name:
                 additional_names.add(parsed_file_name)
@@ -1183,7 +1188,7 @@ class CrowdStrikeDetectionsConnector:
 
         return infrastructure
 
-    def get_software(self, name, version):
+    def get_software(self, name, version, is_bios=False):
         """
         This method takes the name and version of software was found in the CrowdStrike detection
         and returns a corresponding OpenCTI Object. This method creates a new Software
@@ -1192,12 +1197,14 @@ class CrowdStrikeDetectionsConnector:
         Args:
             name (_str_) - The name of the software
             version (_str_) - The version of the software
+            is_bios (_bool_) - Whether this software entry represents a BIOS
 
         Returns:
             The OpenCTI Software stix_cyber_observable object
         """
         try:
-            name = name + " Bios"
+            if is_bios:
+                name = name + " Bios"
             observable_type = "Software"
 
             observable_data = {
@@ -1732,7 +1739,8 @@ class CrowdStrikeDetectionsConnector:
             )
 
             self.helper.log_debug(
-                f"[ProofpointConnector] stix_registry_key = " f"'{stix_registry_key}' "
+                f"[{type(self).__name__}.{CrowdStrikeDetectionsConnector.__name__}] stix_registry_key = "
+                f"'{stix_registry_key}' "
             )
         except ValueError as _err:
             self.helper.log_warning(
@@ -2005,7 +2013,7 @@ class CrowdStrikeDetectionsConnector:
         )
         cti_objects.append(cti_infrastructure_related_to_organization_relationship)
 
-        bios_software = self.get_software(bios_manufacturer, bios_version)
+        bios_software = self.get_software(bios_manufacturer, bios_version, is_bios=True)
         cti_objects.append(bios_software)
 
         physical_system_hosts_bios_relationship = self.create_stix_core_relationship(
@@ -2286,6 +2294,10 @@ class CrowdStrikeDetectionsConnector:
                         f"Exception occurred"
                         f": '{ex}'"
                     )
+                    if work_id:
+                        self.helper.api.work.to_processed(
+                            work_id, "Error: " + str(ex), in_error=True
+                        )
 
                 # Sleeping for 10 minutes between connector runs
                 time.sleep(self.sleep_seconds)

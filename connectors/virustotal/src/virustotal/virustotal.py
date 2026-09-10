@@ -638,8 +638,12 @@ class VirusTotalConnector:
           5. Create a structured assessment note.
           6. Optionally create a full per-engine analysis note.
         """
-        json_data = self.client.get_file_info(self.resolve_default_value(stix_entity))
-        assert json_data
+        file_hash = self.resolve_default_value(stix_entity)
+        if file_hash is None:
+            return "No hash available for this observable; skipping VT lookup."
+        json_data = self.client.get_file_info(file_hash)
+        if not json_data:
+            raise ValueError("Empty response from VirusTotal API")
 
         if (
             "error" in json_data
@@ -675,7 +679,6 @@ class VirusTotalConnector:
                 analysis_id = self.client.upload_artifact(
                     opencti_entity["importFiles"][0]["name"], artifact
                 )
-                self.client.get_file_info(self.resolve_default_value(stix_entity))
             except Exception as err:
                 raise ValueError(
                     "[VirusTotal] Error uploading artifact to VirusTotal"
@@ -694,7 +697,8 @@ class VirusTotalConnector:
             json_data = self.client.get_file_info(
                 self.resolve_default_value(stix_entity)
             )
-            assert json_data
+            if not json_data:
+                raise ValueError("Empty response from VirusTotal API")
 
         if "error" in json_data:
             if json_data["error"].get("code") == "NotFoundError":
@@ -741,6 +745,12 @@ class VirusTotalConnector:
             for yara in yara_results:
                 ruleset_id = yara.get("ruleset_id", "No ruleset id provided")
                 ruleset = self._retrieve_yara_ruleset(ruleset_id)
+                if not ruleset or "data" not in ruleset:
+                    self.helper.log_warning(
+                        f"[VirusTotal] Ruleset {ruleset_id} returned empty or "
+                        "malformed response. Skipping YARA rule."
+                    )
+                    continue
                 builder.create_yara(
                     yara,
                     ruleset,
@@ -797,7 +807,8 @@ class VirusTotalConnector:
           3. Create a structured assessment note.
         """
         json_data = self.client.get_ip_info(opencti_entity["observable_value"])
-        assert json_data
+        if not json_data:
+            raise ValueError("Empty response from VirusTotal API")
 
         if "error" in json_data:
             if json_data["error"].get("code") == "NotFoundError":
@@ -847,7 +858,8 @@ class VirusTotalConnector:
           3. Create a structured assessment note.
         """
         json_data = self.client.get_domain_info(opencti_entity["observable_value"])
-        assert json_data
+        if not json_data:
+            raise ValueError("Empty response from VirusTotal API")
 
         if "error" in json_data:
             if json_data["error"].get("code") == "NotFoundError":
@@ -904,7 +916,8 @@ class VirusTotalConnector:
           2. Create a structured assessment note.
         """
         json_data = self.client.get_url_info(opencti_entity["observable_value"])
-        assert json_data
+        if not json_data:
+            raise ValueError("Empty response from VirusTotal API")
 
         if (
             "error" in json_data
@@ -934,7 +947,8 @@ class VirusTotalConnector:
                     "[VirusTotal] Error waiting for VirusTotal URL analysis"
                 ) from err
             json_data = self.client.get_url_info(opencti_entity["observable_value"])
-            assert json_data
+            if not json_data:
+                raise ValueError("Empty response from VirusTotal API")
 
         if "error" in json_data:
             if json_data["error"].get("code") == "NotFoundError":
@@ -1122,10 +1136,16 @@ class VirusTotalConnector:
                 time.sleep(self.request_delay)
 
         # ── Update state file ─────────────────────────────────────────────────
-        # Written after full iteration so the timestamp only advances when
-        # the complete run finishes. A connector killed mid-run will
-        # reprocess from the previous timestamp on next invocation.
-        self._update_last_run(rfi_id, run_start_time)
+        # Only advance the watermark when every observable was processed
+        # without error.  When errors occurred the watermark stays put so
+        # failed observables are retried on the next invocation.
+        if skipped_error == 0:
+            self._update_last_run(rfi_id, run_start_time)
+        else:
+            self.helper.log_warning(
+                f"[VirusTotal] {skipped_error} observable(s) failed; "
+                "watermark not advanced to preserve retry eligibility"
+            )
 
         summary = (
             f"RFI '{rfi_name}': {processed} enriched, "

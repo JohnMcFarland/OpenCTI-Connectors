@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Set, Tuple
 from qa.relationship_policy import is_allowed
 
 _PARA_SPLIT_RE = re.compile(r"\n{2,}|\r\n\r\n")
-_HEADER_RE     = re.compile(r"^[A-Z0-9 :\-]{4,60}$|.{0,80}:$")
+_HEADER_RE     = re.compile(r"^[A-Z0-9 :\-]{4,60}$|^[A-Z][A-Za-z0-9 :\-]{3,59}:$")
 _MIN_PARA_LEN  = 80
 
 _COOCCURRENCE_RULES: List[Tuple[str, str, str, float]] = [
@@ -52,15 +52,6 @@ def segment_paragraphs(text: str) -> List[str]:
     return result
 
 
-def _find_entity_in_para(para: str, name: str) -> bool:
-    if not name or len(name) < 3:
-        return False
-    try:
-        return bool(re.search(r"\b" + re.escape(name) + r"\b", para, re.IGNORECASE))
-    except re.error:
-        return False
-
-
 def infer_paragraph_relationships(
     paragraphs: List[str],
     candidates: List[Dict[str, Any]],
@@ -73,11 +64,28 @@ def infer_paragraph_relationships(
     if not paragraphs or not candidates:
         return []
 
+    # Pre-compile one regex per candidate name so we don't recompile
+    # inside the (paragraph x candidate) inner loop.
+    compiled_patterns: Dict[str, re.Pattern] = {}
+    for c in candidates:
+        name = (c.get("name") or "").strip()
+        if name and len(name) >= 3 and name not in compiled_patterns:
+            try:
+                compiled_patterns[name] = re.compile(
+                    r"\b" + re.escape(name) + r"\b", re.IGNORECASE
+                )
+            except re.error:
+                pass
+
     results: List[Dict[str, Any]] = []
     seen: Set[str] = set()
 
     for para in paragraphs:
-        present = [c for c in candidates if _find_entity_in_para(para, c.get("name") or "")]
+        present = [
+            c for c in candidates
+            if (c.get("name") or "") in compiled_patterns
+            and compiled_patterns[c.get("name") or ""].search(para)
+        ]
         if len(present) < 2:
             continue
 

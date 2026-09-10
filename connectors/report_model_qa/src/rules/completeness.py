@@ -9,6 +9,7 @@ from util.graph import (
     extract_relationship_endpoints,
     normalize_rel_type,
     obj_display_name,
+    parse_iso,
     resolve_endpoint,
     safe_get,
 )
@@ -54,15 +55,6 @@ def _score_description(desc: str, src_name: str, tgt_name: str) -> Tuple[bool, s
 # Temporal coherence
 # ---------------------------------------------------------------------------
 
-def _parse_iso(ts: Optional[str]) -> Optional[datetime]:
-    if not ts:
-        return None
-    try:
-        return datetime.fromisoformat(ts.strip().replace("Z", "+00:00"))
-    except Exception:
-        return None
-
-
 def _check_temporal_coherence(
     rel: Dict[str, Any],
     src_obj: Optional[Dict[str, Any]],
@@ -71,8 +63,8 @@ def _check_temporal_coherence(
     issues: List[str] = []
     now = datetime.now(timezone.utc)
 
-    rel_first = _parse_iso(safe_get(rel, "first_seen", "start_time"))
-    rel_last  = _parse_iso(safe_get(rel, "last_seen",  "stop_time"))
+    rel_first = parse_iso(safe_get(rel, "first_seen", "start_time"))
+    rel_last  = parse_iso(safe_get(rel, "last_seen",  "stop_time"))
 
     if rel_first and rel_last and rel_last < rel_first:
         issues.append(
@@ -81,8 +73,8 @@ def _check_temporal_coherence(
     if rel_last and rel_last > now:
         issues.append(f"last_seen ({rel_last.date()}) is in the future")
 
-    src_first = _parse_iso(safe_get(src_obj or {}, "first_seen", "start_time", "created_at"))
-    tgt_first = _parse_iso(safe_get(tgt_obj or {}, "first_seen", "start_time", "created_at"))
+    src_first = parse_iso(safe_get(src_obj or {}, "first_seen", "start_time", "created_at"))
+    tgt_first = parse_iso(safe_get(tgt_obj or {}, "first_seen", "start_time", "created_at"))
     if rel_first and src_first and tgt_first:
         earliest = min(src_first, tgt_first)
         if rel_first < earliest:

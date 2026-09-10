@@ -11,7 +11,7 @@ from pydantic import (
 
 LogLevelToLower = Annotated[
     Literal["debug", "info", "warn", "warning", "error"],
-    PlainSerializer(lambda v: "".join(v), return_type=str),
+    PlainSerializer(lambda v: v.lower(), return_type=str),
 ]
 
 HttpUrlToString = Annotated[HttpUrl, PlainSerializer(str, return_type=str)]

@@ -1,19 +1,16 @@
 import io
 import json
-import tempfile
-import threading
 import multiprocessing
 import time
 from datetime import datetime
 from typing import Optional, Set, List
 from uuid import NAMESPACE_DNS, uuid5
 
-import weasyprint
 import requests
 from feedly.api_client.enterprise.indicators_of_compromise import StixIoCDownloader
 from feedly.api_client.session import FeedlySession
 from markdown import markdown
-from pycti import OpenCTIConnectorHelper, OpenCTIStix2Utils
+from pycti import OpenCTIConnectorHelper
 
 FEEDLY_AI_UUID = "identity--477866fd-8784-46f9-ab40-5592ed4eddd7"
 
@@ -26,10 +23,6 @@ TLP_MARKING_IDS = {
     "TLP:AMBER+STRICT": "marking-definition--826578e1-40ad-459f-bc73-ede076f81f37",
     "TLP:RED":          "marking-definition--e828b379-4e03-4974-9ac4-e53a884c97c2",
 }
-
-# pdfkit options for article rendering
-
-
 
 def _weasyprint_worker(html: str, url: str, queue) -> None:
     """Module-level worker for subprocess-isolated weasyprint rendering.
@@ -100,16 +93,7 @@ class FeedlyConnector:
         # --- presentation tweaks
         _make_reports_content_instead_of_descriptions(bundle)
 
-        # --- keep observables, drop indicators (SDO type "indicator")
-        _drop_indicators_keep_observables(bundle)
-
-        # --- keep helper fields for any remaining indicators (no-op if indicators dropped)
-        _add_main_observable_type_to_indicators(bundle)
-
-        # --- normalize TA -> intrusion-set (Feedly sometimes uses TA)
-        _transform_threat_actors_to_intrusion_sets(bundle)
-
-        # --- report author as organization (from external_references[1].source_name)
+        # --- report author as organization (from external_references source_name)
         _add_source_name_as_author_to_all_reports(bundle)
 
         # --- remove auto labels
@@ -117,12 +101,6 @@ class FeedlyConnector:
 
         # --- force report type
         _force_report_type_open_source(bundle)
-
-        # --- drop network-traffic SCOs and references
-        _drop_network_traffic(bundle)
-
-        # --- drop all relationship and sighting SROs
-        _drop_all_relationships(bundle)
 
         # --- strip all SDOs and SCOs except report and identity
         _keep_reports_and_identities_only(bundle)
@@ -311,33 +289,6 @@ def _count_reports(bundle: dict) -> int:
     return sum(1 for o in bundle.get("objects", []) if o.get("type") == "report")
 
 
-def _drop_all_relationships(bundle: dict) -> None:
-    """
-    Remove all relationship and sighting SROs from the bundle.
-    Containment is preserved via object_refs on report objects.
-    """
-    drop_types = {"relationship", "sighting"}
-    dropped_ids: Set[str] = set()
-
-    new_objects: List[dict] = []
-    for o in bundle.get("objects", []):
-        if o.get("type") in drop_types:
-            if isinstance(o.get("id"), str):
-                dropped_ids.add(o["id"])
-            continue
-        new_objects.append(o)
-
-    # Prune any dangling object_refs on reports pointing at dropped SROs
-    if dropped_ids:
-        for o in new_objects:
-            if o.get("type") == "report" and isinstance(o.get("object_refs"), list):
-                o["object_refs"] = [
-                    r for r in o["object_refs"] if r not in dropped_ids
-                ]
-
-    bundle["objects"] = new_objects
-
-
 def _apply_marking_and_confidence(bundle: dict, marking_id: str, confidence: int) -> None:
     """Apply marking definition ref and confidence score to every object in the bundle."""
     SCO_TYPES = {
@@ -366,29 +317,6 @@ def _make_reports_content_instead_of_descriptions(bundle: dict) -> None:
             )
 
 
-def _add_main_observable_type_to_indicators(bundle: dict) -> None:
-    for o in bundle.get("objects", []):
-        if o.get("type") == "indicator" and "pattern" in o:
-            pattern = o["pattern"]
-            stix_type = pattern.removeprefix("[").split(":")[0].strip()
-            o["x_opencti_main_observable_type"] = (
-                OpenCTIStix2Utils.stix_observable_opencti_type(stix_type)
-            )
-
-
-def _transform_threat_actors_to_intrusion_sets(bundle: dict) -> None:
-    for o in bundle.get("objects", []):
-        if o.get("type") == "threat-actor":
-            o["type"] = "intrusion-set"
-            if "id" in o and isinstance(o["id"], str):
-                o["id"] = o["id"].replace("threat-actor", "intrusion-set")
-        if o.get("type") == "relationship":
-            if "source_ref" in o and isinstance(o["source_ref"], str):
-                o["source_ref"] = o["source_ref"].replace("threat-actor", "intrusion-set")
-            if "target_ref" in o and isinstance(o["target_ref"], str):
-                o["target_ref"] = o["target_ref"].replace("threat-actor", "intrusion-set")
-
-
 def _add_source_name_as_author_to_all_reports(bundle: dict) -> None:
     source_identity_objects: List[dict] = []
     for o in bundle.get("objects", []):
@@ -401,9 +329,11 @@ def _add_source_name_as_author_to_all_reports(bundle: dict) -> None:
 
 def _add_source_name_as_author_to_report(report: dict) -> Optional[dict]:
     ext_refs = report.get("external_references") or []
-    if len(ext_refs) < 2:
-        return None
-    source_name = (ext_refs[1] or {}).get("source_name")
+    source_name = None
+    for ref in ext_refs:
+        if ref and ref.get("source_name"):
+            source_name = ref["source_name"]
+            break
     if not source_name:
         return None
     report["created_by_ref"] = _make_source_id(source_name)
@@ -411,11 +341,15 @@ def _add_source_name_as_author_to_report(report: dict) -> Optional[dict]:
 
 
 def _make_source_identity_object(source_name: str) -> dict:
+    now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
     return {
         "type": "identity",
+        "spec_version": "2.1",
         "name": source_name,
         "identity_class": "organization",
         "id": _make_source_id(source_name),
+        "created": now,
+        "modified": now,
     }
 
 
@@ -461,81 +395,7 @@ def _force_report_type_open_source(bundle: dict) -> None:
 def _strip_labels(bundle: dict) -> None:
     for o in bundle.get("objects", []):
         if "labels" in o:
-            try:
-                del o["labels"]
-            except Exception:
-                pass
-
-
-def _drop_indicators_keep_observables(bundle: dict) -> None:
-    objects = bundle.get("objects", [])
-    removed_ids: Set[str] = set()
-
-    for o in objects:
-        if o.get("type") == "indicator" and isinstance(o.get("id"), str):
-            removed_ids.add(o["id"])
-
-    if not removed_ids:
-        return
-
-    new_objects: List[dict] = []
-    for o in objects:
-        t = o.get("type")
-
-        if t == "indicator" and o.get("id") in removed_ids:
-            continue
-
-        if t == "relationship":
-            if o.get("source_ref") in removed_ids or o.get("target_ref") in removed_ids:
-                continue
-
-        if t == "sighting":
-            if o.get("sighting_of_ref") in removed_ids:
-                continue
-
-        if t == "report" and isinstance(o.get("object_refs"), list):
-            o["object_refs"] = [r for r in o["object_refs"] if r not in removed_ids]
-
-        new_objects.append(o)
-
-    bundle["objects"] = new_objects
-
-
-def _drop_network_traffic(bundle: dict) -> None:
-    removed_ids: Set[str] = set()
-
-    for o in bundle.get("objects", []):
-        if o.get("type") == "network-traffic" and isinstance(o.get("id"), str):
-            removed_ids.add(o["id"])
-
-    if not removed_ids:
-        return
-
-    new_objects: List[dict] = []
-    for o in bundle.get("objects", []):
-        t = o.get("type")
-
-        if t == "network-traffic" and o.get("id") in removed_ids:
-            continue
-
-        if t == "relationship" and (
-            o.get("source_ref") in removed_ids or o.get("target_ref") in removed_ids
-        ):
-            continue
-
-        if t == "observed-data" and isinstance(o.get("object_refs"), list):
-            kept = [ref for ref in o["object_refs"] if ref not in removed_ids]
-            if not kept:
-                continue
-            o = dict(o)
-            o["object_refs"] = kept
-
-        if t == "report" and isinstance(o.get("object_refs"), list):
-            o["object_refs"] = [ref for ref in o["object_refs"] if ref not in removed_ids]
-
-        new_objects.append(o)
-
-    bundle["objects"] = new_objects
+            del o["labels"]
 
 
 def _get_last_article_published_date(bundle: dict) -> Optional[str]:

@@ -13,24 +13,23 @@ import io
 import logging
 from datetime import datetime, timezone
 from typing import Optional
+from urllib.parse import unquote, urlparse
 
 logger = logging.getLogger(__name__)
 
-# Marking definition IDs — sourced directly from this OpenCTI instance
-TLP_MARKING_IDS = {
-    "TLP:CLEAR":        "c6080aae-5052-4862-a86e-fb5e318a703c",
-    "TLP:GREEN":        "98ab4b33-8d55-47d0-bcca-611c3b5583b6",
-    "TLP:AMBER":        "d08df377-c083-499b-8f9a-415b42e19fa6",
-    "TLP:AMBER+STRICT": "2e897ae6-7421-49a4-bd75-253b73220f15",
-    "TLP:RED":          "eaa227d5-bf60-4ade-b172-91957e2c7de0",
-    # Internal classifications
-    "restricted":       "91458828-b956-4e0c-8a38-98d256644eba",
-    "limited":          "18bca29f-b881-4af1-88ec-5127040840f2",
-    "sensitive":        "e9aae24e-0528-4f18-9fe9-aa0a24d99d3a",
-}
+# TLP levels to resolve at init time. The connector queries the platform
+# for each marking definition by name rather than hard-coding UUIDs, which
+# are instance-specific and break across deployments.
+_TLP_LEVELS = [
+    "TLP:CLEAR",
+    "TLP:GREEN",
+    "TLP:AMBER",
+    "TLP:AMBER+STRICT",
+    "TLP:RED",
+]
 
-# Default for any plugin that doesn't specify — CISA and other public sources
-DEFAULT_MARKING_ID = "c6080aae-5052-4862-a86e-fb5e318a703c"  # TLP:CLEAR
+# Default marking name for plugins that don't specify one.
+DEFAULT_MARKING_NAME = "TLP:CLEAR"
 
 
 class ReportBuilder:
@@ -44,6 +43,42 @@ class ReportBuilder:
         self.helper = helper
         self.log = logging.getLogger(__name__)
         self._identity_cache: dict[str, str] = {}
+        self._marking_ids: dict[str, str] = {}
+        for tlp_name in _TLP_LEVELS:
+            resolved = self._resolve_marking_id(tlp_name)
+            if resolved:
+                self._marking_ids[tlp_name] = resolved
+            else:
+                self.log.warning(
+                    "Could not resolve marking definition for '%s'", tlp_name
+                )
+        self._default_marking_id = self._marking_ids.get(DEFAULT_MARKING_NAME)
+        if not self._default_marking_id:
+            self.log.error(
+                "Default marking '%s' could not be resolved — "
+                "reports may be created without a marking", DEFAULT_MARKING_NAME
+            )
+
+    def _resolve_marking_id(self, tlp_name: str) -> str | None:
+        """
+        Query the platform for a marking definition by its definition name.
+        Returns the internal UUID or None if not found.
+        """
+        try:
+            result = self.helper.api.marking_definition.read(
+                filters={
+                    "mode": "and",
+                    "filters": [{"key": "definition", "values": [tlp_name]}],
+                    "filterGroups": [],
+                }
+            )
+            if result:
+                return result.get("id")
+        except Exception as e:
+            self.log.warning(
+                "Failed to resolve marking '%s': %s", tlp_name, e
+            )
+        return None
 
     # -----------------------------------------------------------------------
     # Public interface
@@ -80,7 +115,7 @@ class ReportBuilder:
 
         # --- 3. Resolve metadata -------------------------------------------
         marking_name = enriched.marking or plugin.default_marking
-        marking_id = TLP_MARKING_IDS.get(marking_name, DEFAULT_MARKING_ID)
+        marking_id = self._marking_ids.get(marking_name, self._default_marking_id)
         report_type = enriched.report_type or plugin.report_type
         confidence = plugin.confidence
         published = enriched.resolved_published or raw.published or datetime.now(timezone.utc)
@@ -188,9 +223,9 @@ class ReportBuilder:
             return bool(refs)
         except Exception as e:
             self.log.warning(
-                "Dedup check failed for %s: %s — proceeding with ingestion", url, e
+                "Dedup check failed for %s: %s — assuming exists to prevent duplicates", url, e
             )
-            return False
+            return True
 
     def _attach_pdf(self, report_id: str, pdf_bytes: bytes, filename: str) -> None:
         """Upload a PDF file to the report's Files tab."""
@@ -211,9 +246,10 @@ class ReportBuilder:
     @staticmethod
     def _url_to_filename(url: str) -> str:
         """Derive a reasonable filename from a URL."""
-        path = url.rstrip("/").split("/")[-1]
-        if not path or "." not in path:
-            path = "report.pdf"
-        if not path.lower().endswith(".pdf"):
-            path = path + ".pdf"
-        return path
+        path = urlparse(url).path
+        filename = unquote(path.rstrip("/").split("/")[-1]).strip()
+        if not filename or "." not in filename:
+            filename = "report.pdf"
+        if not filename.lower().endswith(".pdf"):
+            filename = filename + ".pdf"
+        return filename

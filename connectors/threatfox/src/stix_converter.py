@@ -140,7 +140,7 @@ class StixConverter:
         confidence_level = entry.get("confidence_level", 50)
         reference = entry.get("reference")
         reporter = (entry.get("reporter") or "").strip()
-        is_anonymous = str(entry.get("anonymous", "0")) == "1"
+        is_anonymous = entry.get("anonymous", 0) in (1, "1", True)
 
         raw_tags = entry.get("tags")
         tags_string = ",".join(raw_tags) if isinstance(raw_tags, list) else raw_tags
@@ -258,12 +258,19 @@ class StixConverter:
             ip, port_str = ioc_value.rsplit(":", 1)
             port = int(port_str)
 
-            # Primary observable: ipv4-addr
-            ip_sid = observable_id("ipv4-addr", ip)
-            self._observables.append({**base, "type": "ipv4-addr", "id": ip_sid, "value": ip})
+            # Detect IPv6: bracketed form [::1]:port or bare form containing ':'
+            ip_clean = ip.strip("[]")
+            if "[" in ip or ":" in ip_clean:
+                sco_type = "ipv6-addr"
+            else:
+                sco_type = "ipv4-addr"
+
+            # Primary observable: ipv4-addr or ipv6-addr
+            ip_sid = observable_id(sco_type, ip_clean)
+            self._observables.append({**base, "type": sco_type, "id": ip_sid, "value": ip_clean})
 
             # Secondary observable: network-traffic (port-only, no dst_ref)
-            nt_sid = network_traffic_id(ip, port)
+            nt_sid = network_traffic_id(ip_clean, port)
             self._observables.append({
                 "type": "network-traffic",
                 "spec_version": "2.1",
@@ -273,7 +280,7 @@ class StixConverter:
                 "object_marking_refs": [config.TLP_CLEAR_ID],
             })
 
-            # Link: ipv4-addr --related-to--> network-traffic
+            # Link: ip-addr --related-to--> network-traffic
             self._add_relationship(ip_sid, "related-to", nt_sid)
 
             return ip_sid
@@ -298,17 +305,21 @@ class StixConverter:
     def _apply_tag_objects(
         self, tags: ProcessedTags, observable_stix_id: str, ioc_type: str
     ) -> None:
-        for tag in tags.asn_tags:
-            as_id = autonomous_system_id(tag.as_number)
-            if as_id not in self._autonomous_systems:
-                self._autonomous_systems[as_id] = {
-                    "type": "autonomous-system",
-                    "spec_version": "2.1",
-                    "id": as_id,
-                    "number": tag.as_number,
-                    "object_marking_refs": [config.TLP_CLEAR_ID],
-                }
-            if ioc_type == "ip:port":
+        # ASN tags only produce a belongs-to edge when the primary observable
+        # is an IP address.  ip:port is currently the only IOC type that
+        # creates an ipv4-addr / ipv6-addr SCO.  For any other IOC type the
+        # ASN SDO would be an orphan node (no relationship), so skip it.
+        if ioc_type == "ip:port":
+            for tag in tags.asn_tags:
+                as_id = autonomous_system_id(tag.as_number)
+                if as_id not in self._autonomous_systems:
+                    self._autonomous_systems[as_id] = {
+                        "type": "autonomous-system",
+                        "spec_version": "2.1",
+                        "id": as_id,
+                        "number": tag.as_number,
+                        "object_marking_refs": [config.TLP_CLEAR_ID],
+                    }
                 self._add_relationship(observable_stix_id, "belongs-to", as_id)
 
         for tag in tags.software_tags:

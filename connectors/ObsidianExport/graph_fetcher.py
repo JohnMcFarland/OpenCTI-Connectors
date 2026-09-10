@@ -62,7 +62,6 @@ OBSERVABLE_ENTITY_TYPES: set[str] = {
     "Hostname",
     "Payment-Card",
     "Persona",            # OpenCTI custom SCO — represents online handles/monikers
-    "Indicator",          # Included here to skip manually-created indicators gracefully
 }
 
 # Identity-family SDOs: fetched via helper.api.identity.read()
@@ -132,8 +131,6 @@ class GraphFetcher:
               entity_type     — the entity_type argument, passed through
               objects_by_type — dict: entity_type_str -> list of entity dicts
               relationships   — list of relationship dicts (both endpoints in container)
-              object_id_set   — set of all contained object IDs (used by NoteBuilder
-                               for relationship endpoint validation)
 
         Raises:
             ValueError: If the container entity cannot be fetched (not found or
@@ -234,7 +231,6 @@ class GraphFetcher:
             "entity_type": entity_type,
             "objects_by_type": dict(objects_by_type),
             "relationships": relationships,
-            "object_id_set": object_id_set,
         }
 
     # ---------------------------------------------------------------------------

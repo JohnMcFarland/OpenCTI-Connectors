@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import re
 
 # ---------------------------------------------------------------------------
@@ -9,21 +10,6 @@ import re
 # Matches any HTML tag — opening, closing, self-closing, with or without
 # attributes. Bounded by > to prevent catastrophic backtracking.
 _HTML_TAG_RE = re.compile(r"<[^>]+>", re.DOTALL)
-
-# Common HTML entities found in CTI report HTML exports.
-_HTML_ENTITIES: dict = {
-    "&amp;":   "&",
-    "&lt;":    "<",
-    "&gt;":    ">",
-    "&quot;":  '"',
-    "&apos;":  "'",
-    "&#39;":   "'",
-    "&#x27;":  "'",
-    "&nbsp;":  " ",
-    "&mdash;": "—",
-    "&ndash;": "–",
-    "&hellip;": "...",
-}
 
 # Block-level HTML element endings that should become newlines to preserve
 # paragraph boundaries for the downstream paragraph segmenter.
@@ -38,7 +24,7 @@ _BLOCK_END_RE = re.compile(
 # stripping when source documents are rendered from markdown or contain
 # markdown-formatted sections. These produce artifacts like "**Scape:**"
 # that get accepted as entity names by the cue-phrase extractor.
-_MD_INLINE_RE = re.compile(r"[*_]{1,3}")
+_MD_INLINE_RE = re.compile(r"(?<!\w)[*_]{1,3}(?=\S)|(?<=\S)[*_]{1,3}(?!\w)")
 _MD_HEADING_RE = re.compile(r"^#{1,6}\s+", re.MULTILINE)
 
 
@@ -71,8 +57,7 @@ def strip_html(text: str) -> str:
 
     text = _BLOCK_END_RE.sub("\n", text)
 
-    for entity, replacement in _HTML_ENTITIES.items():
-        text = text.replace(entity, replacement)
+    text = html.unescape(text)
 
     text = _HTML_TAG_RE.sub(" ", text)
 

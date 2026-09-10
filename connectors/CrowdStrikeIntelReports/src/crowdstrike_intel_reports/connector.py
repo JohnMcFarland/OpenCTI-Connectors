@@ -51,11 +51,11 @@ class CrowdStrikeIntelReportsConnector:
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "..", "config.yml"
         )
-        config = (
-            yaml.safe_load(open(config_file_path, encoding="utf-8"))
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as fh:
+                config = yaml.safe_load(fh) or {}
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -329,7 +329,7 @@ class CrowdStrikeIntelReportsConnector:
     # Per-report processing                                                   #
     # ---------------------------------------------------------------------- #
 
-    def _process_report(self, report: dict) -> bool:
+    def _process_report(self, report: dict, work_id=None) -> bool:
         report_id = report.get("id", "unknown")
         report_name = report.get("name") or f"CrowdStrike Report {report_id}"
 
@@ -368,6 +368,7 @@ class CrowdStrikeIntelReportsConnector:
             bundle=self._build_bundle(report, pdf_bytes),
             update=False,
             bypass_validation=False,
+            work_id=work_id,
         )
 
         self.helper.log_info(f"[CrowdStrikeIntelReports] Ingested: '{report_name}'")
@@ -377,7 +378,7 @@ class CrowdStrikeIntelReportsConnector:
     # Poll cycle                                                              #
     # ---------------------------------------------------------------------- #
 
-    def _run_cycle(self):
+    def _run_cycle(self, work_id=None):
         self.helper.log_info("[CrowdStrikeIntelReports] Starting poll cycle.")
 
         since = self._get_high_water_mark()
@@ -388,7 +389,7 @@ class CrowdStrikeIntelReportsConnector:
         try:
             for report in self.falcon.get_reports_since(since):
                 try:
-                    if self._process_report(report):
+                    if self._process_report(report, work_id=work_id):
                         ingested += 1
                     else:
                         skipped += 1
@@ -429,7 +430,7 @@ class CrowdStrikeIntelReportsConnector:
                     f"CrowdStrike Intel Reports — "
                     f"{datetime.datetime.now(datetime.timezone.utc).isoformat()}",
                 )
-                result = self._run_cycle()
+                result = self._run_cycle(work_id=work_id)
 
             except Exception as exc:
                 self.helper.log_error(

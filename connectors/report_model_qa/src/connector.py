@@ -340,19 +340,26 @@ class ReportModelQAConnector:
         # Class-based rules
         rule_ctx = self._build_rule_context(report, resolved_objects, relationship_ids)
 
+        # 10 function-based rules always run above; count class-based rules that are enabled.
+        total_rules_run = 10
+
         if self._marking_rule.enabled(rule_ctx):
+            total_rules_run += 1
             for rf in self._marking_rule.evaluate(rule_ctx):
                 findings.append(_finding_from_rule_result(rf, "Marking"))
 
         if self._sightings_rule.enabled(rule_ctx):
+            total_rules_run += 1
             for rf in self._sightings_rule.evaluate(rule_ctx):
                 findings.append(_finding_from_rule_result(rf, "Sightings"))
 
         if self._threat_actor_rule.enabled(rule_ctx):
+            total_rules_run += 1
             for rf in self._threat_actor_rule.evaluate(rule_ctx):
                 findings.append(_finding_from_rule_result(rf, "Threat Actor"))
 
         if self._label_rule.enabled(rule_ctx):
+            total_rules_run += 1
             for rf in self._label_rule.evaluate(rule_ctx):
                 findings.append(_finding_from_rule_result(rf, "Labels"))
 
@@ -373,7 +380,7 @@ class ReportModelQAConnector:
                 scope_entities=metrics.get("scope_entities", 0),
                 scope_relationships=metrics.get("scope_relationships", 0),
                 metrics=metrics,
-                total_rules_run=11,
+                total_rules_run=total_rules_run,
             )
         )
 

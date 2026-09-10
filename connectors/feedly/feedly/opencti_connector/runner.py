@@ -91,6 +91,6 @@ class FeedlyRunner:
         state["streams"][stream_id] = {
             "last_run": now.isoformat(),
             "last_article_publish_date": last_article_publish_date
-            or state.get("last_article_publish_date"),
+            or state.get("streams", {}).get(stream_id, {}).get("last_article_publish_date"),
         }
         self.helper.set_state(state)

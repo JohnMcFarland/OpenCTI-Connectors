@@ -6,6 +6,8 @@ import json
 import logging
 import os
 import time
+import traceback
+import uuid
 from datetime import datetime, timezone
 
 from pycti import OpenCTIConnectorHelper
@@ -56,7 +58,7 @@ class ThreatFoxConnector:
                 )
                 self.helper.log_info("Run completed at %s", now.isoformat())
             except Exception as e:
-                self.helper.log_error(f"ThreatFox connector error: {str(e)}")
+                self.helper.log_error(f"ThreatFox connector error: {str(e)}\n{traceback.format_exc()}")
 
             if self._interval > 0:
                 self.helper.log_info(f"Sleeping {self._interval} minutes until next run...")
@@ -93,7 +95,7 @@ class ThreatFoxConnector:
         # Push all content objects via bundle
         bundle = {
             "type": "bundle",
-            "id": f"bundle--{self.helper.connect_id}",
+            "id": f"bundle--{str(uuid.uuid4())}",
             "objects": stix_objects,
         }
         self.helper.log_info("Sending STIX bundle to OpenCTI...")
@@ -149,11 +151,15 @@ class ThreatFoxConnector:
         # Resolve the internal OpenCTI ID for TLP:CLEAR marking definition.
         marking_internal_id = None
         try:
-            markings = self.helper.api.marking_definition.list()
-            for m in (markings or []):
-                if (m.get("definition") or "").strip().lower() == "tlp:clear":
-                    marking_internal_id = m["id"]
-                    break
+            marking = self.helper.api.marking_definition.read(
+                filters={
+                    "mode": "and",
+                    "filters": [{"key": "definition", "values": ["TLP:CLEAR"]}],
+                    "filterGroups": [],
+                }
+            )
+            if marking:
+                marking_internal_id = marking["id"]
         except Exception as e:
             logger.warning("Could not resolve TLP:CLEAR marking ID: %s", e)
 

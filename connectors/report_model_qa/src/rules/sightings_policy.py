@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from .base import Rule, RuleContext
+from util.graph import obj_display_name
 
 # Concrete entity_type strings OpenCTI returns for observables.
 # Must stay in sync with _OBSERVABLES in util/relationship_policy.py.
@@ -34,14 +35,6 @@ _OBSERVABLE_TYPES = frozenset({
     "Payment-Card",
     "Persona",
 })
-
-
-def _display_name(o: Dict[str, Any]) -> str:
-    for k in ("name", "value", "observable_value"):
-        v = o.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-    return o.get("standard_id") or o.get("id") or "(unnamed)"
 
 
 class SightingsPolicyRule(Rule):
@@ -81,8 +74,8 @@ class SightingsPolicyRule(Rule):
             from_type = (from_res.get("entity_type") or from_res.get("entityType") or "").strip()
             to_type = (to_res.get("entity_type") or to_res.get("entityType") or "").strip()
 
-            from_name = _display_name(from_res)
-            to_name = _display_name(to_res)
+            from_name = obj_display_name(from_res)
+            to_name = obj_display_name(to_res)
 
             # Rule 1: sighting source must be an observable
             if from_type and from_type not in _OBSERVABLE_TYPES:

@@ -3,14 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from .base import Rule, RuleContext
-
-
-def _display_name(o: Dict[str, Any]) -> str:
-    for k in ("name", "value", "observable_value"):
-        v = o.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-    return o.get("standard_id") or o.get("id") or "(unnamed)"
+from util.graph import obj_display_name
 
 
 # Collection requirement label prefixes as used in the ingestion manual.
@@ -35,7 +28,7 @@ class LabelPolicyRule(Rule):
                 continue
             oid = o.get("id")
             et = o.get("entity_type") or "(unknown-type)"
-            nm = _display_name(o)
+            nm = obj_display_name(o)
 
             labels = o.get("labels") or []
             if not isinstance(labels, list):

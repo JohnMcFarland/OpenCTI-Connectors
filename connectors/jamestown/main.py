@@ -125,11 +125,11 @@ class JamestownConnector:
         _resolve_graph_references().
         """
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -321,7 +321,7 @@ class JamestownConnector:
             return None
         try:
             dt = parsedate_to_datetime(raw)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, IndexError):
             return None
         if dt is None:
             return None
@@ -508,76 +508,81 @@ class JamestownConnector:
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "The Jamestown Foundation feed poll"
         )
-        self.helper.log_info(f"Fetched {len(entries)} feed items from {self.feed_url}.")
+        try:
+            self.helper.log_info(f"Fetched {len(entries)} feed items from {self.feed_url}.")
 
-        # Observe category terms across the cycle; surface them once, bind nothing.
-        observed = sorted({t for e in entries for t in self._entry_categories(e)})
-        self.helper.log_info(
-            f"Distinct feed categories observed (not bound to Reports): {observed}"
-        )
+            # Observe category terms across the cycle; surface them once, bind nothing.
+            observed = sorted({t for e in entries for t in self._entry_categories(e)})
+            self.helper.log_info(
+                f"Distinct feed categories observed (not bound to Reports): {observed}"
+            )
 
-        processed = 0   # new Reports created
-        skipped = 0     # already present in the graph
-        failed = 0      # render failed or unparseable date
+            processed = 0   # new Reports created
+            skipped = 0     # already present in the graph
+            failed = 0      # render failed or unparseable date
 
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
-            renders_since_recycle = 0
-            try:
-                for entry in entries:
-                    url = entry.get("link")
-                    if not url:
-                        continue
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+                renders_since_recycle = 0
+                try:
+                    for entry in entries:
+                        url = entry.get("link")
+                        if not url:
+                            continue
 
-                    if self.max_reports and processed >= self.max_reports:
-                        self.helper.log_info(
-                            f"Reached JAMESTOWN_MAX_REPORTS={self.max_reports}; stopping run."
-                        )
-                        break
+                        if self.max_reports and processed >= self.max_reports:
+                            self.helper.log_info(
+                                f"Reached JAMESTOWN_MAX_REPORTS={self.max_reports}; stopping run."
+                            )
+                            break
 
-                    # Dedup BEFORE rendering, keyed on the deterministic Report id.
-                    report_id = self._report_id(url)
-                    if self.helper.api.report.read(id=report_id) is not None:
-                        skipped += 1
-                        continue
+                        # Dedup BEFORE rendering, keyed on the deterministic Report id.
+                        report_id = self._report_id(url)
+                        if self.helper.api.report.read(id=report_id) is not None:
+                            skipped += 1
+                            continue
 
-                    # Skip items without a parseable pubDate rather than date them
-                    # to ingestion time.
-                    published = self._published_iso(entry)
-                    if not published:
-                        failed += 1
-                        self.helper.log_warning(
-                            f"Skipping {url}: no parseable pubDate."
-                        )
-                        continue
+                        # Skip items without a parseable pubDate rather than date them
+                        # to ingestion time.
+                        published = self._published_iso(entry)
+                        if not published:
+                            failed += 1
+                            self.helper.log_warning(
+                                f"Skipping {url}: no parseable pubDate."
+                            )
+                            continue
 
-                    if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
-                        browser.close()
-                        browser = pw.chromium.launch(
-                            args=["--no-sandbox", "--disable-dev-shm-usage"]
-                        )
-                        renders_since_recycle = 0
+                        if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
+                            browser.close()
+                            browser = pw.chromium.launch(
+                                args=["--no-sandbox", "--disable-dev-shm-usage"]
+                            )
+                            renders_since_recycle = 0
 
-                    pdf_bytes = self._render_with_retry(browser, url)
-                    renders_since_recycle += 1
+                        pdf_bytes = self._render_with_retry(browser, url)
+                        renders_since_recycle += 1
 
-                    if pdf_bytes is None:
-                        failed += 1
-                        self.helper.log_warning(f"Skipping {url}: render failed after retries.")
-                        continue
+                        if pdf_bytes is None:
+                            failed += 1
+                            self.helper.log_warning(f"Skipping {url}: render failed after retries.")
+                            continue
 
-                    self._create_report(entry, published, pdf_bytes)
-                    processed += 1
-                    time.sleep(self.request_delay)
-            finally:
-                browser.close()
+                        self._create_report(entry, published, pdf_bytes)
+                        processed += 1
+                        time.sleep(self.request_delay)
+                finally:
+                    browser.close()
 
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render or unparseable date)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render or unparseable date)."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
+        except Exception as e:
+            self.helper.log_error(f"Error processing: {e}")
+            self.helper.api.work.to_processed(work_id, str(e), in_error=True)
+            raise
 
     def run(self):
         """Connector entrypoint: resolve references once, then poll forever."""

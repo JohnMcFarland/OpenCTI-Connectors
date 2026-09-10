@@ -3,14 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from .base import Rule, RuleContext
-
-
-def _display_name(o: Dict[str, Any]) -> str:
-    for k in ("name", "value", "observable_value"):
-        v = o.get(k)
-        if isinstance(v, str) and v.strip():
-            return v.strip()
-    return o.get("standard_id") or o.get("id") or "(unnamed)"
+from util.graph import obj_display_name
 
 
 class ThreatActorPolicyRule(Rule):
@@ -33,7 +26,7 @@ class ThreatActorPolicyRule(Rule):
                 continue
 
             oid = o.get("id")
-            nm = _display_name(o)
+            nm = obj_display_name(o)
 
             # Heuristic placeholders: treat unnamed / generic / fictional patterns as suspect.
             # This should be replaced later by your actual data model rules or a curated allowlist.

@@ -16,7 +16,7 @@ from extractors.victim import extract_victims
 from extractors.paragraph_cooccurrence import segment_paragraphs, infer_paragraph_relationships
 from extractors.cue_phrase_relations import extract_cue_relations, extract_observable_chains
 from extractors.preprocess import preprocess_for_extraction
-from util.defang import defang_entity_name, defang_text_block
+from util.defang import defang_value, defang_text_block
 from writers.entity_creator import EntityCreator
 from writers.relationship_creator import RelationshipCreator
 from writers.summary_note import write_summary_note
@@ -52,6 +52,16 @@ _CREATABLE_SDO_TYPES: Set[str] = {
 }
 
 _MANAGED_TYPES: Set[str] = {"Course-Of-Action"}
+
+_TCODE_RE = re.compile(r"T\d{4}(?:\.\d{3})?")
+
+_URL_SLUG_EXT_RE = re.compile(
+    r"\.(html?|php|aspx?|jsp|cfm|cgi|shtml|"
+    r"dll|exe|apk|rar|zip|sys|bat|ps1|sh|jar|deb|rpm|msi|cab|pkg|"
+    r"dmg|iso|img|vhd|vmdk|bin|dat|tmp|log|ini|cfg|conf|"
+    r"pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv|json|xml|yaml|yml)$",
+    re.IGNORECASE,
+)
 
 _DETERMINISTIC_REASONS: Set[str] = {
     "UNC pattern found in extracted text.",
@@ -127,10 +137,10 @@ class ReportEnrichmentConnector:
         # --- Extract text ---
         file_sets = _select_supported_files(report)
         extraction_attempts: List[str] = []
-        extracted_text, pdf_meta = _assemble_text(self.helper, report, file_sets, extraction_attempts)
+        extracted_text, _ = _assemble_text(self.helper, report, file_sets, extraction_attempts)
         # Strip HTML markup and rehydrate defanged indicators before any extractor runs.
         # All downstream extractors receive clean fanged text. Note output re-defangs
-        # observable values via defang_entity_name() at write time.
+        # observable values via defang_value() at write time.
         extracted_text = preprocess_for_extraction(extracted_text)
 
         if not extracted_text.strip():
@@ -439,9 +449,6 @@ class ReportEnrichmentConnector:
           2. Entity name matches the T#### or T####.### pattern
           3. KB entry has an x_mitre_id in its external_references field
         """
-        import re as _re
-        _TCODE_RE = _re.compile(r"T\d{4}(?:\.\d{3})?")
-
         name = (kb_match.get("name") or "").strip()
         if _TCODE_RE.search(name):
             return True
@@ -493,7 +500,6 @@ class ReportEnrichmentConnector:
           - Right-hand labels too long to be valid TLDs (> 6 chars)
           - Known news / media domains whose URLs are source citations
         """
-        import re as _re
         if not name:
             return False
         # Web file extensions and binary file extensions.
@@ -501,13 +507,7 @@ class ReportEnrichmentConnector:
         # as filenames and are matched by the domain regex because their extension
         # looks like a TLD. Reject them as domain observables — they belong as
         # StixFile entries, not Domain-Name entries.
-        if _re.search(
-            r"\.(html?|php|aspx?|jsp|cfm|cgi|shtml|"
-            r"dll|exe|apk|rar|zip|sys|bat|ps1|sh|jar|deb|rpm|msi|cab|pkg|"
-            r"dmg|iso|img|vhd|vmdk|bin|dat|tmp|log|ini|cfg|conf|"
-            r"pdf|doc|docx|xls|xlsx|ppt|pptx|txt|csv|json|xml|yaml|yml)$",
-            name, _re.IGNORECASE
-        ):
+        if _URL_SLUG_EXT_RE.search(name):
             return True
         # Path separators
         if "/" in name:
@@ -625,19 +625,17 @@ class ReportEnrichmentConnector:
         return [c for c in out if c.get("name")]
 
     def _build_temporal_index(self, temporal_hints: List[Dict[str, Any]]) -> Dict[str, str]:
-        index: Dict[str, str] = {}
-        precision_rank = {"month": 3, "quarter": 2, "year": 1}
+        _PRECISION_RANK = {"year": 1, "quarter": 2, "month": 3}
+        # Store (iso_date, precision_rank) tuples so comparisons use the
+        # extractor's stated precision rather than string length.
+        index: Dict[str, Tuple[str, int]] = {}
         for hint in temporal_hints:
             key      = f"{hint.get('entity_type','')}:{(hint.get('entity_name') or '').lower()}"
+            new_rank = _PRECISION_RANK.get(hint.get("precision", "year"), 1)
             existing = index.get(key)
-            if not existing:
-                index[key] = hint["iso_date"]
-            else:
-                new_rank = precision_rank.get(hint.get("precision", "year"), 1)
-                old_rank = 3 if len(existing) >= 17 else (2 if len(existing) >= 10 else 1)
-                if new_rank > old_rank:
-                    index[key] = hint["iso_date"]
-        return index
+            if not existing or new_rank > existing[1]:
+                index[key] = (hint["iso_date"], new_rank)
+        return {k: v[0] for k, v in index.items()}
 
     # --- Dry-run preview ---
 
@@ -651,7 +649,7 @@ class ReportEnrichmentConnector:
             f"## KB-matched existing entities ({len(kb_matches)} would be linked)",
         ]
         for m in kb_matches[:30]:
-            display_name = defang_entity_name(m.get('name',''), m.get('entity_type',''))
+            display_name = defang_value(m.get('name',''), m.get('entity_type',''))
             lines.append(f"- {m.get('entity_type')}:{display_name} (id={m.get('entity_id','')})")
         if len(kb_matches) > 30:
             lines.append(f"  ... and {len(kb_matches) - 30} more")

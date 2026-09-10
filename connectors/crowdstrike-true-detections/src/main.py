@@ -106,6 +106,6 @@ if __name__ == "__main__":
         connector.run()
     except RuntimeError as e:
         print("RunTimeError Received, Connector shutting down.")
-        print("Runtime error:" + e)
+        print(f"Runtime error: {e}")
         time.sleep(10)
-        sys.exit(0)
+        sys.exit(1)

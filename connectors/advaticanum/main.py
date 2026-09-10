@@ -97,11 +97,11 @@ class AdVaticanumConnector:
 
     def __init__(self):
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as f:
+                config = yaml.safe_load(f)
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -432,104 +432,109 @@ class AdVaticanumConnector:
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "AdVaticanum enumeration run"
         )
+        try:
 
-        processed = 0
-        skipped = 0
-        failed = 0
+            processed = 0
+            skipped = 0
+            failed = 0
 
-        with sync_playwright() as pw:
-            browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
-            renders_since_recycle = 0
-            try:
-                listing_ctx = browser.new_context(user_agent=BROWSER_UA)
-                listing_page = listing_ctx.new_page()
+            with sync_playwright() as pw:
+                browser = pw.chromium.launch(args=["--no-sandbox", "--disable-dev-shm-usage"])
+                renders_since_recycle = 0
+                try:
+                    listing_ctx = browser.new_context(user_agent=BROWSER_UA)
+                    listing_page = listing_ctx.new_page()
 
-                for page_num in range(1, MAX_LISTING_PAGES + 1):
-                    if self.max_reports and processed >= self.max_reports:
-                        self.helper.log_info(
-                            f"Reached ADVATICANUM_MAX_REPORTS={self.max_reports}; stopping run."
-                        )
-                        break
-
-                    article_urls = self._scrape_listing_page(listing_page, page_num)
-                    if not article_urls:
-                        self.helper.log_info(
-                            f"Listing page {page_num} empty or out of range; enumeration complete."
-                        )
-                        break
-
-                    self.helper.log_info(
-                        f"Listing page {page_num}: {len(article_urls)} articles"
-                    )
-
-                    all_known = True
-                    for url in article_urls:
+                    for page_num in range(1, MAX_LISTING_PAGES + 1):
                         if self.max_reports and processed >= self.max_reports:
+                            self.helper.log_info(
+                                f"Reached ADVATICANUM_MAX_REPORTS={self.max_reports}; stopping run."
+                            )
                             break
 
-                        if self._already_ingested(url):
-                            skipped += 1
-                            continue
-
-                        all_known = False
-
-                        if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
-                            listing_page.close()
-                            listing_ctx.close()
-                            browser.close()
-                            browser = pw.chromium.launch(
-                                args=["--no-sandbox", "--disable-dev-shm-usage"]
+                        article_urls = self._scrape_listing_page(listing_page, page_num)
+                        if not article_urls:
+                            self.helper.log_info(
+                                f"Listing page {page_num} empty or out of range; enumeration complete."
                             )
-                            renders_since_recycle = 0
-                            listing_ctx = browser.new_context(user_agent=BROWSER_UA)
-                            listing_page = listing_ctx.new_page()
+                            break
 
-                        pdf_bytes, meta = self._render_with_retry(browser, url)
-                        renders_since_recycle += 1
+                        self.helper.log_info(
+                            f"Listing page {page_num}: {len(article_urls)} articles"
+                        )
 
-                        if pdf_bytes is None:
-                            failed += 1
-                            self.helper.log_warning(f"Skipping {url}: render failed after retries.")
-                            continue
+                        all_known = True
+                        for url in article_urls:
+                            if self.max_reports and processed >= self.max_reports:
+                                break
 
-                        if not meta or not meta.get("dateText"):
-                            failed += 1
-                            self.helper.log_warning(
-                                f"Skipping {url}: no published date in page metadata."
+                            if self._already_ingested(url):
+                                skipped += 1
+                                continue
+
+                            all_known = False
+
+                            if renders_since_recycle >= BROWSER_RECYCLE_EVERY:
+                                listing_page.close()
+                                listing_ctx.close()
+                                browser.close()
+                                browser = pw.chromium.launch(
+                                    args=["--no-sandbox", "--disable-dev-shm-usage"]
+                                )
+                                renders_since_recycle = 0
+                                listing_ctx = browser.new_context(user_agent=BROWSER_UA)
+                                listing_page = listing_ctx.new_page()
+
+                            pdf_bytes, meta = self._render_with_retry(browser, url)
+                            renders_since_recycle += 1
+
+                            if pdf_bytes is None:
+                                failed += 1
+                                self.helper.log_warning(f"Skipping {url}: render failed after retries.")
+                                continue
+
+                            if not meta or not meta.get("dateText"):
+                                failed += 1
+                                self.helper.log_warning(
+                                    f"Skipping {url}: no published date in page metadata."
+                                )
+                                continue
+
+                            parsed_date = _parse_date(meta["dateText"])
+                            if not parsed_date:
+                                failed += 1
+                                self.helper.log_warning(
+                                    f"Skipping {url}: could not parse date '{meta['dateText']}'."
+                                )
+                                continue
+
+                            self._create_report(url, meta, pdf_bytes)
+                            processed += 1
+                            time.sleep(self.request_delay)
+
+                        if all_known and article_urls:
+                            self.helper.log_info(
+                                f"All articles on page {page_num} already ingested; stopping walk."
                             )
-                            continue
+                            break
 
-                        parsed_date = _parse_date(meta["dateText"])
-                        if not parsed_date:
-                            failed += 1
-                            self.helper.log_warning(
-                                f"Skipping {url}: could not parse date '{meta['dateText']}'."
-                            )
-                            continue
-
-                        self._create_report(url, meta, pdf_bytes)
-                        processed += 1
                         time.sleep(self.request_delay)
 
-                    if all_known and article_urls:
-                        self.helper.log_info(
-                            f"All articles on page {page_num} already ingested; stopping walk."
-                        )
-                        break
+                    listing_page.close()
+                    listing_ctx.close()
+                finally:
+                    browser.close()
 
-                    time.sleep(self.request_delay)
-
-                listing_page.close()
-                listing_ctx.close()
-            finally:
-                browser.close()
-
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render or missing date)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render or missing date)."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
+        except Exception as e:
+            self.helper.log_error(f"Error processing: {e}")
+            self.helper.api.work.to_processed(work_id, str(e), in_error=True)
+            raise
 
     def run(self):
         self._resolve_graph_references()
