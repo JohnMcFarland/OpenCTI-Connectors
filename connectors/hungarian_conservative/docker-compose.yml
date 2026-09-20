@@ -1,0 +1,31 @@
+# Hungarian Conservative OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  hungarian_conservative:
+    build: .
+    container_name: opencti-connector-hungarian-conservative
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Hungarian Conservative
+      - CONNECTOR_SCOPE=hungarian_conservative
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - HUNGARIAN_CONSERVATIVE_BASE_URL=https://www.hungarianconservative.com
+      - HUNGARIAN_CONSERVATIVE_PER_PAGE=100
+      - HUNGARIAN_CONSERVATIVE_POLL_INTERVAL=86400   # seconds between enumeration runs (24h)
+      - HUNGARIAN_CONSERVATIVE_REQUEST_DELAY=2       # seconds between renders; no crawl-delay in robots.txt
+      - HUNGARIAN_CONSERVATIVE_MAX_REPORTS=0          # 0 = unlimited; set to 3 for a bounded test run
+      - HUNGARIAN_CONSERVATIVE_RENDER_RETRIES=3
+      - HUNGARIAN_CONSERVATIVE_CONFIDENCE=50          # OpenCTI confidence 0-100 (Medium band)
+      - HUNGARIAN_CONSERVATIVE_REPORT_TYPE=open-source-reporting
+      - HUNGARIAN_CONSERVATIVE_TLP=TLP:CLEAR
+      - HUNGARIAN_CONSERVATIVE_AUTHOR_NAME=Hungarian Conservative
+    restart: always
