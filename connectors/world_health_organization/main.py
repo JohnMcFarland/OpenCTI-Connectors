@@ -346,7 +346,7 @@ class WorldHealthOrganizationConnector:
             "$select": "Title,ItemDefaultUrl,PublicationDateAndTime,Summary",
         }
         if cursor_date:
-            params["$filter"] = f"PublicationDateAndTime gt {cursor_date}"
+            params["$filter"] = f"PublicationDateAndTime ge {cursor_date}"
         try:
             resp = self.session.get(self.api_url, params=params, timeout=90)
         except Exception as exc:
@@ -369,7 +369,8 @@ class WorldHealthOrganizationConnector:
         slug = item.get("ItemDefaultUrl", "")
         if not slug:
             return None
-        # API returns ItemDefaultUrl as /{slug}; prepend /news/item
+        if not slug.startswith("/"):
+            slug = "/" + slug
         return f"{base_url}/news/item{slug}"
 
     @staticmethod
@@ -387,6 +388,7 @@ class WorldHealthOrganizationConnector:
             dt = datetime.fromisoformat(raw_clean)
             if dt.tzinfo is None:
                 dt = dt.replace(tzinfo=timezone.utc)
+            dt = dt.astimezone(timezone.utc)
             return dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
         except (TypeError, ValueError):
             return None
@@ -595,8 +597,13 @@ class WorldHealthOrganizationConnector:
                 if self.helper.api.report.read(id=self._report_id(article_url)) is not None:
                     skipped += 1
                     if item_date:
-                        last_date = item_date
-                    skip += 1
+                        if last_date != item_date:
+                            last_date = item_date
+                            skip = 0
+                        else:
+                            skip += 1
+                    else:
+                        skip += 1
                     self._save_cursor(last_date, skip)
                     continue
 
@@ -610,8 +617,13 @@ class WorldHealthOrganizationConnector:
                         f"Skipping {article_url}: PDF render failed after retries."
                     )
                     if item_date:
-                        last_date = item_date
-                    skip += 1
+                        if last_date != item_date:
+                            last_date = item_date
+                            skip = 0
+                        else:
+                            skip += 1
+                    else:
+                        skip += 1
                     self._save_cursor(last_date, skip)
                     continue
 
@@ -627,8 +639,13 @@ class WorldHealthOrganizationConnector:
                 self._create_report(article_url, title, summary, published, pdf_bytes)
                 processed += 1
                 if item_date:
-                    last_date = item_date
-                skip += 1
+                    if last_date != item_date:
+                        last_date = item_date
+                        skip = 0
+                    else:
+                        skip += 1
+                else:
+                    skip += 1
                 self._save_cursor(last_date, skip)
                 time.sleep(self.request_delay)
 

@@ -57,7 +57,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 import html as html_mod
 import logging
 import os
-import re
 import sys
 import time
 import uuid

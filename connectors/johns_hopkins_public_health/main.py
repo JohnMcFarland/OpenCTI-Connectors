@@ -1056,6 +1056,11 @@ class JohnsHopkinsPublicHealthConnector:
                             content_html, meta = self._fetch_and_extract(
                                 browser, url, lastmod
                             )
+                        except Exception as exc:
+                            content_html, meta = None, None
+                            self.helper.log_warning(
+                                f"Fetch/extract raised for {url}: {exc}"
+                            )
                         finally:
                             renders_since_recycle += 1
 
