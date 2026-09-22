@@ -148,18 +148,27 @@ def _escape_html(text):
     return html_mod.escape(text) if text else ""
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
+PDF_VARIANT_REST_API = "rest-api"
+PDF_VARIANT_LIVE_HTML = "live-html"
+
+
+def _build_pdf_html(title, byline, content_html, source_url, ingested_at,
+                     variant=PDF_VARIANT_REST_API):
     css_url = source_url.replace("'", "").replace("\\", "")
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
+    variant_label = variant.upper()
     return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
+        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
+        + f"<meta name='pdf-variant' content='{variant}'>"
+        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
+        + "<style>"
         + _PDF_STYLE
         + "@page { margin: 15mm 12mm 20mm 12mm; "
         + "@bottom-center { content: '"
         + css_url
-        + "  |  OpenCTI Hungarian Conservative connector  |  "
+        + "  |  OpenCTI Hungarian Conservative connector [" + variant_label + "]  |  "
         + ingested_at
         + "'; font-size: 7px; color: #888; } } "
         + "</style></head><body>"
@@ -484,7 +493,10 @@ class HungarianConservativeConnector:
             byline = f"{byline}  |  {', '.join(cats)}" if byline else ", ".join(cats)
 
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        doc_html = _build_pdf_html(
+            title, byline, content_html, url, ingested,
+            variant=PDF_VARIANT_REST_API,
+        )
 
         return weasyprint.HTML(
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
@@ -537,7 +549,10 @@ class HungarianConservativeConnector:
             raise RuntimeError("No article content container found in live HTML")
 
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, str(content), url, ingested)
+        doc_html = _build_pdf_html(
+            title, byline, str(content), url, ingested,
+            variant=PDF_VARIANT_LIVE_HTML,
+        )
 
         return weasyprint.HTML(
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
