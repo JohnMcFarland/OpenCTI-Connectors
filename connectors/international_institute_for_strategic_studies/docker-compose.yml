@@ -5,9 +5,9 @@
 # committed.
 version: '3'
 services:
-  iiss:
+  international_institute_for_strategic_studies:
     build: .
-    container_name: opencti-connector-iiss
+    container_name: opencti-connector-iiss-strategic-studies
     environment:
       # --- OpenCTI platform connection ---
       - OPENCTI_URL=
@@ -16,7 +16,7 @@ services:
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
       - CONNECTOR_NAME=International Institute for Strategic Studies
-      - CONNECTOR_SCOPE=iiss
+      - CONNECTOR_SCOPE=international_institute_for_strategic_studies
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - IISS_BASE_URL=https://www.iiss.org

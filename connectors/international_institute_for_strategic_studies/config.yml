@@ -8,9 +8,9 @@ connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
   name: 'International Institute for Strategic Studies'
-  scope: 'iiss'
+  scope: 'international_institute_for_strategic_studies'
   log_level: 'info'
-iiss:
+international_institute_for_strategic_studies:
   base_url: 'https://www.iiss.org'
   poll_interval: 86400        # seconds between enumeration runs (24h)
   request_delay: 3            # seconds between requests

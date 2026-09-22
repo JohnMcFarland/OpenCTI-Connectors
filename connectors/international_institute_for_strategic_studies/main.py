@@ -253,58 +253,58 @@ class IISSConnector:
 
         self.base_url = get_config_variable(
             "IISS_BASE_URL",
-            ["iiss", "base_url"], config,
+            ["international_institute_for_strategic_studies", "base_url"], config,
             default="https://www.iiss.org",
         ).rstrip("/")
 
         self.poll_interval = get_config_variable(
             "IISS_POLL_INTERVAL",
-            ["iiss", "poll_interval"], config,
+            ["international_institute_for_strategic_studies", "poll_interval"], config,
             isNumber=True, default=86400,
         )
 
         self.request_delay = get_config_variable(
             "IISS_REQUEST_DELAY",
-            ["iiss", "request_delay"], config,
+            ["international_institute_for_strategic_studies", "request_delay"], config,
             isNumber=True, default=3,
         )
 
         self.max_reports = get_config_variable(
             "IISS_MAX_REPORTS",
-            ["iiss", "max_reports"], config,
+            ["international_institute_for_strategic_studies", "max_reports"], config,
             isNumber=True, default=0,
         )
 
         self.nav_timeout_ms = get_config_variable(
             "IISS_PLAYWRIGHT_NAV_TIMEOUT",
-            ["iiss", "playwright_nav_timeout"], config,
+            ["international_institute_for_strategic_studies", "playwright_nav_timeout"], config,
             isNumber=True, default=60000,
         )
 
         self.render_retries = get_config_variable(
             "IISS_RENDER_RETRIES",
-            ["iiss", "render_retries"], config,
+            ["international_institute_for_strategic_studies", "render_retries"], config,
             isNumber=True, default=3,
         )
 
         self.confidence = get_config_variable(
             "IISS_CONFIDENCE",
-            ["iiss", "confidence"], config,
+            ["international_institute_for_strategic_studies", "confidence"], config,
             isNumber=True, default=50,
         )
         self.report_type = get_config_variable(
             "IISS_REPORT_TYPE",
-            ["iiss", "report_type"], config,
+            ["international_institute_for_strategic_studies", "report_type"], config,
             default="open-source-reporting",
         )
         self.tlp_name = get_config_variable(
             "IISS_TLP",
-            ["iiss", "tlp"], config,
+            ["international_institute_for_strategic_studies", "tlp"], config,
             default="TLP:CLEAR",
         )
         self.author_name = get_config_variable(
             "IISS_AUTHOR_NAME",
-            ["iiss", "author_name"], config,
+            ["international_institute_for_strategic_studies", "author_name"], config,
             default="IISS",
         )
 

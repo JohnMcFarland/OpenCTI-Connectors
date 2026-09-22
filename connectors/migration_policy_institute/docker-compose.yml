@@ -4,9 +4,9 @@
 # committed.
 version: '3'
 services:
-  mpi:
+  migration_policy_institute:
     build: .
-    container_name: opencti-connector-mpi
+    container_name: opencti-connector-migration-policy-institute
     environment:
       # --- OpenCTI platform connection ---
       - OPENCTI_URL=
@@ -15,7 +15,7 @@ services:
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
       - CONNECTOR_NAME=Migration Policy Institute
-      - CONNECTOR_SCOPE=mpi
+      - CONNECTOR_SCOPE=migration_policy_institute
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - MPI_BASE_URL=https://www.migrationpolicy.org

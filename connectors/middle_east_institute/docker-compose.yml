@@ -4,9 +4,9 @@
 # committed.
 version: '3'
 services:
-  mei:
+  middle_east_institute:
     build: .
-    container_name: opencti-connector-mei
+    container_name: opencti-connector-middle-east-institute
     environment:
       # --- OpenCTI platform connection ---
       - OPENCTI_URL=
@@ -15,7 +15,7 @@ services:
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
       - CONNECTOR_NAME=Middle East Institute
-      - CONNECTOR_SCOPE=mei
+      - CONNECTOR_SCOPE=middle_east_institute
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - MEI_BASE_URL=https://www.mei.edu

@@ -4,9 +4,9 @@
 # committed.
 version: '3'
 services:
-  splc:
+  southern_poverty_law_center:
     build: .
-    container_name: opencti-connector-splc
+    container_name: opencti-connector-southern-poverty-law-center
     environment:
       # --- OpenCTI platform connection ---
       - OPENCTI_URL=
@@ -15,7 +15,7 @@ services:
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
       - CONNECTOR_NAME=Southern Poverty Law Center
-      - CONNECTOR_SCOPE=splc
+      - CONNECTOR_SCOPE=southern_poverty_law_center
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - SPLC_BASE_URL=https://www.splcenter.org

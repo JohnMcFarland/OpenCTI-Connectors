@@ -8,9 +8,9 @@ connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
   name: 'Southern Poverty Law Center'
-  scope: 'splc'
+  scope: 'southern_poverty_law_center'
   log_level: 'info'
-splc:
+southern_poverty_law_center:
   base_url: 'https://www.splcenter.org'
   poll_interval: 86400        # seconds between enumeration runs (24h)
   request_delay: 10           # seconds between requests; robots.txt Crawl-delay: 10

@@ -1,37 +1,34 @@
 """
-Migration Policy Institute (MPI) OpenCTI connector.
+Middle East Institute (MEI) OpenCTI connector.
 
 Purpose
 -------
 External-import connector that ingests articles from
-https://www.migrationpolicy.org as container-only OpenCTI Reports, one per
+https://www.mei.edu as container-only OpenCTI Reports, one per
 article, with the source article attached as a full-fidelity PDF.
 
 Collection model (Playwright listing walk + graph-dedup early-stop)
 -------------------------------------------------------------------
-MPI is a Drupal site with aggressive WAF protection that blocks ALL non-browser
-HTTP access (API endpoints, RSS feeds, sitemaps, and even standard listing pages
-return 403 to non-browser clients). Only the homepage responds to plain HTTP.
-Collection therefore uses Playwright for both enumeration and content retrieval.
+MEI is behind Cloudflare, blocking all non-browser HTTP access. Collection
+therefore uses Playwright for both enumeration and content retrieval.
 
 Enumeration walks one or more configurable listing-page base URLs (default:
-/research and /news) from page 0 (Drupal's 0-based ?page=N pagination) forward.
-An early-stop optimisation halts the walk for a given listing when an entire page
-contains only articles already present in the graph, since everything older is
-also known (listings default to newest-first).
+/publications and /experts/articles) from page 0 (Drupal-style 0-based ?page=N
+pagination) forward. An early-stop optimisation halts the walk for a given
+listing when an entire page contains only articles already present in the graph,
+since listings default to newest-first.
 
-Article pages are fetched via Playwright for content extraction (the WAF would
-block requests). BeautifulSoup extracts the article body from Drupal field
-renderers. WeasyPrint renders the extracted HTML to PDF.
+Article pages are fetched via Playwright for content extraction. BeautifulSoup
+extracts the article body from the page. WeasyPrint renders the extracted HTML
+to PDF.
 
 Content scope
 -------------
-IN:  Commentary, Research publications, Policy briefs, Explainers, Reports,
-     Features, Spotlights.
-OUT: Podcasts, Data hub / data tools, Multimedia.
+IN:  Articles, analyses, policy briefs, publications, commentary, reports.
+OUT: Events, exhibitions, podcasts, audio, video.
 
-URL patterns containing /podcast/, /data-hub/, or /multimedia/ are filtered
-during enumeration.
+URL patterns containing /events/, /exhibitions/, /podcasts/, /audio/, /video/
+are filtered during enumeration.
 
 Design philosophy
 -----------------
@@ -43,7 +40,7 @@ Key decisions
 -------------
 - Container type: Report (external intelligence).
 - TLP: CLEAR (public source, no paywall).
-- Author: the "Migration Policy Institute" Organization identity.
+- Author: the "Middle East Institute" Organization identity.
 - report_type: "open-source-reporting" (custom open-vocabulary value).
 - Confidence: 50 (Medium band, policy research institute).
 - Deduplication: graph-driven via deterministic Report STIX ID
@@ -52,8 +49,6 @@ Key decisions
 - PDF rendering: WeasyPrint (Playwright is for navigation only).
 - Browser recycled every ~50 page loads to prevent memory leaks.
 - request_delay: 3 seconds between page loads.
-- MPI has sub-brands (MPI Europe, MPI en Espanol); identified from page
-  content and included in Report description when present.
 
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
@@ -98,38 +93,35 @@ MAX_CONTENT_BYTES = 2 * 1024 * 1024  # 2 MB
 MAX_PDF_BYTES = 50 * 1024 * 1024  # 50 MB
 
 # URL path segments that indicate out-of-scope content.
-SKIP_URL_SEGMENTS = ("/podcast/", "/data-hub/", "/multimedia/")
+SKIP_URL_SEGMENTS = ("/events/", "/exhibitions/", "/podcasts/", "/audio/", "/video/")
 
-# Drupal body-field selectors, tried in priority order.
+# Article body-field selectors, tried in priority order.
 CONTENT_SELECTORS = [
     ".field--name-body",
     ".node__content",
     ".article-content",
     "article .content",
-    ".field-item",
-    ".field--name-field-body",
-    "main article",
 ]
 
 # Elements to strip from extracted article content.
 STRIP_SELECTORS = [
     "nav",
-    ".menu",
+    "footer",
     ".sidebar",
-    ".footer",
-    ".share-links",
-    ".social-share",
-    ".social-media",
-    ".breadcrumb",
-    ".pager",
-    ".block-system-breadcrumb-block",
-    ".print-link",
-    ".field--name-field-related",
     ".related-content",
+    ".social-share",
+    ".comments",
     "script",
     "style",
+    ".ad-container",
+    ".newsletter-signup",
     "iframe",
     "noscript",
+    ".breadcrumb",
+    ".pager",
+    ".share-links",
+    ".social-media",
+    ".print-link",
 ]
 
 _PDF_STYLE = (
@@ -187,7 +179,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + "@page { margin: 15mm 12mm 20mm 12mm; "
         + "@bottom-center { content: '"
         + css_url
-        + "  |  OpenCTI MPI connector  |  "
+        + "  |  OpenCTI MEI connector  |  "
         + ingested_at
         + "'; font-size: 7px; color: #888; } } "
         + "</style></head><body>"
@@ -207,8 +199,8 @@ def _build_listing_url(base_url, page_num):
     return urlunparse(parsed._replace(query=new_query))
 
 
-class MPIConnector:
-    """External-import connector that mirrors MPI articles into Reports."""
+class MEIConnector:
+    """External-import connector that mirrors MEI articles into Reports."""
 
     def __init__(self):
         config_file_path = os.path.join(
@@ -223,13 +215,13 @@ class MPIConnector:
 
         # --- Source configuration ------------------------------------------ #
         self.base_url = get_config_variable(
-            "MPI_BASE_URL", ["mpi", "base_url"], config,
-            default="https://www.migrationpolicy.org",
+            "MEI_BASE_URL", ["middle_east_institute", "base_url"], config,
+            default="https://www.mei.edu",
         ).rstrip("/")
 
         listing_urls_raw = get_config_variable(
-            "MPI_LISTING_URLS", ["mpi", "listing_urls"], config,
-            default="/research,/news",
+            "MEI_LISTING_URLS", ["middle_east_institute", "listing_urls"], config,
+            default="/publications,/experts/articles",
         )
         self.listing_urls = [
             f"{self.base_url}{u.strip()}" if u.strip().startswith("/")
@@ -239,46 +231,46 @@ class MPIConnector:
         ]
 
         self.poll_interval = get_config_variable(
-            "MPI_POLL_INTERVAL", ["mpi", "poll_interval"], config,
+            "MEI_POLL_INTERVAL", ["middle_east_institute", "poll_interval"], config,
             isNumber=True, default=21600,
         )
 
         self.request_delay = get_config_variable(
-            "MPI_REQUEST_DELAY", ["mpi", "request_delay"], config,
+            "MEI_REQUEST_DELAY", ["middle_east_institute", "request_delay"], config,
             isNumber=True, default=3,
         )
 
         self.max_reports = get_config_variable(
-            "MPI_MAX_REPORTS", ["mpi", "max_reports"], config,
+            "MEI_MAX_REPORTS", ["middle_east_institute", "max_reports"], config,
             isNumber=True, default=0,
         )
 
         # --- Render configuration ------------------------------------------ #
         self.nav_timeout_ms = get_config_variable(
-            "MPI_PLAYWRIGHT_NAV_TIMEOUT", ["mpi", "playwright_nav_timeout"], config,
+            "MEI_PLAYWRIGHT_NAV_TIMEOUT", ["middle_east_institute", "playwright_nav_timeout"], config,
             isNumber=True, default=60000,
         )
         self.render_retries = get_config_variable(
-            "MPI_RENDER_RETRIES", ["mpi", "render_retries"], config,
+            "MEI_RENDER_RETRIES", ["middle_east_institute", "render_retries"], config,
             isNumber=True, default=3,
         )
 
         # --- Report field configuration ------------------------------------ #
         self.confidence = get_config_variable(
-            "MPI_CONFIDENCE", ["mpi", "confidence"], config,
+            "MEI_CONFIDENCE", ["middle_east_institute", "confidence"], config,
             isNumber=True, default=50,
         )
         self.report_type = get_config_variable(
-            "MPI_REPORT_TYPE", ["mpi", "report_type"], config,
+            "MEI_REPORT_TYPE", ["middle_east_institute", "report_type"], config,
             default="open-source-reporting",
         )
         self.tlp_name = get_config_variable(
-            "MPI_TLP", ["mpi", "tlp"], config,
+            "MEI_TLP", ["middle_east_institute", "tlp"], config,
             default="TLP:CLEAR",
         )
         self.author_name = get_config_variable(
-            "MPI_AUTHOR_NAME", ["mpi", "author_name"], config,
-            default="Migration Policy Institute",
+            "MEI_AUTHOR_NAME", ["middle_east_institute", "author_name"], config,
+            default="Middle East Institute",
         )
 
         self.author_id = None
@@ -292,10 +284,9 @@ class MPIConnector:
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
-            description="Nonpartisan migration policy research institute based "
-                        "in Washington, D.C. Source organization for ingested "
-                        "reports. Sub-brands include MPI Europe and MPI en "
-                        "Espanol.",
+            description="Nonpartisan policy research institute focused on the "
+                        "Middle East, based in Washington, D.C. Source "
+                        "organization for ingested reports.",
         )
         self.author_id = author["id"]
         self.helper.log_info(f"Resolved author identity: {self.author_id}")
@@ -340,28 +331,46 @@ class MPIConnector:
         return self.helper.api.report.read(id=self._report_id(url)) is not None
 
     # ------------------------------------------------------------------ #
+    # Cloudflare challenge detection
+    # ------------------------------------------------------------------ #
+
+    def _check_cloudflare(self, page, label):
+        """Return True if a Cloudflare challenge is detected and persists.
+
+        On first detection, waits 5 seconds and reloads. Returns True only if
+        the challenge is still present after the retry.
+        """
+        page_text = (page.inner_text("body") or "").lower()[:2000]
+        if not any(marker in page_text for marker in CHALLENGE_MARKERS):
+            return False
+        self.helper.log_warning(
+            f"Cloudflare challenge on {label}; waiting 5s and reloading."
+        )
+        time.sleep(5)
+        page.reload(wait_until="networkidle", timeout=self.nav_timeout_ms)
+        page_text = (page.inner_text("body") or "").lower()[:2000]
+        if any(marker in page_text for marker in CHALLENGE_MARKERS):
+            self.helper.log_warning(
+                f"Cloudflare challenge persists on {label}."
+            )
+            return True
+        return False
+
+    # ------------------------------------------------------------------ #
     # Listing-page enumeration (Playwright)
     # ------------------------------------------------------------------ #
 
     def _scrape_listing_page(self, page, listing_url, page_num):
         """Navigate to a listing page and return unique article URLs.
 
-        Returns a list of URLs on success, an empty list if the page is out of
-        range or contains no article links, or ``None`` on failure (CF
-        challenge, network error).
+        Returns a list of URLs on success, an empty list if the page is
+        genuinely empty (end-of-data), or None on transient failure
+        (Cloudflare challenge, network error).
         """
         url = _build_listing_url(listing_url, page_num)
-        try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-        except Exception as exc:
-            self.helper.log_warning(
-                f"Failed to load listing page {page_num} of {listing_url}: {exc}"
-            )
-            return None
+        page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
 
-        title = (page.title() or "").lower()
-        if any(marker in title for marker in CHALLENGE_MARKERS):
-            self.helper.log_warning(f"WAF challenge on listing page {page_num}")
+        if self._check_cloudflare(page, f"listing page {page_num}"):
             return None
 
         base_url = self.base_url
@@ -369,13 +378,13 @@ class MPIConnector:
             """
             (baseUrl) => {
               // Look for article links in the main content area.
-              // Drupal Views render content in .view-content, .views-row, etc.
               const containers = [
                 document.querySelector('.view-content'),
                 document.querySelector('.views-element-container'),
                 document.querySelector('main .content'),
                 document.querySelector('main'),
                 document.querySelector('#content'),
+                document.querySelector('.layout-content'),
               ];
               const container = containers.find(c => c !== null) || document.body;
 
@@ -385,7 +394,7 @@ class MPIConnector:
               for (const a of links) {
                 let href = a.href;
                 if (!href) continue;
-                // Normalise: strip trailing slash for dedup, then re-add
+                // Normalise: strip trailing slash for dedup
                 href = href.replace(/\\/+$/, '');
                 if (!href.startsWith(baseUrl)) continue;
 
@@ -396,9 +405,9 @@ class MPIConnector:
 
                 // Skip non-content patterns
                 const lower = path.toLowerCase();
-                if (/\\/(podcast|data-hub|multimedia|events|about|staff|donate|careers|contact|press-room)\\//i.test(lower)) continue;
+                if (/\\/(events|exhibitions|podcasts|audio|video|about|staff|donate|careers|contact|press-room|gallery|calendar)\\//i.test(lower)) continue;
                 // Skip listing/section pages that end in common section names
-                if (/^\\/(research|news|programs|topics|regions)\\/?$/i.test(lower)) continue;
+                if (/^\\/(publications|experts|articles|programs|topics|regions)\\/?$/i.test(lower)) continue;
                 // Skip anchor-only or query-only links
                 if (href.includes('#') && href.split('#')[0] === '') continue;
 
@@ -422,13 +431,12 @@ class MPIConnector:
         """Navigate to an article page and extract metadata + body HTML.
 
         Returns (meta_dict, body_html_string) or (None, None) on failure.
-        Meta dict keys: title, published, description, topics, sub_brand.
+        Meta dict keys: title, published, description, topics, author.
         """
         page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
 
-        title = (page.title() or "").lower()
-        if any(marker in title for marker in CHALLENGE_MARKERS):
-            raise RuntimeError("WAF challenge interstitial detected")
+        if self._check_cloudflare(page, f"article {url}"):
+            raise RuntimeError("Cloudflare challenge persists after reload")
 
         # --- Metadata extraction via JS -------------------------------- #
         meta = page.evaluate(
@@ -438,7 +446,7 @@ class MPIConnector:
               const h1 = document.querySelector('h1');
               const title = h1 ? h1.textContent.trim() : document.title;
 
-              // Published date: Drupal <time> element, meta tags, or field
+              // Published date: <time> element, meta tags, or field
               let published = null;
               const timeEl = document.querySelector('time[datetime]');
               if (timeEl) {
@@ -452,7 +460,8 @@ class MPIConnector:
               }
               if (!published) {
                 const dateField = document.querySelector(
-                  '.field--name-field-date, .field--name-created, .date-display-single'
+                  '.field--name-field-date, .field--name-created, ' +
+                  '.date-display-single, .publication-date, .post-date'
                 );
                 if (dateField) published = dateField.textContent.trim();
               }
@@ -476,7 +485,8 @@ class MPIConnector:
                 '.field--name-field-categories a, ' +
                 '.taxonomy-term a, ' +
                 '.field--name-field-program a, ' +
-                '.field--name-field-regions a'
+                '.field--name-field-regions a, ' +
+                '.field--name-field-country a'
               );
               const topics = [];
               const topicSet = new Set();
@@ -488,31 +498,22 @@ class MPIConnector:
                 }
               }
 
-              // Sub-brand detection (MPI Europe, MPI en Espanol, etc.)
-              let subBrand = null;
-              const body = document.body.textContent || '';
-              if (/MPI\\s+Europe/i.test(body.substring(0, 3000))) {
-                subBrand = 'MPI Europe';
-              } else if (/MPI\\s+en\\s+Espa[nñ]ol/i.test(body.substring(0, 3000))) {
-                subBrand = 'MPI en Espanol';
-              }
-
               // Author byline
               const authorEl = document.querySelector(
                 '.field--name-field-author, ' +
                 '.field--name-field-authors, ' +
                 '.author-name, ' +
-                '.byline'
+                '.byline, ' +
+                '.field--name-field-expert'
               );
               const author = authorEl ? authorEl.textContent.trim() : null;
 
-              return { title, published, description, topics, subBrand, author };
+              return { title, published, description, topics, author };
             }
             """
         )
 
         # --- Body extraction via BS4 ----------------------------------- #
-        self._auto_scroll(page)
         page_html = page.content()
         soup = BeautifulSoup(page_html, "lxml")
 
@@ -605,26 +606,12 @@ class MPIConnector:
         return urlparse(url).path.strip("/").rsplit("/", 1)[-1] or "article"
 
     @staticmethod
-    def _content_type_from_url(url):
-        """Infer a human-readable content type from the URL path."""
-        path = urlparse(url).path.lower()
-        if path.startswith("/research"):
-            return "Research"
-        if path.startswith("/commentary"):
-            return "Commentary"
-        if path.startswith("/news"):
-            return "News"
-        if path.startswith("/article"):
-            return "Article"
-        return None
-
-    @staticmethod
     def _parse_published(raw):
         """Parse a date string into ISO-8601; return None if unparseable."""
         if not raw:
             return None
         raw = raw.strip()
-        # ISO-8601 datetime (from Drupal <time datetime="...">)
+        # ISO-8601 datetime
         if re.match(r"\d{4}-\d{2}-\d{2}", raw):
             try:
                 dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
@@ -646,18 +633,15 @@ class MPIConnector:
         """Create an OpenCTI Report with attached PDF."""
         name = _strip_html(meta.get("title") or "")
         # Clean trailing site name from title
-        name = re.sub(r"\s*[-|]\s*Migration Policy Institute\s*$", "", name, flags=re.I).strip()
+        name = re.sub(
+            r"\s*[-|]\s*Middle East Institute\s*$", "", name, flags=re.I
+        ).strip()
         if not name:
             name = self._slug_from_url(url)
 
         description_parts = []
         if meta.get("author"):
             description_parts.append(f"By {_strip_html(meta['author'])}.")
-        if meta.get("subBrand"):
-            description_parts.append(f"Published by {meta['subBrand']}.")
-        content_type = self._content_type_from_url(url)
-        if content_type:
-            description_parts.append(f"Type: {content_type}.")
         if meta.get("topics"):
             description_parts.append(f"Topics: {', '.join(meta['topics'])}.")
         raw_desc = _strip_html(meta.get("description") or "")
@@ -667,21 +651,15 @@ class MPIConnector:
 
         published = self._parse_published(meta.get("published"))
         if not published:
-            published = datetime.now(timezone.utc).strftime(
-                "%Y-%m-%dT%H:%M:%S+00:00"
-            )
             self.helper.log_warning(
-                f"No usable date for {url}; using ingestion time."
+                f"Skipping {url}: no usable published date found."
             )
-
-        ref_desc = "Source article on migrationpolicy.org"
-        if meta.get("author"):
-            ref_desc = f"By {_strip_html(meta['author'])}. {ref_desc}"
+            return False
 
         external_reference = self.helper.api.external_reference.create(
             source_name=self.author_name,
             url=url,
-            description=ref_desc,
+            description="Source article on mei.edu",
         )
 
         report = self.helper.api.report.create(
@@ -697,7 +675,7 @@ class MPIConnector:
             update=True,
         )
 
-        file_name = f"mpi-{self._slug_from_url(url)}.pdf"
+        file_name = f"mei-{self._slug_from_url(url)}.pdf"
         if len(pdf_bytes) > MAX_PDF_BYTES:
             self.helper.log_warning(
                 f"Skipping oversized PDF for {url} ({len(pdf_bytes):,} bytes)."
@@ -710,32 +688,7 @@ class MPIConnector:
                 mime_type="application/pdf",
             )
         self.helper.log_info(f"Created Report for {url} ({name[:80]})")
-
-    # ------------------------------------------------------------------ #
-    # Auto-scroll (trigger lazy-loaded images)
-    # ------------------------------------------------------------------ #
-
-    @staticmethod
-    def _auto_scroll(page):
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight || total >= 50000) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
+        return True
 
     # ------------------------------------------------------------------ #
     # Run loop
@@ -745,7 +698,7 @@ class MPIConnector:
         from playwright.sync_api import sync_playwright
 
         work_id = self.helper.api.work.initiate_work(
-            self.helper.connect_id, "MPI enumeration run"
+            self.helper.connect_id, "MEI enumeration run"
         )
 
         processed = 0
@@ -767,7 +720,7 @@ class MPIConnector:
                     for page_num in range(0, MAX_LISTING_PAGES):
                         if self.max_reports and processed >= self.max_reports:
                             self.helper.log_info(
-                                f"Reached MPI_MAX_REPORTS={self.max_reports}; stopping."
+                                f"Reached MEI_MAX_REPORTS={self.max_reports}; stopping."
                             )
                             break
 
@@ -777,7 +730,7 @@ class MPIConnector:
                         if article_urls is None:
                             self.helper.log_warning(
                                 f"Listing {listing_url} page {page_num}: "
-                                f"scrape failed (CF challenge or network error); skipping page."
+                                f"transient failure; skipping to next page."
                             )
                             time.sleep(self.request_delay)
                             continue
@@ -794,16 +747,16 @@ class MPIConnector:
                         )
 
                         all_known = True
-                        for url in article_urls:
+                        for article_url in article_urls:
                             if self.max_reports and processed >= self.max_reports:
                                 break
 
-                            # Apply URL filter (skip podcasts, data-hub, etc.)
-                            if _should_skip_url(url):
+                            # Apply URL filter (skip events, exhibitions, etc.)
+                            if _should_skip_url(article_url):
                                 all_known = False
                                 continue
 
-                            if self._already_ingested(url):
+                            if self._already_ingested(article_url):
                                 skipped += 1
                                 continue
 
@@ -828,10 +781,12 @@ class MPIConnector:
                             )
                             article_page = article_ctx.new_page()
                             try:
-                                meta, body_html = self._extract_article(article_page, url)
+                                meta, body_html = self._extract_article(
+                                    article_page, article_url
+                                )
                             except Exception as exc:
                                 self.helper.log_warning(
-                                    f"Article extraction failed for {url}: {exc}"
+                                    f"Article extraction failed for {article_url}: {exc}"
                                 )
                                 failed += 1
                                 time.sleep(self.request_delay)
@@ -843,11 +798,14 @@ class MPIConnector:
 
                             if not body_html:
                                 self.helper.log_warning(
-                                    f"Skipping {url}: no article content found."
+                                    f"Skipping {article_url}: no article content found."
                                 )
                                 failed += 1
                                 time.sleep(self.request_delay)
                                 continue
+
+                            if not meta:
+                                meta = {}
 
                             title = _strip_html(meta.get("title") or "")
                             byline_parts = []
@@ -858,18 +816,20 @@ class MPIConnector:
                             byline = "  |  ".join(byline_parts) if byline_parts else ""
 
                             pdf_bytes = self._render_with_retry(
-                                title, byline, body_html, url
+                                title, byline, body_html, article_url
                             )
                             if pdf_bytes is None:
                                 failed += 1
                                 self.helper.log_warning(
-                                    f"Skipping {url}: PDF render failed after retries."
+                                    f"Skipping {article_url}: PDF render failed after retries."
                                 )
                                 time.sleep(self.request_delay)
                                 continue
 
-                            self._create_report(url, meta, pdf_bytes)
-                            processed += 1
+                            if self._create_report(article_url, meta, pdf_bytes):
+                                processed += 1
+                            else:
+                                failed += 1
                             time.sleep(self.request_delay)
 
                         if all_known and article_urls:
@@ -899,7 +859,7 @@ class MPIConnector:
     def run(self):
         self._resolve_graph_references()
         self.helper.log_info(
-            f"MPI connector started. Listing URLs: {self.listing_urls}"
+            f"MEI connector started. Listing URLs: {self.listing_urls}"
         )
         while True:
             try:
@@ -911,7 +871,7 @@ class MPIConnector:
 
 if __name__ == "__main__":
     try:
-        MPIConnector().run()
+        MEIConnector().run()
     except Exception as exc:
         print(f"Fatal: {exc}", file=sys.stderr)
         time.sleep(10)

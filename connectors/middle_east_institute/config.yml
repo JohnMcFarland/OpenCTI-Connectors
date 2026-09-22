@@ -7,12 +7,12 @@ opencti:
 connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
-  name: 'Migration Policy Institute'
-  scope: 'mpi'
+  name: 'Middle East Institute'
+  scope: 'middle_east_institute'
   log_level: 'info'
-mpi:
-  base_url: 'https://www.migrationpolicy.org'
-  listing_urls: '/research,/news'     # comma-separated listing page paths
+middle_east_institute:
+  base_url: 'https://www.mei.edu'
+  listing_urls: '/publications,/experts/articles'  # comma-separated listing page paths
   poll_interval: 21600                # seconds between enumeration runs (6h)
   request_delay: 3                    # seconds between page loads (WAF-friendly)
   max_reports: 0                      # 0 = unlimited; set to 3 for a bounded test
@@ -21,4 +21,4 @@ mpi:
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
-  author_name: 'Migration Policy Institute'
+  author_name: 'Middle East Institute'

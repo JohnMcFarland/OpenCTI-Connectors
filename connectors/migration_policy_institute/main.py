@@ -1,34 +1,37 @@
 """
-Middle East Institute (MEI) OpenCTI connector.
+Migration Policy Institute (MPI) OpenCTI connector.
 
 Purpose
 -------
 External-import connector that ingests articles from
-https://www.mei.edu as container-only OpenCTI Reports, one per
+https://www.migrationpolicy.org as container-only OpenCTI Reports, one per
 article, with the source article attached as a full-fidelity PDF.
 
 Collection model (Playwright listing walk + graph-dedup early-stop)
 -------------------------------------------------------------------
-MEI is behind Cloudflare, blocking all non-browser HTTP access. Collection
-therefore uses Playwright for both enumeration and content retrieval.
+MPI is a Drupal site with aggressive WAF protection that blocks ALL non-browser
+HTTP access (API endpoints, RSS feeds, sitemaps, and even standard listing pages
+return 403 to non-browser clients). Only the homepage responds to plain HTTP.
+Collection therefore uses Playwright for both enumeration and content retrieval.
 
 Enumeration walks one or more configurable listing-page base URLs (default:
-/publications and /experts/articles) from page 0 (Drupal-style 0-based ?page=N
-pagination) forward. An early-stop optimisation halts the walk for a given
-listing when an entire page contains only articles already present in the graph,
-since listings default to newest-first.
+/research and /news) from page 0 (Drupal's 0-based ?page=N pagination) forward.
+An early-stop optimisation halts the walk for a given listing when an entire page
+contains only articles already present in the graph, since everything older is
+also known (listings default to newest-first).
 
-Article pages are fetched via Playwright for content extraction. BeautifulSoup
-extracts the article body from the page. WeasyPrint renders the extracted HTML
-to PDF.
+Article pages are fetched via Playwright for content extraction (the WAF would
+block requests). BeautifulSoup extracts the article body from Drupal field
+renderers. WeasyPrint renders the extracted HTML to PDF.
 
 Content scope
 -------------
-IN:  Articles, analyses, policy briefs, publications, commentary, reports.
-OUT: Events, exhibitions, podcasts, audio, video.
+IN:  Commentary, Research publications, Policy briefs, Explainers, Reports,
+     Features, Spotlights.
+OUT: Podcasts, Data hub / data tools, Multimedia.
 
-URL patterns containing /events/, /exhibitions/, /podcasts/, /audio/, /video/
-are filtered during enumeration.
+URL patterns containing /podcast/, /data-hub/, or /multimedia/ are filtered
+during enumeration.
 
 Design philosophy
 -----------------
@@ -40,7 +43,7 @@ Key decisions
 -------------
 - Container type: Report (external intelligence).
 - TLP: CLEAR (public source, no paywall).
-- Author: the "Middle East Institute" Organization identity.
+- Author: the "Migration Policy Institute" Organization identity.
 - report_type: "open-source-reporting" (custom open-vocabulary value).
 - Confidence: 50 (Medium band, policy research institute).
 - Deduplication: graph-driven via deterministic Report STIX ID
@@ -49,6 +52,8 @@ Key decisions
 - PDF rendering: WeasyPrint (Playwright is for navigation only).
 - Browser recycled every ~50 page loads to prevent memory leaks.
 - request_delay: 3 seconds between page loads.
+- MPI has sub-brands (MPI Europe, MPI en Espanol); identified from page
+  content and included in Report description when present.
 
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
@@ -93,35 +98,38 @@ MAX_CONTENT_BYTES = 2 * 1024 * 1024  # 2 MB
 MAX_PDF_BYTES = 50 * 1024 * 1024  # 50 MB
 
 # URL path segments that indicate out-of-scope content.
-SKIP_URL_SEGMENTS = ("/events/", "/exhibitions/", "/podcasts/", "/audio/", "/video/")
+SKIP_URL_SEGMENTS = ("/podcast/", "/data-hub/", "/multimedia/")
 
-# Article body-field selectors, tried in priority order.
+# Drupal body-field selectors, tried in priority order.
 CONTENT_SELECTORS = [
     ".field--name-body",
     ".node__content",
     ".article-content",
     "article .content",
+    ".field-item",
+    ".field--name-field-body",
+    "main article",
 ]
 
 # Elements to strip from extracted article content.
 STRIP_SELECTORS = [
     "nav",
-    "footer",
+    ".menu",
     ".sidebar",
-    ".related-content",
+    ".footer",
+    ".share-links",
     ".social-share",
-    ".comments",
-    "script",
-    "style",
-    ".ad-container",
-    ".newsletter-signup",
-    "iframe",
-    "noscript",
+    ".social-media",
     ".breadcrumb",
     ".pager",
-    ".share-links",
-    ".social-media",
+    ".block-system-breadcrumb-block",
     ".print-link",
+    ".field--name-field-related",
+    ".related-content",
+    "script",
+    "style",
+    "iframe",
+    "noscript",
 ]
 
 _PDF_STYLE = (
@@ -179,7 +187,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + "@page { margin: 15mm 12mm 20mm 12mm; "
         + "@bottom-center { content: '"
         + css_url
-        + "  |  OpenCTI MEI connector  |  "
+        + "  |  OpenCTI MPI connector  |  "
         + ingested_at
         + "'; font-size: 7px; color: #888; } } "
         + "</style></head><body>"
@@ -199,8 +207,8 @@ def _build_listing_url(base_url, page_num):
     return urlunparse(parsed._replace(query=new_query))
 
 
-class MEIConnector:
-    """External-import connector that mirrors MEI articles into Reports."""
+class MPIConnector:
+    """External-import connector that mirrors MPI articles into Reports."""
 
     def __init__(self):
         config_file_path = os.path.join(
@@ -215,13 +223,13 @@ class MEIConnector:
 
         # --- Source configuration ------------------------------------------ #
         self.base_url = get_config_variable(
-            "MEI_BASE_URL", ["mei", "base_url"], config,
-            default="https://www.mei.edu",
+            "MPI_BASE_URL", ["migration_policy_institute", "base_url"], config,
+            default="https://www.migrationpolicy.org",
         ).rstrip("/")
 
         listing_urls_raw = get_config_variable(
-            "MEI_LISTING_URLS", ["mei", "listing_urls"], config,
-            default="/publications,/experts/articles",
+            "MPI_LISTING_URLS", ["migration_policy_institute", "listing_urls"], config,
+            default="/research,/news",
         )
         self.listing_urls = [
             f"{self.base_url}{u.strip()}" if u.strip().startswith("/")
@@ -231,46 +239,46 @@ class MEIConnector:
         ]
 
         self.poll_interval = get_config_variable(
-            "MEI_POLL_INTERVAL", ["mei", "poll_interval"], config,
+            "MPI_POLL_INTERVAL", ["migration_policy_institute", "poll_interval"], config,
             isNumber=True, default=21600,
         )
 
         self.request_delay = get_config_variable(
-            "MEI_REQUEST_DELAY", ["mei", "request_delay"], config,
+            "MPI_REQUEST_DELAY", ["migration_policy_institute", "request_delay"], config,
             isNumber=True, default=3,
         )
 
         self.max_reports = get_config_variable(
-            "MEI_MAX_REPORTS", ["mei", "max_reports"], config,
+            "MPI_MAX_REPORTS", ["migration_policy_institute", "max_reports"], config,
             isNumber=True, default=0,
         )
 
         # --- Render configuration ------------------------------------------ #
         self.nav_timeout_ms = get_config_variable(
-            "MEI_PLAYWRIGHT_NAV_TIMEOUT", ["mei", "playwright_nav_timeout"], config,
+            "MPI_PLAYWRIGHT_NAV_TIMEOUT", ["migration_policy_institute", "playwright_nav_timeout"], config,
             isNumber=True, default=60000,
         )
         self.render_retries = get_config_variable(
-            "MEI_RENDER_RETRIES", ["mei", "render_retries"], config,
+            "MPI_RENDER_RETRIES", ["migration_policy_institute", "render_retries"], config,
             isNumber=True, default=3,
         )
 
         # --- Report field configuration ------------------------------------ #
         self.confidence = get_config_variable(
-            "MEI_CONFIDENCE", ["mei", "confidence"], config,
+            "MPI_CONFIDENCE", ["migration_policy_institute", "confidence"], config,
             isNumber=True, default=50,
         )
         self.report_type = get_config_variable(
-            "MEI_REPORT_TYPE", ["mei", "report_type"], config,
+            "MPI_REPORT_TYPE", ["migration_policy_institute", "report_type"], config,
             default="open-source-reporting",
         )
         self.tlp_name = get_config_variable(
-            "MEI_TLP", ["mei", "tlp"], config,
+            "MPI_TLP", ["migration_policy_institute", "tlp"], config,
             default="TLP:CLEAR",
         )
         self.author_name = get_config_variable(
-            "MEI_AUTHOR_NAME", ["mei", "author_name"], config,
-            default="Middle East Institute",
+            "MPI_AUTHOR_NAME", ["migration_policy_institute", "author_name"], config,
+            default="Migration Policy Institute",
         )
 
         self.author_id = None
@@ -284,9 +292,10 @@ class MEIConnector:
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
-            description="Nonpartisan policy research institute focused on the "
-                        "Middle East, based in Washington, D.C. Source "
-                        "organization for ingested reports.",
+            description="Nonpartisan migration policy research institute based "
+                        "in Washington, D.C. Source organization for ingested "
+                        "reports. Sub-brands include MPI Europe and MPI en "
+                        "Espanol.",
         )
         self.author_id = author["id"]
         self.helper.log_info(f"Resolved author identity: {self.author_id}")
@@ -331,46 +340,28 @@ class MEIConnector:
         return self.helper.api.report.read(id=self._report_id(url)) is not None
 
     # ------------------------------------------------------------------ #
-    # Cloudflare challenge detection
-    # ------------------------------------------------------------------ #
-
-    def _check_cloudflare(self, page, label):
-        """Return True if a Cloudflare challenge is detected and persists.
-
-        On first detection, waits 5 seconds and reloads. Returns True only if
-        the challenge is still present after the retry.
-        """
-        page_text = (page.inner_text("body") or "").lower()[:2000]
-        if not any(marker in page_text for marker in CHALLENGE_MARKERS):
-            return False
-        self.helper.log_warning(
-            f"Cloudflare challenge on {label}; waiting 5s and reloading."
-        )
-        time.sleep(5)
-        page.reload(wait_until="networkidle", timeout=self.nav_timeout_ms)
-        page_text = (page.inner_text("body") or "").lower()[:2000]
-        if any(marker in page_text for marker in CHALLENGE_MARKERS):
-            self.helper.log_warning(
-                f"Cloudflare challenge persists on {label}."
-            )
-            return True
-        return False
-
-    # ------------------------------------------------------------------ #
     # Listing-page enumeration (Playwright)
     # ------------------------------------------------------------------ #
 
     def _scrape_listing_page(self, page, listing_url, page_num):
         """Navigate to a listing page and return unique article URLs.
 
-        Returns a list of URLs on success, an empty list if the page is
-        genuinely empty (end-of-data), or None on transient failure
-        (Cloudflare challenge, network error).
+        Returns a list of URLs on success, an empty list if the page is out of
+        range or contains no article links, or ``None`` on failure (CF
+        challenge, network error).
         """
         url = _build_listing_url(listing_url, page_num)
-        page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
+        try:
+            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
+        except Exception as exc:
+            self.helper.log_warning(
+                f"Failed to load listing page {page_num} of {listing_url}: {exc}"
+            )
+            return None
 
-        if self._check_cloudflare(page, f"listing page {page_num}"):
+        title = (page.title() or "").lower()
+        if any(marker in title for marker in CHALLENGE_MARKERS):
+            self.helper.log_warning(f"WAF challenge on listing page {page_num}")
             return None
 
         base_url = self.base_url
@@ -378,13 +369,13 @@ class MEIConnector:
             """
             (baseUrl) => {
               // Look for article links in the main content area.
+              // Drupal Views render content in .view-content, .views-row, etc.
               const containers = [
                 document.querySelector('.view-content'),
                 document.querySelector('.views-element-container'),
                 document.querySelector('main .content'),
                 document.querySelector('main'),
                 document.querySelector('#content'),
-                document.querySelector('.layout-content'),
               ];
               const container = containers.find(c => c !== null) || document.body;
 
@@ -394,7 +385,7 @@ class MEIConnector:
               for (const a of links) {
                 let href = a.href;
                 if (!href) continue;
-                // Normalise: strip trailing slash for dedup
+                // Normalise: strip trailing slash for dedup, then re-add
                 href = href.replace(/\\/+$/, '');
                 if (!href.startsWith(baseUrl)) continue;
 
@@ -405,9 +396,9 @@ class MEIConnector:
 
                 // Skip non-content patterns
                 const lower = path.toLowerCase();
-                if (/\\/(events|exhibitions|podcasts|audio|video|about|staff|donate|careers|contact|press-room|gallery|calendar)\\//i.test(lower)) continue;
+                if (/\\/(podcast|data-hub|multimedia|events|about|staff|donate|careers|contact|press-room)\\//i.test(lower)) continue;
                 // Skip listing/section pages that end in common section names
-                if (/^\\/(publications|experts|articles|programs|topics|regions)\\/?$/i.test(lower)) continue;
+                if (/^\\/(research|news|programs|topics|regions)\\/?$/i.test(lower)) continue;
                 // Skip anchor-only or query-only links
                 if (href.includes('#') && href.split('#')[0] === '') continue;
 
@@ -431,12 +422,13 @@ class MEIConnector:
         """Navigate to an article page and extract metadata + body HTML.
 
         Returns (meta_dict, body_html_string) or (None, None) on failure.
-        Meta dict keys: title, published, description, topics, author.
+        Meta dict keys: title, published, description, topics, sub_brand.
         """
         page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
 
-        if self._check_cloudflare(page, f"article {url}"):
-            raise RuntimeError("Cloudflare challenge persists after reload")
+        title = (page.title() or "").lower()
+        if any(marker in title for marker in CHALLENGE_MARKERS):
+            raise RuntimeError("WAF challenge interstitial detected")
 
         # --- Metadata extraction via JS -------------------------------- #
         meta = page.evaluate(
@@ -446,7 +438,7 @@ class MEIConnector:
               const h1 = document.querySelector('h1');
               const title = h1 ? h1.textContent.trim() : document.title;
 
-              // Published date: <time> element, meta tags, or field
+              // Published date: Drupal <time> element, meta tags, or field
               let published = null;
               const timeEl = document.querySelector('time[datetime]');
               if (timeEl) {
@@ -460,8 +452,7 @@ class MEIConnector:
               }
               if (!published) {
                 const dateField = document.querySelector(
-                  '.field--name-field-date, .field--name-created, ' +
-                  '.date-display-single, .publication-date, .post-date'
+                  '.field--name-field-date, .field--name-created, .date-display-single'
                 );
                 if (dateField) published = dateField.textContent.trim();
               }
@@ -485,8 +476,7 @@ class MEIConnector:
                 '.field--name-field-categories a, ' +
                 '.taxonomy-term a, ' +
                 '.field--name-field-program a, ' +
-                '.field--name-field-regions a, ' +
-                '.field--name-field-country a'
+                '.field--name-field-regions a'
               );
               const topics = [];
               const topicSet = new Set();
@@ -498,22 +488,31 @@ class MEIConnector:
                 }
               }
 
+              // Sub-brand detection (MPI Europe, MPI en Espanol, etc.)
+              let subBrand = null;
+              const body = document.body.textContent || '';
+              if (/MPI\\s+Europe/i.test(body.substring(0, 3000))) {
+                subBrand = 'MPI Europe';
+              } else if (/MPI\\s+en\\s+Espa[nñ]ol/i.test(body.substring(0, 3000))) {
+                subBrand = 'MPI en Espanol';
+              }
+
               // Author byline
               const authorEl = document.querySelector(
                 '.field--name-field-author, ' +
                 '.field--name-field-authors, ' +
                 '.author-name, ' +
-                '.byline, ' +
-                '.field--name-field-expert'
+                '.byline'
               );
               const author = authorEl ? authorEl.textContent.trim() : null;
 
-              return { title, published, description, topics, author };
+              return { title, published, description, topics, subBrand, author };
             }
             """
         )
 
         # --- Body extraction via BS4 ----------------------------------- #
+        self._auto_scroll(page)
         page_html = page.content()
         soup = BeautifulSoup(page_html, "lxml")
 
@@ -606,12 +605,26 @@ class MEIConnector:
         return urlparse(url).path.strip("/").rsplit("/", 1)[-1] or "article"
 
     @staticmethod
+    def _content_type_from_url(url):
+        """Infer a human-readable content type from the URL path."""
+        path = urlparse(url).path.lower()
+        if path.startswith("/research"):
+            return "Research"
+        if path.startswith("/commentary"):
+            return "Commentary"
+        if path.startswith("/news"):
+            return "News"
+        if path.startswith("/article"):
+            return "Article"
+        return None
+
+    @staticmethod
     def _parse_published(raw):
         """Parse a date string into ISO-8601; return None if unparseable."""
         if not raw:
             return None
         raw = raw.strip()
-        # ISO-8601 datetime
+        # ISO-8601 datetime (from Drupal <time datetime="...">)
         if re.match(r"\d{4}-\d{2}-\d{2}", raw):
             try:
                 dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
@@ -633,15 +646,18 @@ class MEIConnector:
         """Create an OpenCTI Report with attached PDF."""
         name = _strip_html(meta.get("title") or "")
         # Clean trailing site name from title
-        name = re.sub(
-            r"\s*[-|]\s*Middle East Institute\s*$", "", name, flags=re.I
-        ).strip()
+        name = re.sub(r"\s*[-|]\s*Migration Policy Institute\s*$", "", name, flags=re.I).strip()
         if not name:
             name = self._slug_from_url(url)
 
         description_parts = []
         if meta.get("author"):
             description_parts.append(f"By {_strip_html(meta['author'])}.")
+        if meta.get("subBrand"):
+            description_parts.append(f"Published by {meta['subBrand']}.")
+        content_type = self._content_type_from_url(url)
+        if content_type:
+            description_parts.append(f"Type: {content_type}.")
         if meta.get("topics"):
             description_parts.append(f"Topics: {', '.join(meta['topics'])}.")
         raw_desc = _strip_html(meta.get("description") or "")
@@ -651,15 +667,21 @@ class MEIConnector:
 
         published = self._parse_published(meta.get("published"))
         if not published:
-            self.helper.log_warning(
-                f"Skipping {url}: no usable published date found."
+            published = datetime.now(timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%S+00:00"
             )
-            return False
+            self.helper.log_warning(
+                f"No usable date for {url}; using ingestion time."
+            )
+
+        ref_desc = "Source article on migrationpolicy.org"
+        if meta.get("author"):
+            ref_desc = f"By {_strip_html(meta['author'])}. {ref_desc}"
 
         external_reference = self.helper.api.external_reference.create(
             source_name=self.author_name,
             url=url,
-            description="Source article on mei.edu",
+            description=ref_desc,
         )
 
         report = self.helper.api.report.create(
@@ -675,7 +697,7 @@ class MEIConnector:
             update=True,
         )
 
-        file_name = f"mei-{self._slug_from_url(url)}.pdf"
+        file_name = f"mpi-{self._slug_from_url(url)}.pdf"
         if len(pdf_bytes) > MAX_PDF_BYTES:
             self.helper.log_warning(
                 f"Skipping oversized PDF for {url} ({len(pdf_bytes):,} bytes)."
@@ -688,7 +710,32 @@ class MEIConnector:
                 mime_type="application/pdf",
             )
         self.helper.log_info(f"Created Report for {url} ({name[:80]})")
-        return True
+
+    # ------------------------------------------------------------------ #
+    # Auto-scroll (trigger lazy-loaded images)
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _auto_scroll(page):
+        page.evaluate(
+            """
+            async () => {
+              await new Promise((resolve) => {
+                let total = 0;
+                const step = 400;
+                const timer = setInterval(() => {
+                  window.scrollBy(0, step);
+                  total += step;
+                  if (total >= document.body.scrollHeight || total >= 50000) {
+                    clearInterval(timer);
+                    window.scrollTo(0, 0);
+                    resolve();
+                  }
+                }, 100);
+              });
+            }
+            """
+        )
 
     # ------------------------------------------------------------------ #
     # Run loop
@@ -698,7 +745,7 @@ class MEIConnector:
         from playwright.sync_api import sync_playwright
 
         work_id = self.helper.api.work.initiate_work(
-            self.helper.connect_id, "MEI enumeration run"
+            self.helper.connect_id, "MPI enumeration run"
         )
 
         processed = 0
@@ -720,7 +767,7 @@ class MEIConnector:
                     for page_num in range(0, MAX_LISTING_PAGES):
                         if self.max_reports and processed >= self.max_reports:
                             self.helper.log_info(
-                                f"Reached MEI_MAX_REPORTS={self.max_reports}; stopping."
+                                f"Reached MPI_MAX_REPORTS={self.max_reports}; stopping."
                             )
                             break
 
@@ -730,7 +777,7 @@ class MEIConnector:
                         if article_urls is None:
                             self.helper.log_warning(
                                 f"Listing {listing_url} page {page_num}: "
-                                f"transient failure; skipping to next page."
+                                f"scrape failed (CF challenge or network error); skipping page."
                             )
                             time.sleep(self.request_delay)
                             continue
@@ -747,16 +794,16 @@ class MEIConnector:
                         )
 
                         all_known = True
-                        for article_url in article_urls:
+                        for url in article_urls:
                             if self.max_reports and processed >= self.max_reports:
                                 break
 
-                            # Apply URL filter (skip events, exhibitions, etc.)
-                            if _should_skip_url(article_url):
+                            # Apply URL filter (skip podcasts, data-hub, etc.)
+                            if _should_skip_url(url):
                                 all_known = False
                                 continue
 
-                            if self._already_ingested(article_url):
+                            if self._already_ingested(url):
                                 skipped += 1
                                 continue
 
@@ -781,12 +828,10 @@ class MEIConnector:
                             )
                             article_page = article_ctx.new_page()
                             try:
-                                meta, body_html = self._extract_article(
-                                    article_page, article_url
-                                )
+                                meta, body_html = self._extract_article(article_page, url)
                             except Exception as exc:
                                 self.helper.log_warning(
-                                    f"Article extraction failed for {article_url}: {exc}"
+                                    f"Article extraction failed for {url}: {exc}"
                                 )
                                 failed += 1
                                 time.sleep(self.request_delay)
@@ -798,14 +843,11 @@ class MEIConnector:
 
                             if not body_html:
                                 self.helper.log_warning(
-                                    f"Skipping {article_url}: no article content found."
+                                    f"Skipping {url}: no article content found."
                                 )
                                 failed += 1
                                 time.sleep(self.request_delay)
                                 continue
-
-                            if not meta:
-                                meta = {}
 
                             title = _strip_html(meta.get("title") or "")
                             byline_parts = []
@@ -816,20 +858,18 @@ class MEIConnector:
                             byline = "  |  ".join(byline_parts) if byline_parts else ""
 
                             pdf_bytes = self._render_with_retry(
-                                title, byline, body_html, article_url
+                                title, byline, body_html, url
                             )
                             if pdf_bytes is None:
                                 failed += 1
                                 self.helper.log_warning(
-                                    f"Skipping {article_url}: PDF render failed after retries."
+                                    f"Skipping {url}: PDF render failed after retries."
                                 )
                                 time.sleep(self.request_delay)
                                 continue
 
-                            if self._create_report(article_url, meta, pdf_bytes):
-                                processed += 1
-                            else:
-                                failed += 1
+                            self._create_report(url, meta, pdf_bytes)
+                            processed += 1
                             time.sleep(self.request_delay)
 
                         if all_known and article_urls:
@@ -859,7 +899,7 @@ class MEIConnector:
     def run(self):
         self._resolve_graph_references()
         self.helper.log_info(
-            f"MEI connector started. Listing URLs: {self.listing_urls}"
+            f"MPI connector started. Listing URLs: {self.listing_urls}"
         )
         while True:
             try:
@@ -871,7 +911,7 @@ class MEIConnector:
 
 if __name__ == "__main__":
     try:
-        MEIConnector().run()
+        MPIConnector().run()
     except Exception as exc:
         print(f"Fatal: {exc}", file=sys.stderr)
         time.sleep(10)

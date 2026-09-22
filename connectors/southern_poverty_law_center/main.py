@@ -243,14 +243,14 @@ class SplcConnector:
 
         self.base_url = get_config_variable(
             "SPLC_BASE_URL",
-            ["splc", "base_url"],
+            ["southern_poverty_law_center", "base_url"],
             config,
             default="https://www.splcenter.org",
         ).rstrip("/")
 
         self.poll_interval = get_config_variable(
             "SPLC_POLL_INTERVAL",
-            ["splc", "poll_interval"],
+            ["southern_poverty_law_center", "poll_interval"],
             config,
             isNumber=True,
             default=86400,
@@ -258,7 +258,7 @@ class SplcConnector:
 
         self.request_delay = get_config_variable(
             "SPLC_REQUEST_DELAY",
-            ["splc", "request_delay"],
+            ["southern_poverty_law_center", "request_delay"],
             config,
             isNumber=True,
             default=10,
@@ -266,7 +266,7 @@ class SplcConnector:
 
         self.max_reports = get_config_variable(
             "SPLC_MAX_REPORTS",
-            ["splc", "max_reports"],
+            ["southern_poverty_law_center", "max_reports"],
             config,
             isNumber=True,
             default=0,
@@ -274,7 +274,7 @@ class SplcConnector:
 
         self.render_retries = get_config_variable(
             "SPLC_RENDER_RETRIES",
-            ["splc", "render_retries"],
+            ["southern_poverty_law_center", "render_retries"],
             config,
             isNumber=True,
             default=3,
@@ -282,26 +282,26 @@ class SplcConnector:
 
         self.confidence = get_config_variable(
             "SPLC_CONFIDENCE",
-            ["splc", "confidence"],
+            ["southern_poverty_law_center", "confidence"],
             config,
             isNumber=True,
             default=50,
         )
         self.report_type = get_config_variable(
             "SPLC_REPORT_TYPE",
-            ["splc", "report_type"],
+            ["southern_poverty_law_center", "report_type"],
             config,
             default="open-source-reporting",
         )
         self.tlp_name = get_config_variable(
             "SPLC_TLP",
-            ["splc", "tlp"],
+            ["southern_poverty_law_center", "tlp"],
             config,
             default="TLP:CLEAR",
         )
         self.author_name = get_config_variable(
             "SPLC_AUTHOR_NAME",
-            ["splc", "author_name"],
+            ["southern_poverty_law_center", "author_name"],
             config,
             default="Southern Poverty Law Center",
         )
