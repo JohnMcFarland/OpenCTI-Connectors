@@ -1,0 +1,31 @@
+# Carnegie Endowment for International Peace OpenCTI connector - GitHub template
+# compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  carnegie_endowment:
+    build: .
+    container_name: opencti-connector-carnegie-endowment
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Carnegie Endowment for International Peace
+      - CONNECTOR_SCOPE=carnegie_endowment
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - CARNEGIE_ENDOWMENT_BASE_URL=https://carnegieendowment.org
+      - CARNEGIE_ENDOWMENT_POLL_INTERVAL=86400         # seconds between enumeration runs (24h)
+      - CARNEGIE_ENDOWMENT_REQUEST_DELAY=2              # seconds between requests
+      - CARNEGIE_ENDOWMENT_MAX_REPORTS=0                # 0 = unlimited; set to 3 for a bounded test run
+      - CARNEGIE_ENDOWMENT_RENDER_RETRIES=3
+      - CARNEGIE_ENDOWMENT_CONFIDENCE=50                # OpenCTI confidence 0-100 (Medium band)
+      - CARNEGIE_ENDOWMENT_REPORT_TYPE=open-source-reporting
+      - CARNEGIE_ENDOWMENT_TLP=TLP:CLEAR
+      - CARNEGIE_ENDOWMENT_AUTHOR_NAME=Carnegie Endowment for International Peace
+    restart: always

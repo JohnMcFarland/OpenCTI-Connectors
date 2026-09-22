@@ -1,0 +1,22 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Organized Crime and Corruption Reporting Project'
+  scope: 'organized_crime_corruption_reporting'
+  log_level: 'info'
+organized_crime_corruption_reporting:
+  base_url: 'https://www.occrp.org'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 1            # seconds between requests; robots.txt Crawl-delay: 1
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Organized Crime and Corruption Reporting Project'

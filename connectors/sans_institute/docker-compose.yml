@@ -1,0 +1,31 @@
+# SANS Institute OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  sans_institute:
+    build: .
+    container_name: opencti-connector-sans-institute
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=SANS Institute
+      - CONNECTOR_SCOPE=sans_institute
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - SANS_INSTITUTE_BASE_URL=https://www.sans.org
+      - SANS_INSTITUTE_SITEMAP_URL=https://www.sans.org/sitemaps/blogs.xml
+      - SANS_INSTITUTE_POLL_INTERVAL=86400         # seconds between enumeration runs (24h)
+      - SANS_INSTITUTE_REQUEST_DELAY=2             # seconds between requests
+      - SANS_INSTITUTE_MAX_REPORTS=0               # 0 = unlimited; set to 3 for a bounded test run
+      - SANS_INSTITUTE_RENDER_RETRIES=3
+      - SANS_INSTITUTE_CONFIDENCE=50               # OpenCTI confidence 0-100 (Medium band)
+      - SANS_INSTITUTE_REPORT_TYPE=open-source-reporting
+      - SANS_INSTITUTE_TLP=TLP:CLEAR
+      - SANS_INSTITUTE_AUTHOR_NAME=SANS Institute
+    restart: always

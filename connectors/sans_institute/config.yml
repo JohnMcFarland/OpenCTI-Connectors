@@ -1,0 +1,23 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'SANS Institute'
+  scope: 'sans_institute'
+  log_level: 'info'
+sans_institute:
+  base_url: 'https://www.sans.org'
+  sitemap_url: 'https://www.sans.org/sitemaps/blogs.xml'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 2            # seconds between requests; no robots.txt crawl-delay
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'SANS Institute'

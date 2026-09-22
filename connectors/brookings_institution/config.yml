@@ -1,0 +1,23 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Brookings Institution'
+  scope: 'brookings_institution'
+  log_level: 'info'
+brookings_institution:
+  base_url: 'https://www.brookings.edu'
+  per_page: 100
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 2            # seconds between article fetches
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Brookings Institution'

@@ -1,0 +1,22 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'World Health Organization'
+  scope: 'world_health_organization'
+  log_level: 'info'
+world_health_organization:
+  base_url: 'https://www.who.int'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 2            # seconds between requests
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'World Health Organization'

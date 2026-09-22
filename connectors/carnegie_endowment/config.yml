@@ -1,0 +1,22 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Carnegie Endowment for International Peace'
+  scope: 'carnegie_endowment'
+  log_level: 'info'
+carnegie_endowment:
+  base_url: 'https://carnegieendowment.org'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 2            # seconds between requests; no crawl-delay in robots.txt
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Carnegie Endowment for International Peace'

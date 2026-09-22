@@ -1,0 +1,32 @@
+# Johns Hopkins Bloomberg School of Public Health OpenCTI connector -
+# GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  johns-hopkins-public-health:
+    build: .
+    container_name: opencti-connector-johns-hopkins-public-health
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Johns Hopkins Public Health
+      - CONNECTOR_SCOPE=johns_hopkins_public_health
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_BASE_URL=https://publichealth.jhu.edu
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_POLL_INTERVAL=86400          # seconds between enumeration runs (24h)
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_REQUEST_DELAY=3              # seconds between page loads
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_MAX_REPORTS=0                # 0 = unlimited; set to 3 for a bounded test run
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_PLAYWRIGHT_NAV_TIMEOUT=60000 # ms
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_RENDER_RETRIES=3
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_CONFIDENCE=50                # OpenCTI confidence 0-100 (Medium band)
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_REPORT_TYPE=open-source-reporting
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_TLP=TLP:CLEAR
+      - JOHNS_HOPKINS_PUBLIC_HEALTH_AUTHOR_NAME=Johns Hopkins Bloomberg School of Public Health
+    restart: always
