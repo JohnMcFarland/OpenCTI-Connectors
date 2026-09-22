@@ -7,8 +7,13 @@ connector; supersedes conversation memory after compaction.
 
 EXTERNAL_IMPORT connector. Ingests the full article corpus from
 https://www.hungarianconservative.com as container-only OpenCTI Reports, one per
-WordPress post, each with the article content rendered to PDF via WeasyPrint from
-the REST API payload. Enumeration is a full WordPress REST backfill walked by a
+WordPress post, each with TWO PDFs attached:
+  1. REST API PDF — rendered from WP REST `content.rendered` via WeasyPrint.
+  2. Live HTML PDF — fetched from the article URL, body extracted from the
+     Elementor post-content widget with BeautifulSoup, cruft stripped, rendered
+     via WeasyPrint. Serves as the auditor/processor reference copy.
+
+Enumeration is a full WordPress REST backfill walked by a
 persisted positional `{page, index}` cursor with a sliding-window mechanism for
 corpora exceeding WordPress's 100-page pagination limit; the same path drives
 steady state.
@@ -36,25 +41,35 @@ Fixed field mapping:
 2. **WP REST API for enumeration AND content.** The REST API is fully open (no WAF,
    no API key) and returns full article HTML in `content.rendered`. This means the
    connector gets both enumeration metadata and the complete article body in a single
-   API call, with no need for a second HTTP request to the article page.
+   API call. The REST content drives the primary (REST API) PDF.
 
-3. **WeasyPrint for PDF, no Playwright.** Because article HTML comes from the REST
-   API, there is no browser-navigation requirement. WeasyPrint renders the HTML
-   content directly to PDF. This eliminates the Playwright dependency and its
-   ~400 MB Chromium image, cutting the Docker image size significantly.
+3. **Dual-PDF collection (2026-09-22).** Each Report carries two PDFs:
+   - `hungarian-conservative-{slug}.pdf` — REST API content rendered via WeasyPrint.
+     Clean structured content as WordPress stores it.
+   - `hungarian-conservative-{slug}-live.pdf` — live article page fetched via
+     requests, article body extracted from the Elementor post-content widget
+     (`.elementor-widget-theme-post-content .elementor-widget-container`) with
+     BeautifulSoup, ad/donation/self-embed cruft stripped, rendered via WeasyPrint.
+     This captures the page as published and serves as the processor/auditor
+     reference. A live PDF failure is non-fatal: the Report is still created with
+     the REST API PDF only.
 
-4. **Ascending-ID cursor with sliding window.** Post IDs are monotonic and stable.
+4. **WeasyPrint for PDF, no Playwright.** Both PDFs use WeasyPrint. The site has no
+   WAF gating plain HTTP requests, so no browser automation is needed. This
+   eliminates the Playwright dependency and its ~400 MB Chromium image.
+
+5. **Ascending-ID cursor with sliding window.** Post IDs are monotonic and stable.
    The cursor walks ascending-ID order. WordPress caps REST pagination at 100 pages
    (10,000 posts with per_page=100); when the cursor reaches the limit, it shifts
    the query window forward using the `after` date filter and resets to page 1.
    This handles any corpus size with a single code path.
 
-5. **Author byline in description.** The 224 WP authors are cached at startup.
+6. **Author byline in description.** The 224 WP authors are cached at startup.
    Each post's byline is included in the Report description but `createdBy` uses
    the single Organization identity (consistent with all other connectors in this
    repo).
 
-6. **Politeness: 2-second delay.** No `Crawl-Delay` in robots.txt. The default
+7. **Politeness: 2-second delay.** No `Crawl-Delay` in robots.txt. The default
    2-second delay between renders is conservative for a site with no stated rate
    limit. Enumeration uses the REST API which is lightweight (no page rendering).
 

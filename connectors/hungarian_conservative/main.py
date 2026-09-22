@@ -5,7 +5,15 @@ Purpose
 -------
 External-import connector that ingests articles from
 https://www.hungarianconservative.com as container-only OpenCTI Reports, one per
-post, with the article content attached as a full-fidelity PDF.
+post, with two PDFs attached per Report:
+
+  1. REST API PDF — rendered from the WP REST `content.rendered` payload via
+     WeasyPrint. This is the structured content as WordPress stores it: clean,
+     fast, no network fetch beyond embedded images.
+  2. Live HTML PDF — fetched from the article URL, article body extracted from
+     the Elementor post-content widget with BeautifulSoup, cruft stripped
+     (ads, donation box, self-embeds), rendered via WeasyPrint. This captures
+     the page as a reader sees it and serves as the auditor/processor reference.
 
 Collection model (WordPress REST API + ascending-id cursor)
 -----------------------------------------------------------
@@ -26,9 +34,9 @@ by adding `after=<date of last processed post>` and resetting to page 1. This
 sliding-window approach handles any corpus size.
 
 Article content (title, date, excerpt, full HTML body) is read directly from the
-REST payload's `content.rendered` field, so NO second HTTP request to the article
-page is needed. PDFs are rendered from the REST content with WeasyPrint (no browser
-automation required).
+REST payload's `content.rendered` field for the REST API PDF. The live HTML PDF
+requires a second HTTP request to the article URL, but both use WeasyPrint (no
+browser automation required).
 
 Per-post title, excerpt (description), publication date, link, and category ids are
 read directly from the REST payload. The 224 WP authors are resolved once at startup
@@ -79,6 +87,7 @@ from urllib.parse import urlparse
 
 import requests
 import yaml
+from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
 logging.getLogger("weasyprint").setLevel(logging.ERROR)
@@ -95,6 +104,19 @@ BROWSER_UA = (
 
 MAX_PER_PAGE = 100
 MAX_WP_PAGES = 100
+
+LIVE_CONTENT_SELECTORS = [
+    ".elementor-widget-theme-post-content .elementor-widget-container",
+    ".entry-content",
+    ".post-content",
+    "article",
+]
+
+STRIP_SELECTORS = [
+    ".adsense-middle-container",
+    ".hc-donation-box",
+    ".wp-block-embed.is-provider-hungarian-conservative",
+]
 
 _PDF_STYLE = (
     "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
@@ -476,8 +498,60 @@ class HungarianConservativeConnector:
                 return self._render_pdf(post)
             except Exception as exc:
                 self.helper.log_warning(
-                    f"Render attempt {attempt}/{self.render_retries} failed for "
-                    f"{url}: {exc}"
+                    f"REST PDF render attempt {attempt}/{self.render_retries} failed "
+                    f"for {url}: {exc}"
+                )
+                if attempt < self.render_retries:
+                    time.sleep(delay)
+                    delay *= 2
+        return None
+
+    # ------------------------------------------------------------------ #
+    # Live HTML PDF rendering (Trellix pattern)
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _extract_live_content(page_html):
+        soup = BeautifulSoup(page_html, "lxml")
+        content = None
+        for selector in LIVE_CONTENT_SELECTORS:
+            content = soup.select_one(selector)
+            if content:
+                break
+        if not content:
+            return None
+        for sel in STRIP_SELECTORS:
+            for el in content.select(sel):
+                el.decompose()
+        return content
+
+    def _render_live_pdf(self, url, title, byline):
+        import weasyprint
+
+        resp = self.session.get(url, timeout=60, headers={"Accept": "text/html"})
+        if resp.status_code != 200:
+            raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
+
+        content = self._extract_live_content(resp.text)
+        if content is None:
+            raise RuntimeError("No article content container found in live HTML")
+
+        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+        doc_html = _build_pdf_html(title, byline, str(content), url, ingested)
+
+        return weasyprint.HTML(
+            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
+        ).write_pdf()
+
+    def _render_live_with_retry(self, url, title, byline):
+        delay = self.request_delay
+        for attempt in range(1, self.render_retries + 1):
+            try:
+                return self._render_live_pdf(url, title, byline)
+            except Exception as exc:
+                self.helper.log_warning(
+                    f"Live PDF render attempt {attempt}/{self.render_retries} failed "
+                    f"for {url}: {exc}"
                 )
                 if attempt < self.render_retries:
                     time.sleep(delay)
@@ -488,7 +562,7 @@ class HungarianConservativeConnector:
     # Report creation
     # ------------------------------------------------------------------ #
 
-    def _create_report(self, post, published, pdf_bytes):
+    def _create_report(self, post, published, api_pdf, live_pdf):
         url = post.get("link")
         name = _strip_html((post.get("title") or {}).get("rendered", "")) or url
         description = _strip_html((post.get("excerpt") or {}).get("rendered", ""))
@@ -519,14 +593,24 @@ class HungarianConservativeConnector:
         )
 
         slug = urlparse(url).path.strip("/").rsplit("/", 1)[-1] or "article"
-        file_name = f"hungarian-conservative-{slug}.pdf"
+
         self.helper.api.stix_domain_object.add_file(
             id=report["id"],
-            file_name=file_name,
-            data=pdf_bytes,
+            file_name=f"hungarian-conservative-{slug}.pdf",
+            data=api_pdf,
             mime_type="application/pdf",
         )
-        self.helper.log_info(f"Created Report for {url} ({name[:80]})")
+
+        if live_pdf:
+            self.helper.api.stix_domain_object.add_file(
+                id=report["id"],
+                file_name=f"hungarian-conservative-{slug}-live.pdf",
+                data=live_pdf,
+                mime_type="application/pdf",
+            )
+
+        live_tag = "+live" if live_pdf else " (live failed)"
+        self.helper.log_info(f"Created Report{live_tag} for {url} ({name[:80]})")
 
     # ------------------------------------------------------------------ #
     # Run loop
@@ -602,14 +686,25 @@ class HungarianConservativeConnector:
                     self._save_cursor(page_num, idx + 1, window_after)
                     continue
 
-                pdf_bytes = self._render_with_retry(post)
-                if pdf_bytes is None:
+                api_pdf = self._render_with_retry(post)
+                if api_pdf is None:
                     failed += 1
                     self.helper.log_warning(
-                        f"Skipping {url}: render failed after retries."
+                        f"Skipping {url}: REST API PDF render failed after retries."
                     )
                     self._save_cursor(page_num, idx + 1, window_after)
                     continue
+
+                title = _strip_html((post.get("title") or {}).get("rendered", ""))
+                byline = self._author_byline(post)
+                cats = self._category_names(post)
+                if cats:
+                    byline = f"{byline}  |  {', '.join(cats)}" if byline else ", ".join(cats)
+                live_pdf = self._render_live_with_retry(url, title, byline)
+                if live_pdf is None:
+                    self.helper.log_warning(
+                        f"Live HTML PDF failed for {url}; attaching REST API PDF only."
+                    )
 
                 published = self._published_iso(post)
                 if not published:
@@ -620,7 +715,7 @@ class HungarianConservativeConnector:
                         f"No usable date for {url}; using ingestion time."
                     )
 
-                self._create_report(post, published, pdf_bytes)
+                self._create_report(post, published, api_pdf, live_pdf)
                 processed += 1
                 self._save_cursor(page_num, idx + 1, window_after)
                 time.sleep(self.request_delay)
