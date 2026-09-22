@@ -15,7 +15,7 @@ services:
       # --- Connector identity ---
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
-      - CONNECTOR_NAME=IISS
+      - CONNECTOR_NAME=International Institute for Strategic Studies
       - CONNECTOR_SCOPE=iiss
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---
@@ -28,5 +28,5 @@ services:
       - IISS_CONFIDENCE=50                # OpenCTI confidence 0-100 (Medium band)
       - IISS_REPORT_TYPE=open-source-reporting
       - IISS_TLP=TLP:CLEAR
-      - IISS_AUTHOR_NAME=IISS
+      - IISS_AUTHOR_NAME=International Institute for Strategic Studies
     restart: always

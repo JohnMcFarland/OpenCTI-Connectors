@@ -7,7 +7,7 @@ opencti:
 connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
-  name: 'SPLC'
+  name: 'Southern Poverty Law Center'
   scope: 'splc'
   log_level: 'info'
 splc:

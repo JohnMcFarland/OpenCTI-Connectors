@@ -32,7 +32,7 @@ each article to PDF (the site requires a browser for content loading).
 | `IISS_CONFIDENCE` | `50` | OpenCTI confidence (0-100) |
 | `IISS_REPORT_TYPE` | `open-source-reporting` | Report type vocabulary |
 | `IISS_TLP` | `TLP:CLEAR` | Traffic-light marking |
-| `IISS_AUTHOR_NAME` | `IISS` | Organization identity name |
+| `IISS_AUTHOR_NAME` | `International Institute for Strategic Studies` | Organization identity name |
 
 ## Quick start
 

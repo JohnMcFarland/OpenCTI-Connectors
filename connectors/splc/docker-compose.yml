@@ -14,7 +14,7 @@ services:
       # --- Connector identity ---
       - CONNECTOR_ID=            # generate once: uuidgen
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
-      - CONNECTOR_NAME=SPLC
+      - CONNECTOR_NAME=Southern Poverty Law Center
       - CONNECTOR_SCOPE=splc
       - CONNECTOR_LOG_LEVEL=info
       # --- Source / behaviour (non-sensitive; defaults shown) ---

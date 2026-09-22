@@ -7,7 +7,7 @@ opencti:
 connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
-  name: 'IISS'
+  name: 'International Institute for Strategic Studies'
   scope: 'iiss'
   log_level: 'info'
 iiss:
@@ -20,4 +20,4 @@ iiss:
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
-  author_name: 'IISS'
+  author_name: 'International Institute for Strategic Studies'
