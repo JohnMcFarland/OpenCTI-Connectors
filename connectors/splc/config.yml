@@ -1,0 +1,22 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'SPLC'
+  scope: 'splc'
+  log_level: 'info'
+splc:
+  base_url: 'https://www.splcenter.org'
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 10           # seconds between requests; robots.txt Crawl-delay: 10
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'Southern Poverty Law Center'

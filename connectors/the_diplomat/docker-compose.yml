@@ -1,0 +1,31 @@
+# The Diplomat OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  the_diplomat:
+    build: .
+    container_name: opencti-connector-the-diplomat
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=The Diplomat
+      - CONNECTOR_SCOPE=the_diplomat
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - THE_DIPLOMAT_BASE_URL=https://thediplomat.com
+      - THE_DIPLOMAT_POLL_INTERVAL=86400         # seconds between enumeration runs (24h)
+      - THE_DIPLOMAT_REQUEST_DELAY=3             # seconds between Playwright navigations
+      - THE_DIPLOMAT_MAX_REPORTS=0               # 0 = unlimited; set to 3 for a bounded test run
+      - THE_DIPLOMAT_RENDER_RETRIES=3
+      - THE_DIPLOMAT_PLAYWRIGHT_NAV_TIMEOUT=60000  # ms; Cloudflare challenge may need time
+      - THE_DIPLOMAT_CONFIDENCE=50               # OpenCTI confidence 0-100 (Medium band)
+      - THE_DIPLOMAT_REPORT_TYPE=open-source-reporting
+      - THE_DIPLOMAT_TLP=TLP:CLEAR
+      - THE_DIPLOMAT_AUTHOR_NAME=The Diplomat
+    restart: always

@@ -1,0 +1,31 @@
+# InSight Crime OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  insightcrime:
+    build: .
+    container_name: opencti-connector-insightcrime
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=InSight Crime
+      - CONNECTOR_SCOPE=insightcrime
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - INSIGHTCRIME_BASE_URL=https://insightcrime.org
+      - INSIGHTCRIME_PER_PAGE=100
+      - INSIGHTCRIME_POLL_INTERVAL=86400   # seconds between enumeration runs (24h)
+      - INSIGHTCRIME_REQUEST_DELAY=2       # seconds between renders; no crawl-delay in robots.txt
+      - INSIGHTCRIME_MAX_REPORTS=0          # 0 = unlimited; set to 3 for a bounded test run
+      - INSIGHTCRIME_RENDER_RETRIES=3
+      - INSIGHTCRIME_CONFIDENCE=50          # OpenCTI confidence 0-100 (Medium band)
+      - INSIGHTCRIME_REPORT_TYPE=open-source-reporting
+      - INSIGHTCRIME_TLP=TLP:CLEAR
+      - INSIGHTCRIME_AUTHOR_NAME=InSight Crime
+    restart: always

@@ -1,0 +1,30 @@
+# SPLC (Southern Poverty Law Center) OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  splc:
+    build: .
+    container_name: opencti-connector-splc
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=SPLC
+      - CONNECTOR_SCOPE=splc
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - SPLC_BASE_URL=https://www.splcenter.org
+      - SPLC_POLL_INTERVAL=86400         # seconds between enumeration runs (24h)
+      - SPLC_REQUEST_DELAY=10            # seconds between requests; robots.txt Crawl-delay: 10
+      - SPLC_MAX_REPORTS=0               # 0 = unlimited; set to 3 for a bounded test run
+      - SPLC_RENDER_RETRIES=3
+      - SPLC_CONFIDENCE=50               # OpenCTI confidence 0-100 (Medium band)
+      - SPLC_REPORT_TYPE=open-source-reporting
+      - SPLC_TLP=TLP:CLEAR
+      - SPLC_AUTHOR_NAME=Southern Poverty Law Center
+    restart: always

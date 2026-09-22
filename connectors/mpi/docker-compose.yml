@@ -1,0 +1,32 @@
+# MPI (Migration Policy Institute) OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  mpi:
+    build: .
+    container_name: opencti-connector-mpi
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Migration Policy Institute
+      - CONNECTOR_SCOPE=mpi
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - MPI_BASE_URL=https://www.migrationpolicy.org
+      - MPI_LISTING_URLS=/research,/news
+      - MPI_POLL_INTERVAL=21600          # seconds between enumeration runs (6h)
+      - MPI_REQUEST_DELAY=3              # seconds between page loads (WAF-friendly)
+      - MPI_MAX_REPORTS=0                # 0 = unlimited; set to 3 for a bounded test run
+      - MPI_PLAYWRIGHT_NAV_TIMEOUT=60000 # ms
+      - MPI_RENDER_RETRIES=3
+      - MPI_CONFIDENCE=50                # OpenCTI confidence 0-100 (Medium band)
+      - MPI_REPORT_TYPE=open-source-reporting
+      - MPI_TLP=TLP:CLEAR
+      - MPI_AUTHOR_NAME=Migration Policy Institute
+    restart: always

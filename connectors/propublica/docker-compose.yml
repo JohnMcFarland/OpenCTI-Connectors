@@ -1,0 +1,32 @@
+# ProPublica OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  propublica:
+    build: .
+    container_name: opencti-connector-propublica
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=ProPublica
+      - CONNECTOR_SCOPE=propublica
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - PROPUBLICA_BASE_URL=https://www.propublica.org
+      - PROPUBLICA_FEED_PATH=/feed/
+      - PROPUBLICA_POLL_INTERVAL=86400   # seconds between enumeration runs (24h)
+      - PROPUBLICA_REQUEST_DELAY=2       # seconds between requests; no crawl-delay specified
+      - PROPUBLICA_MAX_REPORTS=0          # 0 = unlimited; set to 3 for a bounded test run
+      - PROPUBLICA_EARLY_STOP=20         # stop after N consecutive already-known articles
+      - PROPUBLICA_RENDER_RETRIES=3
+      - PROPUBLICA_CONFIDENCE=50          # OpenCTI confidence 0-100 (Medium band)
+      - PROPUBLICA_REPORT_TYPE=open-source-reporting
+      - PROPUBLICA_TLP=TLP:CLEAR
+      - PROPUBLICA_AUTHOR_NAME=ProPublica
+    restart: always

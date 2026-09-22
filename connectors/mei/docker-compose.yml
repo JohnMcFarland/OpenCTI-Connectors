@@ -1,0 +1,32 @@
+# MEI (Middle East Institute) OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  mei:
+    build: .
+    container_name: opencti-connector-mei
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Middle East Institute
+      - CONNECTOR_SCOPE=mei
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - MEI_BASE_URL=https://www.mei.edu
+      - MEI_LISTING_URLS=/publications,/experts/articles
+      - MEI_POLL_INTERVAL=21600          # seconds between enumeration runs (6h)
+      - MEI_REQUEST_DELAY=3              # seconds between page loads (WAF-friendly)
+      - MEI_MAX_REPORTS=0                # 0 = unlimited; set to 3 for a bounded test run
+      - MEI_PLAYWRIGHT_NAV_TIMEOUT=60000 # ms
+      - MEI_RENDER_RETRIES=3
+      - MEI_CONFIDENCE=50                # OpenCTI confidence 0-100 (Medium band)
+      - MEI_REPORT_TYPE=open-source-reporting
+      - MEI_TLP=TLP:CLEAR
+      - MEI_AUTHOR_NAME=Middle East Institute
+    restart: always

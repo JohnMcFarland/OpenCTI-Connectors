@@ -1,0 +1,31 @@
+# Defense One OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  defense_one:
+    build: .
+    container_name: opencti-connector-defense-one
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Defense One
+      - CONNECTOR_SCOPE=defense_one
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - DEFENSE_ONE_BASE_URL=https://www.defenseone.com
+      - DEFENSE_ONE_RSS_URL=https://www.defenseone.com/rss/all/
+      - DEFENSE_ONE_POLL_INTERVAL=86400   # seconds between enumeration runs (24h)
+      - DEFENSE_ONE_REQUEST_DELAY=1       # seconds between requests; crawl-delay:1 in robots.txt
+      - DEFENSE_ONE_MAX_REPORTS=0          # 0 = unlimited; set to 3 for a bounded test run
+      - DEFENSE_ONE_RENDER_RETRIES=3
+      - DEFENSE_ONE_CONFIDENCE=50          # OpenCTI confidence 0-100 (Medium band)
+      - DEFENSE_ONE_REPORT_TYPE=open-source-reporting
+      - DEFENSE_ONE_TLP=TLP:CLEAR
+      - DEFENSE_ONE_AUTHOR_NAME=Defense One
+    restart: always
