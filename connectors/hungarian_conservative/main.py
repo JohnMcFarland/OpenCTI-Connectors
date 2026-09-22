@@ -86,6 +86,7 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 import requests
+import weasyprint
 import yaml
 from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
@@ -148,13 +149,17 @@ def _escape_html(text):
     return html_mod.escape(text) if text else ""
 
 
+def _css_string_escape(s):
+    return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
+
+
 PDF_VARIANT_REST_API = "rest-api"
 PDF_VARIANT_LIVE_HTML = "live-html"
 
 
 def _build_pdf_html(title, byline, content_html, source_url, ingested_at,
                      variant=PDF_VARIANT_REST_API):
-    css_url = source_url.replace("'", "").replace("\\", "")
+    css_url = _css_string_escape(source_url)
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -370,21 +375,38 @@ class HungarianConservativeConnector:
         self.helper.log_info(f"Cached {len(self._wp_authors)} WP authors.")
 
     def _cache_wp_categories(self):
-        try:
-            resp = self.session.get(
-                f"{self.base_url}/wp-json/wp/v2/categories",
-                params={"per_page": MAX_PER_PAGE, "_fields": "id,name"},
-                timeout=30,
-            )
-            resp.raise_for_status()
-            for cat in resp.json():
-                self._wp_categories[cat["id"]] = cat.get("name", "")
-            self.helper.log_info(
-                f"Cached {len(self._wp_categories)} WP categories: "
-                f"{list(self._wp_categories.values())}"
-            )
-        except Exception as exc:
-            self.helper.log_warning(f"Could not cache WP categories: {exc}")
+        page = 1
+        while True:
+            try:
+                resp = self.session.get(
+                    f"{self.base_url}/wp-json/wp/v2/categories",
+                    params={
+                        "per_page": MAX_PER_PAGE,
+                        "page": page,
+                        "_fields": "id,name",
+                    },
+                    timeout=30,
+                )
+                if resp.status_code == 400:
+                    break
+                resp.raise_for_status()
+                cats = resp.json()
+                if not cats:
+                    break
+                for cat in cats:
+                    self._wp_categories[cat["id"]] = cat.get("name", "")
+                if len(cats) < MAX_PER_PAGE:
+                    break
+                page += 1
+            except Exception as exc:
+                self.helper.log_warning(
+                    f"Could not cache WP categories page {page}: {exc}"
+                )
+                break
+        self.helper.log_info(
+            f"Cached {len(self._wp_categories)} WP categories: "
+            f"{list(self._wp_categories.values())}"
+        )
 
     def _probe_total(self):
         try:
@@ -457,17 +479,40 @@ class HungarianConservativeConnector:
             return self._wp_authors[author_id]
         return ""
 
+    @staticmethod
+    def _post_title(post):
+        return _strip_html((post.get("title") or {}).get("rendered", ""))
+
     def _category_names(self, post):
         cat_ids = post.get("categories", [])
         return [self._wp_categories.get(c, str(c)) for c in cat_ids if c]
+
+    def _format_byline(self, post):
+        byline = self._author_byline(post)
+        cats = self._category_names(post)
+        if cats:
+            byline = f"{byline}  |  {', '.join(cats)}" if byline else ", ".join(cats)
+        return byline
 
     # ------------------------------------------------------------------ #
     # PDF rendering (WeasyPrint)
     # ------------------------------------------------------------------ #
 
-    def _wp_url_fetcher(self, url):
-        import weasyprint
+    def _retry(self, fn, label):
+        delay = self.request_delay
+        for attempt in range(1, self.render_retries + 1):
+            try:
+                return fn()
+            except Exception as exc:
+                self.helper.log_warning(
+                    f"{label} attempt {attempt}/{self.render_retries} failed: {exc}"
+                )
+                if attempt < self.render_retries:
+                    time.sleep(delay)
+                    delay *= 2
+        return None
 
+    def _wp_url_fetcher(self, url):
         if url.startswith("data:"):
             return weasyprint.default_url_fetcher(url)
         try:
@@ -482,15 +527,10 @@ class HungarianConservativeConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, post):
-        import weasyprint
-
-        title = _strip_html((post.get("title") or {}).get("rendered", ""))
+        title = self._post_title(post)
         content_html = (post.get("content") or {}).get("rendered", "")
         url = post.get("link", "")
-        byline = self._author_byline(post)
-        cats = self._category_names(post)
-        if cats:
-            byline = f"{byline}  |  {', '.join(cats)}" if byline else ", ".join(cats)
+        byline = self._format_byline(post)
 
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(
@@ -504,19 +544,10 @@ class HungarianConservativeConnector:
 
     def _render_with_retry(self, post):
         url = post.get("link", "")
-        delay = self.request_delay
-        for attempt in range(1, self.render_retries + 1):
-            try:
-                return self._render_pdf(post)
-            except Exception as exc:
-                self.helper.log_warning(
-                    f"REST PDF render attempt {attempt}/{self.render_retries} failed "
-                    f"for {url}: {exc}"
-                )
-                if attempt < self.render_retries:
-                    time.sleep(delay)
-                    delay *= 2
-        return None
+        return self._retry(
+            lambda: self._render_pdf(post),
+            f"REST PDF render for {url}",
+        )
 
     # ------------------------------------------------------------------ #
     # Live HTML PDF rendering (Trellix pattern)
@@ -538,8 +569,6 @@ class HungarianConservativeConnector:
         return content
 
     def _render_live_pdf(self, url, title, byline):
-        import weasyprint
-
         resp = self.session.get(url, timeout=60, headers={"Accept": "text/html"})
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
@@ -559,19 +588,10 @@ class HungarianConservativeConnector:
         ).write_pdf()
 
     def _render_live_with_retry(self, url, title, byline):
-        delay = self.request_delay
-        for attempt in range(1, self.render_retries + 1):
-            try:
-                return self._render_live_pdf(url, title, byline)
-            except Exception as exc:
-                self.helper.log_warning(
-                    f"Live PDF render attempt {attempt}/{self.render_retries} failed "
-                    f"for {url}: {exc}"
-                )
-                if attempt < self.render_retries:
-                    time.sleep(delay)
-                    delay *= 2
-        return None
+        return self._retry(
+            lambda: self._render_live_pdf(url, title, byline),
+            f"Live PDF render for {url}",
+        )
 
     # ------------------------------------------------------------------ #
     # Report creation
@@ -579,7 +599,7 @@ class HungarianConservativeConnector:
 
     def _create_report(self, post, published, api_pdf, live_pdf):
         url = post.get("link")
-        name = _strip_html((post.get("title") or {}).get("rendered", "")) or url
+        name = self._post_title(post) or url
         description = _strip_html((post.get("excerpt") or {}).get("rendered", ""))
 
         byline = self._author_byline(post)
@@ -710,11 +730,8 @@ class HungarianConservativeConnector:
                     self._save_cursor(page_num, idx + 1, window_after)
                     continue
 
-                title = _strip_html((post.get("title") or {}).get("rendered", ""))
-                byline = self._author_byline(post)
-                cats = self._category_names(post)
-                if cats:
-                    byline = f"{byline}  |  {', '.join(cats)}" if byline else ", ".join(cats)
+                title = self._post_title(post)
+                byline = self._format_byline(post)
                 live_pdf = self._render_live_with_retry(url, title, byline)
                 if live_pdf is None:
                     self.helper.log_warning(
