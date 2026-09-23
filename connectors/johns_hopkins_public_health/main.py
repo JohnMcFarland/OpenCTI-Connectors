@@ -521,10 +521,6 @@ class JohnsHopkinsPublicHealthConnector:
         if parsed.netloc and parsed.netloc != base_parsed.netloc:
             return False
 
-        # Skip external redirect domains.
-        for domain in EXTERNAL_DOMAINS:
-            if domain in parsed.netloc:
-                return False
 
         path = parsed.path
         return _is_article_path(path)

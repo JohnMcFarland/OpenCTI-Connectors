@@ -537,9 +537,9 @@ class OccrpConnector:
         except Exception:
             return {"string": b"", "mime_type": "text/plain"}
 
-    def _render_pdf(self, url, title, byline, content_html):
+    def _render_pdf(self, url, title, content_html):
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        doc_html = _build_pdf_html(title, "", content_html, url, ingested)
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
         if content_bytes > MAX_CONTENT_BYTES:
@@ -648,36 +648,36 @@ class OccrpConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
+        sitemaps = self._fetch_sitemap_index()
+        if sitemaps is None:
+            self.helper.log_warning(
+                "Sitemap index unreachable; skipping this cycle."
+            )
+            return
+        if not sitemaps:
+            self.helper.log_warning(
+                "Sitemap index returned no article sub-sitemaps; skipping."
+            )
+            return
+
+        state = self.helper.get_state() or {}
+        cursor_sitemap_idx = max(0, int(state.get("sitemap_idx", 0)))
+        cursor_url_idx = max(0, int(state.get("url_idx", 0)))
+
+        work_id = self.helper.api.work.initiate_work(
+            self.helper.connect_id, "OCCRP enumeration run"
+        )
+        self.helper.log_info(
+            f"Resuming at sitemap_idx={cursor_sitemap_idx}, "
+            f"url_idx={cursor_url_idx}, "
+            f"total sub-sitemaps={len(sitemaps)}."
+        )
+
+        processed = 0
+        skipped = 0
+        failed = 0
+        stop = False
         try:
-            sitemaps = self._fetch_sitemap_index()
-            if sitemaps is None:
-                self.helper.log_warning(
-                    "Sitemap index unreachable; skipping this cycle."
-                )
-                return
-            if not sitemaps:
-                self.helper.log_warning(
-                    "Sitemap index returned no article sub-sitemaps; skipping."
-                )
-                return
-
-            state = self.helper.get_state() or {}
-            cursor_sitemap_idx = max(0, int(state.get("sitemap_idx", 0)))
-            cursor_url_idx = max(0, int(state.get("url_idx", 0)))
-
-            work_id = self.helper.api.work.initiate_work(
-                self.helper.connect_id, "OCCRP enumeration run"
-            )
-            self.helper.log_info(
-                f"Resuming at sitemap_idx={cursor_sitemap_idx}, "
-                f"url_idx={cursor_url_idx}, "
-                f"total sub-sitemaps={len(sitemaps)}."
-            )
-
-            processed = 0
-            skipped = 0
-            failed = 0
-            stop = False
 
             for sm_idx in range(cursor_sitemap_idx, len(sitemaps)):
                 if stop:

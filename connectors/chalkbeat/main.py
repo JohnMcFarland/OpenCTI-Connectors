@@ -384,8 +384,7 @@ class ChalkbeatConnector:
         return resp.text
 
     @staticmethod
-    def _extract_metadata(page_html):
-        soup = BeautifulSoup(page_html, "lxml")
+    def _extract_metadata(soup):
         meta = {}
 
         og_title = soup.find("meta", property="og:title")
@@ -432,8 +431,7 @@ class ChalkbeatConnector:
         return meta
 
     @staticmethod
-    def _extract_content(page_html):
-        soup = BeautifulSoup(page_html, "lxml")
+    def _extract_content(soup):
         content = None
         for selector in ARTICLE_CONTENT_SELECTORS:
             content = soup.select_one(selector)
@@ -654,8 +652,9 @@ class ChalkbeatConnector:
                     continue
 
                 # Extract metadata and content.
-                meta = self._extract_metadata(page_html)
-                content = self._extract_content(page_html)
+                soup = BeautifulSoup(page_html, "lxml")
+                meta = self._extract_metadata(soup)
+                content = self._extract_content(soup)
 
                 title = (
                     meta.get("title")

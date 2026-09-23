@@ -630,153 +630,155 @@ class BrookingsInstitutionConnector:
         failed = 0
         stop = False
         last_post_date = None
+        try:
 
-        page_num = cursor_page
-        while not stop:
-            articles = self._fetch_listing_page(page_num, window_after)
-            if articles is None:
-                self.helper.log_warning(
-                    f"Page {page_num} fetch failed; ending cycle, cursor preserved."
-                )
-                break
-            if not articles:
-                self._save_cursor(page_num, 0, window_after)
-                self.helper.log_info(
-                    f"Caught up at page {page_num}; nothing new."
-                )
-                break
-
-            start = cursor_index if page_num == cursor_page else 0
-            self.helper.log_info(
-                f"Page {page_num}: {len(articles)} articles; "
-                f"starting at index {start}."
-            )
-
-            for idx in range(start, len(articles)):
-                listing = articles[idx]
-                last_post_date = (
-                    listing.get("date_gmt") or listing.get("modified_gmt")
-                )
-
-                if self.max_reports and processed >= self.max_reports:
-                    self.helper.log_info(
-                        f"Reached max_reports={self.max_reports}; stopping run."
+            page_num = cursor_page
+            while not stop:
+                articles = self._fetch_listing_page(page_num, window_after)
+                if articles is None:
+                    self.helper.log_warning(
+                        f"Page {page_num} fetch failed; ending cycle, cursor preserved."
                     )
-                    stop = True
+                    break
+                if not articles:
+                    self._save_cursor(page_num, 0, window_after)
+                    self.helper.log_info(
+                        f"Caught up at page {page_num}; nothing new."
+                    )
                     break
 
-                # Client-side topic filter: keep only foreign-policy articles.
-                if not self._is_foreign_policy(listing):
-                    non_fp += 1
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                url = listing.get("link", "")
-                if not url:
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                # Graph dedup: skip if Report already exists.
-                if (
-                    self.helper.api.report.read(id=self._report_id(url))
-                    is not None
-                ):
-                    skipped += 1
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                # Fetch full article for ACF content.
-                full = self._fetch_full_article(listing["id"])
-                if full is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping article {listing['id']}: full fetch failed."
-                    )
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                # Skip podcasts.
-                if self._is_podcast(full):
-                    filtered_podcast += 1
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                # Extract HTML body from ACF layout blocks.
-                content_html = self._extract_content(full)
-                if not content_html:
-                    no_content += 1
-                    self.helper.log_warning(
-                        f"No ACF content for {url}; skipping."
-                    )
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                title = self._post_title(full)
-
-                # Render PDF via WeasyPrint.
-                pdf = self._render_with_retry(title, content_html, url)
-                if pdf is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {url}: PDF render failed after retries."
-                    )
-                    self._save_cursor(page_num, idx + 1, window_after)
-                    continue
-
-                published = self._published_iso(full)
-                if not published:
-                    published = datetime.now(timezone.utc).strftime(
-                        "%Y-%m-%dT%H:%M:%S+00:00"
-                    )
-                    self.helper.log_warning(
-                        f"No usable date for {url}; using ingestion time."
-                    )
-
-                self._create_report(full, published, pdf)
-                processed += 1
-                self._save_cursor(page_num, idx + 1, window_after)
-                time.sleep(self.request_delay)
-
-            if stop:
-                break
-
-            if len(articles) < self.per_page:
-                self._save_cursor(page_num, len(articles), window_after)
-                break
-
-            if page_num >= MAX_WP_PAGES and last_post_date:
+                start = cursor_index if page_num == cursor_page else 0
                 self.helper.log_info(
-                    f"Reached WP page limit ({MAX_WP_PAGES}); shifting window "
-                    f"forward past {last_post_date}."
+                    f"Page {page_num}: {len(articles)} articles; "
+                    f"starting at index {start}."
                 )
-                window_after = last_post_date
-                page_num = 1
+
+                for idx in range(start, len(articles)):
+                    listing = articles[idx]
+                    last_post_date = (
+                        listing.get("date_gmt") or listing.get("modified_gmt")
+                    )
+
+                    if self.max_reports and processed >= self.max_reports:
+                        self.helper.log_info(
+                            f"Reached max_reports={self.max_reports}; stopping run."
+                        )
+                        stop = True
+                        break
+
+                    # Client-side topic filter: keep only foreign-policy articles.
+                    if not self._is_foreign_policy(listing):
+                        non_fp += 1
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    url = listing.get("link", "")
+                    if not url:
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    # Graph dedup: skip if Report already exists.
+                    if (
+                        self.helper.api.report.read(id=self._report_id(url))
+                        is not None
+                    ):
+                        skipped += 1
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    # Fetch full article for ACF content.
+                    full = self._fetch_full_article(listing["id"])
+                    if full is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping article {listing['id']}: full fetch failed."
+                        )
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    # Skip podcasts.
+                    if self._is_podcast(full):
+                        filtered_podcast += 1
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    # Extract HTML body from ACF layout blocks.
+                    content_html = self._extract_content(full)
+                    if not content_html:
+                        no_content += 1
+                        self.helper.log_warning(
+                            f"No ACF content for {url}; skipping."
+                        )
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    title = self._post_title(full)
+
+                    # Render PDF via WeasyPrint.
+                    pdf = self._render_with_retry(title, content_html, url)
+                    if pdf is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {url}: PDF render failed after retries."
+                        )
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    published = self._published_iso(full)
+                    if not published:
+                        published = datetime.now(timezone.utc).strftime(
+                            "%Y-%m-%dT%H:%M:%S+00:00"
+                        )
+                        self.helper.log_warning(
+                            f"No usable date for {url}; using ingestion time."
+                        )
+
+                    self._create_report(full, published, pdf)
+                    processed += 1
+                    self._save_cursor(page_num, idx + 1, window_after)
+                    time.sleep(self.request_delay)
+
+                if stop:
+                    break
+
+                if len(articles) < self.per_page:
+                    self._save_cursor(page_num, len(articles), window_after)
+                    break
+
+                if page_num >= MAX_WP_PAGES and last_post_date:
+                    self.helper.log_info(
+                        f"Reached WP page limit ({MAX_WP_PAGES}); shifting window "
+                        f"forward past {last_post_date}."
+                    )
+                    window_after = last_post_date
+                    page_num = 1
+                    cursor_index = 0
+                    self._save_cursor(page_num, 0, window_after)
+                    time.sleep(self.request_delay)
+                    continue
+
+                if page_num >= MAX_WP_PAGES and last_post_date is None:
+                    self.helper.log_warning(
+                        f"Reached WP page limit ({MAX_WP_PAGES}) but no post date "
+                        f"available for sliding-window shift; stopping to avoid "
+                        f"stuck cursor."
+                    )
+                    break
+
+                page_num += 1
                 cursor_index = 0
                 self._save_cursor(page_num, 0, window_after)
                 time.sleep(self.request_delay)
-                continue
 
-            if page_num >= MAX_WP_PAGES and last_post_date is None:
-                self.helper.log_warning(
-                    f"Reached WP page limit ({MAX_WP_PAGES}) but no post date "
-                    f"available for sliding-window shift; stopping to avoid "
-                    f"stuck cursor."
-                )
-                break
-
-            page_num += 1
-            cursor_index = 0
-            self._save_cursor(page_num, 0, window_after)
-            time.sleep(self.request_delay)
-
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{non_fp} filtered (non-foreign-policy), "
-            f"{filtered_podcast} filtered (podcast), "
-            f"{no_content} skipped (no ACF content), {failed} failed."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{non_fp} filtered (non-foreign-policy), "
+                f"{filtered_podcast} filtered (podcast), "
+                f"{no_content} skipped (no ACF content), {failed} failed."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()
