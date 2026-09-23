@@ -673,61 +673,74 @@ class CarnegieEndowmentConnector:
         processed = 0
         skipped = 0
         failed = 0
+        try:
 
-        for article_url in urls:
-            if self.max_reports and processed >= self.max_reports:
-                self.helper.log_info(
-                    f"Reached max_reports={self.max_reports}; stopping run."
-                )
-                break
+            for article_url in urls:
+                if self.max_reports and processed >= self.max_reports:
+                    self.helper.log_info(
+                        f"Reached max_reports={self.max_reports}; stopping run."
+                    )
+                    break
 
-            # Graph dedup check.
-            if (
-                self.helper.api.report.read(id=self._report_id(article_url))
-                is not None
-            ):
-                skipped += 1
-                continue
+                # Graph dedup check.
+                try:
+                    if (
+                        self.helper.api.report.read(id=self._report_id(article_url))
+                        is not None
+                    ):
+                        skipped += 1
+                        continue
+                except Exception as exc:
+                    self.helper.log_warning(
+                        f"Dedup check failed for {article_url}: {exc}"
+                    )
 
-            result = self._fetch_and_render_with_retry(article_url)
-            if result is None:
-                failed += 1
-                self.helper.log_warning(
-                    f"Skipping {article_url}: render failed after retries."
-                )
+                result = self._fetch_and_render_with_retry(article_url)
+                if result is None:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Skipping {article_url}: render failed after retries."
+                    )
+                    time.sleep(self.request_delay)
+                    continue
+
+                title, description, published_raw, pdf_bytes = result
+                if pdf_bytes is None:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Skipping {article_url}: content too large for PDF."
+                    )
+                    time.sleep(self.request_delay)
+                    continue
+
+                published = self._parse_published_iso(published_raw)
+                if not published:
+                    published = datetime.now(timezone.utc).strftime(
+                        "%Y-%m-%dT%H:%M:%S+00:00"
+                    )
+                    self.helper.log_warning(
+                        f"No usable date for {article_url}; using ingestion time."
+                    )
+
+                try:
+                    self._create_report(
+                        article_url, title, description, published, pdf_bytes,
+                    )
+                    processed += 1
+                except Exception as exc:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Report creation failed for {article_url}: {exc}"
+                    )
                 time.sleep(self.request_delay)
-                continue
 
-            title, description, published_raw, pdf_bytes = result
-            if pdf_bytes is None:
-                failed += 1
-                self.helper.log_warning(
-                    f"Skipping {article_url}: content too large for PDF."
-                )
-                time.sleep(self.request_delay)
-                continue
-
-            published = self._parse_published_iso(published_raw)
-            if not published:
-                published = datetime.now(timezone.utc).strftime(
-                    "%Y-%m-%dT%H:%M:%S+00:00"
-                )
-                self.helper.log_warning(
-                    f"No usable date for {article_url}; using ingestion time."
-                )
-
-            self._create_report(
-                article_url, title, description, published, pdf_bytes,
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render)."
             )
-            processed += 1
-            time.sleep(self.request_delay)
-
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()

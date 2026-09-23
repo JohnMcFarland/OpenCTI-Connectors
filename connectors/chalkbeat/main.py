@@ -584,146 +584,155 @@ class ChalkbeatConnector:
         skipped = 0
         failed = 0
         offset = cursor_offset
+        stop = False
+        try:
 
-        while True:
-            items, total = self._fetch_batch(offset)
-            if items is None:
-                self.helper.log_warning(
-                    f"Batch fetch failed at offset {offset}; ending cycle, "
-                    f"cursor preserved."
-                )
-                break
-            if not items:
-                self.helper.log_info(
-                    f"No items returned at offset {offset} (total={total}); "
-                    f"caught up."
-                )
-                break
-
-            self.helper.log_info(
-                f"Batch at offset {offset}: {len(items)} items "
-                f"(total={total})."
-            )
-
-            for item in items:
-                url = item.get("link")
-                if not url:
-                    offset += 1
-                    self._save_cursor(offset)
-                    continue
-
-                # Ensure absolute URL.
-                if url.startswith("/"):
-                    url = self.base_url + url
-
-                if self.max_reports and processed >= self.max_reports:
+            while not stop:
+                items, total = self._fetch_batch(offset)
+                if items is None:
+                    self.helper.log_warning(
+                        f"Batch fetch failed at offset {offset}; ending cycle, "
+                        f"cursor preserved."
+                    )
+                    break
+                if not items:
                     self.helper.log_info(
-                        f"Reached max_reports={self.max_reports}; stopping run."
+                        f"No items returned at offset {offset} (total={total}); "
+                        f"caught up."
                     )
-                    self._save_cursor(offset)
-                    message = (
-                        f"Run complete (max_reports reached): {processed} created, "
-                        f"{skipped} already present, {failed} failed."
-                    )
-                    self.helper.api.work.to_processed(work_id, message)
-                    self.helper.log_info(message)
-                    return
+                    break
 
-                report_id = self._report_id(url)
-
-                # Graph dedup: skip if Report already exists.
-                if self.helper.api.report.read(id=report_id) is not None:
-                    skipped += 1
-                    offset += 1
-                    self._save_cursor(offset)
-                    continue
-
-                # Fetch the article page.
-                try:
-                    page_html = self._fetch_article(url)
-                except Exception as exc:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {url}: article fetch failed: {exc}"
-                    )
-                    offset += 1
-                    self._save_cursor(offset)
-                    time.sleep(self.request_delay)
-                    continue
-
-                # Extract metadata and content.
-                soup = BeautifulSoup(page_html, "lxml")
-                meta = self._extract_metadata(soup)
-                content = self._extract_content(soup)
-
-                title = (
-                    meta.get("title")
-                    or _strip_html(item.get("title", ""))
-                    or url
-                )
-                byline = meta.get("byline", "")
-                description = meta.get("description") or _strip_html(
-                    item.get("description", "")
-                )
-
-                published_raw = (
-                    meta.get("published")
-                    or item.get("pubdate")
-                )
-                published = self._parse_published(published_raw)
-                if not published:
-                    published = datetime.now(timezone.utc).strftime(
-                        "%Y-%m-%dT%H:%M:%S+00:00"
-                    )
-                    self.helper.log_warning(
-                        f"No usable date for {url}; using ingestion time."
-                    )
-
-                if content is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {url}: no article content found in HTML."
-                    )
-                    offset += 1
-                    self._save_cursor(offset)
-                    time.sleep(self.request_delay)
-                    continue
-
-                content_html = str(content)
-
-                # Render PDF with retry.
-                pdf_bytes = self._render_with_retry(url, title, byline, content_html)
-                if pdf_bytes is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {url}: PDF render failed after retries."
-                    )
-                    offset += 1
-                    self._save_cursor(offset)
-                    time.sleep(self.request_delay)
-                    continue
-
-                # Create the Report.
-                self._create_report(url, title, description, published, pdf_bytes)
-                processed += 1
-                offset += 1
-                self._save_cursor(offset)
-                time.sleep(self.request_delay)
-
-            # If fewer items than batch size, we've reached the end.
-            if len(items) < QUERYLY_BATCH_SIZE:
                 self.helper.log_info(
-                    f"Reached end of results at offset {offset} "
-                    f"(batch had {len(items)} items)."
+                    f"Batch at offset {offset}: {len(items)} items "
+                    f"(total={total})."
                 )
-                break
 
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+                for item in items:
+                    url = item.get("link")
+                    if not url:
+                        offset += 1
+                        self._save_cursor(offset)
+                        continue
+
+                    # Ensure absolute URL.
+                    if url.startswith("/"):
+                        url = self.base_url + url
+
+                    if self.max_reports and processed >= self.max_reports:
+                        self.helper.log_info(
+                            f"Reached max_reports={self.max_reports}; stopping run."
+                        )
+                        self._save_cursor(offset)
+                        stop = True
+                        break
+
+                    report_id = self._report_id(url)
+
+                    # Graph dedup: skip if Report already exists.
+                    try:
+                        if self.helper.api.report.read(id=report_id) is not None:
+                            skipped += 1
+                            offset += 1
+                            self._save_cursor(offset)
+                            continue
+                    except Exception as exc:
+                        self.helper.log_warning(
+                            f"Dedup check failed for {url}: {exc}"
+                        )
+
+                    # Fetch the article page.
+                    try:
+                        page_html = self._fetch_article(url)
+                    except Exception as exc:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {url}: article fetch failed: {exc}"
+                        )
+                        offset += 1
+                        self._save_cursor(offset)
+                        time.sleep(self.request_delay)
+                        continue
+
+                    # Extract metadata and content.
+                    soup = BeautifulSoup(page_html, "lxml")
+                    meta = self._extract_metadata(soup)
+                    content = self._extract_content(soup)
+
+                    title = (
+                        meta.get("title")
+                        or _strip_html(item.get("title", ""))
+                        or url
+                    )
+                    byline = meta.get("byline", "")
+                    description = meta.get("description") or _strip_html(
+                        item.get("description", "")
+                    )
+
+                    published_raw = (
+                        meta.get("published")
+                        or item.get("pubdate")
+                    )
+                    published = self._parse_published(published_raw)
+                    if not published:
+                        published = datetime.now(timezone.utc).strftime(
+                            "%Y-%m-%dT%H:%M:%S+00:00"
+                        )
+                        self.helper.log_warning(
+                            f"No usable date for {url}; using ingestion time."
+                        )
+
+                    if content is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {url}: no article content found in HTML."
+                        )
+                        offset += 1
+                        self._save_cursor(offset)
+                        time.sleep(self.request_delay)
+                        continue
+
+                    content_html = str(content)
+
+                    # Render PDF with retry.
+                    pdf_bytes = self._render_with_retry(url, title, byline, content_html)
+                    if pdf_bytes is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {url}: PDF render failed after retries."
+                        )
+                        offset += 1
+                        self._save_cursor(offset)
+                        time.sleep(self.request_delay)
+                        continue
+
+                    # Create the Report.
+                    try:
+                        self._create_report(url, title, description, published, pdf_bytes)
+                        processed += 1
+                    except Exception as exc:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Report creation failed for {url}: {exc}"
+                        )
+                    offset += 1
+                    self._save_cursor(offset)
+                    time.sleep(self.request_delay)
+
+                # If fewer items than batch size, we've reached the end.
+                if len(items) < QUERYLY_BATCH_SIZE:
+                    self.helper.log_info(
+                        f"Reached end of results at offset {offset} "
+                        f"(batch had {len(items)} items)."
+                    )
+                    break
+
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()

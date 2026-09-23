@@ -733,8 +733,14 @@ class BrookingsInstitutionConnector:
                             f"No usable date for {url}; using ingestion time."
                         )
 
-                    self._create_report(full, published, pdf)
-                    processed += 1
+                    try:
+                        self._create_report(full, published, pdf)
+                        processed += 1
+                    except Exception as exc:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Report creation failed for {url}: {exc}"
+                        )
                     self._save_cursor(page_num, idx + 1, window_after)
                     time.sleep(self.request_delay)
 
