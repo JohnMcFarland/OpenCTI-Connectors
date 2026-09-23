@@ -453,7 +453,7 @@ class WorldHealthOrganizationConnector:
         try:
             resp = self.session.get(url, timeout=15)
             if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
+                return {"string": b"", "mime_type": "text/plain"}
             return {
                 "string": resp.content,
                 "mime_type": resp.headers.get(
@@ -475,10 +475,10 @@ class WorldHealthOrganizationConnector:
             title, byline, str(content), article_url, ingested,
         )
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
+        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
+        if content_bytes > MAX_CONTENT_BYTES:
             self.helper.log_warning(
-                f"Skipping PDF render for {article_url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
+                f"Content too large for PDF render ({content_bytes:,} bytes)."
             )
             return None
 
@@ -560,111 +560,102 @@ class WorldHealthOrganizationConnector:
         failed = 0
         stop = False
         last_date = cursor_date
-
         skip = cursor_skip
-        while not stop:
-            items = self._fetch_page(skip, cursor_date)
-            if items is None:
-                self.helper.log_warning(
-                    f"Fetch at skip={skip} failed; ending cycle, cursor preserved."
-                )
-                break
-            if not items:
-                self._save_cursor(last_date, 0)
-                self.helper.log_info(f"Caught up at skip={skip}; nothing new.")
-                break
 
-            self.helper.log_info(
-                f"Skip={skip}: {len(items)} items."
-            )
-
-            for item in items:
-                article_url = self._item_url(self.base_url, item)
-                if not article_url:
-                    skip += 1
-                    self._save_cursor(last_date, skip)
-                    continue
-
-                item_date = item.get("PublicationDateAndTime")
-
-                if self.max_reports and processed >= self.max_reports:
-                    self.helper.log_info(
-                        f"Reached max_reports={self.max_reports}; stopping run."
+        try:
+            while not stop:
+                items = self._fetch_page(skip, cursor_date)
+                if items is None:
+                    self.helper.log_warning(
+                        f"Fetch at skip={skip} failed; ending cycle, cursor preserved."
                     )
-                    stop = True
+                    break
+                if not items:
+                    self._save_cursor(last_date, 0)
+                    self.helper.log_info(f"Caught up at skip={skip}; nothing new.")
                     break
 
-                if self.helper.api.report.read(id=self._report_id(article_url)) is not None:
-                    skipped += 1
-                    if item_date:
-                        if last_date != item_date:
-                            last_date = item_date
-                            skip = 0
-                        else:
-                            skip += 1
-                    else:
+                self.helper.log_info(
+                    f"Skip={skip}: {len(items)} items."
+                )
+
+                for item in items:
+                    article_url = self._item_url(self.base_url, item)
+                    if not article_url:
                         skip += 1
-                    self._save_cursor(last_date, skip)
-                    continue
+                        if item.get("PublicationDateAndTime"):
+                            last_date = item["PublicationDateAndTime"]
+                        self._save_cursor(cursor_date, skip)
+                        continue
 
-                title = self._item_title(item)
-                summary = self._item_summary(item)
+                    item_date = item.get("PublicationDateAndTime")
 
-                pdf_bytes = self._render_with_retry(article_url, title, summary)
-                if pdf_bytes is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {article_url}: PDF render failed after retries."
-                    )
+                    if self.max_reports and processed >= self.max_reports:
+                        self.helper.log_info(
+                            f"Reached max_reports={self.max_reports}; stopping run."
+                        )
+                        stop = True
+                        break
+
                     if item_date:
-                        if last_date != item_date:
-                            last_date = item_date
-                            skip = 0
-                        else:
-                            skip += 1
-                    else:
-                        skip += 1
-                    self._save_cursor(last_date, skip)
-                    continue
-
-                published = self._published_iso(item)
-                if not published:
-                    published = datetime.now(timezone.utc).strftime(
-                        "%Y-%m-%dT%H:%M:%S+00:00"
-                    )
-                    self.helper.log_warning(
-                        f"No usable date for {article_url}; using ingestion time."
-                    )
-
-                self._create_report(article_url, title, summary, published, pdf_bytes)
-                processed += 1
-                if item_date:
-                    if last_date != item_date:
                         last_date = item_date
-                        skip = 0
-                    else:
-                        skip += 1
-                else:
+
+                    try:
+                        if self.helper.api.report.read(id=self._report_id(article_url)) is not None:
+                            skipped += 1
+                            skip += 1
+                            self._save_cursor(cursor_date, skip)
+                            continue
+
+                        title = self._item_title(item)
+                        summary = self._item_summary(item)
+
+                        pdf_bytes = self._render_with_retry(article_url, title, summary)
+                        if pdf_bytes is None:
+                            failed += 1
+                            self.helper.log_warning(
+                                f"Skipping {article_url}: PDF render failed after retries."
+                            )
+                            skip += 1
+                            self._save_cursor(cursor_date, skip)
+                            continue
+
+                        published = self._published_iso(item)
+                        if not published:
+                            published = datetime.now(timezone.utc).strftime(
+                                "%Y-%m-%dT%H:%M:%S+00:00"
+                            )
+                            self.helper.log_warning(
+                                f"No usable date for {article_url}; using ingestion time."
+                            )
+
+                        self._create_report(article_url, title, summary, published, pdf_bytes)
+                        processed += 1
+                    except Exception as exc:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Error processing {article_url}: {exc}"
+                        )
+
                     skip += 1
-                self._save_cursor(last_date, skip)
+                    self._save_cursor(cursor_date, skip)
+                    time.sleep(self.request_delay)
+
+                if stop:
+                    break
+
+                if len(items) < ODATA_PAGE_SIZE:
+                    self._save_cursor(last_date, 0)
+                    break
+
                 time.sleep(self.request_delay)
-
-            if stop:
-                break
-
-            if len(items) < ODATA_PAGE_SIZE:
-                # Last page reached; reset skip for next run
-                self._save_cursor(last_date, 0)
-                break
-
-            time.sleep(self.request_delay)
-
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render)."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()

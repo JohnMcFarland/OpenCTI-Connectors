@@ -97,13 +97,6 @@ ARTICLE_PATH_RE = re.compile(r"^/(\d{4})/")
 CENTER_ARTICLE_PATH_RE = re.compile(r"^/[a-z][a-z0-9-]+/(\d{4})/")
 
 # External domains to skip (articles linking off-site).
-EXTERNAL_DOMAINS = (
-    "globalhealthnow.org",
-    "jhsph.edu",
-    "hub.jhu.edu",
-    "coronavirus.jhu.edu",
-)
-
 BROWSER_RECYCLE_EVERY = 50
 
 CHALLENGE_MARKERS = (
@@ -197,7 +190,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
     return (
         "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
+        + f'<meta name="source-url" content="{_escape_html(source_url)}">'
         + "<style>"
         + _PDF_STYLE
         + "@page { margin: 15mm 12mm 20mm 12mm; "
@@ -892,7 +885,7 @@ class JohnsHopkinsPublicHealthConnector:
         try:
             resp = self.session.get(url, timeout=15)
             if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
+                return {"string": b"", "mime_type": "text/plain"}
             return {
                 "string": resp.content,
                 "mime_type": resp.headers.get(
@@ -914,10 +907,10 @@ class JohnsHopkinsPublicHealthConnector:
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
+        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
+        if content_bytes > MAX_CONTENT_BYTES:
             self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
+                f"Content too large for PDF render ({content_bytes:,} bytes)."
             )
             return None
 

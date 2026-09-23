@@ -166,12 +166,7 @@ class SansInstituteConnector:
 
         self.helper = OpenCTIConnectorHelper(config)
 
-        self.base_url = get_config_variable(
-            "SANS_INSTITUTE_BASE_URL",
-            ["sans_institute", "base_url"],
-            config,
-            default="https://www.sans.org",
-        ).rstrip("/")
+
 
         self.sitemap_url = get_config_variable(
             "SANS_INSTITUTE_SITEMAP_URL",
@@ -467,7 +462,7 @@ class SansInstituteConnector:
         try:
             resp = self.session.get(url, timeout=15)
             if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
+                return {"string": b"", "mime_type": "text/plain"}
             return {
                 "string": resp.content,
                 "mime_type": resp.headers.get(
@@ -481,10 +476,10 @@ class SansInstituteConnector:
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
+        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
+        if content_bytes > MAX_CONTENT_BYTES:
             self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
+                f"Content too large for PDF render ({content_bytes:,} bytes)."
             )
             return None
 
@@ -535,6 +530,8 @@ class SansInstituteConnector:
             return None
         try:
             dt = datetime.fromisoformat(date_str)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
         except (TypeError, ValueError):
             pass
         else:
@@ -624,60 +621,62 @@ class SansInstituteConnector:
         skipped = 0
         failed = 0
 
-        for idx, article_url in enumerate(urls):
-            if self.max_reports and processed >= self.max_reports:
-                self.helper.log_info(
-                    f"Reached max_reports={self.max_reports}; stopping run."
-                )
-                break
+        try:
+            for idx, article_url in enumerate(urls):
+                if self.max_reports and processed >= self.max_reports:
+                    self.helper.log_info(
+                        f"Reached max_reports={self.max_reports}; stopping run."
+                    )
+                    break
 
-            # Graph dedup check.
-            if (
-                self.helper.api.report.read(id=self._report_id(article_url))
-                is not None
-            ):
-                skipped += 1
-                continue
+                # Graph dedup check.
+                if (
+                    self.helper.api.report.read(id=self._report_id(article_url))
+                    is not None
+                ):
+                    skipped += 1
+                    continue
 
-            result = self._fetch_and_render_with_retry(article_url)
-            if result is None:
-                failed += 1
-                self.helper.log_warning(
-                    f"Skipping {article_url}: render failed after retries."
+                result = self._fetch_and_render_with_retry(article_url)
+                if result is None:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Skipping {article_url}: render failed after retries."
+                    )
+                    time.sleep(self.request_delay)
+                    continue
+
+                title, description, published_raw, authors, pdf_bytes = result
+                if pdf_bytes is None:
+                    failed += 1
+                    self.helper.log_warning(
+                        f"Skipping {article_url}: content too large for PDF."
+                    )
+                    time.sleep(self.request_delay)
+                    continue
+
+                published = self._parse_published_iso(published_raw)
+                if not published:
+                    published = datetime.now(timezone.utc).strftime(
+                        "%Y-%m-%dT%H:%M:%S+00:00"
+                    )
+                    self.helper.log_warning(
+                        f"No usable date for {article_url}; using ingestion time."
+                    )
+
+                self._create_report(
+                    article_url, title, description, published, authors, pdf_bytes,
                 )
+                processed += 1
                 time.sleep(self.request_delay)
-                continue
 
-            title, description, published_raw, authors, pdf_bytes = result
-            if pdf_bytes is None:
-                failed += 1
-                self.helper.log_warning(
-                    f"Skipping {article_url}: content too large for PDF."
-                )
-                time.sleep(self.request_delay)
-                continue
-
-            published = self._parse_published_iso(published_raw)
-            if not published:
-                published = datetime.now(timezone.utc).strftime(
-                    "%Y-%m-%dT%H:%M:%S+00:00"
-                )
-                self.helper.log_warning(
-                    f"No usable date for {article_url}; using ingestion time."
-                )
-
-            self._create_report(
-                article_url, title, description, published, authors, pdf_bytes,
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render)."
             )
-            processed += 1
-            time.sleep(self.request_delay)
-
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()

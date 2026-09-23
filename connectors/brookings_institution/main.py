@@ -517,7 +517,7 @@ class BrookingsInstitutionConnector:
         try:
             resp = self.session.get(url, timeout=15)
             if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
+                return {"string": b"", "mime_type": "text/plain"}
             return {
                 "string": resp.content,
                 "mime_type": resp.headers.get(
@@ -531,10 +531,10 @@ class BrookingsInstitutionConnector:
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(title, content_html, url, ingested)
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
+        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
+        if content_bytes > MAX_CONTENT_BYTES:
             self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
+                f"Content too large for PDF render ({content_bytes:,} bytes)."
             )
             return None
 

@@ -527,7 +527,7 @@ class OccrpConnector:
         try:
             resp = self.session.get(url, timeout=15)
             if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
+                return {"string": b"", "mime_type": "text/plain"}
             return {
                 "string": resp.content,
                 "mime_type": resp.headers.get(
@@ -541,10 +541,10 @@ class OccrpConnector:
         ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
+        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
+        if content_bytes > MAX_CONTENT_BYTES:
             self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
+                f"Content too large for PDF render ({content_bytes:,} bytes)."
             )
             return None
 
@@ -573,7 +573,7 @@ class OccrpConnector:
 
         content_html = str(content)
 
-        pdf_bytes = self._render_pdf(url, title, "", content_html)
+        pdf_bytes = self._render_pdf(url, title, content_html)
         return title, description, published, pdf_bytes
 
     def _fetch_and_render_with_retry(self, url):
@@ -648,130 +648,132 @@ class OccrpConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
-        sitemaps = self._fetch_sitemap_index()
-        if sitemaps is None:
-            self.helper.log_warning(
-                "Sitemap index unreachable; skipping this cycle."
-            )
-            return
-        if not sitemaps:
-            self.helper.log_warning(
-                "Sitemap index returned no article sub-sitemaps; skipping."
-            )
-            return
-
-        state = self.helper.get_state() or {}
-        cursor_sitemap_idx = max(0, int(state.get("sitemap_idx", 0)))
-        cursor_url_idx = max(0, int(state.get("url_idx", 0)))
-
-        work_id = self.helper.api.work.initiate_work(
-            self.helper.connect_id, "OCCRP enumeration run"
-        )
-        self.helper.log_info(
-            f"Resuming at sitemap_idx={cursor_sitemap_idx}, "
-            f"url_idx={cursor_url_idx}, "
-            f"total sub-sitemaps={len(sitemaps)}."
-        )
-
-        processed = 0
-        skipped = 0
-        failed = 0
-        stop = False
-
-        for sm_idx in range(cursor_sitemap_idx, len(sitemaps)):
-            if stop:
-                break
-
-            sitemap_url = sitemaps[sm_idx]
-
-            self.helper.log_info(
-                f"Processing sub-sitemap {sm_idx + 1}/{len(sitemaps)}: "
-                f"{sitemap_url}"
-            )
-
-            entries = self._fetch_sub_sitemap(sitemap_url)
-            if entries is None:
+        try:
+            sitemaps = self._fetch_sitemap_index()
+            if sitemaps is None:
                 self.helper.log_warning(
-                    f"Sub-sitemap {sitemap_url} fetch failed; "
-                    f"preserving cursor for retry next cycle."
+                    "Sitemap index unreachable; skipping this cycle."
                 )
-                break
+                return
+            if not sitemaps:
+                self.helper.log_warning(
+                    "Sitemap index returned no article sub-sitemaps; skipping."
+                )
+                return
 
-            time.sleep(self.request_delay)
+            state = self.helper.get_state() or {}
+            cursor_sitemap_idx = max(0, int(state.get("sitemap_idx", 0)))
+            cursor_url_idx = max(0, int(state.get("url_idx", 0)))
 
-            start_idx = cursor_url_idx if sm_idx == cursor_sitemap_idx else 0
-
+            work_id = self.helper.api.work.initiate_work(
+                self.helper.connect_id, "OCCRP enumeration run"
+            )
             self.helper.log_info(
-                f"Sub-sitemap has {len(entries)} English article URLs; "
-                f"starting at index {start_idx}."
+                f"Resuming at sitemap_idx={cursor_sitemap_idx}, "
+                f"url_idx={cursor_url_idx}, "
+                f"total sub-sitemaps={len(sitemaps)}."
             )
 
-            for url_idx in range(start_idx, len(entries)):
-                article_url, lastmod = entries[url_idx]
+            processed = 0
+            skipped = 0
+            failed = 0
+            stop = False
 
-                if self.max_reports and processed >= self.max_reports:
-                    self.helper.log_info(
-                        f"Reached max_reports={self.max_reports}; stopping run."
-                    )
-                    stop = True
+            for sm_idx in range(cursor_sitemap_idx, len(sitemaps)):
+                if stop:
                     break
 
-                # Graph dedup check.
-                if (
-                    self.helper.api.report.read(id=self._report_id(article_url))
-                    is not None
-                ):
-                    skipped += 1
-                    self._save_cursor(sm_idx, url_idx + 1)
-                    continue
+                sitemap_url = sitemaps[sm_idx]
 
-                result = self._fetch_and_render_with_retry(article_url)
-                if result is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {article_url}: render failed after retries."
-                    )
-                    self._save_cursor(sm_idx, url_idx + 1)
-                    time.sleep(self.request_delay)
-                    continue
-
-                title, description, published_raw, pdf_bytes = result
-                if pdf_bytes is None:
-                    failed += 1
-                    self.helper.log_warning(
-                        f"Skipping {article_url}: content too large for PDF."
-                    )
-                    self._save_cursor(sm_idx, url_idx + 1)
-                    time.sleep(self.request_delay)
-                    continue
-
-                published = self._parse_published_iso(published_raw, lastmod)
-                if not published:
-                    published = datetime.now(timezone.utc).strftime(
-                        "%Y-%m-%dT%H:%M:%S+00:00"
-                    )
-                    self.helper.log_warning(
-                        f"No usable date for {article_url}; using ingestion time."
-                    )
-
-                self._create_report(
-                    article_url, title, description, published, pdf_bytes,
+                self.helper.log_info(
+                    f"Processing sub-sitemap {sm_idx + 1}/{len(sitemaps)}: "
+                    f"{sitemap_url}"
                 )
-                processed += 1
-                self._save_cursor(sm_idx, url_idx + 1)
+
+                entries = self._fetch_sub_sitemap(sitemap_url)
+                if entries is None:
+                    self.helper.log_warning(
+                        f"Sub-sitemap {sitemap_url} fetch failed; "
+                        f"preserving cursor for retry next cycle."
+                    )
+                    break
+
                 time.sleep(self.request_delay)
 
-            if not stop:
-                # Finished this sub-sitemap; advance cursor to the next one.
-                self._save_cursor(sm_idx + 1, 0)
-                time.sleep(self.request_delay)
+                start_idx = cursor_url_idx if sm_idx == cursor_sitemap_idx else 0
 
-        message = (
-            f"Run complete: {processed} created, {skipped} already present, "
-            f"{failed} failed (render)."
-        )
-        self.helper.api.work.to_processed(work_id, message)
-        self.helper.log_info(message)
+                self.helper.log_info(
+                    f"Sub-sitemap has {len(entries)} English article URLs; "
+                    f"starting at index {start_idx}."
+                )
+
+                for url_idx in range(start_idx, len(entries)):
+                    article_url, lastmod = entries[url_idx]
+
+                    if self.max_reports and processed >= self.max_reports:
+                        self.helper.log_info(
+                            f"Reached max_reports={self.max_reports}; stopping run."
+                        )
+                        stop = True
+                        break
+
+                    # Graph dedup check.
+                    if (
+                        self.helper.api.report.read(id=self._report_id(article_url))
+                        is not None
+                    ):
+                        skipped += 1
+                        self._save_cursor(sm_idx, url_idx + 1)
+                        continue
+
+                    result = self._fetch_and_render_with_retry(article_url)
+                    if result is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {article_url}: render failed after retries."
+                        )
+                        self._save_cursor(sm_idx, url_idx + 1)
+                        time.sleep(self.request_delay)
+                        continue
+
+                    title, description, published_raw, pdf_bytes = result
+                    if pdf_bytes is None:
+                        failed += 1
+                        self.helper.log_warning(
+                            f"Skipping {article_url}: content too large for PDF."
+                        )
+                        self._save_cursor(sm_idx, url_idx + 1)
+                        time.sleep(self.request_delay)
+                        continue
+
+                    published = self._parse_published_iso(published_raw, lastmod)
+                    if not published:
+                        published = datetime.now(timezone.utc).strftime(
+                            "%Y-%m-%dT%H:%M:%S+00:00"
+                        )
+                        self.helper.log_warning(
+                            f"No usable date for {article_url}; using ingestion time."
+                        )
+
+                    self._create_report(
+                        article_url, title, description, published, pdf_bytes,
+                    )
+                    processed += 1
+                    self._save_cursor(sm_idx, url_idx + 1)
+                    time.sleep(self.request_delay)
+
+                if not stop:
+                    # Finished this sub-sitemap; advance cursor to the next one.
+                    self._save_cursor(sm_idx + 1, 0)
+                    time.sleep(self.request_delay)
+
+        finally:
+            message = (
+                f"Run complete: {processed} created, {skipped} already present, "
+                f"{failed} failed (render)."
+            )
+            self.helper.api.work.to_processed(work_id, message)
+            self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()
