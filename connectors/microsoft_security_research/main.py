@@ -434,6 +434,16 @@ class MicrosoftSecurityResearchConnector:
                 '{ width: 100% !important; max-width: 100% !important; }'
               ].join(' ');
               document.head.appendChild(style);
+
+              // Extract title from hero card before it is hidden, inject into article body
+              var heroTitle = document.querySelector('.card-block__title');
+              var articleBody = document.querySelector('.entry-content.wp-block-post-content');
+              if (heroTitle && articleBody) {
+                var h1 = document.createElement('h1');
+                h1.textContent = heroTitle.textContent.trim();
+                h1.style.cssText = 'font-size:24px; margin:0 0 16px 0; line-height:1.3;';
+                articleBody.insertBefore(h1, articleBody.firstChild);
+              }
             })()
             """
         )
@@ -453,24 +463,12 @@ class MicrosoftSecurityResearchConnector:
 
             self._strip_page_chrome(page)
 
-            ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            footer = (
-                "<div style='font-size:8px; width:100%; padding:0 12px; "
-                "color:#444; display:flex; justify-content:space-between;'>"
-                f"<span>{html.escape(url)}</span>"
-                f"<span>OpenCTI Microsoft Security Research connector &middot; "
-                f"ingested {ingested_at} &middot; page "
-                "<span class='pageNumber'></span>/"
-                "<span class='totalPages'></span></span></div>"
-            )
             return page.pdf(
                 print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=footer,
+                display_header_footer=False,
                 margin={
                     "top": "10mm",
-                    "bottom": "16mm",
+                    "bottom": "10mm",
                     "left": "8mm",
                     "right": "8mm",
                 },
