@@ -410,6 +410,10 @@ class CcdcoeConnector:
         url = item["url"]
         name = item.get("_detail_title") or item["title"]
         description = item["description"]
+        if item.get("authors"):
+            description += f"\n\nAuthors: {', '.join(item['authors'])}"
+        if item.get("focus_areas"):
+            description += f"\n\nFocus areas: {', '.join(item['focus_areas'])}"
         published = item["published"].strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
         ext_ref = self.helper.api.external_reference.create(
