@@ -1,0 +1,5 @@
+pycti==6.9.13
+pyyaml
+requests
+beautifulsoup4
+weasyprint

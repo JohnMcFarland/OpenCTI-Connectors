@@ -1,0 +1,19 @@
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'CCDCOE'
+  scope: 'ccdcoe'
+  log_level: 'info'
+ccdcoe:
+  base_url: 'https://ccdcoe.org'
+  poll_interval: 86400
+  request_delay: 3
+  max_reports: 0
+  render_retries: 3
+  confidence: 60
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'CCDCOE'
