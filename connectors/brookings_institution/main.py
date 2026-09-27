@@ -279,7 +279,7 @@ class BrookingsInstitutionConnector:
 
     def _scope_sig(self):
         """Return the current collection scope signature."""
-        return "foreign_policy"
+        return "all_articles"
 
     def _save_cursor(self, page, index, window_after=None):
         """Persist the enumeration cursor to connector state."""
@@ -350,7 +350,7 @@ class BrookingsInstitutionConnector:
         else:
             self.helper.log_info(
                 f"REST endpoint reachable: {total} articles reported by API "
-                f"(topic filtering is client-side; ~12% are foreign policy)."
+                f"(all articles, no topic filter)."
             )
 
     def _probe_total(self):
@@ -666,7 +666,6 @@ class BrookingsInstitutionConnector:
 
         processed = 0
         skipped = 0
-        non_fp = 0
         filtered_podcast = 0
         no_content = 0
         failed = 0
@@ -707,12 +706,6 @@ class BrookingsInstitutionConnector:
                         )
                         stop = True
                         break
-
-                    # Client-side topic filter: keep only foreign-policy articles.
-                    if not self._is_foreign_policy(listing):
-                        non_fp += 1
-                        self._save_cursor(page_num, idx + 1, window_after)
-                        continue
 
                     url = listing.get("link", "")
                     if not url:
@@ -821,7 +814,6 @@ class BrookingsInstitutionConnector:
         finally:
             message = (
                 f"Run complete: {processed} created, {skipped} already present, "
-                f"{non_fp} filtered (non-foreign-policy), "
                 f"{filtered_podcast} filtered (podcast), "
                 f"{no_content} skipped (no ACF content), {failed} failed."
             )
