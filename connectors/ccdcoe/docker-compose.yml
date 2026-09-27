@@ -1,14 +1,14 @@
 version: '3'
 services:
-  ccdcoe:
+  nato-ccdcoe:
     build: .
-    container_name: opencti-connector-ccdcoe
+    container_name: opencti-connector-nato-ccdcoe
     environment:
       - OPENCTI_URL=
       - OPENCTI_TOKEN=
       - CONNECTOR_ID=
       - CONNECTOR_TYPE=EXTERNAL_IMPORT
-      - CONNECTOR_NAME=CCDCOE
+      - CONNECTOR_NAME=NATO_CCDCOE
       - CONNECTOR_SCOPE=ccdcoe
       - CONNECTOR_LOG_LEVEL=info
       - CCDCOE_BASE_URL=https://ccdcoe.org
@@ -16,9 +16,10 @@ services:
       - CCDCOE_REQUEST_DELAY=3
       - CCDCOE_MAX_REPORTS=0
       - CCDCOE_RENDER_RETRIES=3
-      - CCDCOE_CONFIDENCE=60
+      - CCDCOE_CONFIDENCE=75
       - CCDCOE_REPORT_TYPE=open-source-reporting
       - CCDCOE_TLP=TLP:CLEAR
-      - CCDCOE_AUTHOR_NAME=CCDCOE
+      - CCDCOE_AUTHOR_NAME=NATO CCDCOE
+      - CCDCOE_PDF_RENDER_TIMEOUT=120
     mem_limit: 2g
     restart: always

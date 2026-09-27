@@ -4,7 +4,7 @@ opencti:
 connector:
   id: ''
   type: 'EXTERNAL_IMPORT'
-  name: 'CCDCOE'
+  name: 'NATO_CCDCOE'
   scope: 'ccdcoe'
   log_level: 'info'
 ccdcoe:
@@ -13,7 +13,8 @@ ccdcoe:
   request_delay: 3
   max_reports: 0
   render_retries: 3
-  confidence: 60
+  confidence: 75
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
-  author_name: 'CCDCOE'
+  author_name: 'NATO CCDCOE'
+  pdf_render_timeout: 120

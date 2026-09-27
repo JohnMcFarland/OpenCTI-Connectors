@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bookworm
+FROM mcr.microsoft.com/playwright/python:v1.52.0-noble
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagic1 libpango-1.0-0 libpangocairo-1.0-0 \
