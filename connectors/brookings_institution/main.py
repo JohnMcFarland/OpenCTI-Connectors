@@ -124,16 +124,19 @@ _PDF_STYLE = (
 
 
 def _strip_html(value):
+    """Remove HTML tags and unescape entities from a string."""
     if not value:
         return ""
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
 def _escape_html(text):
+    """Escape text for safe inclusion in HTML."""
     return html_mod.escape(text, quote=True) if text else ""
 
 
 def _css_string_escape(s):
+    """Escape a string for use inside a CSS content value."""
     return (
         s.replace("\\", "\\\\")
         .replace("'", "\\'")
@@ -142,20 +145,15 @@ def _css_string_escape(s):
     )
 
 
-def _build_pdf_html(title, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, content_html, source_url):
+    """Build the HTML document string used for WeasyPrint PDF rendering."""
     safe_title = _escape_html(title)
     return (
         "<!DOCTYPE html><html><head><meta charset='utf-8'>"
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI Brookings Institution connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>"
         + safe_title
@@ -169,6 +167,7 @@ class BrookingsInstitutionConnector:
     """External-import connector that mirrors Brookings foreign-policy articles into Reports."""
 
     def __init__(self):
+        """Initialize connector configuration and HTTP session."""
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "config.yml"
         )
@@ -229,6 +228,14 @@ class BrookingsInstitutionConnector:
             default=3,
         )
 
+        self.pdf_render_timeout = get_config_variable(
+            "BROOKINGS_INSTITUTION_PDF_RENDER_TIMEOUT",
+            ["brookings_institution", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
+        )
+
         self.confidence = get_config_variable(
             "BROOKINGS_INSTITUTION_CONFIDENCE",
             ["brookings_institution", "confidence"],
@@ -271,9 +278,11 @@ class BrookingsInstitutionConnector:
     # ------------------------------------------------------------------ #
 
     def _scope_sig(self):
+        """Return the current collection scope signature."""
         return "foreign_policy"
 
     def _save_cursor(self, page, index, window_after=None):
+        """Persist the enumeration cursor to connector state."""
         self.helper.set_state(
             {
                 "page": page,
@@ -288,6 +297,7 @@ class BrookingsInstitutionConnector:
     # ------------------------------------------------------------------ #
 
     def _resolve_graph_references(self):
+        """Resolve or create author identity, marking, and vocabulary."""
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
@@ -344,6 +354,7 @@ class BrookingsInstitutionConnector:
             )
 
     def _probe_total(self):
+        """Query the API for the total article count."""
         try:
             resp = self.session.get(
                 self.api_url,
@@ -465,10 +476,12 @@ class BrookingsInstitutionConnector:
 
     @staticmethod
     def _report_id(link):
+        """Derive a deterministic STIX Report id from the article URL."""
         return "report--" + str(uuid.uuid5(uuid.NAMESPACE_URL, link))
 
     @staticmethod
     def _published_iso(article):
+        """Parse date_gmt or modified_gmt into an ISO 8601 timestamp."""
         for key in ("date_gmt", "modified_gmt"):
             raw = article.get(key)
             if not raw:
@@ -485,6 +498,7 @@ class BrookingsInstitutionConnector:
 
     @staticmethod
     def _post_title(article):
+        """Extract the plain-text article title from rendered HTML."""
         return _strip_html((article.get("title") or {}).get("rendered", ""))
 
     @staticmethod
@@ -498,6 +512,7 @@ class BrookingsInstitutionConnector:
     # ------------------------------------------------------------------ #
 
     def _retry(self, fn, label):
+        """Retry a callable with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
@@ -512,6 +527,7 @@ class BrookingsInstitutionConnector:
         return None
 
     def _wp_url_fetcher(self, url):
+        """Custom URL fetcher for WeasyPrint that uses the shared session."""
         if url.startswith("data:"):
             return weasyprint.default_url_fetcher(url)
         try:
@@ -528,8 +544,8 @@ class BrookingsInstitutionConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, title, content_html, url):
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, content_html, url, ingested)
+        """Render article HTML to PDF bytes via WeasyPrint."""
+        doc_html = _build_pdf_html(title, content_html, url)
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
         if content_bytes > MAX_CONTENT_BYTES:
@@ -542,9 +558,33 @@ class BrookingsInstitutionConnector:
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_with_retry(self, title, content_html, url):
+        """Render a PDF with retries, using the timeout-wrapped renderer."""
         return self._retry(
-            lambda: self._render_pdf(title, content_html, url),
+            lambda: self._render_pdf_with_timeout(title, content_html, url),
             f"PDF render for {url}",
         )
 
@@ -553,6 +593,7 @@ class BrookingsInstitutionConnector:
     # ------------------------------------------------------------------ #
 
     def _create_report(self, article, published, pdf):
+        """Create an OpenCTI Report with attached PDF for a single article."""
         url = article.get("link")
         name = self._post_title(article) or url
         description = self._build_description(article)
@@ -598,6 +639,7 @@ class BrookingsInstitutionConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
+        """Run a single enumeration cycle over the article corpus."""
         state = self.helper.get_state() or {}
 
         current_sig = self._scope_sig()
@@ -787,6 +829,7 @@ class BrookingsInstitutionConnector:
             self.helper.log_info(message)
 
     def run(self):
+        """Start the connector and enter the main poll loop."""
         self._resolve_graph_references()
         self.helper.log_info("Brookings Institution connector started.")
         while True:

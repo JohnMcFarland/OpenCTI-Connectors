@@ -17,6 +17,7 @@ brookings_institution:
   request_delay: 2            # seconds between article fetches
   max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   render_retries: 3
+  pdf_render_timeout: 120      # max seconds for a single WeasyPrint render
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
