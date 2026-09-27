@@ -175,8 +175,8 @@ def _css_string_escape(s):
     )
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, byline, content_html, source_url):
+    """Build the full HTML document for PDF rendering."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -185,12 +185,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI SPLC connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>"
         + safe_title
@@ -278,6 +273,14 @@ class SplcConnector:
             config,
             isNumber=True,
             default=3,
+        )
+
+        self.pdf_render_timeout = get_config_variable(
+            "SPLC_PDF_RENDER_TIMEOUT",
+            ["southern_poverty_law_center", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.confidence = get_config_variable(
@@ -582,8 +585,8 @@ class SplcConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, url, title, byline, content_html):
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        """Render article content to PDF via WeasyPrint."""
+        doc_html = _build_pdf_html(title, byline, content_html, url)
 
         if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
             self.helper.log_warning(
@@ -595,6 +598,29 @@ class SplcConnector:
         return weasyprint.HTML(
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
+
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
 
     def _fetch_and_render(self, url):
         """Fetch an article page, extract content and metadata, render PDF.
@@ -618,7 +644,7 @@ class SplcConnector:
         byline = author or ""
         content_html = str(content)
 
-        pdf_bytes = self._render_pdf(url, title, byline, content_html)
+        pdf_bytes = self._render_pdf_with_timeout(url, title, byline, content_html)
         return title, description or "", published, pdf_bytes
 
     def _fetch_and_render_with_retry(self, url):

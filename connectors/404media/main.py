@@ -133,18 +133,13 @@ def _escape_html(text):
     return html_mod.escape(text) if text else ""
 
 
-def _build_pdf_html(title, content_html, source_url, ingested_at):
-    css_url = source_url.replace("'", "").replace("\\", "")
+def _build_pdf_html(title, content_html, source_url):
+    """Build a complete HTML document for WeasyPrint PDF rendering."""
     safe_title = _escape_html(title)
     return (
         "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI 404 Media connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + content_html
@@ -193,6 +188,14 @@ class FourZeroFourMediaConnector:
         self.render_retries = get_config_variable(
             "FOUR04MEDIA_RENDER_RETRIES", ["four04media", "render_retries"], config,
             isNumber=True, default=3,
+        )
+
+        self.pdf_render_timeout = get_config_variable(
+            "FOUR04MEDIA_PDF_RENDER_TIMEOUT",
+            ["four04media", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.early_stop_skips = get_config_variable(
@@ -425,13 +428,39 @@ class FourZeroFourMediaConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, content, url, title):
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, str(content), url, ingested)
+        """Render article content to PDF bytes via WeasyPrint."""
+        doc_html = _build_pdf_html(title, str(content), url)
         import weasyprint
 
         return weasyprint.HTML(
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
+
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+
+        result = [None]
+        exc_holder = [None]
+
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
 
     def _load_article(self, url):
         resp = self.session.get(url, timeout=60)
@@ -444,7 +473,7 @@ class FourZeroFourMediaConnector:
         if not metadata.get("published"):
             raise _SkipArticle("no published date in page metadata")
         content = self._extract_content(soup)
-        pdf_bytes = self._render_pdf(content, url, metadata["title"])
+        pdf_bytes = self._render_pdf_with_timeout(content, url, metadata["title"])
         return metadata, pdf_bytes
 
     def _load_with_retry(self, url):

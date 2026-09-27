@@ -470,10 +470,6 @@ class CcdcoeConnector:
 
     def _render_pdf(self, url, title, body_html):
         """Render HTML content to an A4 PDF via WeasyPrint."""
-        ingested = datetime.now(timezone.utc).strftime(
-            "%Y-%m-%d %H:%M UTC"
-        )  # type: str
-        safe_url = _escape_html(url)  # type: str
         page_html = (
             "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
             "body { font-family: Georgia, serif; max-width: 800px; "
@@ -484,12 +480,7 @@ class CcdcoeConnector:
             "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
             "table { border-collapse: collapse; width: 100%; } "
             "td, th { border: 1px solid #ccc; padding: 8px; } "
-            "@page { margin: 15mm 12mm 20mm 12mm; "
-            "@bottom-center { content: '"
-            + safe_url
-            + "  |  OpenCTI NATO CCDCOE connector  |  "
-            + ingested
-            + "'; font-size: 7px; color: #888; } } "
+            "@page { margin: 15mm 12mm 15mm 12mm; } "
             "</style></head><body>"
             "<h1>" + _escape_html(title) + "</h1>"
             + body_html

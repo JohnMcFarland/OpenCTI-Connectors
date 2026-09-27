@@ -16,6 +16,7 @@ four04media:
   request_delay: 3
   max_posts: 0
   render_retries: 3
+  pdf_render_timeout: 120
   early_stop_skips: 24
   confidence: 50
   report_type: 'open-source-reporting'

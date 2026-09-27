@@ -154,29 +154,19 @@ def _escape_html(text):
     return html_mod.escape(text, quote=True) if text else ""
 
 
-def _css_string_escape(s):
-    return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
-
-
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at,
+def _build_pdf_html(title, byline, content_html, source_url,
                      variant=PDF_VARIANT_RSS_CONTENT):
-    css_url = _css_string_escape(source_url)
+    """Wrap extracted article HTML in a styled document for WeasyPrint."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    variant_label = variant.upper()
     return (
         "<!DOCTYPE html><html><head><meta charset='utf-8'>"
         + f"<meta name='pdf-variant' content='{variant}'>"
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI ProPublica connector [" + variant_label + "]  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + byline_block
@@ -239,6 +229,13 @@ class ProPublicaConnector:
             "PROPUBLICA_RENDER_RETRIES",
             ["propublica", "render_retries"], config,
             isNumber=True, default=3,
+        )
+        self.pdf_render_timeout = get_config_variable(
+            "PROPUBLICA_PDF_RENDER_TIMEOUT",
+            ["propublica", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.confidence = get_config_variable(
@@ -443,15 +440,15 @@ class ProPublicaConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_rss_pdf(self, entry):
+        """Render the RSS entry content to PDF via WeasyPrint."""
         title = self._entry_title(entry)
         content_html = self._entry_content_html(entry)
         url = self._entry_url(entry)
 
         byline = self._build_byline(entry)
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(
-            title, byline, content_html, url, ingested,
+            title, byline, content_html, url,
             variant=PDF_VARIANT_RSS_CONTENT,
         )
 
@@ -466,10 +463,34 @@ class ProPublicaConnector:
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, render_fn, *args, **kwargs):
+        """Wrap a PDF render function in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run the render function in a separate thread."""
+            try:
+                result[0] = render_fn(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_rss_with_retry(self, entry):
+        """Retry RSS PDF rendering with exponential backoff and timeout."""
         url = self._entry_url(entry)
         return self._retry(
-            lambda: self._render_rss_pdf(entry),
+            lambda: self._render_pdf_with_timeout(self._render_rss_pdf, entry),
             f"RSS PDF render for {url}",
         )
 
@@ -493,6 +514,7 @@ class ProPublicaConnector:
         return content
 
     def _render_live_pdf(self, url, title, byline):
+        """Fetch a live article page, extract content, and render to PDF."""
         resp = self.session.get(url, timeout=60, headers={"Accept": "text/html"})
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
@@ -501,9 +523,8 @@ class ProPublicaConnector:
         if content is None:
             raise RuntimeError("No article content container found in live HTML")
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(
-            title, byline, str(content), url, ingested,
+            title, byline, str(content), url,
             variant=PDF_VARIANT_LIVE_HTML,
         )
 
@@ -519,8 +540,9 @@ class ProPublicaConnector:
         ).write_pdf()
 
     def _render_live_with_retry(self, url, title, byline):
+        """Retry live HTML PDF rendering with exponential backoff and timeout."""
         return self._retry(
-            lambda: self._render_live_pdf(url, title, byline),
+            lambda: self._render_pdf_with_timeout(self._render_live_pdf, url, title, byline),
             f"Live PDF render for {url}",
         )
 

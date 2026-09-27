@@ -24,6 +24,7 @@ trellix_blog:
   max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   playwright_nav_timeout: 60000
   render_retries: 3
+  pdf_render_timeout: 120       # seconds; wall-clock limit on a single PDF render
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
