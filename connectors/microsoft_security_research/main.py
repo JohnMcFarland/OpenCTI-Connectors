@@ -88,16 +88,19 @@ MAX_SCROLL_PX = 100_000
 # --------------------------------------------------------------------------- #
 
 def _strip_html(value):
+    """Remove HTML tags, decode entities, and strip surrounding whitespace."""
     if not value:
         return ""
     return html.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
 def _report_id(link):
+    """Return a deterministic STIX Report id derived from the article URL."""
     return "report--" + str(uuid.uuid5(uuid.NAMESPACE_URL, link))
 
 
 def _published_iso(post):
+    """Extract a UTC ISO-8601 publication timestamp from a WP post dict."""
     for key in ("date_gmt", "modified_gmt"):
         raw = post.get(key)
         if not raw:
@@ -114,15 +117,18 @@ def _published_iso(post):
 
 
 def _slug_from_url(url):
+    """Return the last path segment of a URL, or 'report' for root URLs."""
     path = urlparse(url).path.strip("/")
     return path.rsplit("/", 1)[-1] if path else "report"
 
 
 def _post_title(post):
+    """Return the plain-text title from a WP post dict."""
     return _strip_html((post.get("title") or {}).get("rendered", ""))
 
 
 def _post_description(post):
+    """Return the plain-text excerpt from a WP post dict."""
     return _strip_html((post.get("excerpt") or {}).get("rendered", ""))
 
 
@@ -134,6 +140,7 @@ class MicrosoftSecurityResearchConnector:
     """External-import connector that mirrors Microsoft Security Research posts into Reports."""
 
     def __init__(self):
+        """Load configuration and initialise the HTTP session."""
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "config.yml"
         )
@@ -245,9 +252,11 @@ class MicrosoftSecurityResearchConnector:
         self.marking_id = None
 
     def _scope_sig(self):
+        """Return a string fingerprint of the current collection scope."""
         return str(self.content_type_id)
 
     def _save_cursor(self, page, index):
+        """Persist the positional cursor to OpenCTI connector state."""
         self.helper.set_state(
             {"page": page, "index": index, "scope_sig": self._scope_sig()}
         )
@@ -257,6 +266,7 @@ class MicrosoftSecurityResearchConnector:
     # ------------------------------------------------------------------ #
 
     def _resolve_graph_references(self):
+        """Create or look up the author identity, marking, and vocabulary."""
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
@@ -312,6 +322,7 @@ class MicrosoftSecurityResearchConnector:
             )
 
     def _probe_total(self):
+        """Fetch the X-WP-Total header to count available research posts."""
         params = {
             "content-type": self.content_type_id,
             "per_page": 1,
@@ -334,6 +345,7 @@ class MicrosoftSecurityResearchConnector:
     # ------------------------------------------------------------------ #
 
     def _fetch_page(self, page):
+        """Fetch one page of posts from the WP REST API."""
         params = {
             "content-type": self.content_type_id,
             "per_page": self.per_page,
@@ -367,6 +379,7 @@ class MicrosoftSecurityResearchConnector:
 
     @staticmethod
     def _auto_scroll(page):
+        """Scroll the page to trigger lazy-loaded images before PDF capture."""
         page.evaluate(
             """
             async () => {
@@ -389,7 +402,44 @@ class MicrosoftSecurityResearchConnector:
             % MAX_SCROLL_PX
         )
 
+    @staticmethod
+    def _strip_page_chrome(page):
+        """Hide nav, sidebar, and promotional elements so the PDF contains only article content."""
+        page.evaluate(
+            """
+            (() => {
+              const style = document.createElement('style');
+              style.textContent = [
+                'uhf-header,',
+                '.wp-block-template-part--header,',
+                '.wp-block-template-part--footer,',
+                'uhf-footer,',
+                '.wp-block-bloginabox-theme-card--hero,',
+                '.social-share,',
+                '.taxonomy-list,',
+                '.wp-block-bloginabox-theme-carousel,',
+                '.wp-block-bloginabox-theme-promotional,',
+                '.tts-audio-player,',
+                '.breadcrumbs,',
+                '.wp-block-search,',
+                'hr.wp-block-separator,',
+                '.is-style-sidebar > .wp-block-column:first-child,',
+                'div[data-bi-an="Related Articles"],',
+                '.wp-block-bloginabox-theme-section,',
+                '.skip-link',
+                '{ display: none !important; }',
+                '.is-style-sidebar',
+                '{ display: block !important; }',
+                '.is-style-sidebar > .wp-block-column:last-child',
+                '{ width: 100% !important; max-width: 100% !important; }'
+              ].join(' ');
+              document.head.appendChild(style);
+            })()
+            """
+        )
+
     def _render_pdf(self, browser, url):
+        """Navigate to a URL and print the article body to PDF."""
         context = browser.new_context(
             viewport={"width": 1280, "height": 1696},
             user_agent=BROWSER_UA,
@@ -400,6 +450,8 @@ class MicrosoftSecurityResearchConnector:
 
             self._auto_scroll(page)
             page.wait_for_timeout(1500)
+
+            self._strip_page_chrome(page)
 
             ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
             footer = (
@@ -429,6 +481,7 @@ class MicrosoftSecurityResearchConnector:
             context.close()
 
     def _render_with_retry(self, browser, url):
+        """Attempt _render_pdf up to render_retries times with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
@@ -448,6 +501,7 @@ class MicrosoftSecurityResearchConnector:
     # ------------------------------------------------------------------ #
 
     def _create_report(self, post, published, pdf_bytes):
+        """Create the External Reference, Report, and attach the PDF."""
         url = post.get("link")
         name = _post_title(post) or url
         description = _post_description(post)
@@ -523,6 +577,7 @@ class MicrosoftSecurityResearchConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
+        """Run one full enumeration cycle over all pages of research posts."""
         from playwright.sync_api import sync_playwright
 
         state = self.helper.get_state() or {}
@@ -635,6 +690,7 @@ class MicrosoftSecurityResearchConnector:
             raise
 
     def run(self):
+        """Resolve graph references once, then poll forever."""
         self._resolve_graph_references()
         self.helper.log_info("Microsoft Security Research connector started.")
         while True:
