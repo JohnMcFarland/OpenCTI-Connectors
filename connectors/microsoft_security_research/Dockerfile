@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright/python:v1.49.0-jammy
+FROM mcr.microsoft.com/playwright/python:v1.63.0-noble
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagic1 \
