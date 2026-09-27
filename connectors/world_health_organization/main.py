@@ -154,8 +154,8 @@ def _css_string_escape(s):
     return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, byline, content_html, source_url):
+    """Build the full HTML document for PDF rendering."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -164,12 +164,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI WHO connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + byline_block
@@ -221,6 +216,14 @@ class WorldHealthOrganizationConnector:
             "WORLD_HEALTH_ORGANIZATION_RENDER_RETRIES",
             ["world_health_organization", "render_retries"], config,
             isNumber=True, default=3,
+        )
+
+        self.pdf_render_timeout = get_config_variable(
+            "WORLD_HEALTH_ORGANIZATION_PDF_RENDER_TIMEOUT",
+            ["world_health_organization", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.confidence = get_config_variable(
@@ -464,15 +467,15 @@ class WorldHealthOrganizationConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, article_url, title, summary):
+        """Fetch article HTML and render to PDF via WeasyPrint."""
         page_html = self._fetch_article_html(article_url)
         content = self._extract_article_content(page_html)
         if content is None:
             raise RuntimeError("No article content container found in HTML")
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         byline = f"World Health Organization  |  {summary[:200]}" if summary else "World Health Organization"
         doc_html = _build_pdf_html(
-            title, byline, str(content), article_url, ingested,
+            title, byline, str(content), article_url,
         )
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
@@ -487,9 +490,33 @@ class WorldHealthOrganizationConnector:
             url_fetcher=self._url_fetcher,
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_with_retry(self, article_url, title, summary):
+        """Render PDF with automatic retries on failure."""
         return self._retry(
-            lambda: self._render_pdf(article_url, title, summary),
+            lambda: self._render_pdf_with_timeout(article_url, title, summary),
             f"PDF render for {article_url}",
         )
 

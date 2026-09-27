@@ -16,6 +16,7 @@ world_health_organization:
   request_delay: 2            # seconds between requests
   max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   render_retries: 3
+  pdf_render_timeout: 120       # seconds; wall-clock limit on a single PDF render
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'

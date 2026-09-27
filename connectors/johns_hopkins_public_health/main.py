@@ -183,8 +183,8 @@ def _css_string_escape(s):
     )
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, byline, content_html, source_url):
+    """Wrap extracted article HTML in a styled document for WeasyPrint."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -193,12 +193,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + f'<meta name="source-url" content="{_escape_html(source_url)}">'
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI JHSPH connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + byline_block
@@ -285,6 +280,14 @@ class JohnsHopkinsPublicHealthConnector:
             "JOHNS_HOPKINS_PUBLIC_HEALTH_RENDER_RETRIES",
             ["johns_hopkins_public_health", "render_retries"], config,
             isNumber=True, default=3,
+        )
+
+        self.pdf_render_timeout = get_config_variable(
+            "JOHNS_HOPKINS_PUBLIC_HEALTH_PDF_RENDER_TIMEOUT",
+            ["johns_hopkins_public_health", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.confidence = get_config_variable(
@@ -892,6 +895,7 @@ class JohnsHopkinsPublicHealthConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, url, meta, content_html):
+        """Render extracted article HTML to PDF via WeasyPrint."""
         title = meta.get("title") or ""
         topics = meta.get("topics", [])
 
@@ -900,8 +904,7 @@ class JohnsHopkinsPublicHealthConnector:
             byline_parts.append("Topics: " + ", ".join(topics))
         byline = "  |  ".join(byline_parts)
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        doc_html = _build_pdf_html(title, byline, content_html, url)
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
         if content_bytes > MAX_CONTENT_BYTES:
@@ -914,11 +917,35 @@ class JohnsHopkinsPublicHealthConnector:
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_with_retry(self, url, meta, content_html):
+        """Retry PDF rendering with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(url, meta, content_html)
+                return self._render_pdf_with_timeout(url, meta, content_html)
             except Exception as exc:
                 self.helper.log_warning(
                     f"PDF render attempt {attempt}/{self.render_retries} "

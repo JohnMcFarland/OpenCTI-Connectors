@@ -134,6 +134,10 @@ class TrellixBlogConnector:
             "TRELLIX_RENDER_RETRIES", ["trellix_blog", "render_retries"], config,
             isNumber=True, default=3,
         )
+        self.pdf_render_timeout = get_config_variable(
+            "TRELLIX_PDF_RENDER_TIMEOUT", ["trellix_blog", "pdf_render_timeout"],
+            config, isNumber=True, default=120,
+        )
         self.confidence = get_config_variable(
             "TRELLIX_CONFIDENCE", ["trellix_blog", "confidence"], config,
             isNumber=True, default=50,
@@ -328,13 +332,12 @@ class TrellixBlogConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, html, url):
+        """Extract article content from page HTML and render to PDF."""
         soup = BeautifulSoup(html, "html.parser")
         article = soup.select_one(".stories-category")
         if not article:
             raise RuntimeError("No .stories-category container for PDF")
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        safe_url = _escape_html(url)
         clean_html = (
             "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
             "body { font-family: Georgia, serif; max-width: 800px; "
@@ -345,12 +348,7 @@ class TrellixBlogConnector:
             "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
             "table { border-collapse: collapse; width: 100%; } "
             "td, th { border: 1px solid #ccc; padding: 8px; } "
-            "@page { margin: 15mm 12mm 20mm 12mm; "
-            "@bottom-center { content: '"
-            + safe_url
-            + "  |  OpenCTI Trellix connector  |  "
-            + ingested
-            + "'; font-size: 7px; color: #888; } } "
+            "@page { margin: 15mm 12mm 15mm 12mm; } "
             "</style></head><body>"
             + str(article)
             + "</body></html>"
@@ -360,7 +358,31 @@ class TrellixBlogConnector:
             string=clean_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _load_article(self, url):
+        """Fetch an article page, extract metadata, and render PDF."""
         resp = self.session.get(url, timeout=60)
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
@@ -370,7 +392,7 @@ class TrellixBlogConnector:
             raise RuntimeError("Article container absent")
         if not (metadata.get("title") or metadata.get("heading")):
             raise RuntimeError("Article carries no title")
-        pdf_bytes = self._render_pdf(html, url)
+        pdf_bytes = self._render_pdf_with_timeout(html, url)
         return metadata, pdf_bytes
 
     def _load_with_retry(self, url):

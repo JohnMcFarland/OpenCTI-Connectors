@@ -143,25 +143,19 @@ def _css_string_escape(s):
     return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at,
+def _build_pdf_html(title, byline, content_html, source_url,
                      variant=PDF_VARIANT_RSS_CONTENT):
-    css_url = _css_string_escape(source_url)
+    """Build a complete HTML document for WeasyPrint PDF rendering."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    variant_label = variant.upper()
     return (
         "<!DOCTYPE html><html><head><meta charset='utf-8'>"
         + f"<meta name='pdf-variant' content='{variant}'>"
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI Defense One connector [" + variant_label + "]  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + byline_block
@@ -217,6 +211,14 @@ class DefenseOneConnector:
             "DEFENSE_ONE_RENDER_RETRIES",
             ["defense_one", "render_retries"], config,
             isNumber=True, default=3,
+        )
+
+        self.pdf_render_timeout = get_config_variable(
+            "DEFENSE_ONE_PDF_RENDER_TIMEOUT",
+            ["defense_one", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
         )
 
         self.confidence = get_config_variable(
@@ -426,6 +428,38 @@ class DefenseOneConnector:
         except Exception:
             return {"string": b"", "mime_type": "text/plain"}
 
+    def _render_pdf(self, doc_html, base_url):
+        """Render an HTML string to PDF bytes via WeasyPrint."""
+        return weasyprint.HTML(
+            string=doc_html, base_url=base_url, url_fetcher=self._wp_url_fetcher
+        ).write_pdf()
+
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+
+        result = [None]
+        exc_holder = [None]
+
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_rss_pdf(self, entry):
         """Render a PDF from the RSS content:encoded payload."""
         title = self._entry_title(entry)
@@ -436,9 +470,8 @@ class DefenseOneConnector:
         if not content_html:
             raise RuntimeError("No content:encoded in RSS entry")
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(
-            title, byline, content_html, url, ingested,
+            title, byline, content_html, url,
             variant=PDF_VARIANT_RSS_CONTENT,
         )
 
@@ -449,9 +482,7 @@ class DefenseOneConnector:
             )
             return None
 
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
+        return self._render_pdf_with_timeout(doc_html, url)
 
     def _render_rss_with_retry(self, entry):
         url = self._entry_link(entry)
@@ -480,6 +511,7 @@ class DefenseOneConnector:
         return content
 
     def _render_live_pdf(self, url, title, byline):
+        """Fetch the live article page and render its content to PDF."""
         resp = self.session.get(url, timeout=60, headers={"Accept": "text/html"})
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
@@ -488,9 +520,8 @@ class DefenseOneConnector:
         if content is None:
             raise RuntimeError("No article content container found in live HTML")
 
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
         doc_html = _build_pdf_html(
-            title, byline, str(content), url, ingested,
+            title, byline, str(content), url,
             variant=PDF_VARIANT_LIVE_HTML,
         )
 
@@ -501,9 +532,7 @@ class DefenseOneConnector:
             )
             return None
 
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
+        return self._render_pdf_with_timeout(doc_html, url)
 
     def _render_live_with_retry(self, url, title, byline):
         return self._retry(

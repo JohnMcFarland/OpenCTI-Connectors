@@ -17,6 +17,7 @@ defense_one:
   request_delay: 1            # seconds between requests; crawl-delay:1 in robots.txt
   max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   render_retries: 3
+  pdf_render_timeout: 120
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'
