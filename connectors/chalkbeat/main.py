@@ -136,21 +136,24 @@ _PDF_STYLE = (
 
 
 def _strip_html(value):
+    """Remove HTML tags and unescape entities from a string."""
     if not value:
         return ""
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
 def _escape_html(text):
+    """Escape text for safe inclusion in HTML."""
     return html_mod.escape(text, quote=True) if text else ""
 
 
 def _css_string_escape(s):
+    """Escape a string for use inside a CSS content value."""
     return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, byline, content_html, source_url):
+    """Build the HTML document string used for WeasyPrint PDF rendering."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -159,12 +162,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI Chalkbeat connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>" + safe_title + "</h1>"
         + byline_block
@@ -177,6 +175,7 @@ class ChalkbeatConnector:
     """External-import connector that mirrors Chalkbeat articles into Reports."""
 
     def __init__(self):
+        """Initialize connector configuration and HTTP session."""
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "config.yml"
         )
@@ -223,6 +222,14 @@ class ChalkbeatConnector:
             isNumber=True, default=3,
         )
 
+        self.pdf_render_timeout = get_config_variable(
+            "CHALKBEAT_PDF_RENDER_TIMEOUT",
+            ["chalkbeat", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
+        )
+
         self.confidence = get_config_variable(
             "CHALKBEAT_CONFIDENCE",
             ["chalkbeat", "confidence"], config,
@@ -258,6 +265,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _save_cursor(self, endindex):
+        """Persist the enumeration offset to connector state."""
         self.helper.set_state({
             "endindex": endindex,
         })
@@ -267,6 +275,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _resolve_graph_references(self):
+        """Resolve or create author identity, marking, and vocabulary."""
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
@@ -321,6 +330,7 @@ class ChalkbeatConnector:
             )
 
     def _probe_total(self):
+        """Query the Queryly API for the total article count."""
         try:
             resp = self.session.get(
                 QUERYLY_ENDPOINT,
@@ -344,6 +354,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _fetch_batch(self, endindex):
+        """Fetch a batch of article stubs from the Queryly API."""
         params = {
             "queryly_key": self.queryly_key,
             "query": "*",
@@ -378,6 +389,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _fetch_article(self, url):
+        """Fetch a single article page and return the raw HTML."""
         resp = self.session.get(url, timeout=60, headers={"Accept": "text/html"})
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
@@ -385,6 +397,7 @@ class ChalkbeatConnector:
 
     @staticmethod
     def _extract_metadata(soup):
+        """Extract title, description, published date, and byline from page metadata."""
         meta = {}
 
         og_title = soup.find("meta", property="og:title")
@@ -432,6 +445,7 @@ class ChalkbeatConnector:
 
     @staticmethod
     def _extract_content(soup):
+        """Extract the article body element from the parsed HTML."""
         content = None
         for selector in ARTICLE_CONTENT_SELECTORS:
             content = soup.select_one(selector)
@@ -450,10 +464,12 @@ class ChalkbeatConnector:
 
     @staticmethod
     def _report_id(link):
+        """Derive a deterministic STIX Report id from the article URL."""
         return "report--" + str(uuid.uuid5(uuid.NAMESPACE_URL, link))
 
     @staticmethod
     def _parse_published(raw):
+        """Parse a date string into an ISO 8601 timestamp."""
         if not raw:
             return None
         try:
@@ -472,6 +488,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _retry(self, fn, label):
+        """Retry a callable with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
@@ -486,6 +503,7 @@ class ChalkbeatConnector:
         return None
 
     def _wp_url_fetcher(self, url):
+        """Custom URL fetcher for WeasyPrint that uses the shared session."""
         if url.startswith("data:"):
             return weasyprint.default_url_fetcher(url)
         try:
@@ -502,8 +520,8 @@ class ChalkbeatConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, url, title, byline, content_html):
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        """Render article HTML to PDF bytes via WeasyPrint."""
+        doc_html = _build_pdf_html(title, byline, content_html, url)
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
         if content_bytes > MAX_CONTENT_BYTES:
@@ -516,9 +534,33 @@ class ChalkbeatConnector:
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
 
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _render_with_retry(self, url, title, byline, content_html):
+        """Render a PDF with retries, using the timeout-wrapped renderer."""
         return self._retry(
-            lambda: self._render_pdf(url, title, byline, content_html),
+            lambda: self._render_pdf_with_timeout(url, title, byline, content_html),
             f"PDF render for {url}",
         )
 
@@ -527,6 +569,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _create_report(self, url, title, description, published, pdf_bytes):
+        """Create an OpenCTI Report with attached PDF for a single article."""
         report_id = self._report_id(url)
 
         external_reference = self.helper.api.external_reference.create(
@@ -570,6 +613,7 @@ class ChalkbeatConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
+        """Run a single enumeration cycle over the Queryly article index."""
         state = self.helper.get_state() or {}
         cursor_offset = max(0, int(state.get("endindex", 0)))
 
@@ -735,6 +779,7 @@ class ChalkbeatConnector:
             self.helper.log_info(message)
 
     def run(self):
+        """Start the connector and enter the main poll loop."""
         self._resolve_graph_references()
         self.helper.log_info("Chalkbeat connector started.")
         while True:

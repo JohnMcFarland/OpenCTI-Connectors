@@ -132,10 +132,12 @@ _PDF_STYLE = (
 
 
 def _escape_html(text):
+    """Escape text for safe inclusion in HTML."""
     return html_mod.escape(text, quote=True) if text else ""
 
 
 def _css_string_escape(s):
+    """Escape a string for use inside a CSS content value."""
     return (
         s.replace("\\", "\\\\")
         .replace("'", "\\'")
@@ -144,8 +146,8 @@ def _css_string_escape(s):
     )
 
 
-def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
-    css_url = _css_string_escape(source_url)
+def _build_pdf_html(title, byline, content_html, source_url):
+    """Build the HTML document string used for WeasyPrint PDF rendering."""
     safe_title = _escape_html(title)
     safe_byline = _escape_html(byline) if byline else ""
     byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
@@ -154,12 +156,7 @@ def _build_pdf_html(title, byline, content_html, source_url, ingested_at):
         + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
         + "<style>"
         + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 20mm 12mm; "
-        + "@bottom-center { content: '"
-        + css_url
-        + "  |  OpenCTI Carnegie Endowment connector  |  "
-        + ingested_at
-        + "'; font-size: 7px; color: #888; } } "
+        + "@page { margin: 15mm 12mm 15mm 12mm; } "
         + "</style></head><body>"
         + "<h1>"
         + safe_title
@@ -188,6 +185,7 @@ class CarnegieEndowmentConnector:
     articles into Reports."""
 
     def __init__(self):
+        """Initialize connector configuration and HTTP session."""
         config_file_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "config.yml"
         )
@@ -237,6 +235,14 @@ class CarnegieEndowmentConnector:
             default=3,
         )
 
+        self.pdf_render_timeout = get_config_variable(
+            "CARNEGIE_ENDOWMENT_PDF_RENDER_TIMEOUT",
+            ["carnegie_endowment", "pdf_render_timeout"],
+            config,
+            isNumber=True,
+            default=120,
+        )
+
         self.confidence = get_config_variable(
             "CARNEGIE_ENDOWMENT_CONFIDENCE",
             ["carnegie_endowment", "confidence"],
@@ -279,6 +285,7 @@ class CarnegieEndowmentConnector:
     # ------------------------------------------------------------------ #
 
     def _resolve_graph_references(self):
+        """Resolve or create author identity, marking, and vocabulary."""
         author = self.helper.api.identity.create(
             type="Organization",
             name=self.author_name,
@@ -478,9 +485,11 @@ class CarnegieEndowmentConnector:
 
     @staticmethod
     def _report_id(url):
+        """Derive a deterministic STIX Report id from the article URL."""
         return "report--" + str(uuid.uuid5(uuid.NAMESPACE_URL, url))
 
     def _retry(self, fn, label):
+        """Retry a callable with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
@@ -495,6 +504,7 @@ class CarnegieEndowmentConnector:
         return None
 
     def _wp_url_fetcher(self, url):
+        """Custom URL fetcher for WeasyPrint that uses the shared session."""
         if url.startswith("data:"):
             return weasyprint.default_url_fetcher(url)
         try:
@@ -511,8 +521,8 @@ class CarnegieEndowmentConnector:
             return {"string": b"", "mime_type": "text/plain"}
 
     def _render_pdf(self, url, title, byline, content_html):
-        ingested = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-        doc_html = _build_pdf_html(title, byline, content_html, url, ingested)
+        """Render article HTML to PDF bytes via WeasyPrint."""
+        doc_html = _build_pdf_html(title, byline, content_html, url)
 
         content_bytes = len(doc_html.encode("utf-8", errors="replace"))
         if content_bytes > MAX_CONTENT_BYTES:
@@ -524,6 +534,29 @@ class CarnegieEndowmentConnector:
         return weasyprint.HTML(
             string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
         ).write_pdf()
+
+    def _render_pdf_with_timeout(self, *args, **kwargs):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        import threading
+        result = [None]
+        exc_holder = [None]
+        def target():
+            """Run _render_pdf in a separate thread."""
+            try:
+                result[0] = self._render_pdf(*args, **kwargs)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
 
     def _download_native_pdf(self, pdf_url):
         """Download a native PDF directly. Returns bytes or None."""
@@ -577,10 +610,11 @@ class CarnegieEndowmentConnector:
         byline = author or ""
         content_html = str(content)
 
-        pdf_bytes = self._render_pdf(url, title, byline, content_html)
+        pdf_bytes = self._render_pdf_with_timeout(url, title, byline, content_html)
         return title, description or "", published, pdf_bytes
 
     def _fetch_and_render_with_retry(self, url):
+        """Fetch article and render PDF with retries."""
         return self._retry(
             lambda: self._fetch_and_render(url),
             f"PDF render for {url}",
@@ -609,6 +643,7 @@ class CarnegieEndowmentConnector:
     # ------------------------------------------------------------------ #
 
     def _create_report(self, url, title, description, published, pdf_bytes):
+        """Create an OpenCTI Report with attached PDF for a single article."""
         report_id = self._report_id(url)
 
         external_reference = self.helper.api.external_reference.create(
@@ -651,6 +686,7 @@ class CarnegieEndowmentConnector:
     # ------------------------------------------------------------------ #
 
     def _process(self):
+        """Run a single enumeration cycle over the research sitemap."""
         urls = self._fetch_sitemap()
         if urls is None:
             self.helper.log_warning(
@@ -743,6 +779,7 @@ class CarnegieEndowmentConnector:
             self.helper.log_info(message)
 
     def run(self):
+        """Start the connector and enter the main poll loop."""
         self._resolve_graph_references()
         self.helper.log_info("Carnegie Endowment connector started.")
         while True:
