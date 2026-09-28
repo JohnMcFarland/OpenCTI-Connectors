@@ -1,5 +1,6 @@
 import io
 import os
+import threading
 import time
 import traceback
 from datetime import datetime, timezone
@@ -85,6 +86,15 @@ class RegionalCybersecurity:
                 config,
                 isNumber=True,
                 default=20,
+            )
+        )
+        self.pdf_render_timeout = int(
+            get_config_variable(
+                "REGIONAL_CYBERSECURITY_PDF_RENDER_TIMEOUT",
+                ["regional_cybersecurity", "pdf_render_timeout"],
+                config,
+                isNumber=True,
+                default=120,
             )
         )
         enabled_raw = get_config_variable(
@@ -220,6 +230,40 @@ class RegionalCybersecurity:
             ):
                 return response.body()
 
+            page.evaluate("""() => {
+                var patterns = [
+                    /^accept$/i, /^accept all$/i, /^agree$/i, /^ok$/i,
+                    /^i agree$/i, /^akzeptieren$/i, /^accepter$/i,
+                    /^accetta$/i, /^alle akzeptieren$/i,
+                    /^tout accepter$/i, /^accetta tutti$/i
+                ];
+                var buttons = document.querySelectorAll(
+                    'button, a[role="button"], [type="submit"]');
+                for (var b = 0; b < buttons.length; b++) {
+                    var text = (buttons[b].textContent || '').trim();
+                    for (var p = 0; p < patterns.length; p++) {
+                        if (patterns[p].test(text)) {
+                            buttons[b].click();
+                            return;
+                        }
+                    }
+                }
+                var selectors = [
+                    '#cookie-consent', '.cookie-banner', '.gdpr-banner',
+                    '#CybotCookiebotDialog', '.cc-window',
+                    '#onetrust-consent-sdk', '.js-cookie-consent',
+                    '[class*="cookie-consent"]', '[id*="cookie-banner"]',
+                    '[class*="cookie-banner"]'
+                ];
+                for (var s = 0; s < selectors.length; s++) {
+                    var els = document.querySelectorAll(selectors[s]);
+                    for (var e = 0; e < els.length; e++) {
+                        els[e].style.display = 'none';
+                    }
+                }
+            }""")
+            page.wait_for_timeout(500)
+
             self._auto_scroll(page)
             page.wait_for_timeout(1500)
             return page.pdf(
@@ -239,6 +283,27 @@ class RegionalCybersecurity:
             page.close()
             context.close()
 
+    def _render_pdf_with_timeout(self, url: str) -> bytes | None:
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        result = [None]
+        exc_holder = [None]
+        def target():
+            try:
+                result[0] = self._render_pdf(url)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
+
     def _acquire_pdf(self, url: str, pdf_url: str | None = None) -> bytes | None:
         if pdf_url:
             try:
@@ -249,7 +314,7 @@ class RegionalCybersecurity:
             except Exception as e:
                 self.helper.log_warning(f"PDF download failed: {pdf_url} — {e}")
 
-        return self._render_pdf(url)
+        return self._render_pdf_with_timeout(url)
 
     # ------------------------------------------------------------------
     # Helpers

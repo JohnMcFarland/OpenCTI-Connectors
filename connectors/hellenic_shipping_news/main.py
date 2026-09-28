@@ -92,6 +92,7 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 import os
 import re
 import sys
+import threading
 import time
 import html
 import uuid
@@ -268,6 +269,10 @@ class HellenicShippingNewsConnector:
         self.render_retries = get_config_variable(
             "HSN_RENDER_RETRIES", ["hsn", "render_retries"], config,
             isNumber=True, default=3,
+        )
+        self.pdf_render_timeout = get_config_variable(
+            "HSN_PDF_RENDER_TIMEOUT", ["hsn", "pdf_render_timeout"], config,
+            isNumber=True, default=120,
         )
 
         # --- Report field configuration ------------------------------------ #
@@ -608,29 +613,56 @@ class HellenicShippingNewsConnector:
             if any(marker in title for marker in CHALLENGE_MARKERS):
                 raise RuntimeError("Cloudflare challenge interstitial detected")
 
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)  # final settle for post-scroll loads
+            page.evaluate("""() => {
+                delete window.onbeforeprint;
+                delete window.onafterprint;
+                for (const sheet of document.styleSheets) {
+                    try {
+                        const rules = sheet.cssRules || [];
+                        for (let i = rules.length - 1; i >= 0; i--) {
+                            if (rules[i] instanceof CSSMediaRule
+                                && /\\bprint\\b/.test(
+                                    rules[i].conditionText || '')) {
+                                sheet.deleteRule(i);
+                            }
+                        }
+                    } catch (e) {}
+                }
+            }""")
 
-            ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            footer = (
-                "<div style='font-size:8px; width:100%; padding:0 12px; "
-                "color:#444; display:flex; justify-content:space-between;'>"
-                f"<span>{html.escape(url)}</span>"
-                f"<span>OpenCTI Hellenic Shipping News connector &middot; ingested "
-                f"{ingested_at} &middot; page <span class='pageNumber'></span>/"
-                "<span class='totalPages'></span></span></div>"
-            )
+            self._auto_scroll(page)
+            page.wait_for_timeout(1500)
+
             return page.pdf(
                 print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=footer,
-                margin={"top": "10mm", "bottom": "16mm", "left": "8mm", "right": "8mm"},
                 format="A4",
+                margin={"top": "10mm", "bottom": "10mm",
+                        "left": "8mm", "right": "8mm"},
             )
         finally:
             page.close()
             context.close()
+
+    def _render_pdf_with_timeout(self, browser, url):
+        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
+        result = [None]
+        exc_holder = [None]
+        def target():
+            try:
+                result[0] = self._render_pdf(browser, url)
+            except Exception as e:
+                exc_holder[0] = e
+        t = threading.Thread(target=target, daemon=True)
+        t.start()
+        t.join(timeout=self.pdf_render_timeout)
+        if t.is_alive():
+            self.helper.log_warning(
+                f"PDF render timed out after {self.pdf_render_timeout}s"
+            )
+            return None
+        if exc_holder[0]:
+            raise exc_holder[0]
+        return result[0]
 
     def _render_with_retry(self, browser, url):
         """Render with bounded exponential backoff.
@@ -641,7 +673,7 @@ class HellenicShippingNewsConnector:
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(browser, url)
+                return self._render_pdf_with_timeout(browser, url)
             except Exception as exc:  # noqa: BLE001 - retried, then skipped
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
