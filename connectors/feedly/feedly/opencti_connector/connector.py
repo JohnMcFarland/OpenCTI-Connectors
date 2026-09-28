@@ -74,13 +74,30 @@ class FeedlyConnector:
         if not bundle.get("objects"):
             return None
 
-        # Collect report metadata before sending — we need stix id + article URL + name
         report_meta = _extract_report_meta(bundle)
+
+        # Graph-dedup: check which reports already exist before the expensive
+        # PDF render.  The bundle push is idempotent (OpenCTI merges by STIX
+        # ID), so we always send it — but skip PDF work for pre-existing reports.
+        new_meta = []
+        for meta in report_meta:
+            if self._report_exists(meta["stix_id"]):
+                self.cti_helper.log_info(
+                    f"Report '{meta.get('name', meta['stix_id'])}' already "
+                    f"in graph, skipping PDF"
+                )
+            else:
+                new_meta.append(meta)
+        if report_meta and len(new_meta) < len(report_meta):
+            self.cti_helper.log_info(
+                f"Graph-dedup: {len(report_meta) - len(new_meta)} existing, "
+                f"{len(new_meta)} new"
+            )
 
         self.cti_helper.send_stix2_bundle(json.dumps(bundle))
 
-        if self.attach_pdf and report_meta:
-            self._attach_pdfs(report_meta)
+        if self.attach_pdf and new_meta:
+            self._attach_pdfs(new_meta)
 
         return _get_last_article_published_date(bundle)
 
@@ -191,6 +208,20 @@ class FeedlyConnector:
         if status == "error":
             raise RuntimeError(payload)
         return payload
+    def _report_exists(self, stix_id: str) -> bool:
+        """Single-shot check whether a report already exists in OpenCTI."""
+        try:
+            result = self.cti_helper.api.report.read(
+                filters={
+                    "mode": "and",
+                    "filters": [{"key": "standard_id", "values": [stix_id]}],
+                    "filterGroups": [],
+                }
+            )
+            return bool(result and result.get("id"))
+        except Exception:
+            return False
+
     def _resolve_report_id(self, stix_id: str, report_name: str, retries: int = 12, delay: float = 5.0) -> Optional[str]:
         """
         Resolve a report to its OpenCTI internal ID.
