@@ -88,9 +88,8 @@ _SKIP_LANG_PREFIXES = ("/ru/", "/zh/", "/ar/", "/fr/", "/hi/")
 
 # CSS selectors tried in order for the article body content.
 CONTENT_SELECTORS = [
-    "section#content .cms-html.payload-richtext",
-    "section#content .cms-html",
-    "section#content",
+    ".cms-html.html-block",
+    ".white-scheme",
     "article",
 ]
 
@@ -469,18 +468,32 @@ class CarnegieEndowmentConnector:
 
     @staticmethod
     def _find_native_pdf(soup):
-        """Look for a link to a native PDF hosted at
-        assets.carnegieendowment.org/files/.
+        """Find a native PDF URL from meta tags or download links.
 
-        Returns the PDF URL string if found, None otherwise.
+        Checks in order: citation_pdf_url meta tag, .carnegieDownload
+        links, then any <a> href at assets.carnegieendowment.org under
+        /static/files/ or /files/.
         """
+        meta = soup.select_one('meta[name="citation_pdf_url"]')
+        if meta:
+            url = (meta.get("content") or "").strip()
+            if url and url.lower().endswith(".pdf"):
+                return url
+
+        for a_tag in soup.select("a.carnegieDownload[href]"):
+            href = a_tag["href"]
+            if href.lower().endswith(".pdf"):
+                return href
+
         for a_tag in soup.find_all("a", href=True):
             href = a_tag["href"]
             parsed = urlparse(href)
-            if (parsed.netloc == "assets.carnegieendowment.org"
-                    and parsed.path.startswith("/files/")
-                    and parsed.path.lower().endswith(".pdf")):
-                return href
+            if parsed.netloc == "assets.carnegieendowment.org":
+                path_lower = parsed.path.lower()
+                if (path_lower.startswith("/static/files/")
+                        or path_lower.startswith("/files/")):
+                    if path_lower.endswith(".pdf"):
+                        return href
         return None
 
     @staticmethod
