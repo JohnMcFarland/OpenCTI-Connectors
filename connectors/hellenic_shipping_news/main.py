@@ -92,7 +92,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 import os
 import re
 import sys
-import threading
 import time
 import html
 import uuid
@@ -599,15 +598,16 @@ class HellenicShippingNewsConnector:
 
         Raises:
             RuntimeError: on a Cloudflare challenge interstitial.
-            playwright errors: navigation timeouts propagate for retry handling.
+            playwright errors: navigation/pdf timeouts propagate for retry handling.
         """
+        timeout_ms = self.pdf_render_timeout * 1000
         context = browser.new_context(
             viewport={"width": 1280, "height": 1696},
             user_agent=BROWSER_UA,
         )
         page = context.new_page()
         try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
+            page.goto(url, wait_until="networkidle", timeout=timeout_ms)
 
             title = (page.title() or "").lower()
             if any(marker in title for marker in CHALLENGE_MARKERS):
@@ -638,31 +638,11 @@ class HellenicShippingNewsConnector:
                 format="A4",
                 margin={"top": "10mm", "bottom": "10mm",
                         "left": "8mm", "right": "8mm"},
+                timeout=timeout_ms,
             )
         finally:
             page.close()
             context.close()
-
-    def _render_pdf_with_timeout(self, browser, url):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        result = [None]
-        exc_holder = [None]
-        def target():
-            try:
-                result[0] = self._render_pdf(browser, url)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
 
     def _render_with_retry(self, browser, url):
         """Render with bounded exponential backoff.
@@ -673,7 +653,7 @@ class HellenicShippingNewsConnector:
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf_with_timeout(browser, url)
+                return self._render_pdf(browser, url)
             except Exception as exc:  # noqa: BLE001 - retried, then skipped
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
