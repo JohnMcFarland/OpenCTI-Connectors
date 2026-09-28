@@ -1,0 +1,19 @@
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'TLPBLACK'
+  scope: 'tlp_black'
+  log_level: 'info'
+tlp_black:
+  base_url: 'https://tlpblack.net'
+  poll_interval: 86400
+  request_delay: 3
+  max_reports: 0
+  render_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'TLPBLACK'
