@@ -72,6 +72,7 @@ from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
 logging.getLogger("weasyprint").setLevel(logging.ERROR)
+logging.getLogger("fontTools.subset").setLevel(logging.ERROR)
 
 
 # --------------------------------------------------------------------------- #
@@ -651,6 +652,21 @@ class CarnegieEndowmentConnector:
         dt = dt.astimezone(timezone.utc)
         return dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
+    @staticmethod
+    def _extract_date_from_url(url):
+        """Extract a YYYY-MM date from the URL path as a fallback.
+
+        Matches patterns like /research/2012/02/<slug> or
+        /<program>/research/2012/02/<slug>.
+        """
+        m = re.search(r"/(\d{4})/(0[1-9]|1[0-2])(?:/|$)", urlparse(url).path)
+        if not m:
+            return None
+        year, month = int(m.group(1)), int(m.group(2))
+        if 1900 <= year <= 2099:
+            return f"{year:04d}-{month:02d}-01T00:00:00+00:00"
+        return None
+
     # ------------------------------------------------------------------ #
     # Report creation
     # ------------------------------------------------------------------ #
@@ -763,6 +779,13 @@ class CarnegieEndowmentConnector:
                     continue
 
                 published = self._parse_published_iso(published_raw)
+                if not published:
+                    published = self._extract_date_from_url(article_url)
+                    if published:
+                        self.helper.log_info(
+                            f"Extracted date from URL path for {article_url}: "
+                            f"{published[:10]}"
+                        )
                 if not published:
                     published = datetime.now(timezone.utc).strftime(
                         "%Y-%m-%dT%H:%M:%S+00:00"
