@@ -1,3 +1,4 @@
+import re
 """
 Carnegie Endowment for International Peace OpenCTI connector.
 
