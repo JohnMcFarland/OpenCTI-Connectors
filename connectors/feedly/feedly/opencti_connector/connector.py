@@ -29,6 +29,8 @@ def _weasyprint_worker(html: str, url: str, queue) -> None:
     Runs in a child process so all weasyprint/Cairo/Pango heap is fully
     released when the process exits, preventing memory accumulation.
     """
+    import logging as _logging
+    _logging.getLogger("fontTools.subset").setLevel(_logging.ERROR)
     import weasyprint
     try:
         pdf = weasyprint.HTML(string=html, base_url=url).write_pdf()
