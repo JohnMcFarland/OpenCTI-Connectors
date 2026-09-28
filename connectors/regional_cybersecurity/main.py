@@ -276,7 +276,7 @@ class RegionalCybersecurity:
                     "left": "8mm",
                     "right": "8mm",
                 },
-                timeout=timeout_ms,
+
             )
         except Exception as e:
             self.helper.log_warning(f"PDF render failed: {url} — {e}")

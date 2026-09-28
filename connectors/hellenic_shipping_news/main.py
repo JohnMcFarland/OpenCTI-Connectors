@@ -638,7 +638,7 @@ class HellenicShippingNewsConnector:
                 format="A4",
                 margin={"top": "10mm", "bottom": "10mm",
                         "left": "8mm", "right": "8mm"},
-                timeout=timeout_ms,
+
             )
         finally:
             page.close()
