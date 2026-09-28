@@ -1,3 +1,6 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
 opencti:
   url: ''
   token: ''
@@ -7,11 +10,13 @@ connector:
   name: 'TLPBLACK'
   scope: 'tlp_black'
   log_level: 'info'
+  render_service_url: 'http://pdf-renderer:8080/render'
+  render_timeout: 120
 tlp_black:
   base_url: 'https://tlpblack.net'
-  poll_interval: 86400
-  request_delay: 3
-  max_reports: 0
+  poll_interval: 86400        # seconds between enumeration runs (24h)
+  request_delay: 3            # seconds between successive fetches
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   render_retries: 3
   confidence: 50
   report_type: 'open-source-reporting'

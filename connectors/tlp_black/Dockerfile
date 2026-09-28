@@ -1,3 +1,5 @@
+# No Playwright or WeasyPrint dependencies: PDF rendering is delegated to the
+# centralised pdf-renderer service via HTTP.
 FROM python:3.11-slim-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

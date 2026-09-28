@@ -1,3 +1,7 @@
+# TLPBLACK OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
 version: '3'
 services:
   tlp-black:
