@@ -1,6 +1,5 @@
 import io
 import os
-import threading
 import time
 import traceback
 from datetime import datetime, timezone
@@ -217,13 +216,15 @@ class RegionalCybersecurity:
 
     def _render_pdf(self, url: str) -> bytes | None:
         self._maybe_recycle_browser()
+        timeout_ms = self.pdf_render_timeout * 1000
         context = self._browser.new_context(
             viewport={"width": 1280, "height": 1696},
             user_agent=self.BROWSER_UA,
         )
         page = context.new_page()
         try:
-            response = page.goto(url, wait_until="networkidle", timeout=60000)
+            response = page.goto(url, wait_until="networkidle",
+                                 timeout=timeout_ms)
 
             if response and "application/pdf" in (
                 response.headers.get("content-type") or ""
@@ -275,6 +276,7 @@ class RegionalCybersecurity:
                     "left": "8mm",
                     "right": "8mm",
                 },
+                timeout=timeout_ms,
             )
         except Exception as e:
             self.helper.log_warning(f"PDF render failed: {url} — {e}")
@@ -282,27 +284,6 @@ class RegionalCybersecurity:
         finally:
             page.close()
             context.close()
-
-    def _render_pdf_with_timeout(self, url: str) -> bytes | None:
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        result = [None]
-        exc_holder = [None]
-        def target():
-            try:
-                result[0] = self._render_pdf(url)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
 
     def _acquire_pdf(self, url: str, pdf_url: str | None = None) -> bytes | None:
         if pdf_url:
@@ -314,7 +295,7 @@ class RegionalCybersecurity:
             except Exception as e:
                 self.helper.log_warning(f"PDF download failed: {pdf_url} — {e}")
 
-        return self._render_pdf_with_timeout(url)
+        return self._render_pdf(url)
 
     # ------------------------------------------------------------------
     # Helpers
