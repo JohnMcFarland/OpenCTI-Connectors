@@ -12,7 +12,7 @@ Collection model
 ----------------
 The TLPBLACK blog is a Next.js site that publishes an RSS feed at /rss.xml
 containing all posts (~9 as of September 2026). The feed provides title,
-description, publication date, author, and category tags for each item.
+description, and publication date for each item.
 
 Enumeration reads the full RSS feed on each poll cycle. Because the corpus is
 small and the feed is newest-first (no stable ascending cursor), the connector
@@ -22,7 +22,7 @@ deterministic STIX id before rendering, skipping items already ingested.
 PDF rendering is delegated to the centralised pdf-renderer microservice via
 HTTP POST. The service renders the live page with Playwright and returns both
 a PDF and a raw HTML snapshot. The connector uses the ``article`` CSS selector
-to isolate blog content and strips the site header/footer.
+to isolate blog content.
 
 Deduplication and crash-safety
 ------------------------------
@@ -74,13 +74,7 @@ BROWSER_UA = (
     "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 )
 
-STRIP_SELECTORS = [
-    "header.fixed",
-    "header.top-0",
-    "footer",
-    "nav",
-    "a[href='/blog']",
-]
+STRIP_SELECTORS = []
 
 
 # --------------------------------------------------------------------------- #
@@ -292,8 +286,6 @@ class TlpBlackConnector:
                 "link": link,
                 "description": (item_el.findtext("description") or "").strip(),
                 "pub_date": (item_el.findtext("pubDate") or "").strip(),
-                "author": (item_el.findtext("author") or "").strip(),
-                "category": (item_el.findtext("category") or "").strip(),
             })
 
         return items
