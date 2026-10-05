@@ -1,0 +1,38 @@
+# arXiv OpenCTI connector — GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  arxiv:
+    build: .
+    container_name: opencti-connector-arxiv
+    environment:
+      # --- OpenCTI platform connection ---
+      # OPENCTI_URL is the canonical platform pointer (pycti opencti.url).
+      # Value (e.g. http://opencti:8080) lives in the override.
+      - OPENCTI_URL=
+      # Connector service-account token. Local override key: ARXIV_OPENCTI_TOKEN
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=arXiv
+      - CONNECTOR_SCOPE=arxiv
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - ARXIV_OAI_BASE_URL=https://oaipmh.arxiv.org/oai
+      - ARXIV_SITE_BASE_URL=https://arxiv.org
+      - ARXIV_METADATA_PREFIX=arXiv
+      - ARXIV_OAI_SET=             # '' = entire arXiv; 'cs' or 'cs:cs:CR' to scope
+      - ARXIV_FROM_DATE=           # '' = from the earliest record (full corpus)
+      - ARXIV_POLL_INTERVAL=86400  # seconds between harvest runs (24h)
+      - ARXIV_REQUEST_DELAY=3      # seconds between OAI pages / PDF fetches (>=3 for politeness)
+      - ARXIV_MAX_REPORTS=0        # 0 = unlimited; set to 3 for a bounded test run
+      - ARXIV_FETCH_PDF=true       # false = metadata-only Reports (no PDF attached)
+      - ARXIV_OAI_RETRIES=5
+      - ARXIV_PDF_RETRIES=3
+      - ARXIV_CONFIDENCE=50        # OpenCTI confidence 0-100 (Medium band)
+      - ARXIV_REPORT_TYPE=open-source-reporting
+      - ARXIV_TLP=TLP:CLEAR
+    restart: always

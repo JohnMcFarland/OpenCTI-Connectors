@@ -72,6 +72,10 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
 
@@ -90,9 +94,6 @@ BROWSER_UA = (
 # Recycle the Chromium browser after this many renders to cap memory growth on a
 # host that co-locates Elasticsearch.
 BROWSER_RECYCLE_EVERY = 50
-
-# Substrings indicating a bot/challenge interstitial rather than article content.
-CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
 
 # Yearly release sitemaps in the sitemap index: sitemap-releases-YYYY.xml.gz.
 SITEMAP_RELEASES_RE = re.compile(r"sitemap-releases-(\d{4})\.xml\.gz", re.IGNORECASE)
@@ -402,35 +403,6 @@ class ScienceDailyConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page):
-        """Scroll to the page bottom to trigger lazy-loaded media.
-
-        ScienceDaily articles carry figures and related-story thumbnails that load
-        on scroll, so this improves PDF fidelity.
-
-        Args:
-            page: active Playwright page.
-        """
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
     def _extract_meta(self, page):
         """Read the article title and description from the rendered DOM.
 
@@ -464,6 +436,9 @@ class ScienceDailyConnector:
     def _render_pdf(self, browser, url):
         """Render an article to PDF and extract its on-page metadata.
 
+        Uses render_page_to_pdf for the PDF, then opens a separate page to
+        extract metadata via _extract_meta.
+
         Args:
             browser: active Playwright Chromium browser.
             url: canonical article URL.
@@ -475,6 +450,8 @@ class ScienceDailyConnector:
             RuntimeError: on a bot/challenge interstitial.
             playwright errors: navigation timeouts propagate for retry handling.
         """
+        pdf = render_page_to_pdf(browser, url, connector_name="ScienceDaily", nav_timeout_ms=self.nav_timeout_ms)
+
         context = browser.new_context(
             viewport={"width": 1280, "height": 1696},
             user_agent=BROWSER_UA,
@@ -482,38 +459,12 @@ class ScienceDailyConnector:
         page = context.new_page()
         try:
             page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Challenge interstitial detected")
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1000)  # final settle for post-scroll loads
-
             meta = self._extract_meta(page)
-
-            from datetime import datetime, timezone
-            ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            footer = (
-                "<div style='font-size:8px; width:100%; padding:0 12px; "
-                "color:#444; display:flex; justify-content:space-between;'>"
-                f"<span>{html.escape(url)}</span>"
-                f"<span>OpenCTI ScienceDaily connector &middot; ingested {ingested_at} "
-                "&middot; page <span class='pageNumber'></span>/"
-                "<span class='totalPages'></span></span></div>"
-            )
-            pdf = page.pdf(
-                print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=footer,
-                margin={"top": "10mm", "bottom": "16mm", "left": "8mm", "right": "8mm"},
-                format="A4",
-            )
-            return pdf, meta
         finally:
             page.close()
             context.close()
+
+        return pdf, meta
 
     def _render_with_retry(self, browser, url):
         """Render with bounded exponential backoff.
@@ -574,11 +525,17 @@ class ScienceDailyConnector:
             description="Source article on sciencedaily.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="ScienceDaily", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

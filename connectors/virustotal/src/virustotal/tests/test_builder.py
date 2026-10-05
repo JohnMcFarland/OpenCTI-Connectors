@@ -17,7 +17,7 @@ class VirusTotalBuilderTest(unittest.TestCase):
         cls.helper = MagicMock()
         cls.confidence_level = PropertyMock(return_value=49)
         type(cls.helper).connect_confidence_level = cls.confidence_level
-        cls.helper.api.stix2.format_date.return_value = datetime.datetime.utcnow()
+        cls.helper.api.stix2.format_date.return_value = datetime.datetime.now(datetime.timezone.utc)
 
         # Setup author
         cls.author = stix2.Identity(

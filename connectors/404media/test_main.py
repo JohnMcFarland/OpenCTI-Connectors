@@ -8,8 +8,6 @@ from bs4 import BeautifulSoup
 from main import (
     FourZeroFourMediaConnector,
     _SkipArticle,
-    _build_pdf_html,
-    _escape_html,
     _strip_html,
 )
 
@@ -160,20 +158,6 @@ class TestStripHtml:
         assert _strip_html("  <p> spaced </p>  ") == "spaced"
 
 
-class TestEscapeHtml:
-    def test_none(self):
-        assert _escape_html(None) == ""
-
-    def test_empty(self):
-        assert _escape_html("") == ""
-
-    def test_special_chars(self):
-        result = _escape_html('<a href="x">&')
-        assert "&lt;" in result
-        assert "&amp;" in result
-        assert "&quot;" in result
-
-
 class TestSlugFromUrl:
     def test_trailing_slash(self):
         assert FourZeroFourMediaConnector._slug_from_url(
@@ -189,33 +173,6 @@ class TestSlugFromUrl:
         assert FourZeroFourMediaConnector._slug_from_url(
             "https://www.404media.co/"
         ) == "article"
-
-
-class TestBuildPdfHtml:
-    def test_structure(self):
-        result = _build_pdf_html(
-            "Title", "<p>Body</p>", "https://example.com/a/", "2026-01-01"
-        )
-        assert "<!DOCTYPE html>" in result
-        assert "<h1>Title</h1>" in result
-        assert "<p>Body</p>" in result
-        assert "example.com/a/" in result
-        assert "2026-01-01" in result
-
-    def test_escapes_title(self):
-        result = _build_pdf_html(
-            "A <script> & B", "<p>x</p>", "https://x.com/", "now"
-        )
-        assert "&lt;script&gt;" in result
-        assert "&amp;" in result
-        assert "<script>" not in result
-
-    def test_strips_single_quotes_from_url(self):
-        result = _build_pdf_html(
-            "T", "<p>x</p>", "https://x.com/it's-here/", "now"
-        )
-        assert "its-here" in result
-        assert "it's" not in result
 
 
 # --------------------------------------------------------------------------- #

@@ -11,9 +11,14 @@ from __future__ import annotations
 
 import io
 import logging
+import os
+import sys
 from datetime import datetime, timezone
 from typing import Optional
 from urllib.parse import unquote, urlparse
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from microservices.classify_report import classify_report
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +126,13 @@ class ReportBuilder:
         published = enriched.resolved_published or raw.published or datetime.now(timezone.utc)
         published_str = published.strftime("%Y-%m-%dT%H:%M:%SZ")
 
+        _report_types = classify_report(
+            title=raw.title, description=raw.summary or "",
+            content="", source=author_name,
+            source_url=raw.url or "",
+            default_types=[report_type],
+        )
+
         # --- 4. Create the Report container --------------------------------
         self.log.info("Creating report: %s", raw.title)
         try:
@@ -128,7 +140,7 @@ class ReportBuilder:
                 name=raw.title,
                 description=raw.summary or "",
                 published=published_str,
-                report_types=[report_type],
+                report_types=_report_types,
                 createdBy=author_id,
                 objectMarking=[marking_id],
                 confidence=confidence,

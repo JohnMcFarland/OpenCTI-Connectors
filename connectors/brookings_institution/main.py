@@ -66,7 +66,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
 import html as html_mod
-import logging
 import os
 import re
 import sys
@@ -76,11 +75,12 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 import requests
-import weasyprint
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -103,64 +103,11 @@ FOREIGN_POLICY_TOPIC_ID = 69
 # Fields for the lightweight listing pass (no ACF content).
 LISTING_FIELDS = "id,title,link,date_gmt,modified_gmt,topics,excerpt"
 
-_PDF_STYLE = (
-    "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.3em; } "
-    "h2 { font-size: 20px; } "
-    ".byline { font-size: 14px; color: #555; margin-bottom: 1.5em; "
-    "border-bottom: 1px solid #ccc; padding-bottom: 0.8em; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #003A70; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-    "a { color: #003A70; } "
-)
-
-
 def _strip_html(value):
     """Remove HTML tags and unescape entities from a string."""
     if not value:
         return ""
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
-
-
-def _escape_html(text):
-    """Escape text for safe inclusion in HTML."""
-    return html_mod.escape(text, quote=True) if text else ""
-
-
-def _css_string_escape(s):
-    """Escape a string for use inside a CSS content value."""
-    return (
-        s.replace("\\", "\\\\")
-        .replace("'", "\\'")
-        .replace("\n", "\\a ")
-        .replace("\r", "")
-    )
-
-
-def _build_pdf_html(title, content_html, source_url):
-    """Build the HTML document string used for WeasyPrint PDF rendering."""
-    safe_title = _escape_html(title)
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
-        + "<style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>"
-        + safe_title
-        + "</h1>"
-        + content_html
-        + "</body></html>"
-    )
 
 
 class BrookingsInstitutionConnector:
@@ -174,7 +121,7 @@ class BrookingsInstitutionConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -526,65 +473,10 @@ class BrookingsInstitutionConnector:
                     delay *= 2
         return None
 
-    def _wp_url_fetcher(self, url):
-        """Custom URL fetcher for WeasyPrint that uses the shared session."""
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            if not resp.ok:
-                return {"string": b"", "mime_type": "text/plain"}
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, title, content_html, url):
-        """Render article HTML to PDF bytes via WeasyPrint."""
-        doc_html = _build_pdf_html(title, content_html, url)
-
-        content_bytes = len(doc_html.encode("utf-8", errors="replace"))
-        if content_bytes > MAX_CONTENT_BYTES:
-            self.helper.log_warning(
-                f"Content too large for PDF render ({content_bytes:,} bytes)."
-            )
-            return None
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-        result = [None]
-        exc_holder = [None]
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _render_with_retry(self, title, content_html, url):
-        """Render a PDF with retries, using the timeout-wrapped renderer."""
+        """Render a PDF with retries, using render_html_to_pdf."""
         return self._retry(
-            lambda: self._render_pdf_with_timeout(title, content_html, url),
+            lambda: render_html_to_pdf(title, str(content_html), url, session=self.session, timeout=self.pdf_render_timeout),
             f"PDF render for {url}",
         )
 
@@ -605,12 +497,18 @@ class BrookingsInstitutionConnector:
             description="Source article on brookings.edu",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description,
+            source="Brookings Institution", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=report_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],
@@ -718,6 +616,11 @@ class BrookingsInstitutionConnector:
                         is not None
                     ):
                         skipped += 1
+                        self._save_cursor(page_num, idx + 1, window_after)
+                        continue
+
+                    # Filter: only foreign-policy articles (topic 69).
+                    if not self._is_foreign_policy(listing):
                         self._save_cursor(page_num, idx + 1, window_after)
                         continue
 

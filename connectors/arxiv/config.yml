@@ -1,0 +1,27 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'arXiv'
+  scope: 'arxiv'
+  log_level: 'info'
+arxiv:
+  oai_base_url: 'https://oaipmh.arxiv.org/oai'
+  site_base_url: 'https://arxiv.org'
+  metadata_prefix: 'arXiv'
+  oai_set: ''            # '' = entire arXiv; e.g. 'cs' or 'cs:cs:CR' to scope
+  from_date: ''          # '' = from the earliest record (full corpus)
+  poll_interval: 86400
+  request_delay: 3
+  max_reports: 0
+  fetch_pdf: true
+  oai_retries: 5
+  pdf_retries: 3
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'

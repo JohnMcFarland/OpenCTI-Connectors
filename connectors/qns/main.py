@@ -80,6 +80,9 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+
 
 # --------------------------------------------------------------------------- #
 # Constants
@@ -135,7 +138,7 @@ class QnsConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -479,12 +482,18 @@ class QnsConnector:
             description="Source article on qns.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="QNS", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=report_stix_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

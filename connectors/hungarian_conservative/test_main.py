@@ -15,9 +15,6 @@ if "weasyprint" not in sys.modules:
 
 from main import (  # noqa: E402
     HungarianConservativeConnector,
-    _build_pdf_html,
-    _css_string_escape,
-    _escape_html,
     _strip_html,
     PDF_VARIANT_LIVE_HTML,
     PDF_VARIANT_REST_API,
@@ -74,96 +71,6 @@ class TestStripHtml:
 
     def test_nested_tags(self):
         assert _strip_html("<div><p><span>deep</span></p></div>") == "deep"
-
-
-# --------------------------------------------------------------------------- #
-# _escape_html
-# --------------------------------------------------------------------------- #
-
-class TestEscapeHtml:
-    def test_escapes_special_chars(self):
-        assert "&amp;" in _escape_html("&")
-        assert "&lt;" in _escape_html("<")
-        assert "&gt;" in _escape_html(">")
-
-    def test_empty(self):
-        assert _escape_html("") == ""
-
-    def test_none(self):
-        assert _escape_html(None) == ""
-
-    def test_plain_text_unchanged(self):
-        assert _escape_html("hello world") == "hello world"
-
-
-# --------------------------------------------------------------------------- #
-# _css_string_escape
-# --------------------------------------------------------------------------- #
-
-class TestCssStringEscape:
-    def test_escapes_backslash(self):
-        assert _css_string_escape("a\\b") == "a\\\\b"
-
-    def test_escapes_single_quote(self):
-        assert _css_string_escape("it's") == "it\\'s"
-
-    def test_escapes_newline(self):
-        assert _css_string_escape("line\nbreak") == "line\\a break"
-
-    def test_strips_carriage_return(self):
-        assert _css_string_escape("line\rbreak") == "linebreak"
-
-    def test_url_unchanged(self):
-        url = "https://www.hungarianconservative.com/articles/politics/test/"
-        assert _css_string_escape(url) == url
-
-    def test_backslash_before_quote(self):
-        assert _css_string_escape("\\'") == "\\\\\\'", "backslash doubled, then quote escaped"
-
-
-# --------------------------------------------------------------------------- #
-# _build_pdf_html
-# --------------------------------------------------------------------------- #
-
-class TestBuildPdfHtml:
-    def test_contains_variant_meta(self):
-        html = _build_pdf_html("Title", "Author", "<p>body</p>",
-                               "https://example.com", "2024-01-01 00:00 UTC")
-        assert "name='pdf-variant' content='rest-api'" in html
-
-    def test_live_variant(self):
-        html = _build_pdf_html("Title", "Author", "<p>body</p>",
-                               "https://example.com", "2024-01-01 00:00 UTC",
-                               variant=PDF_VARIANT_LIVE_HTML)
-        assert "name='pdf-variant' content='live-html'" in html
-        assert "[LIVE-HTML]" in html
-
-    def test_contains_source_url(self):
-        html = _build_pdf_html("T", "", "<p>b</p>",
-                               "https://example.com/article", "now")
-        assert "name='source-url' content='https://example.com/article'" in html
-
-    def test_title_escaped(self):
-        html = _build_pdf_html("Title <script>", "", "<p>b</p>",
-                               "https://example.com", "now")
-        assert "<script>" not in html
-        assert "&lt;script&gt;" in html
-
-    def test_byline_block_present(self):
-        html = _build_pdf_html("T", "Some Author", "<p>b</p>",
-                               "https://example.com", "now")
-        assert 'class="byline"' in html
-        assert "Some Author" in html
-
-    def test_byline_block_absent_when_empty(self):
-        html = _build_pdf_html("T", "", "<p>b</p>",
-                               "https://example.com", "now")
-        assert 'class="byline"' not in html
-
-    def test_content_included(self):
-        html = _build_pdf_html("T", "", "<p>article body text</p>",
-                               "https://example.com", "now")
-        assert "article body text" in html
 
 
 # --------------------------------------------------------------------------- #

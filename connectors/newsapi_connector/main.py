@@ -60,10 +60,13 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 import requests
-import trafilatura
 import yaml
 from dateutil import parser as dtparser
 from pycti import OpenCTIConnectorHelper, get_config_variable
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
 
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
@@ -91,19 +94,9 @@ BROWSER_UA = (
 # a host that co-locates Elasticsearch.
 BROWSER_RECYCLE_EVERY = 50
 
-# Substrings indicating a Cloudflare interstitial rather than article content.
-CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
-
 # Phrases that, when prominent on a rendered page, indicate a paywall/subscribe
 # wall rather than the article body. Conservative (specific multi-word phrases)
 # to avoid false positives on articles that merely mention subscriptions.
-PAYWALL_MARKERS = (
-    "subscribe to continue reading", "subscribe to read", "subscribe for full access",
-    "to continue reading", "this article is for subscribers", "already a subscriber",
-    "create an account to continue", "become a subscriber", "subscribe to keep reading",
-    "register to continue reading",
-)
-
 # Domains rendered straight to the metadata fallback because their live pages are
 # hard paywalls (the rendered PDF would otherwise capture a subscribe wall).
 # Operator-extendable via NEWSAPI_PAYWALL_DOMAINS_FILE.
@@ -822,105 +815,15 @@ class NewsAPIConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page) -> None:
-        """Scroll to the page bottom to trigger lazy-loaded media."""
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
-    def _pdf_footer(self, url: str) -> str:
-        ingested_at = utc_now().strftime("%Y-%m-%d %H:%M UTC")
-        return (
-            "<div style='font-size:8px; width:100%; padding:0 12px; "
-            "color:#444; display:flex; justify-content:space-between;'>"
-            f"<span>{html.escape(url)}</span>"
-            f"<span>OpenCTI NewsAPI connector &middot; ingested {ingested_at} "
-            "&middot; page <span class='pageNumber'></span>/"
-            "<span class='totalPages'></span></span></div>"
-        )
-
-    def _extract_text(self, page) -> str:
-        """Extract the main article text from the already-rendered DOM via
-        trafilatura. Reuses page.content(), so there is no second network fetch."""
-        try:
-            extracted = trafilatura.extract(
-                page.content(),
-                include_comments=False, include_tables=True,
-                no_fallback=False, favor_recall=True,
-            )
-            return (extracted or "").strip()
-        except Exception:
-            return ""
-
-    def _looks_paywalled(self, page) -> bool:
-        """True if the rendered body text carries a prominent paywall phrase."""
-        try:
-            body = (page.inner_text("body") or "").lower()
-        except Exception:
-            return False
-        return any(marker in body for marker in PAYWALL_MARKERS)
-
-    def _render_live(self, browser, url: str) -> tuple[bytes, str]:
-        """Render the live publisher page to (pdf_bytes, full_text).
-
-        Raises PaywallDetected if the page is a subscribe wall (caller falls back
-        to a metadata PDF without retrying), or other exceptions on transient
-        failure for the retry handler.
-        """
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 1696}, user_agent=BROWSER_UA
-        )
-        page = context.new_page()
-        try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Cloudflare challenge interstitial detected")
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)  # final settle for post-scroll loads
-            if self._looks_paywalled(page):
-                raise PaywallDetected(url)
-            full_text = self._extract_text(page)
-            pdf = page.pdf(
-                print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=self._pdf_footer(url),
-                margin={"top": "10mm", "bottom": "16mm", "left": "8mm", "right": "8mm"},
-                format="A4",
-            )
-            return pdf, full_text
-        finally:
-            page.close()
-            context.close()
-
     def _render_live_with_retry(self, browser, url: str) -> tuple[bytes, str] | None:
         """Render the live page with bounded exponential backoff. Returns
         (pdf_bytes, full_text), or None to signal 'use the metadata fallback'
-        (paywall detected, or all attempts exhausted). Paywalls are not retried."""
+        (all attempts exhausted). Paywalled domains are caught upstream in _acquire."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_live(browser, url)
-            except PaywallDetected:
-                self.helper.log_info(f"Paywall detected at {url}; using metadata fallback.")
-                return None
+                pdf_bytes = render_page_to_pdf(browser, url, connector_name="NewsAPI", nav_timeout_ms=self.nav_timeout_ms)
+                return pdf_bytes, ""
             except Exception as exc:
                 self.helper.log_warning(
                     f"Live render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
@@ -1059,10 +962,16 @@ class NewsAPIConnector:
             description=desc[:1000] if desc else None,
         )
 
+        _report_types = classify_report(
+            title=report_name, description=desc, content=report_description or "",
+            source="NewsAPI", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             name=report_name,
             description=report_description,
-            report_types=[self.report_type],
+            report_types=_report_types,
             published=published_iso,
             createdBy=author_id,
             confidence=self.confidence,

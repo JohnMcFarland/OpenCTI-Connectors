@@ -51,7 +51,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 
 import html as html_mod
 import json
-import logging
 import os
 import re
 import sys
@@ -64,7 +63,9 @@ import yaml
 from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -94,21 +95,6 @@ CONTENT_SELECTORS = [
     "article",
 ]
 
-_PDF_STYLE = (
-    "body { font-family: Georgia, serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.5em; } "
-    "h2 { font-size: 20px; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #ccc; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-)
 
 
 # --------------------------------------------------------------------------- #
@@ -129,23 +115,6 @@ def _strip_html(value):
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
-def _escape_html(text):
-    return html_mod.escape(text) if text else ""
-
-
-def _build_pdf_html(title, content_html, source_url):
-    """Build a complete HTML document for WeasyPrint PDF rendering."""
-    safe_title = _escape_html(title)
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>" + safe_title + "</h1>"
-        + content_html
-        + "</body></html>"
-    )
-
 
 # --------------------------------------------------------------------------- #
 # Connector
@@ -161,7 +130,7 @@ class FourZeroFourMediaConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -407,61 +376,6 @@ class FourZeroFourMediaConnector:
                 return content
         raise RuntimeError("No article content container found for PDF")
 
-    # ------------------------------------------------------------------ #
-    # PDF rendering (WeasyPrint)
-    # ------------------------------------------------------------------ #
-
-    def _wp_url_fetcher(self, url):
-        import weasyprint
-
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, content, url, title):
-        """Render article content to PDF bytes via WeasyPrint."""
-        doc_html = _build_pdf_html(title, str(content), url)
-        import weasyprint
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-
-        result = [None]
-        exc_holder = [None]
-
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _load_article(self, url):
         resp = self.session.get(url, timeout=60)
         if resp.status_code != 200:
@@ -473,7 +387,10 @@ class FourZeroFourMediaConnector:
         if not metadata.get("published"):
             raise _SkipArticle("no published date in page metadata")
         content = self._extract_content(soup)
-        pdf_bytes = self._render_pdf_with_timeout(content, url, metadata["title"])
+        pdf_bytes = render_html_to_pdf(
+            metadata["title"], str(content), url,
+            session=self.session, timeout=self.pdf_render_timeout,
+        )
         return metadata, pdf_bytes
 
     def _load_with_retry(self, url):
@@ -513,11 +430,17 @@ class FourZeroFourMediaConnector:
             description="Source article on 404media.co",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description,
+            source="404 Media", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

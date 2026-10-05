@@ -1,0 +1,21 @@
+opencti:
+  url: 'ChangeMe'
+  token: 'ChangeMe'
+  ssl_verify: False
+
+connector:
+  id: 'CHANGEME'
+  type: 'EXTERNAL_IMPORT'
+  name: 'OpenPhish'
+  scope: 'OpenPhish'
+  update_existing_data: true
+  log_level: 'info'
+
+openphish:
+  interval_hours: '3'
+  feed_name: 'premium/gov/feed.json'
+  access_key_id: 'ChangeMe'
+  access_key_secret: 'ChangeMe'
+  organizations_marking_definitions: ''
+  attack_patterns_marking_definitions: ''
+  default_marking_definitions: ''

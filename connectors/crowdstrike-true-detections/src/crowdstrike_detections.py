@@ -3,6 +3,8 @@ import ipaddress
 import itertools
 import json
 import ntpath
+import os
+import sys
 import time
 import traceback
 
@@ -10,6 +12,9 @@ from falconpy import (
     Detects,
 )
 from pycti import OpenCTIConnectorHelper
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from microservices.classify_report import classify_report
 
 
 def get_cti_severity(severity_string: str):
@@ -111,7 +116,7 @@ class CrowdStrikeDetectionsConnector:
             f"is_false_positive='{self.is_false_positive}' "
             f"detection_status='{self.detection_status}' "
             f"interval='{self.interval}' "
-            f"client_id='{self.client_id}' "
+            f"client_id='{self.client_id[:4]}****' "
             f"sleep_seconds='{self.sleep_seconds}' "
             f"organizations_marking_definition_ids='{self.organizations_marking_definition_ids}' "
             f"attack_pattern_marking_definition_ids='{self.attack_pattern_marking_definition_ids}' "
@@ -191,7 +196,7 @@ class CrowdStrikeDetectionsConnector:
                 f"'{marking_definition_string}'"
             )
         else:
-            marking_definition_id = marking_definition.get("standard_id")
+            marking_definition_id = marking_definition.get("id")
 
         return marking_definition_id
 
@@ -222,7 +227,7 @@ class CrowdStrikeDetectionsConnector:
             organization = self.helper.api.identity.create(
                 type="Organization",
                 name=organization_name,
-                createdBy=self.cti_author.get("standard_id"),
+                createdBy=self.cti_author.get("id"),
                 objectMarking=self.organizations_marking_definition_ids,
                 confidence=self.helper.connect_confidence_level,
             )
@@ -278,7 +283,7 @@ class CrowdStrikeDetectionsConnector:
                 system = self.helper.api.identity.create(
                     type="System",
                     name=system_name,
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     confidence=self.helper.connect_confidence_level,
                     description=description,
@@ -337,7 +342,7 @@ class CrowdStrikeDetectionsConnector:
 
             if ip_address is None:
                 ip_address = self.helper.api.stix_cyber_observable.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     observableData=observable_data,
                     confidence=self.helper.connect_confidence_level,
@@ -401,7 +406,7 @@ class CrowdStrikeDetectionsConnector:
 
             if cti_mac_address is None:
                 cti_mac_address = self.helper.api.stix_cyber_observable.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     observableData=observable_data,
                     confidence=self.helper.connect_confidence_level,
@@ -473,7 +478,7 @@ class CrowdStrikeDetectionsConnector:
 
             if cti_domain_name is None:
                 cti_domain_name = self.helper.api.stix_cyber_observable.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     observableData=observable_data,
                     confidence=self.helper.connect_confidence_level,
@@ -566,7 +571,7 @@ class CrowdStrikeDetectionsConnector:
                     relationship_type=relationship_type,
                     start_time=first_seen,
                     stop_time=last_seen,
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     confidence=self.helper.connect_confidence_level,
                 )
@@ -645,7 +650,7 @@ class CrowdStrikeDetectionsConnector:
 
             if attack_pattern is None:
                 attack_pattern = self.helper.api.attack_pattern.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.attack_pattern_marking_definition_ids,
                     name=attack_pattern_name,
                     x_mitre_id=attack_pattern_id,
@@ -720,7 +725,7 @@ class CrowdStrikeDetectionsConnector:
                 toId=to_id,
                 first_seen=first_seen,
                 last_seen=last_seen,
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 confidence=self.helper.connect_confidence_level,
                 x_opencti_negative=self.is_false_positive,
@@ -886,7 +891,7 @@ class CrowdStrikeDetectionsConnector:
 
             if file is None:
                 file = self.helper.api.stix_cyber_observable.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     observableData=observable_data,
                     confidence=self.helper.connect_confidence_level,
@@ -994,7 +999,7 @@ class CrowdStrikeDetectionsConnector:
             # This entity type cannot be read from OpenCTI because the StixCyberObservablesFilter
             # object does not have a field for "path"
             directory = self.helper.api.stix_cyber_observable.create(
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 observableData=observable_data,
                 confidence=self.helper.connect_confidence_level,
@@ -1047,7 +1052,7 @@ class CrowdStrikeDetectionsConnector:
             # This entity type cannot be read from OpenCTI because the StixCyberObservablesFilter
             # object does not have a field for "command_line"
             process = self.helper.api.stix_cyber_observable.create(
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 observableData=observable_data,
                 confidence=self.helper.connect_confidence_level,
@@ -1101,7 +1106,7 @@ class CrowdStrikeDetectionsConnector:
             # This entity type cannot be read from OpenCTI because the StixCyberObservablesFilter
             # object does not have a fields for "user_id" or "display_name"
             user_account = self.helper.api.stix_cyber_observable.create(
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 observableData=observable_data,
                 confidence=self.helper.connect_confidence_level,
@@ -1163,7 +1168,7 @@ class CrowdStrikeDetectionsConnector:
 
             if infrastructure is None:
                 infrastructure = self.helper.api.infrastructure.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     infrastructure_types=infrastructure_type,
                     name=name,
@@ -1226,7 +1231,7 @@ class CrowdStrikeDetectionsConnector:
             # This entity type cannot be read from OpenCTI because the StixCyberObservablesFilter
             # object does not have a field for "version"
             software = self.helper.api.stix_cyber_observable.create(
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 observableData=observable_data,
                 confidence=self.helper.connect_confidence_level,
@@ -1285,7 +1290,7 @@ class CrowdStrikeDetectionsConnector:
 
             if position is None:
                 position = self.helper.api.location.create(
-                    createdBy=self.cs_author.get("standard_id"),
+                    createdBy=self.cs_author.get("id"),
                     objectMarking=self.default_marking_definition_ids,
                     type="Position",
                     name=site_name,
@@ -1349,7 +1354,7 @@ class CrowdStrikeDetectionsConnector:
             _incident = self.helper.api.incident.create(
                 name=incident_name,
                 incident_type="Alert",
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 confidence=self.helper.connect_confidence_level,
                 severity=get_cti_severity(cs_severity),
@@ -1732,7 +1737,7 @@ class CrowdStrikeDetectionsConnector:
             }
 
             stix_registry_key = self.helper.api.stix_cyber_observable.create(
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 observableData=observable_data,
                 confidence=self.helper.connect_confidence_level,
@@ -2144,7 +2149,7 @@ class CrowdStrikeDetectionsConnector:
         for container_object in container_objects:
             object_ids.append(container_object.get("standard_id"))
         run_time_string = (
-            datetime.datetime.utcfromtimestamp(current_run_time).strftime(
+            datetime.datetime.fromtimestamp(current_run_time, tz=datetime.timezone.utc).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ"
             )[:-4]
             + "Z"
@@ -2168,15 +2173,22 @@ class CrowdStrikeDetectionsConnector:
                 f"len(object_ids)="
                 f"'{len(object_ids)}'"
             )
+            _report_types = classify_report(
+                title=report_name, description=report_description,
+                content=report_description or "",
+                source="CrowdStrike Detections", source_url="",
+                default_types=["Processed Alert"],
+            )
+
             report = self.helper.api.report.create(
                 name=report_name,
                 description=report_description,
-                createdBy=self.cs_author.get("standard_id"),
+                createdBy=self.cs_author.get("id"),
                 objectMarking=self.default_marking_definition_ids,
                 confidence=self.helper.connect_confidence_level,
                 published=run_time_string,
                 objects=object_ids,
-                report_types="Processed Alert",
+                report_types=_report_types,
             )
 
             self.helper.api.stix_domain_object.add_file(
@@ -2215,7 +2227,7 @@ class CrowdStrikeDetectionsConnector:
                 self.helper.log_info(
                     f"[{type(self).__name__}.{CrowdStrikeDetectionsConnector.__name__}] Connector "
                     f"last run: "
-                    + datetime.datetime.utcfromtimestamp(last_run).strftime(
+                    + datetime.datetime.fromtimestamp(last_run, tz=datetime.timezone.utc).strftime(
                         "%Y-%m-%d %H:%M:%S"
                     )
                 )
@@ -2229,7 +2241,7 @@ class CrowdStrikeDetectionsConnector:
 
             # If the last_run is more than interval-1 day
             if last_run is None or ((timestamp - last_run) >= self.get_interval()):
-                now = datetime.datetime.utcfromtimestamp(timestamp)
+                now = datetime.datetime.fromtimestamp(timestamp, tz=datetime.timezone.utc)
                 friendly_name = (
                     f"{type(self).__name__} run @ {now.strftime('%Y-%m-%d %H:%M:%S')}"
                 )
@@ -2246,14 +2258,14 @@ class CrowdStrikeDetectionsConnector:
                 if last_run is None:
                     past_date = timestamp - self.get_interval()
                     date_string = (
-                        datetime.datetime.utcfromtimestamp(past_date).strftime(
+                        datetime.datetime.fromtimestamp(past_date, tz=datetime.timezone.utc).strftime(
                             "%Y-%m-%dT%H:%M:%S.%fZ"
                         )[:-4]
                         + "Z"
                     )
                 else:
                     date_string = (
-                        datetime.datetime.utcfromtimestamp(last_run - 60).strftime(
+                        datetime.datetime.fromtimestamp(last_run - 60, tz=datetime.timezone.utc).strftime(
                             "%Y-%m-%dT%H:%M:%S.%fZ"
                         )[:-4]
                         + "Z"

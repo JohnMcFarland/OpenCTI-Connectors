@@ -1,6 +1,5 @@
 """Trellix blog OpenCTI connector (curl_cffi + BS4 + WeasyPrint, no Playwright)."""
 
-import html
 import os
 import re
 import sys
@@ -12,9 +11,12 @@ from xml.etree import ElementTree as ET
 
 from bs4 import BeautifulSoup
 from curl_cffi import requests as cfreq
-import weasyprint
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 BROWSER_UA = (
@@ -36,10 +38,6 @@ _MONTHS = {
     "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
     "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
 }
-
-
-def _escape_html(value):
-    return html.escape(str(value))
 
 
 def _local_name(tag):
@@ -317,82 +315,26 @@ class TrellixBlogConnector:
             "dateline": dateline,
         }
 
-    def _wp_url_fetcher(self, url):
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, html, url):
-        """Extract article content from page HTML and render to PDF."""
-        soup = BeautifulSoup(html, "html.parser")
-        article = soup.select_one(".stories-category")
-        if not article:
-            raise RuntimeError("No .stories-category container for PDF")
-
-        clean_html = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
-            "body { font-family: Georgia, serif; max-width: 800px; "
-            "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-            "h1 { font-size: 24px; } h2 { font-size: 20px; } "
-            "img { max-width: 100%; height: auto; } "
-            "pre, code { background: #f4f4f4; padding: 2px 6px; "
-            "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-            "table { border-collapse: collapse; width: 100%; } "
-            "td, th { border: 1px solid #ccc; padding: 8px; } "
-            "@page { margin: 15mm 12mm 15mm 12mm; } "
-            "</style></head><body>"
-            + str(article)
-            + "</body></html>"
-        )
-
-        return weasyprint.HTML(
-            string=clean_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-        result = [None]
-        exc_holder = [None]
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _load_article(self, url):
         """Fetch an article page, extract metadata, and render PDF."""
         resp = self.session.get(url, timeout=60)
         if resp.status_code != 200:
             raise RuntimeError(f"HTTP {resp.status_code} fetching {url}")
-        html = resp.text
-        metadata = self._extract_metadata(html)
+        page_html = resp.text
+        metadata = self._extract_metadata(page_html)
         if not metadata.get("article_present"):
             raise RuntimeError("Article container absent")
         if not (metadata.get("title") or metadata.get("heading")):
             raise RuntimeError("Article carries no title")
-        pdf_bytes = self._render_pdf_with_timeout(html, url)
+        title_for_pdf = metadata.get("title") or metadata.get("heading") or url
+
+        # Extract article content instead of passing the full page HTML
+        # (which includes nav, footer, ads, etc.)
+        soup = BeautifulSoup(page_html, "html.parser")
+        article = soup.select_one(".stories-category")
+        content_html = str(article) if article else page_html
+
+        pdf_bytes = render_html_to_pdf(title_for_pdf, content_html, url, session=self.session, timeout=self.pdf_render_timeout)
         return metadata, pdf_bytes
 
     def _load_with_retry(self, url):
@@ -434,9 +376,15 @@ class TrellixBlogConnector:
             description="Source article on www.trellix.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="Trellix", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=self._report_id(url), name=name, description=description,
-            published=published, report_types=[self.report_type],
+            published=published, report_types=_report_types,
             confidence=self.confidence, createdBy=self.author_id,
             objectMarking=[self.marking_id],
             externalReferences=[external_reference["id"]], update=True,

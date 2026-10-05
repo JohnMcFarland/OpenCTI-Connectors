@@ -60,6 +60,10 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
 
@@ -86,10 +90,6 @@ MAX_API_PAGES = 1000
 # Recycle the Chromium browser after this many renders to cap memory growth on a
 # host that co-locates Elasticsearch.
 BROWSER_RECYCLE_EVERY = 50
-
-# Substrings indicating a Cloudflare interstitial rather than article content.
-CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
-
 
 def _strip_html(value: str) -> str:
     """Strip tags and decode HTML entities from a text fragment.
@@ -190,6 +190,7 @@ class DFIRReportConnector:
         # Resolved graph references, populated by _resolve_graph_references().
         self.author_id = None      # "The DFIR Report" Organization internal UUID
         self.marking_id = None     # TLP marking internal UUID
+        self._work_id = None       # current work-item id for error handling in run()
 
     # ------------------------------------------------------------------ #
     # Initialisation
@@ -355,86 +356,6 @@ class DFIRReportConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page):
-        """Scroll to the page bottom to trigger lazy-loaded media.
-
-        DFIR reports carry 60+ lazy-loaded evidence screenshots, so this is load-
-        bearing for PDF fidelity rather than cosmetic.
-
-        Args:
-            page: active Playwright page.
-        """
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
-    def _render_pdf(self, browser, url):
-        """Render an article to PDF.
-
-        Args:
-            browser: active Playwright Chromium browser.
-            url: canonical article URL.
-
-        Returns:
-            bytes: rendered article PDF.
-
-        Raises:
-            RuntimeError: on a Cloudflare challenge interstitial.
-            playwright errors: navigation timeouts propagate for retry handling.
-        """
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 1696},
-            user_agent=BROWSER_UA,
-        )
-        page = context.new_page()
-        try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Cloudflare challenge interstitial detected")
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)  # final settle for post-scroll loads
-
-            from datetime import datetime, timezone
-            ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            footer = (
-                "<div style='font-size:8px; width:100%; padding:0 12px; "
-                "color:#444; display:flex; justify-content:space-between;'>"
-                f"<span>{html.escape(url)}</span>"
-                f"<span>OpenCTI DFIR Report connector &middot; ingested {ingested_at} "
-                "&middot; page <span class='pageNumber'></span>/"
-                "<span class='totalPages'></span></span></div>"
-            )
-            return page.pdf(
-                print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=footer,
-                margin={"top": "10mm", "bottom": "16mm", "left": "8mm", "right": "8mm"},
-                format="A4",
-            )
-        finally:
-            page.close()
-            context.close()
-
     def _render_with_retry(self, browser, url):
         """Render with bounded exponential backoff.
 
@@ -448,7 +369,7 @@ class DFIRReportConnector:
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(browser, url)
+                return render_page_to_pdf(browser, url, connector_name="DFIR Report", nav_timeout_ms=self.nav_timeout_ms)
             except Exception as exc:  # noqa: BLE001 - retried, then skipped
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
@@ -486,11 +407,17 @@ class DFIRReportConnector:
             description="Source report on thedfirreport.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="DFIR Report", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],
@@ -515,7 +442,7 @@ class DFIRReportConnector:
         """Execute one full enumeration-and-ingest pass."""
         from playwright.sync_api import sync_playwright  # lazy import
 
-        work_id = self.helper.api.work.initiate_work(
+        self._work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "The DFIR Report enumeration run"
         )
 
@@ -568,7 +495,7 @@ class DFIRReportConnector:
             f"Run complete: {processed} created, {skipped} already present, "
             f"{failed} failed (render)."
         )
-        self.helper.api.work.to_processed(work_id, message)
+        self.helper.api.work.to_processed(self._work_id, message)
         self.helper.log_info(message)
 
     def run(self):
@@ -576,10 +503,18 @@ class DFIRReportConnector:
         self._resolve_graph_references()
         self.helper.log_info("The DFIR Report connector started.")
         while True:
+            self._work_id = None
             try:
                 self._process()
             except Exception as exc:  # noqa: BLE001 - keep the connector alive
                 self.helper.log_error(f"Unhandled error during run: {exc}")
+                if self._work_id is not None:
+                    try:
+                        self.helper.api.work.to_processed(
+                            self._work_id, str(exc), in_error=True
+                        )
+                    except Exception:
+                        pass
             time.sleep(self.poll_interval)
 
 

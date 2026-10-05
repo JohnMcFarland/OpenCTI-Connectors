@@ -51,6 +51,10 @@ from datetime import datetime, timezone
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 # Playwright is imported lazily inside _process() so a syntax/import check of
 # this module does not require the browser stack to be present.
 
@@ -254,27 +258,6 @@ class AdVaticanumConnector:
     # PDF rendering + metadata extraction (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page):
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
     def _extract_metadata(self, page):
         """Read title, published date, and description from the article page.
 
@@ -320,6 +303,13 @@ class AdVaticanumConnector:
         )
 
     def _render_and_extract(self, browser, url):
+        """Render an article to PDF and extract its metadata.
+
+        Uses render_page_to_pdf for the PDF, then opens a separate page to
+        extract metadata via _extract_metadata.
+        """
+        pdf_bytes = render_page_to_pdf(browser, url, connector_name="AdVaticanum", nav_timeout_ms=self.nav_timeout_ms)
+
         context = browser.new_context(
             viewport={"width": 1280, "height": 1696},
             user_agent=BROWSER_UA,
@@ -327,37 +317,12 @@ class AdVaticanumConnector:
         page = context.new_page()
         try:
             page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Cloudflare challenge interstitial detected")
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)
-
             meta = self._extract_metadata(page)
-
-            ingested_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-            footer = (
-                "<div style='font-size:8px; width:100%; padding:0 12px; "
-                "color:#444; display:flex; justify-content:space-between;'>"
-                f"<span>{html.escape(url)}</span>"
-                f"<span>OpenCTI AdVaticanum connector &middot; ingested {ingested_at} "
-                "&middot; page <span class='pageNumber'></span>/"
-                "<span class='totalPages'></span></span></div>"
-            )
-            pdf_bytes = page.pdf(
-                print_background=True,
-                display_header_footer=True,
-                header_template="<span></span>",
-                footer_template=footer,
-                margin={"top": "10mm", "bottom": "16mm", "left": "8mm", "right": "8mm"},
-                format="A4",
-            )
-            return pdf_bytes, meta
         finally:
             page.close()
             context.close()
+
+        return pdf_bytes, meta
 
     def _render_with_retry(self, browser, url):
         delay = self.request_delay
@@ -400,11 +365,17 @@ class AdVaticanumConnector:
             description=ref_desc,
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description,
+            source="AdVaticanum", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

@@ -35,6 +35,9 @@ from pycti import (
     StixCoreRelationship,
 )
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+
 # ─────────────────────────────────────────────
 FEEDS_BASE = "https://feeds.synthient.com"
 AUTHOR_NAME = "Synthient"
@@ -186,13 +189,6 @@ class SynthientFeedConnector:
             f"{RESOLVE_RETRIES} attempts"
         )
         return None
-
-    def _load_state(self) -> dict:
-        try:
-            with open(self.state_file) as f:
-                return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return {}
 
     def _save_state(self, state: dict) -> None:
         os.makedirs(os.path.dirname(self.state_file), exist_ok=True)
@@ -596,6 +592,13 @@ class SynthientFeedConnector:
             "description": "Synthient anonymizers feed",
         }
 
+        _report_types = classify_report(
+            title=report_name, description=description or "",
+            content="", source="Synthient",
+            source_url=ext_ref.get("url", ""),
+            default_types=["threat-report"],
+        )
+
         # ── Dedup: check for existing Report ─────────────────────────
         existing = self.helper.api.report.read(
             filters={
@@ -614,7 +617,7 @@ class SynthientFeedConnector:
             # ── Create via direct API ─────────────────────────────────
             report = self.helper.api.report.create(
                 name=report_name,
-                report_types=["threat-report"],
+                report_types=_report_types,
                 published=f"{run_date_str}T00:00:00.000Z",
                 description=description,
                 createdBy=self.author_id,
@@ -640,7 +643,7 @@ class SynthientFeedConnector:
             stix_report = stix2.Report(
                 id=report_stix_id,
                 name=report_name,
-                report_types=["threat-report"],
+                report_types=_report_types,
                 published=published_dt,
                 object_refs=all_stix_ids,
                 description=description,
@@ -769,7 +772,6 @@ class SynthientFeedConnector:
 
 
 if __name__ == "__main__":
-    import traceback
     try:
         SynthientFeedConnector().start()
     except Exception:

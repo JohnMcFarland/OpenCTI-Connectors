@@ -1,10 +1,8 @@
 """NATO CCDCOE OpenCTI connector -- news, publications, and strategy database (Playwright + WeasyPrint)."""
 
-import html
 import os
 import re
 import sys
-import threading
 import time
 import traceback
 import uuid
@@ -14,9 +12,12 @@ from urllib.parse import urljoin, urlparse
 import requests as req
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
-import weasyprint
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 BROWSER_UA = (
@@ -27,11 +28,6 @@ BROWSER_UA = (
 NEWS_YEAR_START = 2008  # type: int
 
 NEWS_DATE_RE = re.compile(r"(\d{2})\.(\d{2})\.(\d{4})")
-
-
-def _escape_html(value):
-    """Escape a value for safe inclusion in HTML attributes and content."""
-    return html.escape(str(value))
 
 
 def _canonical(base, href):
@@ -453,69 +449,6 @@ class CcdcoeConnector:
     # PDF rendering (WeasyPrint)
     # ------------------------------------------------------------------ #
 
-    def _wp_url_fetcher(self, url):
-        """WeasyPrint URL fetcher using the connector HTTP session."""
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)  # type: req.Response
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, url, title, body_html):
-        """Render HTML content to an A4 PDF via WeasyPrint."""
-        page_html = (
-            "<!DOCTYPE html><html><head><meta charset='utf-8'><style>"
-            "body { font-family: Georgia, serif; max-width: 800px; "
-            "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-            "h1 { font-size: 24px; } h2 { font-size: 20px; } "
-            "img { max-width: 100%; height: auto; } "
-            "pre, code { background: #f4f4f4; padding: 2px 6px; "
-            "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-            "table { border-collapse: collapse; width: 100%; } "
-            "td, th { border: 1px solid #ccc; padding: 8px; } "
-            "@page { margin: 15mm 12mm 15mm 12mm; } "
-            "</style></head><body>"
-            "<h1>" + _escape_html(title) + "</h1>"
-            + body_html
-            + "</body></html>"
-        )  # type: str
-        return weasyprint.HTML(
-            string=page_html, base_url=url,
-            url_fetcher=self._wp_url_fetcher,
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, url, title, body_html):
-        """Render PDF with a configurable wall-clock timeout via daemon thread."""
-        result = [None]  # type: list
-        error = [None]  # type: list
-
-        def _target():
-            """Execute the WeasyPrint render in a background thread."""
-            try:
-                result[0] = self._render_pdf(url, title, body_html)
-            except Exception as exc:
-                error[0] = exc
-
-        t = threading.Thread(target=_target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s "
-                f"for {url}"
-            )
-            return None
-        if error[0] is not None:
-            raise error[0]
-        return result[0]
-
     def _download_pdf(self, pdf_url):
         """Download a native PDF file from the given URL."""
         resp = self.session.get(pdf_url, timeout=120)  # type: req.Response
@@ -547,8 +480,8 @@ class CcdcoeConnector:
             title = title or item["title"]
 
         if body_html:
-            rendered = self._render_pdf_with_timeout(
-                url, title, body_html
+            rendered = render_html_to_pdf(
+                title, str(body_html), url, session=self.session, timeout=self.pdf_render_timeout
             )  # type: bytes | None
             if rendered:
                 if kind == "strategy":
@@ -617,10 +550,16 @@ class CcdcoeConnector:
             description="Source page on ccdcoe.org",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description,
+            source="NATO CCDCOE", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=self._report_id(url), name=name,
             description=description, published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence, createdBy=self.author_id,
             objectMarking=[self.marking_id],
             externalReferences=[ext_ref["id"]], update=True,

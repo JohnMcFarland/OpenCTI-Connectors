@@ -1,7 +1,11 @@
 import os
+import sys
 from typing import Dict, Optional
 
 from pycti import OpenCTIConnectorHelper
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from microservices.classify_report import classify_report
 
 from connector import _utc_now_iso
 
@@ -50,16 +54,23 @@ def create_report_from_item(helper: OpenCTIConnectorHelper, item: Dict, now_iso:
         })
 
     report_name = f"{report_prefix} | {title}"
+    description = f"Ingested by NSA Published Reports connector. Source PDF: {pdf_url}" if pdf_url else "Ingested by NSA Published Reports connector."
+
+    _report_types = classify_report(
+        title=title, description=description or "",
+        content="", source="NSA", source_url=pdf_url or "",
+        default_types=[report_type],
+    )
 
     report_id = helper.api.report.create(
         name=report_name,
-        description=f"Ingested by NSA Published Reports connector. Source PDF: {pdf_url}" if pdf_url else "Ingested by NSA Published Reports connector.",
-        report_types=[report_type],
+        description=description,
+        report_types=_report_types,
         confidence=confidence,
         published=now_iso,
         created=now_iso,
         modified=now_iso,
-        createdBy=helper.api.identity.create(type="Organization", name=author) if author else None,
+        createdBy=helper.api.identity.create(type="Organization", name=author)["id"] if author else None,
         objectMarking=marking_ids,
         externalReferences=external_references if external_references else None,
     )

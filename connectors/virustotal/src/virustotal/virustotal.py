@@ -156,13 +156,11 @@ class VirusTotalConnector:
     def __init__(self):
         # ── Config loading ────────────────────────────────────────────────────
         config_file_path = Path(__file__).parent.parent.resolve() / "config.yml"
-        config = (
-            yaml.load(
-                open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader
-            )
-            if config_file_path.is_file()
-            else {}
-        )
+        if config_file_path.is_file():
+            with open(config_file_path, encoding="utf-8") as fh:
+                config = yaml.safe_load(fh) or {}
+        else:
+            config = {}
         self.helper = OpenCTIConnectorHelper(config, playbook_compatible=False)
 
         token = get_config_variable(
@@ -563,7 +561,7 @@ class VirusTotalConnector:
         """
         ts = attributes.get("last_analysis_date")
         if ts:
-            return datetime.datetime.utcfromtimestamp(ts).strftime(
+            return datetime.datetime.fromtimestamp(ts, tz=datetime.timezone.utc).strftime(
                 "%Y-%m-%d %H:%M UTC"
             )
         return None
@@ -1024,7 +1022,7 @@ class VirusTotalConnector:
         # ── Record run start time ─────────────────────────────────────────────
         # Captured before any processing so observables added during this run
         # are picked up on the next run rather than missed due to clock drift.
-        run_start_time = datetime.datetime.utcnow()
+        run_start_time = datetime.datetime.now(datetime.timezone.utc)
 
         # ── Read last-run state ───────────────────────────────────────────────
         last_run = self._get_last_run(rfi_id)

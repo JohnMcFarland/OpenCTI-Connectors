@@ -56,8 +56,6 @@ Key decisions
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
-import html as html_mod
-import logging
 import os
 import re
 import sys
@@ -67,13 +65,14 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 import requests
-import weasyprint
 import yaml
 from bs4 import BeautifulSoup
 from lxml import etree
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -152,68 +151,11 @@ CHALLENGE_MARKERS = (
     "cf-browser-verification",
 )
 
-MAX_CONTENT_BYTES = 2 * 1024 * 1024  # 2 MB
 MAX_PDF_BYTES = 50 * 1024 * 1024  # 50 MB
-
-_PDF_STYLE = (
-    "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.3em; } "
-    "h2 { font-size: 20px; } "
-    ".byline { font-size: 14px; color: #555; margin-bottom: 1.5em; "
-    "border-bottom: 1px solid #ccc; padding-bottom: 0.8em; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #1a3a6b; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-    "a { color: #1a3a6b; } "
-)
-
-
-# --------------------------------------------------------------------------- #
-# Helpers
-# --------------------------------------------------------------------------- #
-
-def _escape_html(text):
-    return html_mod.escape(text, quote=True) if text else ""
-
-
-def _css_string_escape(s):
-    return (
-        s.replace("\\", "\\\\")
-        .replace("'", "\\'")
-        .replace("\n", "\\a ")
-        .replace("\r", "")
-    )
-
 
 def _slug_to_title(slug):
     """Convert a URL slug like 'military-balance' to 'Military Balance'."""
     return slug.replace("-", " ").title()
-
-
-def _build_pdf_html(title, byline, content_html, source_url):
-    """Wrap extracted article HTML in a styled document for WeasyPrint."""
-    safe_title = _escape_html(title)
-    safe_byline = _escape_html(byline) if byline else ""
-    byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
-        + "<style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>" + safe_title + "</h1>"
-        + byline_block
-        + content_html
-        + "</body></html>"
-    )
 
 
 def _extract_date_from_url(url):
@@ -242,7 +184,7 @@ class IISSConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -715,77 +657,13 @@ class IISSConnector:
     # PDF rendering (WeasyPrint)
     # ------------------------------------------------------------------ #
 
-    def _wp_url_fetcher(self, url):
-        """Custom WeasyPrint URL fetcher using the HTTP session for images."""
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, url, meta, content_html):
-        """Render extracted article HTML to PDF via WeasyPrint."""
-        title = meta.get("title") or ""
-        series = self._infer_series(url)
-
-        byline_parts = []
-        if meta.get("byline"):
-            byline_parts.append(f"By {meta['byline']}")
-        if series:
-            byline_parts.append(series)
-        byline = "  |  ".join(byline_parts)
-
-        doc_html = _build_pdf_html(title, byline, content_html, url)
-
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
-            self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
-            )
-            return None
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-        result = [None]
-        exc_holder = [None]
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _render_with_retry(self, url, meta, content_html):
         """Retry PDF rendering with exponential backoff."""
+        title = meta.get("title") or ""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf_with_timeout(url, meta, content_html)
+                return render_html_to_pdf(title, str(content_html), url, session=self.session, timeout=self.pdf_render_timeout)
             except Exception as exc:
                 self.helper.log_warning(
                     f"PDF render attempt {attempt}/{self.render_retries} "
@@ -826,12 +704,18 @@ class IISSConnector:
             description="Source article on iiss.org",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="IISS", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=self._report_id(url),
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

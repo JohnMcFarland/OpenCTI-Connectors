@@ -1,5 +1,6 @@
 import io
 import os
+import sys
 import time
 import traceback
 from datetime import datetime, timezone
@@ -8,6 +9,10 @@ import feedparser
 import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
 
 from sources import SOURCES, AgencySource
 from scrapers import (
@@ -23,10 +28,6 @@ class RegionalCybersecurity:
 
     EARLY_STOP_THRESHOLD = 5
     BROWSER_RECYCLE_EVERY = 50
-    BROWSER_UA = (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    )
 
     def __init__(self):
         config_path = os.path.join(
@@ -133,9 +134,14 @@ class RegionalCybersecurity:
             raise RuntimeError(f"Marking '{self.tlp_name}' not found on platform")
         self.marking_id = marking["id"]
 
-        self.helper.api.vocabulary.create(
-            name=self.report_type, category="report_types_ov"
-        )
+        try:
+            self.helper.api.vocabulary.create(
+                name=self.report_type, category="report_types_ov"
+            )
+        except Exception as exc:
+            self.helper.log_warning(
+                f"Could not register report_type '{self.report_type}' ({exc})."
+            )
 
         for source in SOURCES:
             if source.key not in self.enabled_keys:
@@ -189,23 +195,6 @@ class RegionalCybersecurity:
     # Browser & PDF acquisition
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _auto_scroll(page):
-        page.evaluate("""async () => {
-            await new Promise(resolve => {
-                let total = 0;
-                const dist = 300;
-                const timer = setInterval(() => {
-                    window.scrollBy(0, dist);
-                    total += dist;
-                    if (total >= document.body.scrollHeight) {
-                        clearInterval(timer);
-                        resolve();
-                    }
-                }, 100);
-            });
-        }""")
-
     def _maybe_recycle_browser(self):
         if self._renders_since_recycle >= self.BROWSER_RECYCLE_EVERY:
             self._browser.close()
@@ -213,77 +202,6 @@ class RegionalCybersecurity:
                 args=["--no-sandbox", "--disable-dev-shm-usage"]
             )
             self._renders_since_recycle = 0
-
-    def _render_pdf(self, url: str) -> bytes | None:
-        self._maybe_recycle_browser()
-        timeout_ms = self.pdf_render_timeout * 1000
-        context = self._browser.new_context(
-            viewport={"width": 1280, "height": 1696},
-            user_agent=self.BROWSER_UA,
-        )
-        page = context.new_page()
-        try:
-            response = page.goto(url, wait_until="networkidle",
-                                 timeout=timeout_ms)
-
-            if response and "application/pdf" in (
-                response.headers.get("content-type") or ""
-            ):
-                return response.body()
-
-            page.evaluate("""() => {
-                var patterns = [
-                    /^accept$/i, /^accept all$/i, /^agree$/i, /^ok$/i,
-                    /^i agree$/i, /^akzeptieren$/i, /^accepter$/i,
-                    /^accetta$/i, /^alle akzeptieren$/i,
-                    /^tout accepter$/i, /^accetta tutti$/i
-                ];
-                var buttons = document.querySelectorAll(
-                    'button, a[role="button"], [type="submit"]');
-                for (var b = 0; b < buttons.length; b++) {
-                    var text = (buttons[b].textContent || '').trim();
-                    for (var p = 0; p < patterns.length; p++) {
-                        if (patterns[p].test(text)) {
-                            buttons[b].click();
-                            return;
-                        }
-                    }
-                }
-                var selectors = [
-                    '#cookie-consent', '.cookie-banner', '.gdpr-banner',
-                    '#CybotCookiebotDialog', '.cc-window',
-                    '#onetrust-consent-sdk', '.js-cookie-consent',
-                    '[class*="cookie-consent"]', '[id*="cookie-banner"]',
-                    '[class*="cookie-banner"]'
-                ];
-                for (var s = 0; s < selectors.length; s++) {
-                    var els = document.querySelectorAll(selectors[s]);
-                    for (var e = 0; e < els.length; e++) {
-                        els[e].style.display = 'none';
-                    }
-                }
-            }""")
-            page.wait_for_timeout(500)
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)
-            return page.pdf(
-                print_background=True,
-                format="A4",
-                margin={
-                    "top": "10mm",
-                    "bottom": "10mm",
-                    "left": "8mm",
-                    "right": "8mm",
-                },
-
-            )
-        except Exception as e:
-            self.helper.log_warning(f"PDF render failed: {url} — {e}")
-            return None
-        finally:
-            page.close()
-            context.close()
 
     def _acquire_pdf(self, url: str, pdf_url: str | None = None) -> bytes | None:
         if pdf_url:
@@ -295,7 +213,15 @@ class RegionalCybersecurity:
             except Exception as e:
                 self.helper.log_warning(f"PDF download failed: {pdf_url} — {e}")
 
-        return self._render_pdf(url)
+        self._maybe_recycle_browser()
+        try:
+            pdf = render_page_to_pdf(self._browser, url, connector_name="Regional Cybersecurity", nav_timeout_ms=60000)
+            return pdf
+        except Exception as e:
+            self.helper.log_warning(f"PDF render failed: {url} — {e}")
+            return None
+        finally:
+            self._renders_since_recycle += 1
 
     # ------------------------------------------------------------------
     # Helpers
@@ -327,11 +253,17 @@ class RegionalCybersecurity:
         report_type = source.report_type or self.report_type
         confidence = source.confidence or self.confidence
 
+        _report_types = classify_report(
+            title=title, description=summary, content=summary or "",
+            source="Regional Cybersecurity", source_url=url,
+            default_types=[report_type],
+        )
+
         report = self.helper.api.report.create(
             name=title,
             description=summary,
             published=published.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            report_types=[report_type],
+            report_types=_report_types,
             confidence=confidence,
             createdBy=self.author_ids[source.key],
             objectMarking=[self.marking_id],

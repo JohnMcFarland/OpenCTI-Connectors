@@ -1,0 +1,22 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  id: Build
+  args: [ 'build', '-t', '${_CONTAINER_IMAGE_NAME}' , '-f', 'openphish/Dockerfile.cloudbuild', '.']
+- name: "gcr.io/cloud-builders/docker"
+  id: Push image
+  args: ["push", "${_CONTAINER_IMAGE_NAME}"]
+- name: "gcr.io/cloud-builders/gke-deploy"
+  id: Deploy image
+  args:
+  - run
+  - --filename=openphish/deployment-dev.yaml
+  - --image=${_CONTAINER_IMAGE_NAME}
+  - --location=us-east1
+  - --project=nyc3-dev-malshare
+  - --cluster=nyc3-dev-odin-connectors-cluster-256-v2
+substitutions:
+  _CONTAINER_IMAGE_NAME: 'gcr.io/nyc3-dev-phoenix/github.com/nyc-cyber-command/nyc3-cta-opencti-connectors/dev-openphish:openphish_dev'
+images:
+- '${_CONTAINER_IMAGE_NAME}'
+options:
+  machineType: 'E2_HIGHCPU_32'

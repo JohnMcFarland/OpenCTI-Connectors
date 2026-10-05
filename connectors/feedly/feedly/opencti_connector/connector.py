@@ -1,8 +1,9 @@
 import io
 import json
-import multiprocessing
+import os
+import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Set, List
 from uuid import NAMESPACE_DNS, uuid5
 
@@ -12,7 +13,9 @@ from feedly.api_client.session import FeedlySession
 from markdown import markdown
 from pycti import OpenCTIConnectorHelper
 
-FEEDLY_AI_UUID = "identity--477866fd-8784-46f9-ab40-5592ed4eddd7"
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 # Well-known STIX 2.1 TLP marking definition IDs (stable, spec-defined)
 TLP_MARKING_IDS = {
@@ -23,21 +26,6 @@ TLP_MARKING_IDS = {
     "TLP:AMBER+STRICT": "marking-definition--826578e1-40ad-459f-bc73-ede076f81f37",
     "TLP:RED":          "marking-definition--e828b379-4e03-4974-9ac4-e53a884c97c2",
 }
-
-def _weasyprint_worker(html: str, url: str, queue) -> None:
-    """Module-level worker for subprocess-isolated weasyprint rendering.
-    Runs in a child process so all weasyprint/Cairo/Pango heap is fully
-    released when the process exits, preventing memory accumulation.
-    """
-    import logging as _logging
-    _logging.getLogger("fontTools.subset").setLevel(_logging.ERROR)
-    import weasyprint
-    try:
-        pdf = weasyprint.HTML(string=html, base_url=url).write_pdf()
-        queue.put(("ok", pdf))
-    except Exception as exc:
-        queue.put(("error", str(exc)))
-
 
 class FeedlyConnector:
     def __init__(
@@ -183,31 +171,19 @@ class FeedlyConnector:
                 )
 
     def _render_pdf(self, url: str) -> bytes:
-        """Fetch article and render to PDF bytes via weasyprint.
-        Runs weasyprint in a child process so all C-level heap (Cairo, Pango,
-        fontTools) is unconditionally released when the process exits,
-        preventing memory accumulation in the parent process.
-        """
+        """Fetch article HTML and render to PDF via the shared microservice."""
         headers = {"User-Agent": self.pdf_user_agent}
         response = requests.get(url, headers=headers, timeout=self.pdf_timeout)
         response.raise_for_status()
-        html = response.text
-        queue = multiprocessing.Queue()
-        proc = multiprocessing.Process(target=_weasyprint_worker, args=(html, url, queue))
-        proc.start()
-        proc.join(timeout=self.pdf_render_timeout)
-        if proc.is_alive():
-            proc.kill()
-            proc.join()
-            raise TimeoutError(
-                f"weasyprint render exceeded {self.pdf_render_timeout}s timeout"
-            )
-        if queue.empty():
-            raise RuntimeError("weasyprint worker returned no result")
-        status, payload = queue.get()
-        if status == "error":
-            raise RuntimeError(payload)
-        return payload
+        title = ""
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, "html.parser")
+        if soup.title and soup.title.string:
+            title = soup.title.string.strip()
+        pdf_bytes = render_html_to_pdf(
+            title, response.text, url, timeout=self.pdf_render_timeout,
+        )
+        return pdf_bytes
     def _report_exists(self, stix_id: str) -> bool:
         """Single-shot check whether a report already exists in OpenCTI."""
         try:
@@ -374,7 +350,7 @@ def _add_source_name_as_author_to_report(report: dict) -> Optional[dict]:
 
 
 def _make_source_identity_object(source_name: str) -> dict:
-    now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
     return {
         "type": "identity",
         "spec_version": "2.1",
@@ -422,7 +398,19 @@ def _keep_reports_and_identities_only(bundle: dict) -> None:
 def _force_report_type_open_source(bundle: dict) -> None:
     for o in bundle.get("objects", []):
         if o.get("type") == "report":
-            o["report_types"] = ["Open Source Report"]
+            _ext_url = ""
+            for _ref in (o.get("external_references") or []):
+                if _ref and _ref.get("url"):
+                    _ext_url = _ref["url"]
+                    break
+            o["report_types"] = classify_report(
+                title=o.get("name", ""),
+                description=o.get("description", ""),
+                content=o.get("content", ""),
+                source="Feedly",
+                source_url=_ext_url,
+                default_types=["Open Source Report"],
+            )
 
 
 def _strip_labels(bundle: dict) -> None:

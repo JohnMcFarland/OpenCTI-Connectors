@@ -1,0 +1,111 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opencti-connector-openphish
+  namespace: default
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      connector: openphish
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: opencti-connector
+        connector: openphish
+    spec:
+      containers:
+        - env:
+            - name: OPENCTI_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: OPENCTI_TOKEN
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENCTI_URL
+              valueFrom:
+                secretKeyRef:
+                  key: OPENCTI_URL
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_ID
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_ID
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_TYPE
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_TYPE
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_NAME
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_SCOPE
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_SCOPE
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_LOG_LEVEL
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: CONNECTOR_UPDATE_EXISTING_DATA
+              valueFrom:
+                secretKeyRef:
+                  key: CONNECTOR_UPDATE_EXISTING_DATA
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_INTERVAL_HOURS
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_INTERVAL_HOURS
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_FEED_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_FEED_NAME
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_ACCESS_KEY_ID
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_ACCESS_KEY_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_ACCESS_KEY_SECRET
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_OBSERVABLES_MARKING_DEFINITIONS
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_OBSERVABLES_MARKING_DEFINITIONS
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_ORGANIZATIONS_MARKING_DEFINITIONS
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_ORGANIZATIONS_MARKING_DEFINITIONS
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+            - name: OPENPHISH_RELATIONSHIPS_MARKING_DEFINITIONS
+              valueFrom:
+                secretKeyRef:
+                  key: OPENPHISH_RELATIONSHIPS_MARKING_DEFINITIONS
+                  name: nyc3-prod-opencti-odin-connector-openphish-secrets
+          image: gcr.io/nyc3-dev-phoenix/github.com/nyc-cyber-command/nyc3-cta-opencti-connectors/prod-openphish:openphish_prod
+          imagePullPolicy: Always
+          name: opencti-connector-openphish
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

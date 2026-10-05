@@ -76,7 +76,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
 import html as html_mod
-import logging
 import os
 import re
 import sys
@@ -86,12 +85,13 @@ from datetime import datetime, timezone
 from urllib.parse import urlparse
 
 import requests
-import weasyprint
 import yaml
 from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -119,63 +119,11 @@ STRIP_SELECTORS = [
     ".wp-block-embed.is-provider-hungarian-conservative",
 ]
 
-_PDF_STYLE = (
-    "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.3em; } "
-    "h2 { font-size: 20px; } "
-    ".byline { font-size: 14px; color: #555; margin-bottom: 1.5em; "
-    "border-bottom: 1px solid #ccc; padding-bottom: 0.8em; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #8b1a1a; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-    "a { color: #8b1a1a; } "
-)
-
-
 def _strip_html(value):
     if not value:
         return ""
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
-
-def _escape_html(text):
-    return html_mod.escape(text) if text else ""
-
-
-def _css_string_escape(s):
-    return s.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\a ").replace("\r", "")
-
-
-PDF_VARIANT_REST_API = "rest-api"
-PDF_VARIANT_LIVE_HTML = "live-html"
-
-
-def _build_pdf_html(title, byline, content_html, source_url,
-                     variant=PDF_VARIANT_REST_API):
-    """Build a complete HTML document for WeasyPrint PDF rendering."""
-    safe_title = _escape_html(title)
-    safe_byline = _escape_html(byline) if byline else ""
-    byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='pdf-variant' content='{variant}'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
-        + "<style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>" + safe_title + "</h1>"
-        + byline_block
-        + content_html
-        + "</body></html>"
-    )
 
 
 class HungarianConservativeConnector:
@@ -188,7 +136,7 @@ class HungarianConservativeConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -268,6 +216,7 @@ class HungarianConservativeConnector:
 
         self.author_id = None
         self.marking_id = None
+        self._work_id = None
         self._wp_authors = {}
         self._wp_categories = {}
 
@@ -514,65 +463,13 @@ class HungarianConservativeConnector:
                     delay *= 2
         return None
 
-    def _wp_url_fetcher(self, url):
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, doc_html, base_url):
-        """Render an HTML string to PDF bytes via WeasyPrint."""
-        return weasyprint.HTML(
-            string=doc_html, base_url=base_url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-
-        result = [None]
-        exc_holder = [None]
-
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _render_api_pdf(self, post):
         """Build HTML from a WP REST API post payload and render to PDF."""
         title = self._post_title(post)
         content_html = (post.get("content") or {}).get("rendered", "")
         url = post.get("link", "")
-        byline = self._format_byline(post)
 
-        doc_html = _build_pdf_html(
-            title, byline, content_html, url,
-            variant=PDF_VARIANT_REST_API,
-        )
-
-        return self._render_pdf_with_timeout(doc_html, url)
+        return render_html_to_pdf(title, str(content_html), url, session=self.session, timeout=self.pdf_render_timeout)
 
     def _render_with_retry(self, post):
         """Render REST API PDF with bounded retries."""
@@ -611,12 +508,7 @@ class HungarianConservativeConnector:
         if content is None:
             raise RuntimeError("No article content container found in live HTML")
 
-        doc_html = _build_pdf_html(
-            title, byline, str(content), url,
-            variant=PDF_VARIANT_LIVE_HTML,
-        )
-
-        return self._render_pdf_with_timeout(doc_html, url)
+        return render_html_to_pdf(title, str(content), url, session=self.session, timeout=self.pdf_render_timeout)
 
     def _render_live_with_retry(self, url, title, byline):
         return self._retry(
@@ -645,12 +537,18 @@ class HungarianConservativeConnector:
             description="Source article on hungarianconservative.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="Hungarian Conservative", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=report_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],
@@ -698,7 +596,7 @@ class HungarianConservativeConnector:
         cursor_index = max(0, int(state.get("index", 0)))
         window_after = state.get("window_after")
 
-        work_id = self.helper.api.work.initiate_work(
+        self._work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "Hungarian Conservative enumeration run"
         )
         self.helper.log_info(
@@ -811,17 +709,25 @@ class HungarianConservativeConnector:
             f"Run complete: {processed} created, {skipped} already present, "
             f"{failed} failed (render)."
         )
-        self.helper.api.work.to_processed(work_id, message)
+        self.helper.api.work.to_processed(self._work_id, message)
         self.helper.log_info(message)
 
     def run(self):
         self._resolve_graph_references()
         self.helper.log_info("Hungarian Conservative connector started.")
         while True:
+            self._work_id = None
             try:
                 self._process()
             except Exception as exc:
                 self.helper.log_error(f"Unhandled error during run: {exc}")
+                if self._work_id is not None:
+                    try:
+                        self.helper.api.work.to_processed(
+                            self._work_id, str(exc), in_error=True
+                        )
+                    except Exception:
+                        pass
             time.sleep(self.poll_interval)
 
 

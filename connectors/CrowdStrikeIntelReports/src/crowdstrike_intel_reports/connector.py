@@ -9,11 +9,12 @@ OUTPUT:          OpenCTI Report containers with PDF attachments
 
 import base64
 import datetime
+import os
+import sys
 import time
 
 import stix2
 import yaml
-import os
 
 from pycti import (
     OpenCTIConnectorHelper,
@@ -22,6 +23,9 @@ from pycti import (
 )
 
 from .client import FalconIntelClient
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", ".."))
+from microservices.classify_report import classify_report
 
 
 DEFAULT_REPORT_TYPE_MAP = {
@@ -274,6 +278,13 @@ class CrowdStrikeIntelReportsConnector:
         cs_type_name = cs_type.get("name", "") if isinstance(cs_type, dict) else ""
         opencti_report_type = self._map_report_type(cs_type_name)
 
+        _report_types = classify_report(
+            title=name, description=description or "",
+            content=description or "", source="CrowdStrike",
+            source_url=report_url or "",
+            default_types=[opencti_report_type],
+        )
+
         stix_author = stix2.Identity(
             id=self.author["standard_id"],
             name=self.author["name"],
@@ -302,7 +313,7 @@ class CrowdStrikeIntelReportsConnector:
             name=name,
             description=description,
             published=published,
-            report_types=[opencti_report_type],
+            report_types=_report_types,
             created_by_ref=self.author["standard_id"],
             object_marking_refs=[self.marking["standard_id"]],
             external_references=external_refs,

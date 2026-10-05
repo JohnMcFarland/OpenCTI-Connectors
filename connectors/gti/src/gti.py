@@ -9,6 +9,7 @@ which returns a signed GCS URL pointing to the official Mandiant-formatted PDF.
 This requires only the GTI API key — no separate Mandiant credentials needed.
 """
 
+import io
 import os
 import sys
 import time
@@ -19,6 +20,9 @@ import traceback
 import yaml
 import requests
 from pycti import OpenCTIConnectorHelper, get_config_variable
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from microservices.classify_report import classify_report
 
 
 class GTIReportConnector:
@@ -238,39 +242,32 @@ class GTIReportConnector:
         pdf_bytes = self._download_pdf(report_id)
         if pdf_bytes:
             mandiant_id = re.sub(r'[^\w\-.]', '_', attrs.get("report_id", safe_stem))
-            pdf_path = f"/tmp/gti-{mandiant_id}.pdf"
             try:
-                with open(pdf_path, "wb") as fh:
-                    fh.write(pdf_bytes)
                 self.helper.api.stix_domain_object.add_file(
                     id=report_standard_id,
-                    file_name=pdf_path,
+                    file_name=f"gti-{mandiant_id}.pdf",
+                    data=io.BytesIO(pdf_bytes),
+                    mime_type="application/pdf",
                 )
                 self.helper.log_info(f"[GTI] PDF attached: '{name}'")
             except Exception as exc:
                 self.helper.log_warning(f"[GTI] PDF attachment failed for '{name}': {exc}")
-            finally:
-                if os.path.exists(pdf_path):
-                    os.remove(pdf_path)
         else:
             self.helper.log_info(f"[GTI] PDF unavailable for '{name}' — markdown only.")
 
         # Always attach markdown
         md_text = self._build_markdown(attrs, name)
-        md_path = f"/tmp/gti-{safe_stem}.md"
+        md_filename = f"gti-{safe_stem}.md"
         try:
-            with open(md_path, "w", encoding="utf-8") as fh:
-                fh.write(md_text)
             self.helper.api.stix_domain_object.add_file(
                 id=report_standard_id,
-                file_name=md_path,
+                file_name=md_filename,
+                data=io.BytesIO(md_text.encode("utf-8")),
+                mime_type="text/markdown",
             )
             self.helper.log_info(f"[GTI] Markdown attached: '{name}'")
         except Exception as exc:
             self.helper.log_warning(f"[GTI] Markdown attachment failed for '{name}': {exc}")
-        finally:
-            if os.path.exists(md_path):
-                os.remove(md_path)
 
     def ingest_report(self, report_data):
         report_id = report_data.get("id", "")
@@ -301,12 +298,20 @@ class GTIReportConnector:
             description=f"GTI Report ID: {mandiant_report_id}" if mandiant_report_id else f"GTI collection ID: {report_id}",
         )
 
+        report_types = classify_report(
+            title=name, description=description or "",
+            content=attrs.get("content", "") or "",
+            source="Google Threat Intelligence",
+            source_url=external_url or "",
+            default_types=[self._map_report_type(attrs.get("report_type", ""))],
+        )
+
         report = self.helper.api.report.create(
             name=name,
             description=description,
             published=published,
-            report_types=[self._map_report_type(attrs.get("report_type", ""))],
-            createdBy=self.identity["standard_id"],
+            report_types=report_types,
+            createdBy=self.identity["id"],
             objectMarking=self.marking_ids,
             confidence=self.confidence,
             externalReferences=[ext_ref["id"]],
@@ -321,7 +326,7 @@ class GTIReportConnector:
             f"(ID: {mandiant_report_id or report_id}, published: {published})"
         )
 
-        self._attach_files(report["standard_id"], report_id, attrs, name)
+        self._attach_files(report["id"], report_id, attrs, name)
 
         return True
 

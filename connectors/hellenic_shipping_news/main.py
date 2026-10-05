@@ -101,6 +101,10 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
 
@@ -125,9 +129,6 @@ MAX_PER_PAGE = 100
 # Recycle the Chromium browser after this many renders to cap memory growth on a
 # host that co-locates Elasticsearch.
 BROWSER_RECYCLE_EVERY = 50
-
-# Substrings indicating a Cloudflare interstitial rather than article content.
-CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
 
 # Earliest plausible real publication year. Anything below this (notably the
 # WordPress -0001 placeholder date defect) is treated as "no usable date".
@@ -158,11 +159,11 @@ class HellenicShippingNewsConnector:
         _resolve_graph_references().
         """
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as fh:
+                config = yaml.safe_load(fh) or {}
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -269,11 +270,6 @@ class HellenicShippingNewsConnector:
             "HSN_RENDER_RETRIES", ["hsn", "render_retries"], config,
             isNumber=True, default=3,
         )
-        self.pdf_render_timeout = get_config_variable(
-            "HSN_PDF_RENDER_TIMEOUT", ["hsn", "pdf_render_timeout"], config,
-            isNumber=True, default=120,
-        )
-
         # --- Report field configuration ------------------------------------ #
         # OpenCTI confidence 0-100. Medium band: secondary trade-news aggregation.
         self.confidence = get_config_variable(
@@ -564,86 +560,6 @@ class HellenicShippingNewsConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page):
-        """Scroll to the page bottom to trigger lazy-loaded media before render."""
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
-    def _render_pdf(self, browser, url):
-        """Render an article to PDF.
-
-        Args:
-            browser: active Playwright Chromium browser.
-            url: canonical article URL.
-
-        Returns:
-            bytes: rendered article PDF.
-
-        Raises:
-            RuntimeError: on a Cloudflare challenge interstitial.
-            playwright errors: navigation/pdf timeouts propagate for retry handling.
-        """
-        timeout_ms = self.pdf_render_timeout * 1000
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 1696},
-            user_agent=BROWSER_UA,
-        )
-        page = context.new_page()
-        try:
-            page.goto(url, wait_until="networkidle", timeout=timeout_ms)
-
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Cloudflare challenge interstitial detected")
-
-            page.evaluate("""() => {
-                delete window.onbeforeprint;
-                delete window.onafterprint;
-                for (const sheet of document.styleSheets) {
-                    try {
-                        const rules = sheet.cssRules || [];
-                        for (let i = rules.length - 1; i >= 0; i--) {
-                            if (rules[i] instanceof CSSMediaRule
-                                && /\\bprint\\b/.test(
-                                    rules[i].conditionText || '')) {
-                                sheet.deleteRule(i);
-                            }
-                        }
-                    } catch (e) {}
-                }
-            }""")
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)
-
-            return page.pdf(
-                print_background=True,
-                format="A4",
-                margin={"top": "10mm", "bottom": "10mm",
-                        "left": "8mm", "right": "8mm"},
-
-            )
-        finally:
-            page.close()
-            context.close()
-
     def _render_with_retry(self, browser, url):
         """Render with bounded exponential backoff.
 
@@ -653,7 +569,7 @@ class HellenicShippingNewsConnector:
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(browser, url)
+                return render_page_to_pdf(browser, url, connector_name="Hellenic Shipping News", nav_timeout_ms=self.nav_timeout_ms)
             except Exception as exc:  # noqa: BLE001 - retried, then skipped
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
@@ -690,12 +606,18 @@ class HellenicShippingNewsConnector:
             description="Source article on hellenicshippingnews.com",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="Hellenic Shipping News", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=report_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

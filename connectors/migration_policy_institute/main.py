@@ -59,7 +59,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
 import html as html_mod
-import logging
 import os
 import re
 import sys
@@ -68,7 +67,6 @@ import uuid
 from datetime import datetime, timezone
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qs
 
-import weasyprint
 import yaml
 from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
@@ -76,7 +74,9 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 # Playwright is imported lazily inside _process() so a syntax/import check of
 # this module does not require the browser stack to be present.
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +94,6 @@ BROWSER_RECYCLE_EVERY = 50
 
 CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
 
-MAX_CONTENT_BYTES = 2 * 1024 * 1024  # 2 MB
 MAX_PDF_BYTES = 50 * 1024 * 1024  # 50 MB
 
 # URL path segments that indicate out-of-scope content.
@@ -132,26 +131,6 @@ STRIP_SELECTORS = [
     "noscript",
 ]
 
-_PDF_STYLE = (
-    "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.3em; } "
-    "h2 { font-size: 20px; } "
-    ".byline { font-size: 14px; color: #555; margin-bottom: 1.5em; "
-    "border-bottom: 1px solid #ccc; padding-bottom: 0.8em; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #003366; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-    "a { color: #003366; } "
-)
-
-
 def _strip_html(value):
     """Remove HTML tags and decode entities."""
     if not value:
@@ -159,33 +138,10 @@ def _strip_html(value):
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
 
 
-def _escape_html(text):
-    return html_mod.escape(text, quote=True) if text else ""
-
-
 def _should_skip_url(url):
     """Return True if the URL matches an out-of-scope pattern."""
     path = urlparse(url).path.lower()
     return any(seg in path for seg in SKIP_URL_SEGMENTS)
-
-
-def _build_pdf_html(title, byline, content_html, source_url):
-    """Wrap extracted article HTML in a styled document for WeasyPrint."""
-    safe_title = _escape_html(title)
-    safe_byline = _escape_html(byline) if byline else ""
-    byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
-        + "<style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>" + safe_title + "</h1>"
-        + byline_block
-        + content_html
-        + "</body></html>"
-    )
 
 
 def _build_listing_url(base_url, page_num):
@@ -207,7 +163,7 @@ class MPIConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -540,71 +496,12 @@ class MPIConnector:
     # PDF rendering (WeasyPrint)
     # ------------------------------------------------------------------ #
 
-    def _url_fetcher(self, url):
-        """Custom WeasyPrint URL fetcher; images may be WAF-gated."""
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            import requests
-            resp = requests.get(
-                url, timeout=15,
-                headers={"User-Agent": BROWSER_UA},
-            )
-            if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
-    def _render_pdf(self, title, byline, content_html, source_url):
-        """Render extracted article HTML to PDF via WeasyPrint."""
-        doc_html = _build_pdf_html(title, byline, content_html, source_url)
-
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
-            self.helper.log_warning(
-                f"Skipping PDF render for {source_url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
-            )
-            return None
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=source_url, url_fetcher=self._url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, *args, **kwargs):
-        """Wrap _render_pdf in a daemon thread with a wall-clock timeout."""
-        import threading
-        result = [None]
-        exc_holder = [None]
-        def target():
-            """Run _render_pdf in a separate thread."""
-            try:
-                result[0] = self._render_pdf(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _render_with_retry(self, title, byline, content_html, source_url):
         """Retry PDF rendering with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf_with_timeout(title, byline, content_html, source_url)
+                return render_html_to_pdf(title, str(content_html), source_url, timeout=self.pdf_render_timeout)
             except Exception as exc:
                 self.helper.log_warning(
                     f"PDF render attempt {attempt}/{self.render_retries} failed "
@@ -703,12 +600,18 @@ class MPIConnector:
             description=ref_desc,
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="Migration Policy Institute", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=self._report_id(url),
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

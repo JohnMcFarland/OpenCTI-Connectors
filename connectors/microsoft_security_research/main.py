@@ -66,6 +66,10 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 
 # --------------------------------------------------------------------------- #
 # Constants
@@ -79,8 +83,6 @@ BROWSER_UA = (
 MAX_PER_PAGE = 100
 
 BROWSER_RECYCLE_EVERY = 50
-
-MAX_SCROLL_PX = 100_000
 
 
 # --------------------------------------------------------------------------- #
@@ -147,7 +149,7 @@ class MicrosoftSecurityResearchConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -377,113 +379,12 @@ class MicrosoftSecurityResearchConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    @staticmethod
-    def _auto_scroll(page):
-        """Scroll the page to trigger lazy-loaded images before PDF capture."""
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const maxScroll = %d;
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight || total >= maxScroll) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-            % MAX_SCROLL_PX
-        )
-
-    @staticmethod
-    def _strip_page_chrome(page):
-        """Hide nav, sidebar, and promotional elements so the PDF contains only article content."""
-        page.evaluate(
-            """
-            (() => {
-              const style = document.createElement('style');
-              style.textContent = [
-                'uhf-header,',
-                '.wp-block-template-part--header,',
-                '.wp-block-template-part--footer,',
-                'uhf-footer,',
-                '.wp-block-bloginabox-theme-card--hero,',
-                '.social-share,',
-                '.taxonomy-list,',
-                '.wp-block-bloginabox-theme-carousel,',
-                '.wp-block-bloginabox-theme-promotional,',
-                '.tts-audio-player,',
-                '.breadcrumbs,',
-                '.wp-block-search,',
-                'hr.wp-block-separator,',
-                '.is-style-sidebar > .wp-block-column:first-child,',
-                'div[data-bi-an="Related Articles"],',
-                '.wp-block-bloginabox-theme-section,',
-                '.skip-link',
-                '{ display: none !important; }',
-                '.is-style-sidebar',
-                '{ display: block !important; }',
-                '.is-style-sidebar > .wp-block-column:last-child',
-                '{ width: 100% !important; max-width: 100% !important; }'
-              ].join(' ');
-              document.head.appendChild(style);
-
-              // Extract title from hero card before it is hidden, inject into article body
-              var heroTitle = document.querySelector('.card-block__title');
-              var articleBody = document.querySelector('.entry-content.wp-block-post-content');
-              if (heroTitle && articleBody) {
-                var h1 = document.createElement('h1');
-                h1.textContent = heroTitle.textContent.trim();
-                h1.style.cssText = 'font-size:24px; margin:0 0 16px 0; line-height:1.3;';
-                articleBody.insertBefore(h1, articleBody.firstChild);
-              }
-            })()
-            """
-        )
-
-    def _render_pdf(self, browser, url):
-        """Navigate to a URL and print the article body to PDF."""
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 1696},
-            user_agent=BROWSER_UA,
-        )
-        page = context.new_page()
-        try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)
-
-            self._strip_page_chrome(page)
-
-            return page.pdf(
-                print_background=True,
-                display_header_footer=False,
-                margin={
-                    "top": "10mm",
-                    "bottom": "10mm",
-                    "left": "8mm",
-                    "right": "8mm",
-                },
-                format="A4",
-            )
-        finally:
-            page.close()
-            context.close()
-
     def _render_with_retry(self, browser, url):
         """Attempt _render_pdf up to render_retries times with exponential backoff."""
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(browser, url)
+                return render_page_to_pdf(browser, url, connector_name="Microsoft Security Research", nav_timeout_ms=self.nav_timeout_ms)
             except Exception as exc:
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for "
@@ -511,12 +412,18 @@ class MicrosoftSecurityResearchConnector:
             description="Source article on the Microsoft Security Blog",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="Microsoft Security Research", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=stix_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

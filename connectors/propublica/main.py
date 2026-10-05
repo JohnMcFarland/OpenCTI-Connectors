@@ -63,7 +63,6 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
 import html as html_mod
-import logging
 import os
 import re
 import sys
@@ -74,12 +73,13 @@ from urllib.parse import urlparse
 
 import feedparser
 import requests
-import weasyprint
 import yaml
 from bs4 import BeautifulSoup
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
-logging.getLogger("weasyprint").setLevel(logging.ERROR)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_html_to_pdf
 
 
 # --------------------------------------------------------------------------- #
@@ -124,55 +124,10 @@ PDF_VARIANT_LIVE_HTML = "live-html"
 MAX_CONTENT_BYTES = 2 * 1024 * 1024  # 2 MB
 MAX_PDF_BYTES = 50 * 1024 * 1024  # 50 MB
 
-_PDF_STYLE = (
-    "body { font-family: Georgia, 'Times New Roman', serif; max-width: 800px; "
-    "margin: 0 auto; padding: 20px; color: #222; line-height: 1.6; } "
-    "h1 { font-size: 24px; margin-bottom: 0.3em; } "
-    "h2 { font-size: 20px; } "
-    ".byline { font-size: 14px; color: #555; margin-bottom: 1.5em; "
-    "border-bottom: 1px solid #ccc; padding-bottom: 0.8em; } "
-    "img { max-width: 100%; height: auto; } "
-    "pre, code { background: #f4f4f4; padding: 2px 6px; "
-    "font-size: 13px; white-space: pre-wrap; word-break: break-all; } "
-    "table { border-collapse: collapse; width: 100%; } "
-    "td, th { border: 1px solid #ccc; padding: 8px; } "
-    "figure { margin: 1em 0; } "
-    "figcaption { font-size: 0.85em; color: #666; margin-top: 4px; } "
-    "blockquote { border-left: 3px solid #1a1a8b; margin: 1em 0; "
-    "padding: 0.5em 1em; color: #555; } "
-    "a { color: #1a1a8b; } "
-)
-
-
 def _strip_html(value):
     if not value:
         return ""
     return html_mod.unescape(re.sub(r"<[^>]+>", "", value)).strip()
-
-
-def _escape_html(text):
-    return html_mod.escape(text, quote=True) if text else ""
-
-
-def _build_pdf_html(title, byline, content_html, source_url,
-                     variant=PDF_VARIANT_RSS_CONTENT):
-    """Wrap extracted article HTML in a styled document for WeasyPrint."""
-    safe_title = _escape_html(title)
-    safe_byline = _escape_html(byline) if byline else ""
-    byline_block = f'<div class="byline">{safe_byline}</div>' if safe_byline else ""
-    return (
-        "<!DOCTYPE html><html><head><meta charset='utf-8'>"
-        + f"<meta name='pdf-variant' content='{variant}'>"
-        + f"<meta name='source-url' content='{_escape_html(source_url)}'>"
-        + "<style>"
-        + _PDF_STYLE
-        + "@page { margin: 15mm 12mm 15mm 12mm; } "
-        + "</style></head><body>"
-        + "<h1>" + safe_title + "</h1>"
-        + byline_block
-        + content_html
-        + "</body></html>"
-    )
 
 
 class ProPublicaConnector:
@@ -185,7 +140,7 @@ class ProPublicaConnector:
         config = {}
         if os.path.isfile(config_file_path):
             with open(config_file_path, encoding="utf-8") as fh:
-                config = yaml.load(fh, Loader=yaml.FullLoader) or {}
+                config = yaml.safe_load(fh) or {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -423,74 +378,21 @@ class ProPublicaConnector:
                     delay *= 2
         return None
 
-    def _wp_url_fetcher(self, url):
-        if url.startswith("data:"):
-            return weasyprint.default_url_fetcher(url)
-        try:
-            resp = self.session.get(url, timeout=15)
-            if not resp.ok:
-                return {"string": b"", "mime_type": "image/png"}
-            return {
-                "string": resp.content,
-                "mime_type": resp.headers.get(
-                    "content-type", "application/octet-stream"
-                ).split(";")[0],
-            }
-        except Exception:
-            return {"string": b"", "mime_type": "text/plain"}
-
     def _render_rss_pdf(self, entry):
-        """Render the RSS entry content to PDF via WeasyPrint."""
+        """Render the RSS entry content to PDF via the shared microservice."""
         title = self._entry_title(entry)
         content_html = self._entry_content_html(entry)
         url = self._entry_url(entry)
-
-        byline = self._build_byline(entry)
-
-        doc_html = _build_pdf_html(
-            title, byline, content_html, url,
-            variant=PDF_VARIANT_RSS_CONTENT,
+        return render_html_to_pdf(
+            title, str(content_html), url,
+            session=self.session, timeout=self.pdf_render_timeout,
         )
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
-            self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
-            )
-            return None
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
-    def _render_pdf_with_timeout(self, render_fn, *args, **kwargs):
-        """Wrap a PDF render function in a daemon thread with a wall-clock timeout."""
-        import threading
-        result = [None]
-        exc_holder = [None]
-        def target():
-            """Run the render function in a separate thread."""
-            try:
-                result[0] = render_fn(*args, **kwargs)
-            except Exception as e:
-                exc_holder[0] = e
-        t = threading.Thread(target=target, daemon=True)
-        t.start()
-        t.join(timeout=self.pdf_render_timeout)
-        if t.is_alive():
-            self.helper.log_warning(
-                f"PDF render timed out after {self.pdf_render_timeout}s"
-            )
-            return None
-        if exc_holder[0]:
-            raise exc_holder[0]
-        return result[0]
-
     def _render_rss_with_retry(self, entry):
-        """Retry RSS PDF rendering with exponential backoff and timeout."""
+        """Retry RSS PDF rendering with exponential backoff."""
         url = self._entry_url(entry)
         return self._retry(
-            lambda: self._render_pdf_with_timeout(self._render_rss_pdf, entry),
+            lambda: self._render_rss_pdf(entry),
             f"RSS PDF render for {url}",
         )
 
@@ -523,26 +425,15 @@ class ProPublicaConnector:
         if content is None:
             raise RuntimeError("No article content container found in live HTML")
 
-        doc_html = _build_pdf_html(
-            title, byline, str(content), url,
-            variant=PDF_VARIANT_LIVE_HTML,
+        return render_html_to_pdf(
+            title, str(content), url,
+            session=self.session, timeout=self.pdf_render_timeout,
         )
 
-        if len(doc_html.encode("utf-8", errors="replace")) > MAX_CONTENT_BYTES:
-            self.helper.log_warning(
-                f"Skipping PDF render for {url}: content too large "
-                f"({len(doc_html.encode('utf-8', errors='replace')):,} bytes)."
-            )
-            return None
-
-        return weasyprint.HTML(
-            string=doc_html, base_url=url, url_fetcher=self._wp_url_fetcher
-        ).write_pdf()
-
     def _render_live_with_retry(self, url, title, byline):
-        """Retry live HTML PDF rendering with exponential backoff and timeout."""
+        """Retry live HTML PDF rendering with exponential backoff."""
         return self._retry(
-            lambda: self._render_pdf_with_timeout(self._render_live_pdf, url, title, byline),
+            lambda: self._render_live_pdf(url, title, byline),
             f"Live PDF render for {url}",
         )
 
@@ -586,12 +477,19 @@ class ProPublicaConnector:
             description="Source article on propublica.org",
         )
 
+        # -- Crucible report classification --
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="ProPublica", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=report_id,
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],

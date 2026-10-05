@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import sys
 import time
 import traceback
 import uuid
@@ -17,6 +18,9 @@ from .mitre_lookup import MitreLookup
 from .stix_converter import StixConverter
 from .threatfox_client import ThreatFoxClient
 from .uuid_generator import report_id
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+from microservices.classify_report import classify_report
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +184,13 @@ class ThreatFoxConnector:
                 create_kwargs["createdBy"] = created_by_internal_id
             if marking_internal_id:
                 create_kwargs["objectMarking"] = [marking_internal_id]
+
+            create_kwargs["report_types"] = classify_report(
+                title=name, description=create_kwargs.get("description", ""),
+                content=create_kwargs.get("description", ""),
+                source="ThreatFox", source_url="",
+                default_types=["observable-feed"],
+            )
 
             report = self.helper.api.report.create(**create_kwargs)
 

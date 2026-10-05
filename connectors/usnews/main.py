@@ -67,6 +67,10 @@ import requests
 import yaml
 from pycti import OpenCTIConnectorHelper, get_config_variable
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+from microservices.classify_report import classify_report
+from microservices.make_pdf import render_page_to_pdf
+
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
 
@@ -81,8 +85,6 @@ BROWSER_UA = (
 )
 
 BROWSER_RECYCLE_EVERY = 50
-
-CHALLENGE_MARKERS = ("just a moment", "attention required", "cf-browser-verification")
 
 MIN_VALID_YEAR = 1990
 
@@ -205,11 +207,11 @@ class USNewsConnector:
 
     def __init__(self):
         config_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yml")
-        config = (
-            yaml.load(open(config_file_path, encoding="utf-8"), Loader=yaml.FullLoader)
-            if os.path.isfile(config_file_path)
-            else {}
-        )
+        if os.path.isfile(config_file_path):
+            with open(config_file_path, encoding="utf-8") as fh:
+                config = yaml.safe_load(fh) or {}
+        else:
+            config = {}
 
         self.helper = OpenCTIConnectorHelper(config)
 
@@ -401,77 +403,11 @@ class USNewsConnector:
     # PDF rendering (Playwright)
     # ------------------------------------------------------------------ #
 
-    def _auto_scroll(self, page):
-        """Scroll to the page bottom to trigger lazy-loaded media before render.
-
-        Guards against infinite-scroll pages with both a pixel cap (maxScroll)
-        and a wall-clock cap (maxTimeMs). Whichever fires first stops the scroll
-        and resets to the top.
-        """
-        page.evaluate(
-            """
-            async () => {
-              await new Promise((resolve) => {
-                let total = 0;
-                const step = 400;
-                const maxScroll = 100000;
-                const maxTimeMs = 15000;
-                const start = Date.now();
-                const timer = setInterval(() => {
-                  window.scrollBy(0, step);
-                  total += step;
-                  if (total >= document.body.scrollHeight
-                      || total >= maxScroll
-                      || Date.now() - start > maxTimeMs) {
-                    clearInterval(timer);
-                    window.scrollTo(0, 0);
-                    resolve();
-                  }
-                }, 100);
-              });
-            }
-            """
-        )
-
-    def _render_pdf(self, browser, url):
-        """Render an article page to PDF.
-
-        Mirrors the Trellix connector render path: fresh context per page,
-        networkidle wait, challenge/block detection, auto-scroll, settle, PDF.
-        No footer is rendered.
-        """
-        context = browser.new_context(
-            viewport={"width": 1280, "height": 1696},
-            user_agent=BROWSER_UA,
-        )
-        page = context.new_page()
-        try:
-            page.goto(url, wait_until="networkidle", timeout=self.nav_timeout_ms)
-
-            title = (page.title() or "").lower()
-            if any(marker in title for marker in CHALLENGE_MARKERS):
-                raise RuntimeError("Edge challenge interstitial detected")
-
-            if "blocked" in title:
-                raise RuntimeError("Bot detection block page detected")
-
-            self._auto_scroll(page)
-            page.wait_for_timeout(1500)
-
-            return page.pdf(
-                print_background=True,
-                margin={"top": "10mm", "bottom": "10mm", "left": "8mm", "right": "8mm"},
-                format="A4",
-            )
-        finally:
-            page.close()
-            context.close()
-
     def _render_with_retry(self, browser, url):
         delay = self.request_delay
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_pdf(browser, url)
+                return render_page_to_pdf(browser, url, connector_name="US News", nav_timeout_ms=self.nav_timeout_ms)
             except Exception as exc:  # noqa: BLE001
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for {url}: {exc}"
@@ -502,12 +438,18 @@ class USNewsConnector:
             description=f"Source article on usnews.com ({item['feed']} section)",
         )
 
+        _report_types = classify_report(
+            title=name, description=description, content=description or "",
+            source="US News", source_url=url,
+            default_types=[self.report_type],
+        )
+
         report = self.helper.api.report.create(
             stix_id=_report_id(url),
             name=name,
             description=description,
             published=published,
-            report_types=[self.report_type],
+            report_types=_report_types,
             confidence=self.confidence,
             createdBy=self.author_id,
             objectMarking=[self.marking_id],
