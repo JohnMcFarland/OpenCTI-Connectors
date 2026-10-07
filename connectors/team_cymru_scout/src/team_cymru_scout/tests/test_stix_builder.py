@@ -218,6 +218,7 @@ class TestSendBundle(unittest.TestCase):
         grouping = builder.bundle[-1]
         self.assertIsInstance(grouping, stix2.Grouping)
         self.assertEqual(grouping.context, "suspicious-activity")
+        self.assertTrue(grouping.name.startswith("Enrichment 8.8.8.8 "))
         self.assertIn(_FAKE_IDS["IPv4-Addr"], grouping.object_refs)
         for obj in builder.bundle[:-1]:
             self.assertIn(obj.id, grouping.object_refs)

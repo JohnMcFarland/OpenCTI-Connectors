@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 from urllib.parse import quote
 
 import pycountry
@@ -247,7 +248,7 @@ class TeamCymruScoutStixBuilder:
         grouping = stix2.Grouping(
             id=_grouping_id(self._obs_value),
             created_by_ref=self.author,
-            name=f"Team Cymru Scout: {self._obs_value}",
+            name=f"Enrichment {self._obs_value} {datetime.now(timezone.utc).strftime('%Y-%m-%d')}",
             context="suspicious-activity",
             object_refs=object_refs,
             object_marking_refs=[self.tlp_marking_id],
