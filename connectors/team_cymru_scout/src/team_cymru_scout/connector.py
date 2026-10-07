@@ -11,12 +11,13 @@ _SOURCE_NAME = "Team Cymru Scout"
 
 _SUPPORTED_TYPES = frozenset({"IPv4-Addr", "IPv6-Addr", "Domain-Name"})
 
-_ALLOWED_TLP = frozenset({
-    "TLP:CLEAR",
-    "TLP:GREEN",
-    "TLP:AMBER",
-    "TLP:AMBER+STRICT",
-})
+_TLP_HIERARCHY = ["TLP:CLEAR", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED"]
+
+
+def _parse_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).lower() in ("true", "1", "yes")
 
 
 class TeamCymruScoutConnector:
@@ -40,11 +41,13 @@ class TeamCymruScoutConnector:
                 "[TeamCymruScout] TEAM_CYMRU_SCOUT_API_KEY is required."
             )
 
-        self.use_foundation = get_config_variable(
-            "TEAM_CYMRU_SCOUT_USE_FOUNDATION_API",
-            ["team_cymru_scout", "use_foundation_api"],
-            config,
-            default=True,
+        self.use_foundation = _parse_bool(
+            get_config_variable(
+                "TEAM_CYMRU_SCOUT_USE_FOUNDATION_API",
+                ["team_cymru_scout", "use_foundation_api"],
+                config,
+                default=True,
+            )
         )
         self.max_pdns = int(
             get_config_variable(
@@ -111,13 +114,17 @@ class TeamCymruScoutConnector:
             f"[TeamCymruScout] TLP marking resolved: {tlp_name} -> {self.tlp_marking_id}"
         )
 
-        max_tlp_name = get_config_variable(
+        self.max_tlp = get_config_variable(
             "TEAM_CYMRU_SCOUT_MAX_TLP",
             ["team_cymru_scout", "max_tlp"],
             config,
             default="TLP:AMBER+STRICT",
         )
-        self.max_tlp = max_tlp_name
+        if self.max_tlp not in _TLP_HIERARCHY:
+            raise ValueError(
+                f"[TeamCymruScout] Invalid max_tlp '{self.max_tlp}'. "
+                f"Must be one of {_TLP_HIERARCHY}."
+            )
 
         usage = self.client.get_usage()
         if usage:
@@ -129,7 +136,7 @@ class TeamCymruScoutConnector:
             )
 
     def _get_entity_tlp(self, entity: dict) -> str | None:
-        markings = entity.get("objectMarking", [])
+        markings = entity.get("objectMarking") or []
         for m in markings:
             defn = m.get("definition", "")
             if defn.startswith("TLP:"):
@@ -140,42 +147,43 @@ class TeamCymruScoutConnector:
         tlp = self._get_entity_tlp(entity)
         if tlp is None:
             return True
-        return tlp in _ALLOWED_TLP
+        if tlp not in _TLP_HIERARCHY:
+            return False
+        return _TLP_HIERARCHY.index(tlp) <= _TLP_HIERARCHY.index(self.max_tlp)
 
     def _normalize_foundation(self, data: dict) -> dict:
-        as_info = data.get("as_info", [])
-        asn = as_info[0]["asn"] if as_info else None
-        as_name = as_info[0]["as_name"] if as_info else None
-        insights_data = data.get("insights", {})
-        pdns_raw = data.get("pdns", [])
+        as_info = data.get("as_info") or []
+        asn = as_info[0].get("asn") if as_info else None
+        as_name = as_info[0].get("as_name") if as_info else None
+        insights_data = data.get("insights") or {}
+        pdns_raw = data.get("pdns") or []
         pdns = [d["domain"] for d in pdns_raw if d.get("domain")]
-        services = data.get("services", [])
 
         return {
             "country_code": data.get("country_code"),
             "asn": asn,
             "as_name": as_name,
             "insights_rating": insights_data.get("overall_rating"),
-            "insights": insights_data.get("insights", []),
+            "insights": insights_data.get("insights") or [],
             "tags": data.get("tags") or [],
             "pdns_domains": pdns[: self.max_pdns],
-            "open_ports": services,
+            "open_ports": data.get("services") or [],
         }
 
     def _normalize_details(self, data: dict) -> dict:
-        identity = data.get("identity", {})
-        whois = data.get("whois", {})
-        summary = data.get("summary", {})
-        insights_data = summary.get("insights", {})
+        identity = data.get("identity") or {}
+        whois = data.get("whois") or {}
+        summary = data.get("summary") or {}
+        insights_data = summary.get("insights") or {}
 
         asn = identity.get("asn") or summary.get("bgp_asn")
         as_name = identity.get("as_name") or summary.get("bgp_asname")
         cc = summary.get("geo_ip_cc") or whois.get("cc")
 
-        pdns_raw = summary.get("pdns", {}).get("top_pdns", [])
+        pdns_raw = (summary.get("pdns") or {}).get("top_pdns") or []
         pdns = [d["domain"] for d in pdns_raw if d.get("domain")]
 
-        ports_raw = summary.get("open_ports", {}).get("top_open_ports", [])
+        ports_raw = (summary.get("open_ports") or {}).get("top_open_ports") or []
         tags = summary.get("tags") or identity.get("tags") or []
 
         return {
@@ -183,7 +191,7 @@ class TeamCymruScoutConnector:
             "asn": asn,
             "as_name": as_name,
             "insights_rating": insights_data.get("overall_rating"),
-            "insights": insights_data.get("insights", []),
+            "insights": insights_data.get("insights") or [],
             "tags": tags,
             "pdns_domains": pdns[: self.max_pdns],
             "open_ports": ports_raw,
@@ -250,7 +258,7 @@ class TeamCymruScoutConnector:
         if raw is None:
             return f"No data returned from Scout Search API for {domain_value}."
 
-        ips = raw.get("ips", [])
+        ips = raw.get("ips") or []
         if not ips:
             return f"Scout returned no IP associations for {domain_value}."
 
@@ -264,24 +272,21 @@ class TeamCymruScoutConnector:
             if not ip_value:
                 continue
 
-            as_info = ip_entry.get("as_info", [])
-            asn = as_info[0]["asn"] if as_info else None
-            as_name = as_info[0]["as_name"] if as_info else None
+            as_info = ip_entry.get("as_info") or []
+            asn = as_info[0].get("asn") if as_info else None
+            as_name = as_info[0].get("as_name") if as_info else None
 
             builder.create_domain_ip_resolves_to(ip_value, asn, as_name)
 
-        tags = []
-        insights_list = []
+        first_ip = ips[0]
+        tags = first_ip.get("tags") or []
         insights_rating = None
-        if ips:
-            first_ip = ips[0]
-            tags = first_ip.get("tags", [])
-            summary = first_ip.get("summary", {})
-            if summary:
-                insights_data = summary.get("insights", {})
-                if insights_data:
-                    insights_rating = insights_data.get("overall_rating")
-                    insights_list = insights_data.get("insights", [])
+        insights_list = []
+        summary = first_ip.get("summary") or {}
+        insights_data = summary.get("insights") or {}
+        if insights_data:
+            insights_rating = insights_data.get("overall_rating")
+            insights_list = insights_data.get("insights") or []
 
         builder.create_assessment_note(
             insights_rating, insights_list, tags,
@@ -307,10 +312,8 @@ class TeamCymruScoutConnector:
 
         if entity_type in ("IPv4-Addr", "IPv6-Addr"):
             return self._enrich_ip(opencti_entity, stix_entity)
-        elif entity_type == "Domain-Name":
-            return self._enrich_domain(opencti_entity, stix_entity)
 
-        return f"No handler for entity type: {entity_type}"
+        return self._enrich_domain(opencti_entity, stix_entity)
 
     def start(self):
         self.helper.listen(message_callback=self._process_message)

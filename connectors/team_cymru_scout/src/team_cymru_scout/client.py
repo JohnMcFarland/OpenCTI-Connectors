@@ -1,4 +1,5 @@
 import json
+from urllib.parse import quote
 
 import requests
 from pycti import OpenCTIConnectorHelper
@@ -60,7 +61,7 @@ class TeamCymruScoutClient:
 
     def get_ip_details(self, ip: str) -> dict | None:
         """Full IP enrichment via Details API (4 query credits)."""
-        return self._get(f"{_BASE_URL}/api/scout/ip/{ip}/details")
+        return self._get(f"{_BASE_URL}/api/scout/ip/{quote(ip, safe='')}/details")
 
     def get_ip_foundation(self, ip: str) -> dict | None:
         """Lightweight IP enrichment via Foundation API (1 foundation credit)."""

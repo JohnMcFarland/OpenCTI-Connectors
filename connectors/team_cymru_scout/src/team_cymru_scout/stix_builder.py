@@ -1,9 +1,9 @@
 import uuid
+from urllib.parse import quote
 
 import pycountry
 import stix2
 from pycti import (
-    Identity,
     Location,
     OpenCTIConnectorHelper,
     StixCoreRelationship,
@@ -52,13 +52,12 @@ class TeamCymruScoutStixBuilder:
 
         self._ext_ref = stix2.ExternalReference(
             source_name="Team Cymru Scout",
-            url=f"https://scout.cymru.com/scout/details?query={self._obs_value}",
+            url=f"https://scout.cymru.com/scout/details?query={quote(self._obs_value, safe='')}",
             description=f"Team Cymru Scout lookup for {self._obs_value}",
         )
 
     def _add(self, *objects):
-        for obj in objects:
-            self.bundle.append(obj)
+        self.bundle.extend(objects)
 
     def _make_relationship(
         self, rel_type: str, source_id: str, target_id: str, description: str = "",
