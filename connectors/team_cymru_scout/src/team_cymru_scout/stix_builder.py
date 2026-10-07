@@ -15,11 +15,15 @@ _RATING_SCORES = {
     "no_rating": 20,
 }
 
-_NOTE_NAMESPACE = uuid.UUID("7c3e1a4b-9d2f-5e6c-8a1b-0c3d5e7f9a2b")
+_NS = uuid.UUID("7c3e1a4b-9d2f-5e6c-8a1b-0c3d5e7f9a2b")
 
 
 def _note_id(observable_value: str) -> str:
-    return f"note--{uuid.uuid5(_NOTE_NAMESPACE, observable_value)}"
+    return f"note--{uuid.uuid5(_NS, observable_value)}"
+
+
+def _grouping_id(observable_value: str) -> str:
+    return f"grouping--{uuid.uuid5(_NS, f'grouping:{observable_value}')}"
 
 
 def rating_to_score(rating: str | None) -> int | None:
@@ -236,6 +240,22 @@ class TeamCymruScoutStixBuilder:
             return "No enrichment data to send."
 
         self.bundle.append(self.author)
+
+        object_refs = [self.stix_entity["id"]]
+        object_refs.extend(obj.id for obj in self.bundle)
+
+        grouping = stix2.Grouping(
+            id=_grouping_id(self._obs_value),
+            created_by_ref=self.author,
+            name=f"Team Cymru Scout: {self._obs_value}",
+            context="suspicious-activity",
+            object_refs=object_refs,
+            object_marking_refs=[self.tlp_marking_id],
+            confidence=self.helper.connect_confidence_level,
+            external_references=[self._ext_ref],
+            allow_custom=True,
+        )
+        self.bundle.append(grouping)
 
         self.helper.log_debug(
             f"[TeamCymruScout] Sending bundle: {len(self.bundle)} objects"

@@ -207,4 +207,32 @@ class TestSendBundle(unittest.TestCase):
         result = builder.send_bundle()
         self.assertIn("1 bundle(s)", result)
         builder.helper.send_stix2_bundle.assert_called_once()
-        self.assertEqual(builder.bundle[-1], builder.author)
+
+    def test_grouping_contains_all_objects(self):
+        builder = _make_builder("IPv4-Addr")
+        builder.create_asn_belongs_to(13335, "CLOUDFLARENET")
+        builder.create_assessment_note("malicious", [], [], [])
+        builder.helper.stix2_create_bundle.return_value = '{"objects":[]}'
+        builder.helper.send_stix2_bundle.return_value = ["bundle-1"]
+        builder.send_bundle()
+        grouping = builder.bundle[-1]
+        self.assertIsInstance(grouping, stix2.Grouping)
+        self.assertEqual(grouping.context, "suspicious-activity")
+        self.assertIn(_FAKE_IDS["IPv4-Addr"], grouping.object_refs)
+        for obj in builder.bundle[:-1]:
+            self.assertIn(obj.id, grouping.object_refs)
+
+    def test_grouping_id_is_deterministic(self):
+        b1 = _make_builder("IPv4-Addr", "8.8.8.8")
+        b1.create_assessment_note("malicious", [], [], [])
+        b1.helper.stix2_create_bundle.return_value = '{"objects":[]}'
+        b1.helper.send_stix2_bundle.return_value = ["bundle-1"]
+        b1.send_bundle()
+
+        b2 = _make_builder("IPv4-Addr", "8.8.8.8")
+        b2.create_assessment_note("suspicious", [], [], [])
+        b2.helper.stix2_create_bundle.return_value = '{"objects":[]}'
+        b2.helper.send_stix2_bundle.return_value = ["bundle-1"]
+        b2.send_bundle()
+
+        self.assertEqual(b1.bundle[-1].id, b2.bundle[-1].id)
