@@ -1,0 +1,20 @@
+opencti:
+  url: 'http://localhost:8080'
+  token: 'ChangeMe'
+
+connector:
+  id: 'TeamCymruScout'
+  type: 'INTERNAL_ENRICHMENT'
+  name: 'Team Cymru Scout'
+  scope: 'IPv4-Addr,IPv6-Addr,Domain-Name'
+  auto: false
+  log_level: 'info'
+  expose_metrics: false
+
+team_cymru_scout:
+  api_key: 'ChangeMe'
+  tlp: 'TLP:AMBER'
+  max_tlp: 'TLP:AMBER+STRICT'
+  use_foundation_api: true
+  max_pdns: 10
+  domain_search_size: 10

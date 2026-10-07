@@ -1,0 +1,30 @@
+version: "3"
+services:
+  connector-team-cymru-scout:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custom/connector-team-cymru-scout:latest
+    environment:
+      - OPENCTI_URL=http://localhost:8080
+      - OPENCTI_TOKEN=ChangeMe
+      - CONNECTOR_ID=ChangeMe
+      - CONNECTOR_NAME=Team Cymru Scout
+      - CONNECTOR_TYPE=INTERNAL_ENRICHMENT
+      - CONNECTOR_SCOPE=IPv4-Addr,IPv6-Addr,Domain-Name
+      - CONNECTOR_LOG_LEVEL=info
+      - CONNECTOR_CONFIDENCE_LEVEL=70
+      - CONNECTOR_AUTO=false
+      # Team Cymru Scout API key (generate at scout.cymru.com/api_keys)
+      - TEAM_CYMRU_SCOUT_API_KEY=ChangeMe
+      # TLP marking applied to all enrichment objects (paid feed — AMBER default)
+      - TEAM_CYMRU_SCOUT_TLP=TLP:AMBER
+      # Maximum TLP of observables that will be sent to Scout (skip TLP:RED)
+      - TEAM_CYMRU_SCOUT_MAX_TLP=TLP:AMBER+STRICT
+      # true = Foundation API (1 credit, lighter); false = Details API (4 credits, full)
+      - TEAM_CYMRU_SCOUT_USE_FOUNDATION_API=true
+      # Maximum passive DNS domains to create as relationships per IP enrichment
+      - TEAM_CYMRU_SCOUT_MAX_PDNS=10
+      # Maximum IPs returned for domain search enrichment
+      - TEAM_CYMRU_SCOUT_DOMAIN_SEARCH_SIZE=10
+    restart: always
