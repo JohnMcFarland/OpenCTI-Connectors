@@ -1,6 +1,9 @@
+import time
 from pathlib import Path
 
+from datetime import datetime, timezone
 import stix2
+import uuid
 import yaml
 from pycti import Identity, OpenCTIConnectorHelper, get_config_variable
 
@@ -9,7 +12,11 @@ from .stix_builder import TeamCymruScoutStixBuilder, rating_to_score
 
 _SOURCE_NAME = "Team Cymru Scout"
 
-_SUPPORTED_TYPES = frozenset({"IPv4-Addr", "IPv6-Addr", "Domain-Name"})
+_SUPPORTED_OBSERVABLE_TYPES = frozenset({"IPv4-Addr", "IPv6-Addr", "Domain-Name"})
+_SUPPORTED_CONTAINER_TYPES = frozenset({
+    "Report", "Grouping", "Case-Incident", "Case-Rfi", "Case-Rft",
+})
+_SUPPORTED_TYPES = _SUPPORTED_OBSERVABLE_TYPES | _SUPPORTED_CONTAINER_TYPES
 
 _TLP_HIERARCHY = ["TLP:CLEAR", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED"]
 
@@ -18,6 +25,62 @@ def _parse_bool(value) -> bool:
     if isinstance(value, bool):
         return value
     return str(value).lower() in ("true", "1", "yes")
+
+
+# GraphQL query to pull observables from an OpenCTI container
+_CONTAINER_OBSERVABLES_QUERY = """
+    query ContainerObservables($id: String!, $types: [String]) {
+        container(id: $id) {
+            objects(types: $types, first: 500) {
+                edges {
+                    node {
+                        ... on IPv4Addr {
+                            id
+                            standard_id
+                            entity_type
+                            observable_value
+                            objectMarking {
+                                id
+                                definition
+                            }
+                        }
+                        ... on IPv6Addr {
+                            id
+                            standard_id
+                            entity_type
+                            observable_value
+                            objectMarking {
+                                id
+                                definition
+                            }
+                        }
+                        ... on DomainName {
+                            id
+                            standard_id
+                            entity_type
+                            observable_value
+                            objectMarking {
+                                id
+                                definition
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+"""
+
+# GraphQL mutation to add an object to a container's object_refs
+_ADD_TO_CONTAINER_MUTATION = """
+    mutation ContainerAddObject($id: ID!, $input: StixRefRelationshipAddInput!) {
+        containerEdit(id: $id) {
+            relationAdd(input: $input) {
+                id
+            }
+        }
+    }
+"""
 
 
 class TeamCymruScoutConnector:
@@ -74,7 +137,7 @@ class TeamCymruScoutConnector:
             type="Organization",
             name=_SOURCE_NAME,
             description=(
-                "Team Cymru Scout — real-time threat intelligence and "
+                "Team Cymru Scout -- real-time threat intelligence and "
                 "internet infrastructure tracking platform."
             ),
             update=True,
@@ -151,6 +214,33 @@ class TeamCymruScoutConnector:
             return False
         return _TLP_HIERARCHY.index(tlp) <= _TLP_HIERARCHY.index(self.max_tlp)
 
+    def _add_to_container(self, container_id: str, stix_id: str) -> bool:
+        """Add a STIX object to a container, with retry for async ingestion."""
+        for attempt in range(4):
+            try:
+                self.helper.api.query(
+                    _ADD_TO_CONTAINER_MUTATION,
+                    {
+                        "id": container_id,
+                        "input": {
+                            "toId": stix_id,
+                            "relationship_type": "object",
+                        },
+                    },
+                )
+                return True
+            except Exception as exc:
+                msg = str(exc)
+                if "internal_id" in msg and attempt < 3:
+                    time.sleep(3 * (attempt + 1))
+                    continue
+                self.helper.log_warning(
+                    f"[TeamCymruScout] Could not add {stix_id} "
+                    f"to container: {exc}"
+                )
+                return False
+        return False
+
     def _normalize_foundation(self, data: dict) -> dict:
         as_info = data.get("as_info") or []
         asn = as_info[0].get("asn") if as_info else None
@@ -197,19 +287,19 @@ class TeamCymruScoutConnector:
             "open_ports": ports_raw,
         }
 
-    def _enrich_ip(self, opencti_entity: dict, stix_entity: dict) -> str:
+    def _enrich_ip(self, opencti_entity: dict, stix_entity: dict) -> tuple[str, list[str]]:
         ip_value = opencti_entity.get("observable_value", "")
         self.helper.log_info(f"[TeamCymruScout] Enriching IP: {ip_value}")
 
         if self.use_foundation:
             raw = self.client.get_ip_foundation(ip_value)
             if raw is None:
-                return f"No data returned from Scout Foundation API for {ip_value}."
+                return (f"No data returned from Scout Foundation API for {ip_value}.", [])
             enrichment = self._normalize_foundation(raw)
         else:
             raw = self.client.get_ip_details(ip_value)
             if raw is None:
-                return f"No data returned from Scout Details API for {ip_value}."
+                return (f"No data returned from Scout Details API for {ip_value}.", [])
             enrichment = self._normalize_details(raw)
 
         builder = TeamCymruScoutStixBuilder(
@@ -250,17 +340,17 @@ class TeamCymruScoutConnector:
 
         return builder.send_bundle()
 
-    def _enrich_domain(self, opencti_entity: dict, stix_entity: dict) -> str:
+    def _enrich_domain(self, opencti_entity: dict, stix_entity: dict) -> tuple[str, list[str]]:
         domain_value = opencti_entity.get("observable_value", "")
         self.helper.log_info(f"[TeamCymruScout] Enriching domain: {domain_value}")
 
         raw = self.client.search(domain_value, size=self.domain_search_size)
         if raw is None:
-            return f"No data returned from Scout Search API for {domain_value}."
+            return (f"No data returned from Scout Search API for {domain_value}.", [])
 
         ips = raw.get("ips") or []
         if not ips:
-            return f"Scout returned no IP associations for {domain_value}."
+            return (f"Scout returned no IP associations for {domain_value}.", [])
 
         builder = TeamCymruScoutStixBuilder(
             self.helper, self.author, self.tlp_marking_id,
@@ -294,6 +384,129 @@ class TeamCymruScoutConnector:
 
         return builder.send_bundle()
 
+    def _enrich_container(self, opencti_entity: dict, stix_entity: dict) -> str:
+        """Pull all supported observables from a container and enrich each one."""
+        container_id = opencti_entity.get("id")
+        entity_type = opencti_entity.get("entity_type", "")
+        self.helper.log_info(
+            f"[TeamCymruScout] Enriching container {entity_type}: {container_id}"
+        )
+
+        # Query the container for all IPv4/IPv6/Domain observables
+        result = self.helper.api.query(
+            _CONTAINER_OBSERVABLES_QUERY,
+            {"id": container_id, "types": list(_SUPPORTED_OBSERVABLE_TYPES)},
+        )
+
+        container_data = (result or {}).get("data", {}).get("container")
+        if container_data is None:
+            return f"Container {container_id} not found."
+
+        edges = container_data.get("objects", {}).get("edges", [])
+        observables = [
+            e["node"] for e in edges
+            if e.get("node", {}).get("id")
+        ]
+
+        if not observables:
+            return f"No enrichable observables in {entity_type} {container_id}."
+
+        self.helper.log_info(
+            f"[TeamCymruScout] Found {len(observables)} observable(s) in container"
+        )
+
+        enriched = 0
+        skipped = 0
+        added = 0
+        all_new_ids = []
+        for obs in observables:
+            obs_type = obs.get("entity_type", "")
+            obs_value = obs.get("observable_value", "")
+            obs_stix_id = obs.get("standard_id") or obs.get("id")
+            obs_stix_entity = {"id": obs_stix_id}
+
+            # Per-observable TLP gating
+            if not self._is_tlp_allowed(obs):
+                tlp = self._get_entity_tlp(obs)
+                self.helper.log_info(
+                    f"[TeamCymruScout] Skipping {obs_value} -- TLP {tlp} exceeds max"
+                )
+                skipped += 1
+                continue
+
+            try:
+                new_ids = []
+                if obs_type in ("IPv4-Addr", "IPv6-Addr"):
+                    _, new_ids = self._enrich_ip(obs, obs_stix_entity)
+                elif obs_type == "Domain-Name":
+                    _, new_ids = self._enrich_domain(obs, obs_stix_entity)
+                else:
+                    continue
+
+                all_new_ids.extend(new_ids)
+                enriched += 1
+            except Exception as exc:
+                self.helper.log_warning(
+                    f"[TeamCymruScout] Error enriching {obs_value}: {exc}"
+                )
+
+            # Throttle between Scout API calls to pace credit burn
+            time.sleep(2)
+
+        # Wait for RabbitMQ bundle processing, then batch-add to container
+        if all_new_ids:
+            self.helper.log_info(
+                f"[TeamCymruScout] Waiting 15s for {len(all_new_ids)} "
+                f"objects to be ingested before container association"
+            )
+            time.sleep(15)
+            for sid in all_new_ids:
+                if self._add_to_container(container_id, sid):
+                    added += 1
+
+            # Create a single summary Grouping for the container run
+            obs_stix_ids = [
+                o.get("standard_id") or o.get("id") for o in observables
+            ]
+            all_refs = obs_stix_ids + all_new_ids
+            grp_ns = uuid.UUID("d4565c42-e0b4-4f6a-a345-1b5cb3c8d2a0")
+            grp_id = "grouping--" + str(
+                uuid.uuid5(grp_ns, f"container-enrichment-{container_id}")
+            )
+            summary_grouping = stix2.Grouping(
+                id=grp_id,
+                created_by_ref=self.author,
+                name=(
+                    f"Scout Enrichment: {entity_type} "
+                    f"{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}"
+                ),
+                context="suspicious-activity",
+                object_refs=all_refs,
+                object_marking_refs=[self.tlp_marking_id],
+                confidence=self.helper.connect_confidence_level,
+                allow_custom=True,
+            )
+            grp_bundle = self.helper.stix2_create_bundle(
+                [self.author, summary_grouping]
+            )
+            self.helper.send_stix2_bundle(grp_bundle)
+            self.helper.log_info(
+                f"[TeamCymruScout] Created summary Grouping {grp_id} "
+                f"with {len(all_refs)} refs"
+            )
+            # Wait for summary grouping ingestion, then add it too
+            time.sleep(5)
+            self._add_to_container(container_id, grp_id)
+
+        summary = (
+            f"Container enrichment: "
+            f"{enriched} enriched, {skipped} TLP-skipped, "
+            f"{added} objects added to container, "
+            f"{len(observables)} total."
+        )
+        self.helper.log_info(f"[TeamCymruScout] {summary}")
+        return summary
+
     def _process_message(self, data: dict) -> str:
         opencti_entity = data["enrichment_entity"]
         stix_id = opencti_entity.get("standard_id") or opencti_entity.get("id")
@@ -303,17 +516,23 @@ class TeamCymruScoutConnector:
         if entity_type not in _SUPPORTED_TYPES:
             return f"Unsupported entity type: {entity_type}"
 
+        # Route container types to batch enrichment
+        if entity_type in _SUPPORTED_CONTAINER_TYPES:
+            return self._enrich_container(opencti_entity, stix_entity)
+
         if not self._is_tlp_allowed(opencti_entity):
             tlp = self._get_entity_tlp(opencti_entity)
             self.helper.log_info(
-                f"[TeamCymruScout] Skipping {entity_type} — TLP {tlp} exceeds max"
+                f"[TeamCymruScout] Skipping {entity_type} -- TLP {tlp} exceeds max"
             )
             return f"Skipped: TLP {tlp} exceeds configured maximum ({self.max_tlp})."
 
         if entity_type in ("IPv4-Addr", "IPv6-Addr"):
-            return self._enrich_ip(opencti_entity, stix_entity)
+            summary, _ = self._enrich_ip(opencti_entity, stix_entity)
+            return summary
 
-        return self._enrich_domain(opencti_entity, stix_entity)
+        summary, _ = self._enrich_domain(opencti_entity, stix_entity)
+        return summary
 
     def start(self):
         self.helper.listen(message_callback=self._process_message)

@@ -236,9 +236,10 @@ class TeamCymruScoutStixBuilder:
         )
         self._add(note)
 
-    def send_bundle(self) -> str:
+    def send_bundle(self) -> tuple[str, list[str]]:
+        """Send the STIX bundle. Returns (summary, list_of_new_stix_ids)."""
         if not self.bundle:
-            return "No enrichment data to send."
+            return ("No enrichment data to send.", [])
 
         self.bundle.append(self.author)
 
@@ -258,10 +259,16 @@ class TeamCymruScoutStixBuilder:
         )
         self.bundle.append(grouping)
 
+        # Collect STIX IDs of enrichment artifacts
+        # Exclude author Identity and per-observable Grouping
+        exclude = {self.author.id, grouping.id}
+        stix_ids = [obj.id for obj in self.bundle if obj.id not in exclude]
+
         self.helper.log_debug(
             f"[TeamCymruScout] Sending bundle: {len(self.bundle)} objects"
         )
         self.helper.metric.inc("record_send", len(self.bundle))
         serialized = self.helper.stix2_create_bundle(self.bundle)
         bundles_sent = self.helper.send_stix2_bundle(serialized)
-        return f"Sent {len(bundles_sent)} bundle(s) ({len(self.bundle)} objects)."
+        summary = f"Sent {len(bundles_sent)} bundle(s) ({len(self.bundle)} objects)."
+        return (summary, stix_ids)
