@@ -1,0 +1,37 @@
+# MERICS OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  merics:
+    build:
+      # Parent context so the Dockerfile can copy the shared microservices/.
+      context: ..
+      dockerfile: merics/Dockerfile
+    container_name: opencti-connector-merics
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=MERICS
+      - CONNECTOR_SCOPE=merics
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service ---
+      - RENDER_SERVICE_URL=http://pdf-renderer:8080/render
+      - RENDER_TIMEOUT=120
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - MERICS_BASE_URL=https://merics.org
+      - MERICS_SITEMAP_URL=                        # empty = derived from base_url
+      - MERICS_POLL_INTERVAL=86400                 # seconds between enumeration runs (24h)
+      - MERICS_REQUEST_DELAY=3                     # seconds between article page loads
+      - MERICS_MAX_REPORTS=0                       # 0 = unlimited; set to 3 for a bounded test run
+      - MERICS_RENDER_RETRIES=3
+      - MERICS_CONFIDENCE=50                       # OpenCTI confidence 0-100 (Medium band)
+      - MERICS_REPORT_TYPE=open-source-reporting
+      - MERICS_TLP=TLP:CLEAR
+      - MERICS_AUTHOR_NAME=MERICS
+    restart: always
