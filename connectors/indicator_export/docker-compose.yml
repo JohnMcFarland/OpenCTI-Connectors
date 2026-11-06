@@ -1,0 +1,45 @@
+# Real values go in docker-compose.override.yml, which is never committed.
+# See docker-compose.override.yml.sample.
+services:
+  connector-indicator-export:
+    build: .
+    container_name: connector-indicator-export
+    restart: always
+    volumes:
+      # Holds the CSV snapshots and state.sqlite3. Treat it as AMBER+STRICT data.
+      - ./data:/data
+    environment:
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      - CONNECTOR_ID=
+      - CONNECTOR_NAME=Indicator Export
+      - CONNECTOR_SCOPE=indicator
+      - CONNECTOR_DURATION_PERIOD=PT1H
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Indicator lifecycle ---
+      # Stays true until you have reviewed a dry-run CSV. Nothing is written to
+      # OpenCTI or streamed while it is true.
+      - INDICATOR_DRY_RUN=true
+      - INDICATOR_AUTHOR_NAME=Indicator Export
+      - INDICATOR_CONFIDENCE_FLOOR=15
+      - INDICATOR_CONFIDENCE_CEILING=85
+      - INDICATOR_DECAY_DAYS=30
+      - INDICATOR_MAX_ERRORS=50
+      - INDICATOR_EXCLUDED_OBSERVABLE_TYPES=
+      - INDICATOR_EXCLUDED_LABELS=
+      # --- Export ---
+      # "debug" writes CSV files to /data. An IP address streams STIX to it.
+      - EXPORT_LOCATION=debug
+      - EXPORT_MARKING_CEILING=TLP:AMBER+STRICT
+      - EXPORT_MAX_LABELS=50
+      - EXPORT_EXCLUDED_ENTITY_TYPES=System,Organization,Individual,Incident
+      - EXPORT_DATA_DIR=/data
+      - EXPORT_CSV_RETENTION=5
+      # Used only when EXPORT_LOCATION is an IP address.
+      - EXPORT_SCHEME=https
+      - EXPORT_PORT=
+      - EXPORT_PATH=/
+      - EXPORT_AUTH_TOKEN=
+      - EXPORT_VERIFY_TLS=true
+      - EXPORT_BATCH_SIZE=500
+      - EXPORT_TIMEOUT_SECONDS=30

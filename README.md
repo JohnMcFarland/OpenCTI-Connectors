@@ -42,7 +42,7 @@ All ingestion and enrichment logic is governed by the **Four Cs** framework, whi
 
 **Separation of concerns.** External reporting lives in `Report` containers. Internal observations and sensor alerts live in `Incident Response` containers. These are not interchangeable.
 
-**No Indicators.** Indicators are generated automatically by the OpenCTI platform from Observables when detection rules are configured. Connectors in this repository do not create Indicator objects.
+**No Indicators.** Indicators are generated automatically by the OpenCTI platform from Observables when detection rules are configured. Connectors in this repository do not create Indicator objects, with two exceptions: `indicator_export` promotes Observables that meet its Attack Pattern rule, and enrichment may create YARA Indicators.
 
 **Identity-anchored observables.** Every Observable ingested by a connector carries at least one `related-to` relationship pointing to a named Identity (Threat Actor, Intrusion Set, or Organization). Unanchored observables are noise.
 

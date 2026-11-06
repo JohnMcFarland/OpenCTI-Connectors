@@ -1,5 +1,5 @@
 """
-pattern_builder.py — STIX 2.1 Pattern Construction
+patterns.py - STIX 2.1 pattern construction.
 
 Constructs deterministic STIX 2.1 pattern strings from OpenCTI observable
 dicts. Determinism is a hard requirement: the same observable must always

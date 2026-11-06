@@ -1,0 +1,26 @@
+# Add this block to your docker-compose.override.yml.
+services:
+  connector-indicator-export:
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=ChangeMe
+      - CONNECTOR_ID=ChangeMe            # generate once: uuidgen
+
+      # Where Indicators are exported:
+      #   debug      write a CSV snapshot to ./data each cycle
+      #   10.0.0.50  stream STIX 2.1 bundles to that IPv4 or IPv6 address
+      # Anything else, including a hostname, stops the connector at startup.
+      - EXPORT_LOCATION=debug
+
+      # Needed only when EXPORT_LOCATION is an IP address. The URL becomes
+      # EXPORT_SCHEME://EXPORT_LOCATION:EXPORT_PORT/EXPORT_PATH
+      # - EXPORT_SCHEME=https
+      # - EXPORT_PORT=8443
+      # - EXPORT_PATH=/stix
+      # - EXPORT_AUTH_TOKEN=ChangeMe     # sent as a Bearer token if set
+      # A certificate must list the IP itself, so most IP targets need a CA
+      # bundle path here (or false, which turns verification off).
+      # - EXPORT_VERIFY_TLS=/data/ca.pem
+
+      # Change to false after reviewing a dry-run CSV.
+      - INDICATOR_DRY_RUN=true
