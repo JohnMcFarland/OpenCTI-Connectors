@@ -17,6 +17,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 from pycti import Indicator
 
 from .config import Settings
+from .grouping import grouping_day
 from .labels import ObservableContext, build_context
 from .opencti_client import OpenCTIClient, creator_id
 from .patterns import build_pattern
@@ -26,6 +27,20 @@ REASON_OBSERVABLE_MISSING = "OBSERVABLE_MISSING"
 REASON_NO_LONGER_QUALIFIES = "NO_LONGER_QUALIFIES"
 
 _MAX_NAME_LENGTH = 200
+
+# Diamond Model coverage. Every Indicator has infrastructure (the observable)
+# and capability (the Attack Pattern); adversary and victim raise the score.
+SCORE_BASE = 50
+SCORE_ADVERSARY_OR_VICTIM = 75
+SCORE_FULL_DIAMOND = 100
+
+
+def score_for(context: ObservableContext) -> int:
+    if context.has_adversary and context.has_victim:
+        return SCORE_FULL_DIAMOND
+    if context.has_adversary or context.has_victim:
+        return SCORE_ADVERSARY_OR_VICTIM
+    return SCORE_BASE
 
 
 @dataclass
@@ -146,7 +161,7 @@ class LifecycleManager:
         return result
 
     def context_for(self, observable_id: str, result: CycleResult) -> ObservableContext:
-        """Fetch relationships once per cycle, for confidence and labels both."""
+        """Fetch relationships once per cycle, for score and labels both."""
         if observable_id not in result.contexts:
             result.contexts[observable_id] = build_context(
                 observable_id, self.client.observable_relationships(observable_id)
@@ -193,7 +208,10 @@ class LifecycleManager:
             return None
 
         context = self.context_for(observable_id, result)
-        confidence, indicator_types = self._assess(context)
+        score = score_for(context)
+        indicator_types = (
+            ["anomalous-activity"] if score == SCORE_BASE else ["malicious-activity"]
+        )
         markings = observable.get("objectMarking") or [default_marking]
 
         existing = owned_by_observable.get(observable_id)
@@ -210,31 +228,26 @@ class LifecycleManager:
                 return None
             if found is None:
                 return self._promote(
-                    entry, pattern, stix_id, confidence, indicator_types,
+                    entry, pattern, stix_id, score, indicator_types,
                     markings, author_id, result,
                 )
             # Ours, but the based-on link is gone. Put it back.
             self.client.create_relationship(
-                found["id"], observable_id, "based-on", confidence, author_id,
+                found["id"], observable_id, "based-on", score, author_id,
                 [marking["id"] for marking in markings],
             )
             result.observables[found["id"]] = observable
             existing = found
 
-        self._sync(existing, entry, confidence, indicator_types, markings, author_id, result)
+        self._sync(existing, entry, score, indicator_types, markings, author_id, result)
         return existing["id"]
-
-    def _assess(self, context: ObservableContext) -> tuple:
-        if context.has_adversary_or_victim:
-            return self.settings.confidence_ceiling, ["malicious-activity"]
-        return self.settings.confidence_floor, ["anomalous-activity"]
 
     def _promote(
         self,
         entry: Qualifying,
         pattern: str,
         stix_id: str,
-        confidence: int,
+        score: int,
         indicator_types: List[str],
         markings: List[Dict[str, Any]],
         author_id: Optional[str],
@@ -251,7 +264,8 @@ class LifecycleManager:
             name=name,
             pattern=pattern,
             valid_from=valid_from,
-            confidence=confidence,
+            confidence=score,
+            x_opencti_score=score,
             indicator_types=indicator_types,
             x_opencti_main_observable_type=entity_type,
             createdBy=author_id,
@@ -268,7 +282,8 @@ class LifecycleManager:
                     "name": name,
                     "pattern": pattern,
                     "pattern_type": "stix",
-                    "confidence": confidence,
+                    "confidence": score,
+                    "x_opencti_score": score,
                     "created": now,
                     "modified": now,
                     "valid_from": valid_from,
@@ -283,13 +298,15 @@ class LifecycleManager:
             return None
 
         indicator_id = created["id"]
+        # Queued now, so it lands in a Grouping even if it is never exported.
+        self.store.queue_grouping(grouping_day(self.clock()), [indicator_id])
         result.observables[indicator_id] = observable
         self.client.create_relationship(
-            indicator_id, observable["id"], "based-on", confidence, author_id, marking_ids
+            indicator_id, observable["id"], "based-on", score, author_id, marking_ids
         )
         for attack_pattern_id in sorted(entry.attack_pattern_ids):
             self.client.create_relationship(
-                indicator_id, attack_pattern_id, "indicates", confidence,
+                indicator_id, attack_pattern_id, "indicates", score,
                 author_id, marking_ids,
             )
         return indicator_id
@@ -300,7 +317,7 @@ class LifecycleManager:
         self,
         indicator: Dict[str, Any],
         entry: Qualifying,
-        confidence: int,
+        score: int,
         indicator_types: List[str],
         markings: List[Dict[str, Any]],
         author_id: Optional[str],
@@ -321,10 +338,12 @@ class LifecycleManager:
                 self.store.clear_decay(indicator_id)
             result.stats["restored"] += 1
 
-        if indicator.get("confidence") != confidence or sorted(
-            indicator.get("indicator_types") or []
-        ) != sorted(indicator_types):
-            self.client.update_assessment(indicator_id, confidence, indicator_types)
+        if (
+            indicator.get("x_opencti_score") != score
+            or indicator.get("confidence") != score
+            or sorted(indicator.get("indicator_types") or []) != sorted(indicator_types)
+        ):
+            self.client.update_assessment(indicator_id, score, indicator_types)
 
         # Markings only ever get added here. A raised observable marking must
         # reach the Indicator; a lowered one is left for an analyst to review.
@@ -337,7 +356,7 @@ class LifecycleManager:
         marking_ids = sorted(current | {marking["id"] for marking in markings})
         for attack_pattern_id in sorted(entry.attack_pattern_ids - set(edges)):
             self.client.create_relationship(
-                indicator_id, attack_pattern_id, "indicates", confidence,
+                indicator_id, attack_pattern_id, "indicates", score,
                 author_id, marking_ids,
             )
         for attack_pattern_id in sorted(set(edges) - entry.attack_pattern_ids):

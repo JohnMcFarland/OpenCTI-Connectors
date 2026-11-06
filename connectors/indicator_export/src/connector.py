@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .config import Settings
+from .grouping import flush_groupings, grouping_day
 from .labels import LabelPolicy, ObservableContext, build_labels
 from .lifecycle import CycleResult, LifecycleManager
-from .markings import within_ceiling
+from .markings import is_blocked
 from .opencti_client import OpenCTIClient
 from .records import (
     STATUS_ACTIVE,
@@ -38,7 +39,7 @@ class IndicatorExportConnector:
         self.logger = helper.connector_logger
         self.lifecycle = LifecycleManager(client, store, settings, self.logger)
         self.policy = LabelPolicy(
-            marking_ceiling=settings.marking_ceiling,
+            blocked_markings=settings.blocked_markings,
             max_labels=settings.max_labels,
             excluded_entity_types=settings.excluded_entity_types,
         )
@@ -73,6 +74,7 @@ class IndicatorExportConnector:
             self.helper.api.work.to_processed(work_id, message, in_error=in_error)
 
     def _run_cycle(self) -> Tuple[str, bool]:
+        self._check_blocked_markings_exist()
         result = self.lifecycle.run_cycle()
         author_id = self.client.resolve_author()
         indicators = self.client.owned_indicators(author_id)
@@ -82,16 +84,51 @@ class IndicatorExportConnector:
         # and the next cycle tries again.
         export_failed = False
         try:
-            summary = self.sink.deliver(records, self.settings.dry_run)
+            summary, delivered = self.sink.deliver(records, self.settings.dry_run)
         except ExportError as exc:
             export_failed = True
+            delivered = exc.delivered
             summary = f"Export failed: {exc}"
             self.logger.error(summary)
 
+        grouped = 0
+        if not self.settings.dry_run:
+            grouped = self._update_groupings(author_id, delivered, result)
+
         stats = ", ".join(f"{key}={value}" for key, value in result.stats.items())
-        message = f"{summary}. Blocked by marking: {blocked}. {stats}"
+        message = f"{summary}. Blocked by marking: {blocked}. Grouped: {grouped}. {stats}"
         self.logger.info(message)
         return message, export_failed or result.stats["errors"] > 0
+
+    def _check_blocked_markings_exist(self) -> None:
+        """A blocked term that matches nothing is probably a typo, and would
+        silently block nothing."""
+        blocked = self.settings.blocked_markings
+        if not any(
+            is_blocked([marking], blocked)
+            for marking in self.client.marking_definitions()
+        ):
+            self.logger.warning(
+                f"No marking definition matches EXPORT_BLOCKED_MARKINGS: {sorted(blocked)}"
+            )
+
+    def _update_groupings(
+        self, author_id: str, delivered: Sequence[ExportRecord], result: CycleResult
+    ) -> int:
+        today = grouping_day(datetime.now(timezone.utc))
+        self.store.queue_grouping(
+            today, [record.opencti_id for record in delivered if record.opencti_id]
+        )
+        added, errors = flush_groupings(
+            self.client,
+            self.store,
+            self.logger,
+            author_id,
+            self.client.default_marking()["id"],
+            today,
+        )
+        result.stats["errors"] += errors
+        return added
 
     def _build_records(
         self, indicators: List[Dict[str, Any]], result: CycleResult
@@ -99,8 +136,8 @@ class IndicatorExportConnector:
         records: List[ExportRecord] = []
         blocked = 0
         for indicator in indicators + result.previews:
-            if not within_ceiling(
-                indicator.get("objectMarking") or [], self.settings.marking_ceiling
+            if is_blocked(
+                indicator.get("objectMarking") or [], self.settings.blocked_markings
             ):
                 blocked += 1
                 continue
@@ -167,6 +204,7 @@ class IndicatorExportConnector:
             observable_value=observable.get("observable_value") or "",
             indicator_types=tuple(indicator.get("indicator_types") or ()),
             confidence=indicator.get("confidence"),
+            score=indicator.get("x_opencti_score"),
             markings=tuple(m.get("definition") or "" for m in markings),
             marking_refs=tuple(m["standard_id"] for m in markings if m.get("standard_id")),
             status=self._status(indicator, result),
@@ -176,4 +214,5 @@ class IndicatorExportConnector:
             revoked=bool(indicator.get("revoked")),
             labels=labels.labels,
             labels_dropped=labels.dropped,
+            opencti_id=indicator.get("id"),
         )

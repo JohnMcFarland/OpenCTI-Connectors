@@ -67,23 +67,66 @@ def test_no_attack_pattern_means_no_indicator(store):
     assert client.indicators == {}
 
 
-def test_confidence_floor_without_adversary_context(store):
-    client = FakeClient()
-    client.qualifying = [ap_link(ipv4())]
-    manager(client, store).run_cycle()
-    indicator = next(iter(client.indicators.values()))
-    assert indicator["confidence"] == 15
-    assert indicator["indicator_types"] == ["anomalous-activity"]
+ADVERSARY = ("Intrusion-Set", "APT29")
+VICTIM = ("Organization", "Victim Corp")
 
 
-def test_confidence_ceiling_with_adversary_context(store):
+@pytest.mark.parametrize(
+    "entities, score, indicator_type",
+    [
+        ([], 50, "anomalous-activity"),
+        ([("Tool", "PsExec")], 50, "anomalous-activity"),
+        ([("Malware", "Emotet")], 75, "malicious-activity"),
+        ([ADVERSARY], 75, "malicious-activity"),
+        ([("Threat-Actor-Group", "SVR")], 75, "malicious-activity"),
+        ([("Threat-Actor-Individual", "A Person")], 75, "malicious-activity"),
+        ([VICTIM], 75, "malicious-activity"),
+        ([ADVERSARY, VICTIM], 100, "malicious-activity"),
+        ([("Malware", "Emotet"), VICTIM], 100, "malicious-activity"),
+        ([("Threat-Actor-Individual", "A Person"), VICTIM], 100, "malicious-activity"),
+    ],
+)
+def test_diamond_scoring(store, entities, score, indicator_type):
     client = FakeClient()
     client.qualifying = [ap_link(ipv4())]
-    client.relationships["obs-1"] = [related("obs-1", entity("Intrusion-Set", "APT29"))]
+    client.relationships["obs-1"] = [related("obs-1", entity(*e)) for e in entities]
     manager(client, store).run_cycle()
     indicator = next(iter(client.indicators.values()))
-    assert indicator["confidence"] == 85
-    assert indicator["indicator_types"] == ["malicious-activity"]
+    assert indicator["x_opencti_score"] == score
+    assert indicator["confidence"] == score
+    assert indicator["indicator_types"] == [indicator_type]
+
+
+def test_score_rises_as_the_diamond_fills_in(store):
+    client, indicator_id = promoted(store)
+    assert client.indicators[indicator_id]["x_opencti_score"] == 50
+
+    client.relationships["obs-1"] = [related("obs-1", entity(*ADVERSARY))]
+    manager(client, store).run_cycle()
+    assert client.indicators[indicator_id]["x_opencti_score"] == 75
+
+    client.relationships["obs-1"].append(related("obs-1", entity(*VICTIM)))
+    manager(client, store).run_cycle()
+    assert client.indicators[indicator_id]["x_opencti_score"] == 100
+
+
+def test_score_falls_when_the_victim_link_is_removed(store):
+    client, indicator_id = promoted(store)
+    client.relationships["obs-1"] = [
+        related("obs-1", entity(*ADVERSARY)),
+        related("obs-1", entity(*VICTIM)),
+    ]
+    manager(client, store).run_cycle()
+    client.relationships["obs-1"].pop()
+    manager(client, store).run_cycle()
+    assert client.indicators[indicator_id]["x_opencti_score"] == 75
+
+
+def test_platform_score_drift_is_corrected(store):
+    client, indicator_id = promoted(store)
+    client.indicators[indicator_id]["x_opencti_score"] = 42
+    manager(client, store).run_cycle()
+    assert client.indicators[indicator_id]["x_opencti_score"] == 50
 
 
 def test_every_observable_marking_reaches_the_indicator(store):
@@ -119,12 +162,24 @@ def test_second_cycle_syncs_instead_of_recreating(store):
     assert len(client.indicators) == 1
 
 
-def test_sync_updates_confidence_and_types_together(store):
+def test_sync_updates_score_and_types_together(store):
     client, indicator_id = promoted(store)
-    client.relationships["obs-1"] = [related("obs-1", entity("Malware", "Emotet"))]
+    client.relationships["obs-1"] = [related("obs-1", entity(*ADVERSARY))]
     manager(client, store).run_cycle()
-    assert client.indicators[indicator_id]["confidence"] == 85
+    assert client.indicators[indicator_id]["confidence"] == 75
     assert client.indicators[indicator_id]["indicator_types"] == ["malicious-activity"]
+
+
+def test_created_indicator_is_queued_for_todays_grouping(store):
+    client, indicator_id = promoted(store)
+    assert store.pending_grouping() == [("2026-11-05", indicator_id)]
+
+
+def test_dry_run_queues_nothing_for_grouping(store):
+    client = FakeClient(dry_run=True, author=None)
+    client.qualifying = [ap_link(ipv4())]
+    manager(client, store).run_cycle()
+    assert store.pending_grouping() == []
 
 
 def test_sync_adds_a_raised_marking(store):

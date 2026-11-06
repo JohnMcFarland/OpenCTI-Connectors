@@ -24,6 +24,7 @@ class ExportRecord:
     observable_value: str
     indicator_types: Tuple[str, ...]
     confidence: Optional[int]
+    score: Optional[int]
     markings: Tuple[str, ...]
     marking_refs: Tuple[str, ...]
     status: str
@@ -33,6 +34,7 @@ class ExportRecord:
     revoked: bool
     labels: Tuple[str, ...]
     labels_dropped: Dict[str, int] = field(default_factory=dict)
+    opencti_id: Optional[str] = None
 
     def fingerprint(self) -> str:
         """Hash of what the destination sees. A label change alone must count,
@@ -42,6 +44,7 @@ class ExportRecord:
             "pattern": self.pattern,
             "indicator_types": sorted(self.indicator_types),
             "confidence": self.confidence,
+            "score": self.score,
             "marking_refs": sorted(self.marking_refs),
             "valid_from": self.valid_from,
             "valid_until": self.valid_until,
@@ -74,6 +77,8 @@ class ExportRecord:
             stix["valid_until"] = self.valid_until
         if self.confidence is not None:
             stix["confidence"] = self.confidence
+        if self.score is not None:
+            stix["x_opencti_score"] = self.score
         if self.indicator_types:
             stix["indicator_types"] = list(self.indicator_types)
         if self.labels:

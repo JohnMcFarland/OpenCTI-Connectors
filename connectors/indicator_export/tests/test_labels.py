@@ -1,10 +1,13 @@
+import pytest
+
 from src.labels import LabelPolicy, build_context, build_labels
 
-from .fakes import AMBER_STRICT, RED, entity, related
+from .fakes import RED, SENSITIVE, entity, related
 
 OBS = "obs-1"
+BLOCKED = frozenset(["Sensitive"])
 POLICY = LabelPolicy(
-    marking_ceiling="TLP:AMBER+STRICT",
+    blocked_markings=BLOCKED,
     max_labels=50,
     excluded_entity_types=frozenset(["System", "Organization", "Individual", "Incident"]),
 )
@@ -56,35 +59,32 @@ def test_identity_types_are_excluded_by_default_and_counted():
 
 
 def test_exclusions_are_configurable():
-    policy = LabelPolicy("TLP:AMBER+STRICT", 50, frozenset())
+    policy = LabelPolicy(BLOCKED, 50, frozenset())
     result = labels_for([related(OBS, entity("Organization", "Victim Corp"))], policy)
     assert result.labels == ("organization:Victim Corp",)
 
 
-def test_entity_above_ceiling_is_dropped():
-    result = labels_for([related(OBS, entity("Intrusion-Set", "Secret", markings=[RED]))])
+def test_sensitive_entity_is_dropped():
+    result = labels_for([related(OBS, entity("Intrusion-Set", "Secret", markings=[SENSITIVE]))])
     assert result.labels == ()
     assert result.dropped == {"marking": 1}
 
 
-def test_relationship_above_ceiling_is_dropped():
+def test_sensitive_relationship_is_dropped():
     # The entity is public, but the link to this observable is the secret.
-    result = labels_for([related(OBS, entity("Malware", "Emotet"), markings=[RED])])
+    result = labels_for([related(OBS, entity("Malware", "Emotet"), markings=[SENSITIVE])])
     assert result.labels == ()
     assert result.dropped == {"marking": 1}
 
 
-def test_lower_ceiling_applies():
-    policy = LabelPolicy("TLP:GREEN", 50, frozenset())
-    result = labels_for(
-        [related(OBS, entity("Malware", "Emotet", markings=[AMBER_STRICT]))], policy
-    )
-    assert result.labels == ()
+def test_red_is_allowed_out():
+    result = labels_for([related(OBS, entity("Malware", "Emotet", markings=[RED]), markings=[RED])])
+    assert result.labels == ("malware:Emotet",)
 
 
 def test_entity_with_one_permitted_path_is_kept():
     malware = entity("Malware", "Emotet")
-    result = labels_for([related(OBS, malware, markings=[RED]), related(OBS, malware)])
+    result = labels_for([related(OBS, malware, markings=[SENSITIVE]), related(OBS, malware)])
     assert result.labels == ("malware:Emotet",)
     assert result.dropped == {}
 
@@ -96,7 +96,7 @@ def test_duplicates_collapse():
 
 
 def test_limit_keeps_adversaries_first():
-    policy = LabelPolicy("TLP:AMBER+STRICT", 2, frozenset())
+    policy = LabelPolicy(BLOCKED, 2, frozenset())
     result = labels_for(
         [
             related(OBS, entity("Infrastructure", "Bulletproof")),
@@ -111,7 +111,7 @@ def test_limit_keeps_adversaries_first():
 
 
 def test_collection_requirements_pass_through_and_skip_the_limit():
-    policy = LabelPolicy("TLP:AMBER+STRICT", 1, frozenset())
+    policy = LabelPolicy(BLOCKED, 1, frozenset())
     result = labels_for(
         [related(OBS, entity("Malware", "Emotet"))],
         policy,
@@ -126,10 +126,20 @@ def test_unnamed_entity_is_counted_not_exported():
     assert result.dropped == {"unnamed": 1}
 
 
-def test_context_flag_follows_adversary_and_victim_types():
-    adversary = build_context(OBS, [related(OBS, entity("Intrusion-Set", "APT29"))])
-    victim = build_context(OBS, [related(OBS, entity("Organization", "Corp"))])
-    neither = build_context(OBS, [related(OBS, entity("Attack-Pattern", "T1059"))])
-    assert adversary.has_adversary_or_victim
-    assert victim.has_adversary_or_victim
-    assert not neither.has_adversary_or_victim
+@pytest.mark.parametrize(
+    "entity_type", ["Malware", "Intrusion-Set", "Threat-Actor-Group", "Threat-Actor-Individual"]
+)
+def test_adversary_types(entity_type):
+    context = build_context(OBS, [related(OBS, entity(entity_type, "x"))])
+    assert context.has_adversary and not context.has_victim
+
+
+def test_organization_is_the_victim_type():
+    context = build_context(OBS, [related(OBS, entity("Organization", "Corp"))])
+    assert context.has_victim and not context.has_adversary
+
+
+@pytest.mark.parametrize("entity_type", ["Individual", "Tool", "Attack-Pattern"])
+def test_other_types_are_neither(entity_type):
+    context = build_context(OBS, [related(OBS, entity(entity_type, "x"))])
+    assert not context.has_adversary and not context.has_victim

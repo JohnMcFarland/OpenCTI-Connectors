@@ -1,41 +1,23 @@
-"""TLP ordering and the marking ceiling check.
+"""The export marking rule: everything may leave except blocked markings.
 
-Anything that is not a recognised TLP marking ranks above every ceiling, so it
-can never leave. An object with no marking at all is treated as the data
-model's default, TLP:AMBER+STRICT.
+Terms match anywhere in the definition, ignoring case, so "Sensitive" also
+catches "Highly Sensitive". Blocking too much is the safer way to be wrong.
 """
 
 from __future__ import annotations
 
-import math
 from typing import Any, Dict, Iterable
 
-DEFAULT_MARKING = "TLP:AMBER+STRICT"
 
-_TLP_RANK: Dict[str, int] = {
-    "TLP:CLEAR": 0,
-    "TLP:WHITE": 0,  # TLP 1.0 name for TLP:CLEAR
-    "TLP:GREEN": 1,
-    "TLP:AMBER": 2,
-    "TLP:AMBER+STRICT": 3,
-    "TLP:RED": 4,
-}
+def is_blocked(markings: Iterable[Dict[str, Any]], blocked_terms: Iterable[str]) -> bool:
+    """True if any marking matches a blocked term.
 
-
-def is_known_tlp(definition: str) -> bool:
-    return definition in _TLP_RANK
-
-
-def rank(definition: Any) -> float:
-    """Rank one marking definition. Unknown definitions rank as infinity."""
-    return _TLP_RANK.get(str(definition or "").strip().upper(), math.inf)
-
-
-def highest_rank(markings: Iterable[Dict[str, Any]]) -> float:
-    """Rank a marking list by its most restrictive entry."""
-    ranks = [rank(marking.get("definition")) for marking in markings or []]
-    return max(ranks) if ranks else rank(DEFAULT_MARKING)
-
-
-def within_ceiling(markings: Iterable[Dict[str, Any]], ceiling: str) -> bool:
-    return highest_rank(markings) <= rank(ceiling)
+    A marking with no definition cannot be checked, so it counts as blocked.
+    An object with no markings at all has nothing to block.
+    """
+    terms = [term.lower() for term in blocked_terms]
+    for marking in markings or []:
+        definition = str(marking.get("definition") or "").strip().lower()
+        if not definition or any(term in definition for term in terms):
+            return True
+    return False

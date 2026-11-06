@@ -21,6 +21,7 @@ AMBER_STRICT = {
 }
 CLEAR = {"id": "m-clear", "standard_id": "marking-definition--clear", "definition": "TLP:CLEAR"}
 RED = {"id": "m-red", "standard_id": "marking-definition--red", "definition": "TLP:RED"}
+SENSITIVE = {"id": "m-sens", "standard_id": "marking-definition--sens", "definition": "Sensitive"}
 
 
 def settings(**overrides: str):
@@ -95,13 +96,28 @@ class FakeClient:
         self.foreign: Dict[str, Dict[str, Any]] = {}
         self.writes: List[Any] = []
         self.fail_relationships_for: set = set()
+        self.groupings: Dict[str, List[str]] = {}
+        self.fail_grouping_adds = False
+        self.definitions = [AMBER_STRICT, CLEAR, RED, SENSITIVE]
         self._next = 0
 
     def resolve_author(self):
         return self.author
 
+    def marking_definitions(self):
+        return self.definitions
+
     def default_marking(self):
         return AMBER_STRICT
+
+    def ensure_grouping(self, name, author_id, marking_ids):
+        self.groupings.setdefault(name, [])
+        return name
+
+    def add_to_grouping(self, grouping_id, indicator_id):
+        if self.fail_grouping_adds:
+            raise RuntimeError("grouping down")
+        self.groupings[grouping_id].append(indicator_id)
 
     def qualifying_relationships(self):
         return self.qualifying
@@ -135,7 +151,7 @@ class FakeClient:
 
         self._next += 1
         indicator_id = f"ind-{self._next}"
-        marking_by_id = {m["id"]: m for m in (AMBER_STRICT, CLEAR, RED)}
+        marking_by_id = {m["id"]: m for m in (AMBER_STRICT, CLEAR, RED, SENSITIVE)}
         self.indicators[indicator_id] = {
             "id": indicator_id,
             "standard_id": Indicator.generate_id(fields["pattern"]),
@@ -143,6 +159,7 @@ class FakeClient:
             "pattern": fields["pattern"],
             "pattern_type": "stix",
             "confidence": fields["confidence"],
+            "x_opencti_score": fields["x_opencti_score"],
             "created": "2026-02-01T00:00:00.000Z",
             "modified": "2026-02-01T00:00:00.000Z",
             "valid_from": fields["valid_from"],
@@ -174,10 +191,11 @@ class FakeClient:
     def add_marking(self, indicator_id, marking_id):
         self.writes.append(("marking", indicator_id, marking_id))
 
-    def update_assessment(self, indicator_id, confidence, indicator_types):
-        self.writes.append(("assessment", indicator_id, confidence))
+    def update_assessment(self, indicator_id, score, indicator_types):
+        self.writes.append(("assessment", indicator_id, score))
         if not self.dry_run:
-            self.indicators[indicator_id]["confidence"] = confidence
+            self.indicators[indicator_id]["confidence"] = score
+            self.indicators[indicator_id]["x_opencti_score"] = score
             self.indicators[indicator_id]["indicator_types"] = indicator_types
 
     def set_valid_until(self, indicator_id, value):

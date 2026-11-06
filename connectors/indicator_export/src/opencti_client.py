@@ -9,7 +9,9 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from pycti import Identity
+from pycti import Grouping, Identity
+
+GROUPING_CONTEXT = "suspicious-activity"
 
 MARKING_FIELDS = "objectMarking { id standard_id definition definition_type }"
 
@@ -89,6 +91,7 @@ INDICATOR_ATTRIBUTES = """
     pattern
     pattern_type
     confidence
+    x_opencti_score
     created
     modified
     valid_from
@@ -135,13 +138,16 @@ class OpenCTIClient:
         )
         return author["id"]
 
+    def marking_definitions(self) -> List[Dict[str, Any]]:
+        return self.api.marking_definition.list()
+
     def default_marking(self) -> Dict[str, Any]:
         """Fetch the TLP:AMBER+STRICT definition used for unmarked observables.
 
         pycti's marking list ignores server-side filters, so match here. Raises
         if it is missing, rather than creating unmarked Indicators.
         """
-        for marking in self.api.marking_definition.list():
+        for marking in self.marking_definitions():
             if marking.get("definition") == "TLP:AMBER+STRICT":
                 return marking
         raise RuntimeError("TLP:AMBER+STRICT marking definition not found.")
@@ -266,14 +272,40 @@ class OpenCTIClient:
         self.api.indicator.update_field(id=indicator_id, input=edits)
 
     def update_assessment(
-        self, indicator_id: str, confidence: int, indicator_types: List[str]
+        self, indicator_id: str, score: int, indicator_types: List[str]
     ) -> None:
         self._patch(
             indicator_id,
             [
-                {"key": "confidence", "value": [confidence]},
+                {"key": "x_opencti_score", "value": [score]},
+                {"key": "confidence", "value": [score]},
                 {"key": "indicator_types", "value": indicator_types},
             ],
+        )
+
+    def ensure_grouping(
+        self, name: str, author_id: Optional[str], marking_ids: List[str]
+    ) -> str:
+        """Create the Grouping, or return the existing one for that name.
+
+        The id comes from the name and context, so every cycle in a day lands
+        on the same Grouping.
+        """
+        grouping = self.api.grouping.create(
+            stix_id=Grouping.generate_id(name, GROUPING_CONTEXT),
+            name=name,
+            context=GROUPING_CONTEXT,
+            description="Indicators created or exported on this date (US Eastern).",
+            createdBy=author_id,
+            objectMarking=marking_ids,
+        )
+        if not grouping:
+            raise RuntimeError(f"Grouping create returned nothing: {name}")
+        return grouping["id"]
+
+    def add_to_grouping(self, grouping_id: str, indicator_id: str) -> None:
+        self.api.grouping.add_stix_object_or_stix_relationship(
+            id=grouping_id, stixObjectOrStixRelationshipId=indicator_id
         )
 
     def set_valid_until(self, indicator_id: str, value: Optional[str]) -> None:

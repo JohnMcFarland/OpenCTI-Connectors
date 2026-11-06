@@ -1,7 +1,7 @@
 import pytest
 
 from src.config import MODE_DEBUG, MODE_STREAM, parse_export_location
-from src.markings import highest_rank, rank, within_ceiling
+from src.markings import is_blocked
 
 from .fakes import settings
 
@@ -53,11 +53,9 @@ def test_network_traffic_can_never_be_promoted():
 @pytest.mark.parametrize(
     "overrides",
     [
-        {"EXPORT_MARKING_CEILING": "SECRET"},
         {"EXPORT_SCHEME": "ftp"},
         {"EXPORT_PORT": "70000"},
         {"EXPORT_PORT": "abc"},
-        {"INDICATOR_CONFIDENCE_FLOOR": "90"},
         {"EXPORT_MAX_LABELS": "0"},
     ],
 )
@@ -71,22 +69,35 @@ def test_missing_token_stops_startup():
         settings(OPENCTI_TOKEN="")
 
 
-def test_clear_ranks_lowest_not_highest():
-    assert rank("TLP:CLEAR") < rank("TLP:GREEN") < rank("TLP:AMBER")
-    assert rank("TLP:AMBER") < rank("TLP:AMBER+STRICT") < rank("TLP:RED")
+BLOCKED = ["Sensitive"]
 
 
-def test_clear_and_red_together_resolve_to_red():
-    pair = [{"definition": "TLP:CLEAR"}, {"definition": "TLP:RED"}]
-    assert highest_rank(pair) == rank("TLP:RED")
-    assert not within_ceiling(pair, "TLP:AMBER+STRICT")
+def test_sensitive_is_blocked_by_default_and_blank_cannot_clear_it():
+    assert settings().blocked_markings == {"Sensitive"}
+    assert settings(EXPORT_BLOCKED_MARKINGS="").blocked_markings == {"Sensitive"}
 
 
-def test_unknown_marking_never_passes():
-    assert not within_ceiling([{"definition": "PAP:RED"}], "TLP:RED")
-    assert not within_ceiling([{"definition": None}], "TLP:RED")
+@pytest.mark.parametrize(
+    "definition",
+    ["TLP:CLEAR", "TLP:GREEN", "TLP:AMBER", "TLP:AMBER+STRICT", "TLP:RED",
+     "PAP:RED", "Limited", "Restricted", "Highly Restricted"],
+)
+def test_every_other_marking_can_leave(definition):
+    assert not is_blocked([{"definition": definition}], BLOCKED)
 
 
-def test_unmarked_counts_as_amber_strict():
-    assert within_ceiling([], "TLP:AMBER+STRICT")
-    assert not within_ceiling([], "TLP:AMBER")
+@pytest.mark.parametrize("definition", ["Sensitive", "SENSITIVE", "Highly Sensitive"])
+def test_sensitive_is_blocked_in_any_form(definition):
+    assert is_blocked([{"definition": definition}], BLOCKED)
+
+
+def test_one_blocked_marking_among_several_blocks():
+    assert is_blocked([{"definition": "TLP:CLEAR"}, {"definition": "Sensitive"}], BLOCKED)
+
+
+def test_marking_with_no_definition_is_blocked():
+    assert is_blocked([{"definition": None}], BLOCKED)
+
+
+def test_unmarked_is_not_blocked():
+    assert not is_blocked([], BLOCKED)

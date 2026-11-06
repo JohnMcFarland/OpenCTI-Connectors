@@ -30,6 +30,7 @@ def record(**overrides):
         observable_value="1.2.3.4",
         indicator_types=("malicious-activity",),
         confidence=85,
+        score=85,
         markings=("TLP:CLEAR",),
         marking_refs=("marking-definition--613f2e26-407d-48c7-9eca-b8e91df99dc9",),
         status="active",
@@ -109,9 +110,10 @@ def test_location_picks_the_sink(tmp_path, store):
 
 
 def test_csv_has_the_agreed_columns_and_values(tmp_path):
-    message = CsvSink(str(tmp_path), 5, clock=lambda: NOW).deliver([record()], dry_run=False)
+    result = CsvSink(str(tmp_path), 5, clock=lambda: NOW).deliver([record()], dry_run=False)
     path = str(tmp_path / "indicators_20261106T120000Z.csv")
-    assert path in message
+    assert path in result.summary
+    assert result.delivered == (record(),)
     row = read_rows(path)[0]
     assert row["indicator_id"] == STIX_ID
     assert row["labels"] == "intrusion-set:APT29 | malware:Emotet"
@@ -119,6 +121,7 @@ def test_csv_has_the_agreed_columns_and_values(tmp_path):
     assert row["labels_dropped"] == "excluded_type=2;marking=1"
     assert row["status"] == "active"
     assert row["marking"] == "TLP:CLEAR"
+    assert row["score"] == "85"
 
 
 def test_csv_is_written_in_dry_run(tmp_path):
@@ -184,11 +187,12 @@ def test_stream_sends_a_valid_stix_bundle(receiver, store):
     assert bundle["type"] == "bundle"
     assert receiver.headers[0]["Content-Type"] == "application/stix+json;version=2.1"
 
-    parsed = stix2.parse(json.dumps(bundle), allow_custom=False)
+    parsed = stix2.parse(json.dumps(bundle), allow_custom=True)
     indicator = parsed.objects[0]
     assert indicator.type == "indicator"
     assert indicator.labels == ["intrusion-set:APT29", "malware:Emotet"]
     assert indicator.pattern == "[ipv4-addr:value = '1.2.3.4']"
+    assert bundle["objects"][0]["x_opencti_score"] == 85
 
 
 def test_stream_does_not_send_csv_only_fields(receiver, store):
@@ -234,6 +238,19 @@ def test_status_change_alone_is_not_resent(receiver, store):
     assert len(receiver.bundles) == 1
 
 
+def test_only_changed_indicators_count_as_delivered(receiver, store):
+    sink = stream_sink(receiver.url, store)
+    assert len(sink.deliver([record()], dry_run=False).delivered) == 1
+    assert sink.deliver([record()], dry_run=False).delivered == ()
+
+
+def test_score_change_alone_is_resent(receiver, store):
+    sink = stream_sink(receiver.url, store)
+    sink.deliver([record()], dry_run=False)
+    sink.deliver([record(score=100)], dry_run=False)
+    assert len(receiver.bundles) == 2
+
+
 def test_rejected_batch_is_retried_next_cycle(receiver, store):
     sink = stream_sink(receiver.url, store)
     receiver.status = 500
@@ -258,9 +275,10 @@ def test_batches_already_confirmed_are_not_resent_after_a_failure(store):
     first = record()
     second = record(stix_id="indicator--9e2e2d2b-17d4-4cbf-938f-98ee46b3cd3f")
     sink = stream_sink("http://unused", store, batch_size=1, session=Session())
-    with pytest.raises(ExportError):
+    with pytest.raises(ExportError) as failure:
         sink.deliver([first, second], dry_run=False)
     assert set(store.sent_fingerprints()) == {first.stix_id}
+    assert failure.value.delivered == (first,)
 
 
 def test_unreachable_destination_is_an_export_error(store):
@@ -277,8 +295,9 @@ def test_redirects_are_not_followed(receiver, store):
 
 
 def test_stream_sends_nothing_in_dry_run(receiver, store):
-    message = stream_sink(receiver.url, store).deliver([record()], dry_run=True)
-    assert "would stream 1 of 1" in message
+    result = stream_sink(receiver.url, store).deliver([record()], dry_run=True)
+    assert "would stream 1 of 1" in result.summary
+    assert result.delivered == ()
     assert receiver.headers == []
     assert store.sent_fingerprints() == {}
 

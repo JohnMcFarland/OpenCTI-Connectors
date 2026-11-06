@@ -11,8 +11,6 @@ import os
 from dataclasses import dataclass
 from typing import FrozenSet, Mapping, Optional, Union
 
-from .markings import is_known_tlp
-
 MODE_DEBUG = "debug"
 MODE_STREAM = "stream"
 
@@ -77,8 +75,6 @@ class Settings:
 
     author_name: str
     dry_run: bool
-    confidence_floor: int
-    confidence_ceiling: int
     decay_days: int
     max_errors: int
     excluded_observable_types: FrozenSet[str]
@@ -92,7 +88,7 @@ class Settings:
     verify_tls: Union[bool, str]
     batch_size: int
     timeout_seconds: int
-    marking_ceiling: str
+    blocked_markings: FrozenSet[str]
     max_labels: int
     excluded_entity_types: FrozenSet[str]
     data_dir: str
@@ -131,10 +127,6 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
             raise ValueError(f"{key} must be at least {minimum}, got {value}.")
         return value
 
-    ceiling = optional("EXPORT_MARKING_CEILING", "TLP:AMBER+STRICT").upper()
-    if not is_known_tlp(ceiling):
-        raise ValueError(f"EXPORT_MARKING_CEILING is not a TLP marking: {ceiling!r}.")
-
     scheme = optional("EXPORT_SCHEME", "https").lower()
     if scheme not in ("http", "https"):
         raise ValueError(f"EXPORT_SCHEME must be http or https, got {scheme!r}.")
@@ -148,14 +140,6 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
     if port is not None and port > 65535:
         raise ValueError(f"EXPORT_PORT must be at most 65535, got {port}.")
 
-    floor = integer("INDICATOR_CONFIDENCE_FLOOR", 15)
-    top = integer("INDICATOR_CONFIDENCE_CEILING", 85)
-    if not floor < top <= 100:
-        raise ValueError(
-            "Confidence must satisfy floor < ceiling <= 100, "
-            f"got floor={floor}, ceiling={top}."
-        )
-
     return Settings(
         opencti_url=required("OPENCTI_URL"),
         opencti_token=required("OPENCTI_TOKEN"),
@@ -167,8 +151,6 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
         author_name=optional("INDICATOR_AUTHOR_NAME", "Indicator Export"),
         # Off only when explicitly set: the first run must not write or send.
         dry_run=_parse_bool(optional("INDICATOR_DRY_RUN", "true")),
-        confidence_floor=floor,
-        confidence_ceiling=top,
         decay_days=integer("INDICATOR_DECAY_DAYS", 30, minimum=1),
         max_errors=integer("INDICATOR_MAX_ERRORS", 50, minimum=1),
         excluded_observable_types=HARDCODED_OBSERVABLE_EXCLUSIONS
@@ -182,7 +164,8 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
         verify_tls=_parse_verify(optional("EXPORT_VERIFY_TLS", "true")),
         batch_size=integer("EXPORT_BATCH_SIZE", 500, minimum=1),
         timeout_seconds=integer("EXPORT_TIMEOUT_SECONDS", 30, minimum=1),
-        marking_ceiling=ceiling,
+        # A blank value falls back to the default, so it cannot switch this off.
+        blocked_markings=_parse_csv_set(optional("EXPORT_BLOCKED_MARKINGS", "Sensitive")),
         max_labels=integer("EXPORT_MAX_LABELS", 50, minimum=1),
         excluded_entity_types=_parse_csv_set(
             optional("EXPORT_EXCLUDED_ENTITY_TYPES", DEFAULT_EXCLUDED_ENTITY_TYPES)

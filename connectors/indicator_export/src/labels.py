@@ -9,10 +9,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, FrozenSet, Iterable, List, Set, Tuple
 
-from .markings import within_ceiling
+from .markings import is_blocked
 
-ADVERSARY_ENTITY_TYPES = frozenset(["Malware", "Intrusion-Set", "Threat-Actor-Group"])
-VICTIM_ENTITY_TYPES = frozenset(["Organization", "Individual"])
+# The Diamond Model's adversary and victim vertices, used for scoring.
+ADVERSARY_ENTITY_TYPES = frozenset(
+    ["Malware", "Intrusion-Set", "Threat-Actor-Group", "Threat-Actor-Individual"]
+)
+VICTIM_ENTITY_TYPES = frozenset(["Organization"])
 
 # Same prefixes as QA.LABELS.001 in report_model_qa. These are the only labels
 # that exist in OpenCTI by policy, so they pass through unfiltered.
@@ -44,12 +47,13 @@ class RelatedEntity:
 @dataclass(frozen=True)
 class ObservableContext:
     entities: Tuple[RelatedEntity, ...] = ()
-    has_adversary_or_victim: bool = False
+    has_adversary: bool = False
+    has_victim: bool = False
 
 
 @dataclass(frozen=True)
 class LabelPolicy:
-    marking_ceiling: str
+    blocked_markings: FrozenSet[str]
     max_labels: int
     excluded_entity_types: FrozenSet[str]
 
@@ -81,7 +85,8 @@ def build_context(
     communicates-with url).
     """
     entities: List[RelatedEntity] = []
-    has_context = False
+    has_adversary = False
+    has_victim = False
     for relationship in relationships:
         source = relationship.get("from") or {}
         target = relationship.get("to") or {}
@@ -89,8 +94,8 @@ def build_context(
         if other.get("id") == observable_id:
             continue
         entity_type = other.get("entity_type") or ""
-        if entity_type in ADVERSARY_ENTITY_TYPES | VICTIM_ENTITY_TYPES:
-            has_context = True
+        has_adversary = has_adversary or entity_type in ADVERSARY_ENTITY_TYPES
+        has_victim = has_victim or entity_type in VICTIM_ENTITY_TYPES
         if not _is_entity(other):
             continue
         entities.append(
@@ -101,7 +106,7 @@ def build_context(
                 relationship_markings=tuple(relationship.get("objectMarking") or ()),
             )
         )
-    return ObservableContext(tuple(entities), has_context)
+    return ObservableContext(tuple(entities), has_adversary, has_victim)
 
 
 def is_collection_requirement(label: str) -> bool:
@@ -121,7 +126,7 @@ def build_labels(
     """Apply the type, marking and limit rules.
 
     An entity reached by several relationships is kept if any one of them
-    passes the ceiling, since that path alone already permits disclosing it.
+    is unblocked, since that path alone already permits disclosing it.
     Dropped counts never name the entity, so they are safe to export.
     """
     requirements = sorted(
@@ -129,7 +134,7 @@ def build_labels(
     )
 
     kept: Dict[str, int] = {}
-    over_ceiling: Set[str] = set()
+    blocked: Set[str] = set()
     excluded: Set[str] = set()
     unnamed = 0
 
@@ -140,19 +145,19 @@ def build_labels(
         label = format_label(entity.entity_type, entity.name)
         if entity.entity_type in policy.excluded_entity_types:
             excluded.add(label)
-        elif within_ceiling(
-            entity.entity_markings, policy.marking_ceiling
-        ) and within_ceiling(entity.relationship_markings, policy.marking_ceiling):
-            kept[label] = _TIER_BY_TYPE.get(entity.entity_type, _DEFAULT_TIER)
+        elif is_blocked(
+            entity.entity_markings, policy.blocked_markings
+        ) or is_blocked(entity.relationship_markings, policy.blocked_markings):
+            blocked.add(label)
         else:
-            over_ceiling.add(label)
+            kept[label] = _TIER_BY_TYPE.get(entity.entity_type, _DEFAULT_TIER)
 
-    over_ceiling -= set(kept)
+    blocked -= set(kept)
     ranked = sorted(kept, key=lambda label: (kept[label], label))
     selected = ranked[: policy.max_labels]
 
     dropped = {
-        "marking": len(over_ceiling),
+        "marking": len(blocked),
         "excluded_type": len(excluded),
         "limit": len(ranked) - len(selected),
         "unnamed": unnamed,

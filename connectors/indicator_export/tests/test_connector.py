@@ -11,7 +11,7 @@ from src.opencti_client import OpenCTIClient
 from src.sinks import CsvSink, ExportError
 from src.store import StateStore
 
-from .fakes import FakeClient, FakeLogger, RED, ap_link, entity, ipv4, related, settings
+from .fakes import FakeClient, FakeLogger, RED, SENSITIVE, ap_link, entity, ipv4, related, settings
 
 
 def build(tmp_path, client, sink=None, **overrides):
@@ -36,7 +36,7 @@ def graph(client, observable=None):
     client.relationships[observable["id"]] = [
         related(observable["id"], entity("Intrusion-Set", "APT29")),
         related(observable["id"], entity("System", "HOST-01")),
-        related(observable["id"], entity("Malware", "Hidden", markings=[RED])),
+        related(observable["id"], entity("Malware", "Hidden", markings=[SENSITIVE])),
     ]
     return observable
 
@@ -51,7 +51,7 @@ def test_dry_run_csv_shows_what_would_be_created(tmp_path):
     assert row["status"] == "would_create"
     assert row["labels"] == "intrusion-set:APT29"
     assert row["labels_dropped"] == "excluded_type=1;marking=1"
-    assert row["confidence"] == "85"
+    assert row["score"] == "75"
     assert client.indicators == {}
     helper.api.work.to_processed.assert_called_once()
     assert helper.api.work.to_processed.call_args.kwargs["in_error"] is False
@@ -80,14 +80,22 @@ def test_live_cycle_exports_the_created_indicator(tmp_path):
     assert row["valid_until"]
 
 
-def test_indicator_above_ceiling_is_withheld(tmp_path):
+def test_sensitive_indicator_is_withheld(tmp_path):
     client = FakeClient()
-    graph(client, ipv4(markings=[RED]))
+    graph(client, ipv4(markings=[SENSITIVE]))
     connector, helper = build(tmp_path, client, INDICATOR_DRY_RUN="false")
     connector.process()
 
     assert rows(tmp_path) == []
     assert "Blocked by marking: 1" in helper.api.work.to_processed.call_args.args[1]
+
+
+def test_red_indicator_is_exported(tmp_path):
+    client = FakeClient()
+    graph(client, ipv4(markings=[RED]))
+    connector, _ = build(tmp_path, client, INDICATOR_DRY_RUN="false")
+    connector.process()
+    assert rows(tmp_path)[0]["marking"] == "TLP:RED"
 
 
 def test_revoked_and_decaying_status_reach_the_export(tmp_path):
@@ -168,7 +176,7 @@ def test_dry_run_client_makes_no_write_calls():
     client.create_relationship("a", "b", "based-on", 15, "author", [])
     client.delete_relationship("r")
     client.add_marking("i", "m")
-    client.update_assessment("i", 85, ["malicious-activity"])
+    client.update_assessment("i", 75, ["malicious-activity"])
     client.set_valid_until("i", "2026-01-01T00:00:00Z")
     client.revoke("i")
 
@@ -240,3 +248,29 @@ def test_graphql_selections_are_balanced():
         text = getattr(module, name)
         assert text.count("{") == text.count("}"), name
         assert "%s" not in text, name
+
+
+def test_assessment_writes_score_and_confidence():
+    client, api = real_client(dry_run=False)
+    client.update_assessment("i", 100, ["malicious-activity"])
+    edits = api.indicator.update_field.call_args.kwargs["input"]
+    assert {"key": "x_opencti_score", "value": [100]} in edits
+    assert {"key": "confidence", "value": [100]} in edits
+
+
+def test_grouping_id_is_stable_for_the_day():
+    client, api = real_client(dry_run=False)
+    api.grouping.create.return_value = {"id": "g"}
+    client.ensure_grouping("Indicator Export 2026-11-06", "a", ["m"])
+    client.ensure_grouping("Indicator Export 2026-11-06", "a", ["m"])
+    first, second = api.grouping.create.call_args_list
+    assert first.kwargs["stix_id"] == second.kwargs["stix_id"]
+    assert first.kwargs["context"] == "suspicious-activity"
+
+
+def test_missing_sensitive_marking_warns(tmp_path):
+    client = FakeClient(dry_run=True, author=None)
+    client.definitions = [{"id": "m", "definition": "TLP:CLEAR"}]
+    connector, helper = build(tmp_path, client)
+    connector.process()
+    assert any("EXPORT_BLOCKED_MARKINGS" in w for w in helper.connector_logger.warnings)

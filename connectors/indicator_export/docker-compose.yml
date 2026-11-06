@@ -6,7 +6,7 @@ services:
     container_name: connector-indicator-export
     restart: always
     volumes:
-      # Holds the CSV snapshots and state.sqlite3. Treat it as AMBER+STRICT data.
+      # Holds the CSV snapshots and state.sqlite3. Treat it like the most restricted data it holds.
       - ./data:/data
     environment:
       - OPENCTI_URL=
@@ -21,8 +21,6 @@ services:
       # OpenCTI or streamed while it is true.
       - INDICATOR_DRY_RUN=true
       - INDICATOR_AUTHOR_NAME=Indicator Export
-      - INDICATOR_CONFIDENCE_FLOOR=15
-      - INDICATOR_CONFIDENCE_CEILING=85
       - INDICATOR_DECAY_DAYS=30
       - INDICATOR_MAX_ERRORS=50
       - INDICATOR_EXCLUDED_OBSERVABLE_TYPES=
@@ -30,7 +28,7 @@ services:
       # --- Export ---
       # "debug" writes CSV files to /data. An IP address streams STIX to it.
       - EXPORT_LOCATION=debug
-      - EXPORT_MARKING_CEILING=TLP:AMBER+STRICT
+      - EXPORT_BLOCKED_MARKINGS=Sensitive
       - EXPORT_MAX_LABELS=50
       - EXPORT_EXCLUDED_ENTITY_TYPES=System,Organization,Individual,Incident
       - EXPORT_DATA_DIR=/data

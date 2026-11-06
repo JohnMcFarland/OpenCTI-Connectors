@@ -11,7 +11,7 @@ import os
 import tempfile
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Protocol, Sequence
+from typing import Any, Callable, Dict, List, NamedTuple, Protocol, Sequence, Tuple
 
 import requests
 
@@ -27,6 +27,7 @@ CSV_COLUMNS = (
     "observable_value",
     "indicator_types",
     "confidence",
+    "score",
     "marking",
     "status",
     "valid_from",
@@ -44,13 +45,25 @@ _FORMULA_PREFIXES = ("=", "+", "-", "@", "\t", "\r")
 _UNESCAPED_COLUMNS = frozenset(["pattern"])
 
 
+class Delivery(NamedTuple):
+    summary: str
+    delivered: Tuple[ExportRecord, ...]
+
+
 class ExportError(RuntimeError):
-    """The destination did not accept the data. Retried next cycle."""
+    """The destination did not accept the data. Retried next cycle.
+
+    delivered holds any batches confirmed before the failure.
+    """
+
+    def __init__(self, message: str, delivered: Tuple[ExportRecord, ...] = ()) -> None:
+        super().__init__(message)
+        self.delivered = delivered
 
 
 class Sink(Protocol):
-    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> str:
-        """Send records and return a short summary. Raises ExportError."""
+    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> Delivery:
+        """Send records and report what arrived. Raises ExportError."""
 
 
 def _utc_now() -> datetime:
@@ -77,6 +90,7 @@ def _csv_row(record: ExportRecord, exported_at: str) -> Dict[str, Any]:
         "observable_value": record.observable_value,
         "indicator_types": " | ".join(record.indicator_types),
         "confidence": record.confidence,
+        "score": record.score,
         "marking": " | ".join(record.markings),
         "status": record.status,
         "valid_from": record.valid_from,
@@ -109,7 +123,7 @@ class CsvSink:
         self.retention = retention
         self.clock = clock
 
-    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> str:
+    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> Delivery:
         now = self.clock()
         os.makedirs(self.directory, exist_ok=True)
         path = os.path.join(
@@ -133,7 +147,7 @@ class CsvSink:
             raise ExportError(f"Could not write {path}: {exc}") from exc
 
         self._prune()
-        return f"Wrote {len(records)} rows to {path}"
+        return Delivery(f"Wrote {len(records)} rows to {path}", tuple(records))
 
     def _prune(self) -> None:
         pattern = os.path.join(self.directory, "indicators_*.csv")
@@ -169,21 +183,29 @@ class StixStreamSink:
         self.session = session or requests.Session()
         self.clock = clock
 
-    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> str:
+    def deliver(self, records: Sequence[ExportRecord], dry_run: bool) -> Delivery:
         sent = self.store.sent_fingerprints()
         changed = [
             record for record in records if sent.get(record.stix_id) != record.fingerprint()
         ]
         if dry_run:
-            return f"Dry run: would stream {len(changed)} of {len(records)} to {self.url}"
+            return Delivery(
+                f"Dry run: would stream {len(changed)} of {len(records)} to {self.url}",
+                (),
+            )
 
-        delivered = 0
+        delivered: List[ExportRecord] = []
         for start in range(0, len(changed), self.batch_size):
             batch = changed[start : start + self.batch_size]
-            self._post(batch)
+            try:
+                self._post(batch)
+            except ExportError as exc:
+                exc.delivered = tuple(delivered)
+                raise
             self.store.mark_sent((r.stix_id, r.fingerprint()) for r in batch)
-            delivered += len(batch)
-        return f"Streamed {delivered} of {len(records)} to {self.url}"
+            delivered.extend(batch)
+        summary = f"Streamed {len(delivered)} of {len(records)} to {self.url}"
+        return Delivery(summary, tuple(delivered))
 
     def _post(self, batch: List[ExportRecord]) -> None:
         modified = self.clock()

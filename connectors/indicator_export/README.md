@@ -8,17 +8,55 @@ Observables.
 
 ## What each cycle does
 
-1. **Promote.** An Observable with a `related-to` Attack Pattern gets an
+1. **Promote.** An Observable with a `related-to` Attack Pattern gets a scored
    Indicator, with `based-on` and `indicates` relationships. No Attack Pattern
    means no Indicator, however strong its other links are.
-2. **Reconcile.** Existing Indicators get their confidence, types, markings and
-   `indicates` edges synced. If the Observable stops qualifying, the Indicator
-   enters decay for `INDICATOR_DECAY_DAYS` and is then revoked. If it qualifies
-   again during decay, it is restored.
+2. **Reconcile.** Existing Indicators get their score, types, markings and
+   `indicates` edges synced, so scores follow the graph up and down. If the
+   Observable stops qualifying, the Indicator enters decay for
+   `INDICATOR_DECAY_DAYS` and is then revoked. If it qualifies again during decay,
+   it is restored.
 3. **Export.** Indicators are labeled and sent to `EXPORT_LOCATION`.
+4. **Group.** Indicators created or exported today are added to that day's
+   Grouping.
 
 Labels exist only on the exported copy. They are never written to OpenCTI, where
 labels are reserved for collection requirements.
+
+## Scoring
+
+The score follows the Diamond Model. Every Indicator already has infrastructure
+(the Observable) and capability (the Attack Pattern), so the score depends on the
+other two vertices. Only a direct relationship to the Observable counts.
+
+| Score | Linked to | `indicator_types` |
+|---|---|---|
+| 50 | Neither | `anomalous-activity` |
+| 75 | An adversary or a victim | `malicious-activity` |
+| 100 | An adversary and a victim | `malicious-activity` |
+
+- **Adversary:** Malware, Intrusion Set, Threat Actor Group or Threat Actor
+  Individual.
+- **Victim:** Organization.
+
+The value is written to both `x_opencti_score` and `confidence`, and both are
+exported. Tools do not change the score.
+
+## Daily Groupings
+
+Each Eastern-time day has one Grouping named `Indicator Export YYYY-MM-DD`. The
+day changes at midnight in `America/New_York`, so it follows daylight saving time.
+The Grouping holds Indicators only and is marked `TLP:AMBER+STRICT`.
+
+An Indicator joins on the day it is created and on any day it is exported:
+
+- With `debug`, every snapshot exports every Indicator, so each day's Grouping
+  holds the full set, revoked Indicators included.
+- With an IP address, only changed Indicators are exported, so each day's Grouping
+  holds that day's new and changed Indicators.
+
+A failed add is retried next cycle into its original day. Dry run creates no
+Grouping.
 
 ## Choosing the export location
 
@@ -42,7 +80,8 @@ except `pattern`, which must stay exact and always starts with `[`.
 counts what the filters removed by reason (`marking`, `excluded_type`, `limit`,
 `unnamed`), without naming the entities.
 
-A CSV cannot enforce TLP, so handle `./data` as `EXPORT_MARKING_CEILING` data.
+A CSV cannot enforce markings, so handle `./data` as the most restricted data it
+holds, which can include `TLP:RED`.
 
 ### IP address
 
@@ -66,15 +105,20 @@ never become labels.
 | Rule | Default | Setting |
 |---|---|---|
 | Excluded entity types | System, Organization, Individual, Incident | `EXPORT_EXCLUDED_ENTITY_TYPES` |
-| Marking ceiling | `TLP:AMBER+STRICT` | `EXPORT_MARKING_CEILING` |
+| Blocked markings | Sensitive | `EXPORT_BLOCKED_MARKINGS` |
 | Label limit per Indicator | 50 | `EXPORT_MAX_LABELS` |
 
 - The type exclusions exist because every observable must link to an Identity,
   so "all entities" would otherwise publish internal hostnames and victims.
-- A label is dropped if the entity or the relationship is above the ceiling. An
-  unmarked object counts as `TLP:AMBER+STRICT`, and a marking that is not TLP
-  never passes.
-- An Indicator above the ceiling is not exported at all.
+- Every marking can leave except blocked ones, `TLP:RED` included. Terms match
+  anywhere in the definition, ignoring case, so `Sensitive` also blocks
+  `Highly Sensitive`. A blank setting falls back to `Sensitive`.
+- A label is dropped if the entity or the relationship has a blocked marking. A
+  marking with no definition counts as blocked.
+- An Indicator with a blocked marking still exists in OpenCTI and joins the
+  Grouping when created, but is not exported.
+- The connector logs a warning if no marking on the platform matches a term,
+  which usually means a typo.
 - Over the limit, adversaries are kept first, then Malware, then Attack Patterns,
   Tools and Vulnerabilities, then Infrastructure, then the rest.
 - Labels starting `CR-`, `REQ-` or `COLREQ-` on the Indicator or Observable pass
@@ -101,13 +145,14 @@ unchanged. The CSV is still written, so a dry run can be reviewed.
 | `CONNECTOR_DURATION_PERIOD` | `PT1H` | Time between cycles. |
 | `INDICATOR_DRY_RUN` | `true` | Must be set to `false` to write or stream. |
 | `INDICATOR_AUTHOR_NAME` | `Indicator Export` | Identity that marks Indicators as owned. **Do not change after going live**, or existing Indicators stop being maintained. |
-| `INDICATOR_CONFIDENCE_FLOOR` | `15` | Attack Pattern context only. Sets `anomalous-activity`. |
-| `INDICATOR_CONFIDENCE_CEILING` | `85` | Adversary or victim context too. Sets `malicious-activity`. |
 | `INDICATOR_DECAY_DAYS` | `30` | Days from lapse to revocation. |
 | `INDICATOR_MAX_ERRORS` | `50` | Errors before a cycle stops its lifecycle pass. |
 | `INDICATOR_EXCLUDED_OBSERVABLE_TYPES` | empty | Added to Network-Traffic and Persona, which are always excluded. |
 | `INDICATOR_EXCLUDED_LABELS` | empty | Observables with these labels are not promoted. |
 | `EXPORT_LOCATION` | none | Required. `debug` or an IP address. |
+| `EXPORT_BLOCKED_MARKINGS` | `Sensitive` | Comma-separated terms. Matching markings never leave. |
+| `EXPORT_MAX_LABELS` | `50` | Labels per Indicator. |
+| `EXPORT_EXCLUDED_ENTITY_TYPES` | `System,Organization,Individual,Incident` | Entity types that never become labels. |
 | `EXPORT_DATA_DIR` | `/data` | CSV files and `state.sqlite3`. |
 | `EXPORT_CSV_RETENTION` | `5` | CSV snapshots to keep. |
 | `EXPORT_SCHEME` | `https` | `http` or `https`. |
@@ -120,10 +165,16 @@ unchanged. The CSV is still written, so a dry run can be reviewed.
 
 ## Behavior worth knowing
 
-- **Local state.** `state.sqlite3` records decay deadlines and what the stream
-  destination confirmed. This departs from the repo's no-local-state convention
-  because OpenCTI cannot hold either. Losing it restarts decay windows and
-  re-sends objects under the same STIX ids.
+- **Local state.** `state.sqlite3` records decay deadlines, what the stream
+  destination confirmed, and pending Grouping adds. This departs from the repo's
+  no-local-state convention because OpenCTI cannot hold these. Losing it restarts
+  decay windows and re-sends objects under the same STIX ids.
+- **Organization does not always mean victim.** Any direct link to an Organization
+  counts, including an owner, vendor or provider.
+- **Scores can show what labels hide.** Organization labels are excluded by default,
+  so a 100 will not show which victim produced it.
+- **Score and platform decay.** If OpenCTI lowers a score through its own decay
+  rules, the next cycle sets it back.
 - **Pattern collisions.** An Indicator with the same pattern from another source
   is the same object in OpenCTI. It is left alone, not exported, and counted in
   `collisions`.
@@ -134,7 +185,7 @@ unchanged. The CSV is still written, so a dry run can be reviewed.
   Indicator into decay.
 - **Markings only go up.** A raised Observable marking reaches the Indicator, but
   a lowered one is left for an analyst.
-- **Raised above the ceiling after sending.** Exports stop, but nothing tells the
+- **Marked Sensitive after sending.** Exports stop, but nothing tells the
   destination to withdraw its existing copy.
 
 ## Tests
