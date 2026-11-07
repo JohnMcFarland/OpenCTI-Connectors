@@ -80,7 +80,7 @@ def test_url_observable_has_no_asn_or_country():
         "https://bad.example/x",
         [{"feed": "TweetFeed URLs", "vendor": "Daniel L\u00f3pez", "asn": 1}],
     )
-    assert [obj.type for obj in objects] == ["url", "relationship"]
+    assert [obj.type for obj in objects] == ["identity", "url", "relationship"]
 
 
 def test_osint_report_name_and_description():
@@ -92,3 +92,57 @@ def test_osint_report_name_and_description():
     assert "open-source" in report.description
     iofa = builder.build_report(slot, [ref], "IOFA")
     assert iofa.id != report.id
+
+
+# SP-OSINT-AUTHOR-V1: OSINT objects are authored by the original feed publisher.
+
+def _ipv4_rows():
+    return [
+        {"feed": "CINS Army List IP", "vendor": "CINS", "asn": 64500, "asname": "AS",
+         "ip_location": {"country_code": "DE"}, "first_seen_on": "2026-11-07T01:00:00"},
+        {"feed": "Green Snow", "vendor": "Green Snow", "first_seen_on": "2026-11-06T09:00:00"},
+    ]
+
+
+def test_osint_observable_is_authored_by_the_earliest_feed_publisher():
+    builder = SilentPushStixBuilder(MARKING, 70)
+    objects = builder.build_osint_indicator("ipv4-addr", "198.18.0.9", _ipv4_rows())
+    identities = {obj.name: obj for obj in objects if obj.type == "identity"}
+    assert set(identities) == {"CINS", "Green Snow"}
+    ip = next(obj for obj in objects if obj.type == "ipv4-addr")
+    assert ip.x_opencti_created_by_ref == identities["Green Snow"].id
+
+
+def test_each_publisher_authors_its_own_identity_floor_edge():
+    builder = SilentPushStixBuilder(MARKING, 70)
+    objects = builder.build_osint_indicator("ipv4-addr", "198.18.0.9", _ipv4_rows())
+    ids = {obj.id: obj for obj in objects if obj.type == "identity"}
+    floor = [obj for obj in objects if obj.type == "relationship" and obj.target_ref in ids]
+    assert len(floor) == 2
+    assert all(edge.created_by_ref == edge.target_ref for edge in floor)
+
+
+def test_silent_push_still_authors_its_enrichment():
+    builder = SilentPushStixBuilder(MARKING, 70)
+    objects = builder.build_osint_indicator("ipv4-addr", "198.18.0.9", _ipv4_rows())
+    asn_edge = next(o for o in objects if o.type == "relationship" and o.relationship_type == "belongs-to")
+    assert asn_edge.created_by_ref == builder.author.id
+    location = next(o for o in objects if o.type == "location")
+    assert location.created_by_ref == builder.author.id
+
+
+def test_person_publisher_is_an_individual():
+    builder = SilentPushStixBuilder(MARKING, 70)
+    objects = builder.build_osint_indicator(
+        "url", "https://bad.example/x",
+        [{"feed": "TweetFeed URLs", "vendor": "Daniel L\u00f3pez"}],
+    )
+    person = next(obj for obj in objects if obj.type == "identity")
+    assert person.identity_class == "individual"
+
+
+def test_rows_without_a_vendor_fall_back_to_silent_push():
+    builder = SilentPushStixBuilder(MARKING, 70)
+    objects = builder.build_osint_indicator("url", "https://bad.example/x", [{"feed": "X"}])
+    assert [obj.type for obj in objects] == ["url", "relationship"]
+    assert objects[0].x_opencti_created_by_ref == builder.author.id

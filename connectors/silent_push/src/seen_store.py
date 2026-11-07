@@ -1,5 +1,6 @@
 """
-The set of values a stream has already handled, on a persistent volume.
+The set of values a stream has already handled, on a persistent volume,
+plus the OSINT cursor, which lives in platform connector state.
 
 One file per stream: seen_iofa.txt and seen_osint.txt. Neither source has a
 usable date cursor (the IOFA exports carry no dates, and Feed Scan ignores
@@ -45,17 +46,28 @@ class SeenStore:
             os.fsync(handle.fileno())
 
 
-class Cursor:
-    """A single UTC timestamp on the state volume, replaced atomically."""
+class StateCursor:
+    """A single UTC timestamp kept in the connector's platform state.
 
-    def __init__(self, state_dir: str, file_name: str) -> None:
-        self.path = os.path.join(state_dir, file_name)
+    SP-STATE-CURSOR-V1: the OSINT cursor lives in OpenCTI connector state
+    (helper.get_state/set_state), the repository convention, so it survives a
+    rebuilt container and is visible in the platform. Only the seen-value sets
+    stay on the volume, because about two million values do not fit in
+    connector state.
+    """
+
+    def __init__(self, helper, key: str) -> None:
+        self.helper = helper
+        self.key = key
+        self.path = f"connector state: {key}"
+
+    def _state(self) -> dict:
+        state = self.helper.get_state()
+        return dict(state) if isinstance(state, dict) else {}
 
     def read(self) -> datetime | None:
-        try:
-            with open(self.path, encoding="utf-8") as handle:
-                text = handle.read().strip()
-        except FileNotFoundError:
+        text = self._state().get(self.key)
+        if not isinstance(text, str):
             return None
         try:
             moment = datetime.fromisoformat(text)
@@ -66,9 +78,7 @@ class Cursor:
         return moment.astimezone(timezone.utc)
 
     def write(self, moment: datetime) -> None:
-        temporary = f"{self.path}.tmp"
-        with open(temporary, "w", encoding="utf-8") as handle:
-            handle.write(moment.astimezone(timezone.utc).isoformat())
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary, self.path)
+        # Merge, so any other key in the connector state is kept.
+        state = self._state()
+        state[self.key] = moment.astimezone(timezone.utc).isoformat()
+        self.helper.set_state(state)

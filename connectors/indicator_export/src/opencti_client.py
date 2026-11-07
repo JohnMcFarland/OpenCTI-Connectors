@@ -27,6 +27,7 @@ _ENDPOINT_FIELDS = (
     """
     ... on BasicObject { id entity_type parent_types }
     ... on StixDomainObject { %s }
+    ... on StixCyberObservable { createdBy { ... on Identity { id } } }
     """
     % MARKING_FIELDS
     + "\n".join(f"... on {name} {{ name }}" for name in _NAMED_TYPES)
@@ -69,6 +70,7 @@ _QUALIFYING_ATTRIBUTES = """
 _RELATED_ATTRIBUTES = """
     id
     relationship_type
+    createdBy { ... on Identity { id } }
     %s
     from { %s }
     to { %s }

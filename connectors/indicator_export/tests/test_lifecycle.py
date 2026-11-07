@@ -428,3 +428,23 @@ def test_unsaved_changes_do_not_reach_the_platform():
     first = StateStore(platform)
     first.put_decay("ind-1", DecayEntry("2026-12-01T00:00:00+00:00", None, "X"))
     assert StateStore(platform).get_decay("ind-1") is None
+
+
+def test_only_allowlisted_observable_types_are_promoted(store):
+    client = FakeClient()
+    software = {"id": "sw", "entity_type": "Software", "name": "Slack", "objectMarking": []}
+    account = {"id": "ua", "entity_type": "User-Account", "account_login": "root", "objectMarking": []}
+    client.qualifying = [ap_link(software), ap_link(account), ap_link(ipv4())]
+    result = manager(client, store).run_cycle()
+    assert result.stats["promoted"] == 1
+    assert [i["pattern"] for i in client.indicators.values()] == ["[ipv4-addr:value = '1.2.3.4']"]
+
+
+def test_allowlist_is_configurable_but_never_blank(store):
+    assert settings().allowed_observable_types == frozenset(
+        ["IPv4-Addr", "IPv6-Addr", "StixFile", "Domain-Name", "Url"]
+    )
+    assert settings(INDICATOR_ALLOWED_OBSERVABLE_TYPES="").allowed_observable_types == (
+        settings().allowed_observable_types
+    )
+    assert settings(INDICATOR_ALLOWED_OBSERVABLE_TYPES="Url").allowed_observable_types == frozenset(["Url"])

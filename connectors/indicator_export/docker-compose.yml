@@ -24,6 +24,8 @@ services:
       - INDICATOR_AUTHOR_NAME=Indicator Export
       - INDICATOR_DECAY_DAYS=30
       - INDICATOR_MAX_ERRORS=50
+      # IP addresses, file hashes, domains and URLs only.
+      - INDICATOR_ALLOWED_OBSERVABLE_TYPES=IPv4-Addr,IPv6-Addr,StixFile,Domain-Name,Url
       - INDICATOR_EXCLUDED_OBSERVABLE_TYPES=
       - INDICATOR_EXCLUDED_LABELS=
       # --- Export ---

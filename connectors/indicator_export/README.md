@@ -11,6 +11,8 @@ Observables.
 1. **Promote.** An Observable with a `related-to` Attack Pattern gets a scored
    Indicator, with `based-on` and `indicates` relationships. No Attack Pattern
    means no Indicator, however strong its other links are.
+   Only IP addresses, file hashes, domains and URLs qualify
+   (`INDICATOR_ALLOWED_OBSERVABLE_TYPES`).
 2. **Reconcile.** Existing Indicators get their score, types, markings and
    `indicates` edges synced, so scores follow the graph up and down. If the
    Observable stops qualifying, the Indicator enters decay for
@@ -37,7 +39,9 @@ other two vertices. Only a direct relationship to the Observable counts.
 
 - **Adversary:** Malware, Intrusion Set, Threat Actor Group or Threat Actor
   Individual.
-- **Victim:** Organization.
+- **Victim:** an Organization that is not the author of the Observable or of
+  the relationship. The author is the source (the data model's Identity
+  floor), not a victim.
 
 The value is written to both `x_opencti_score` and `confidence`, and both are
 exported. Tools do not change the score.
@@ -147,6 +151,7 @@ unchanged apart from `last_run`. The CSV is still written, so a dry run can be r
 | `INDICATOR_AUTHOR_NAME` | `Indicator Export` | Identity that marks Indicators as owned. **Do not change after going live**, or existing Indicators stop being maintained. |
 | `INDICATOR_DECAY_DAYS` | `30` | Days from lapse to revocation. |
 | `INDICATOR_MAX_ERRORS` | `50` | Errors before a cycle stops its lifecycle pass. |
+| `INDICATOR_ALLOWED_OBSERVABLE_TYPES` | `IPv4-Addr,IPv6-Addr,StixFile,Domain-Name,Url` | Only these types become Indicators. File patterns are hash-only. A blank value falls back to the default. |
 | `INDICATOR_EXCLUDED_OBSERVABLE_TYPES` | empty | Added to Network-Traffic and Persona, which are always excluded. |
 | `INDICATOR_EXCLUDED_LABELS` | empty | Observables with these labels are not promoted. |
 | `EXPORT_LOCATION` | none | Required. `debug` or an IP address. |
@@ -176,7 +181,7 @@ unchanged apart from `last_run`. The CSV is still written, so a dry run can be r
   Attack Pattern qualifies again. Edges authored by anyone else are never
   touched.
 - **Organization does not always mean victim.** Any direct link to an Organization
-  counts, including an owner, vendor or provider.
+  other than the author counts, including an owner, vendor or provider.
 - **Scores can show what labels hide.** Organization labels are excluded by default,
   so a 100 will not show which victim produced it.
 - **Score and platform decay.** If OpenCTI lowers a score through its own decay

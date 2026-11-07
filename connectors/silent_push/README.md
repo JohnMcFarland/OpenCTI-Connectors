@@ -164,8 +164,8 @@ At each slot the IOFA stream runs, then the OSINT stream.
 2. **Work out the window.** On the first run it starts
    `OSINT_INITIAL_LOOKBACK_HOURS` ago. After that it starts when the previous
    successful run started, less a one-hour overlap for clock skew and late
-   timestamps. The start of each successful run is kept in
-   `osint_last_run.txt`.
+   timestamps. The start of each successful run is kept in the connector's
+   platform state (`osint_last_run`).
 3. **Pull the window through Feed Scan.** Open-source feeds have no export
    file. The connector queries `POST /app/v1/feed-scan/query-data/` with
    `datasource = ["FEED"] AND feed_scope = ["GLOBAL"] AND vendor = [...] AND first_seen_on >= "now-<N>d"`,
@@ -204,8 +204,13 @@ adds to the same Report rather than creating a second one.
 
 ## What gets created in OpenCTI
 
-Everything is authored by the **Silent Push** Organization identity and marked
-with the configured TLP. No Indicators are created
+IOFA objects are authored by the **Silent Push** Organization identity. OSINT
+observables are authored by the **original feed's publisher** (the feed
+`vendor`, e.g. CINS or Green Snow), because the author is the source of the
+information; Silent Push still authors the enrichment it adds (Autonomous
+System, Country) and the Report. Publishers that are people, such as the
+TweetFeed author, are Individuals (`INDIVIDUAL_VENDORS` in `stix_builder.py`).
+Everything is marked with the configured TLP. No Indicators are created
 (`x_opencti_create_indicator` is off), so promotion to Indicators stays with
 your platform's own rules. No Labels are applied, because feed names are not
 collection requirements.
@@ -237,7 +242,7 @@ edge to the shared entity, from the earlier listing.
 | `indicator` with `type` `domain` | Domain-Name observable |
 | `indicator` with `type` `ip` | IPv4-Addr or IPv6-Addr observable |
 | `indicator` with `type` `url` | URL observable |
-| Every value | `related-to` the Silent Push Organization |
+| Every value | `related-to` each feed publisher that lists it, each edge authored by that publisher (Silent Push only when a row has no vendor) |
 | `sp_risk_score` (highest across its feeds) | Observable score (`x_opencti_score`, 0-100) |
 | `feed`, `vendor`, `first_seen_on`, `last_seen_on`, tags | Observable description, such as `Listed in open-source feeds collected by Silent Push: CINS Army List IP (CINS)` |
 | `asn`, `asname` (IPv4 only) | Autonomous System, `belongs-to` from the IP |
@@ -338,13 +343,15 @@ at again.
 
 ## State
 
-Everything lives in `STATE_DIR`:
+The OSINT cursor lives in the connector's platform state, like every other
+connector in this repository. Only the seen-value sets stay on disk in
+`STATE_DIR`, because about two million values do not fit in connector state:
 
-| File | Stream | Holds |
+| Where | Stream | Holds |
 | --- | --- | --- |
 | `seen_iofa.txt` | IOFA | Every value handled. Starts at about 30 MB, grows by roughly 6,000 to 11,000 lines a day |
 | `seen_osint.txt` | OSINT | Every value handled. Grows by the number of new OSINT values |
-| `osint_last_run.txt` | OSINT | When the last successful OSINT run started |
+| platform state `osint_last_run` | OSINT | When the last successful OSINT run started |
 
 The value files are append-only, flushed to disk after each bundle, and survive
 a partial line left by a crash. A value that drops off a feed and later returns
@@ -357,7 +364,7 @@ in between is never ingested. Watch for the
 `No state file: saved a baseline and ingested nothing` warning on any run after
 the first.
 
-**OSINT works from time.** With no `osint_last_run.txt`, it takes the last
+**OSINT works from time.** With no `osint_last_run` in connector state, it takes the last
 `OSINT_INITIAL_LOOKBACK_HOURS` and logs `No OSINT cursor: taking the initial
 lookback window`. If the connector is down for days, the next run reaches back
 to the last successful run, however long ago.

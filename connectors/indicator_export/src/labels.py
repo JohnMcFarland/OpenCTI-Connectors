@@ -17,6 +17,10 @@ ADVERSARY_ENTITY_TYPES = frozenset(
 )
 VICTIM_ENTITY_TYPES = frozenset(["Organization"])
 
+
+def _author_id(obj: Dict[str, Any]) -> str:
+    return str(((obj or {}).get("createdBy") or {}).get("id") or "")
+
 # Same prefixes as QA.LABELS.001 in report_model_qa. These are the only labels
 # that exist in OpenCTI by policy, so they pass through unfiltered.
 COLLECTION_REQUIREMENT_PREFIXES = ("CR-", "REQ-", "COLREQ-")
@@ -91,11 +95,17 @@ def build_context(
         source = relationship.get("from") or {}
         target = relationship.get("to") or {}
         other = target if source.get("id") == observable_id else source
+        me = source if other is target else target
         if other.get("id") == observable_id:
             continue
         entity_type = other.get("entity_type") or ""
         has_adversary = has_adversary or entity_type in ADVERSARY_ENTITY_TYPES
-        has_victim = has_victim or entity_type in VICTIM_ENTITY_TYPES
+        # IE-VICTIM-AUTHOR-V1: the Organization that authored the observable
+        # or the edge is its source (the data model's Identity floor), not a
+        # victim. Only an unrelated Organization fills the victim vertex.
+        authors = {_author_id(relationship), _author_id(me)} - {""}
+        if entity_type in VICTIM_ENTITY_TYPES and other.get("id") not in authors:
+            has_victim = True
         if not _is_entity(other):
             continue
         entities.append(

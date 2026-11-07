@@ -178,7 +178,10 @@ class LifecycleManager:
             observable_id = observable.get("id")
             if not observable_id or not attack_pattern.get("id"):
                 continue
-            if observable.get("entity_type") in self.settings.excluded_observable_types:
+            entity_type = observable.get("entity_type")
+            if entity_type not in self.settings.allowed_observable_types:
+                continue
+            if entity_type in self.settings.excluded_observable_types:
                 continue
             labels = {
                 label.get("value", "") for label in observable.get("objectLabel") or []

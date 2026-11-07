@@ -42,7 +42,7 @@ from client import (
     SilentPushClient,
     batch_size,
 )
-from seen_store import Cursor, SeenStore
+from seen_store import SeenStore, StateCursor
 from stix_builder import (
     STREAM_IOFA,
     STREAM_OSINT,
@@ -151,7 +151,7 @@ class SilentPushConnector:
         self.client = SilentPushClient(api_key)
         self.store = SeenStore(state_dir, "seen_iofa.txt")
         self.osint_store = SeenStore(state_dir, "seen_osint.txt")
-        self.osint_cursor = Cursor(state_dir, "osint_last_run.txt")
+        self.osint_cursor = StateCursor(self.helper, "osint_last_run")
         self.osint_initial_lookback = timedelta(
             hours=float(setting("osint_initial_lookback_hours", 24))
         )

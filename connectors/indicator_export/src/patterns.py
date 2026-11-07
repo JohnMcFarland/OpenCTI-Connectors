@@ -31,7 +31,7 @@ def build_pattern(observable: Dict[str, Any]) -> Optional[str]:
     Dispatches to a type-specific factory based on entity_type. Returns None
     if the type is unsupported or the observable lacks the required value
     fields. None signals the caller to skip and log the observable rather
-    than raise an exception — skipping is the correct behavior for observable
+    than raise an exception - skipping is the correct behavior for observable
     types that cannot be patterned.
 
     Args:

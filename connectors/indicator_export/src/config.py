@@ -20,6 +20,11 @@ DEFAULT_EXCLUDED_ENTITY_TYPES = "System,Organization,Individual,Incident"
 # no usable STIX pattern. Neither can become an Indicator.
 HARDCODED_OBSERVABLE_EXCLUSIONS = frozenset(["Network-Traffic", "Persona"])
 
+# Only these observable types become Indicators: IP addresses, file hashes,
+# domains and URLs (decided 2026-11-07). Software, User-Account and the rest
+# match too much benign activity to act on. StixFile patterns are hash-only.
+DEFAULT_ALLOWED_OBSERVABLE_TYPES = "IPv4-Addr,IPv6-Addr,StixFile,Domain-Name,Url"
+
 
 @dataclass(frozen=True)
 class ExportTarget:
@@ -78,6 +83,7 @@ class Settings:
     decay_days: int
     max_errors: int
     excluded_observable_types: FrozenSet[str]
+    allowed_observable_types: FrozenSet[str]
     excluded_labels: FrozenSet[str]
 
     target: ExportTarget
@@ -155,6 +161,10 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
         max_errors=integer("INDICATOR_MAX_ERRORS", 50, minimum=1),
         excluded_observable_types=HARDCODED_OBSERVABLE_EXCLUSIONS
         | _parse_csv_set(source.get("INDICATOR_EXCLUDED_OBSERVABLE_TYPES", "")),
+        # A blank value falls back to the default, so it cannot open every type.
+        allowed_observable_types=_parse_csv_set(
+            optional("INDICATOR_ALLOWED_OBSERVABLE_TYPES", DEFAULT_ALLOWED_OBSERVABLE_TYPES)
+        ),
         excluded_labels=_parse_csv_set(source.get("INDICATOR_EXCLUDED_LABELS", "")),
         target=parse_export_location(source.get("EXPORT_LOCATION", "")),
         scheme=scheme,

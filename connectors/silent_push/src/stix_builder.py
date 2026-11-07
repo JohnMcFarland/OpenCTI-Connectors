@@ -58,6 +58,11 @@ _ACTOR_ALIASES = {"Fin7": "FIN7"}
 _MALWARE_ALIASES = {"Cobaltstrike": "Cobalt Strike"}
 _SCREENCONNECT_FEED = "Screen Connect RMM leveraged by Threat Actors"
 
+# OSINT feed publishers that are people, not organizations. The data model
+# keeps Individual for real personal names (locked decision), and a vendor
+# name alone cannot tell the two apart, so the known ones are listed here.
+INDIVIDUAL_VENDORS = {"Daniel L\u00f3pez"}
+
 # Dual-use software attackers run, which the data model classes as Tool.
 _TOOLS = {"Cobalt Strike", "Sliver", "Havoc", "Adaptix", "ScreenConnect"}
 
@@ -233,6 +238,7 @@ class SilentPushStixBuilder:
         target_id: str,
         description: str,
         start_time: datetime | None,
+        author=None,
     ) -> stix2.Relationship:
         # Keyed on start_time alone. The first-listed date is stable, whereas
         # the last-listed date moves and would mint a duplicate edge.
@@ -246,15 +252,32 @@ class SilentPushStixBuilder:
             target_ref=target_id,
             description=description,
             confidence=self.confidence,
-            created_by_ref=self.author.id,
+            created_by_ref=(author or self.author).id,
             object_marking_refs=[self.marking_id],
             allow_custom=True,
             **kwargs,
         )
 
-    def _observable(self, stix_type: str, value: str, row: dict, description: str):
+    def _source_identity(self, vendor: str) -> stix2.Identity:
+        """The publisher of an open-source feed, as the OSINT author.
+
+        SP-OSINT-AUTHOR-V1: the author of an object is the source of the
+        information, so OSINT observables are authored by the original feed's
+        publisher, not by Silent Push, which only collects and enriches them.
+        """
+        identity_class = "individual" if vendor in INDIVIDUAL_VENDORS else "organization"
+        return stix2.Identity(
+            id=Identity.generate_id(vendor, identity_class),
+            name=vendor,
+            identity_class=identity_class,
+            description="Publisher of an open-source threat feed collected by Silent Push.",
+        )
+
+    def _observable(
+        self, stix_type: str, value: str, row: dict, description: str, author=None
+    ):
         custom = {
-            "x_opencti_created_by_ref": self.author.id,
+            "x_opencti_created_by_ref": (author or self.author).id,
             "x_opencti_create_indicator": False,
             "x_opencti_description": description,
         }
@@ -446,19 +469,39 @@ class SilentPushStixBuilder:
         scores = [score for score in scores if score is not None]
         score_row = {"sp_risk_score": max(scores)} if scores else {}
 
+        # One publisher per vendor, earliest listing first; that one authors
+        # the observable. Each publisher gets its own Identity-floor edge.
+        vendors = _osint_vendors(rows)
+        publishers = [(self._source_identity(name), first) for name, first in vendors]
+        primary = publishers[0][0] if publishers else self.author
+
         observable = self._observable(
-            stix_type, value, score_row, _describe_osint(rows)
+            stix_type, value, score_row, _describe_osint(rows), author=primary
         )
-        objects = [
-            observable,
-            self._relationship(
-                "related-to",
-                observable.id,
-                self.author.id,
-                f"{value} is listed in open-source feeds collected by Silent Push.",
-                start_time,
-            ),
-        ]
+        objects = [identity for identity, _ in publishers] + [observable]
+        if publishers:
+            for identity, first in publishers:
+                objects.append(
+                    self._relationship(
+                        "related-to",
+                        observable.id,
+                        identity.id,
+                        f"{value} is listed in an open-source feed published by "
+                        f"{identity.name}, collected by Silent Push.",
+                        first or start_time,
+                        author=identity,
+                    )
+                )
+        else:
+            objects.append(
+                self._relationship(
+                    "related-to",
+                    observable.id,
+                    self.author.id,
+                    f"{value} is listed in open-source feeds collected by Silent Push.",
+                    start_time,
+                )
+            )
         if stix_type == "ipv4-addr":
             objects += self._asn_objects(observable, row, start_time)
             objects += self._country_objects(observable, row, start_time)
@@ -535,6 +578,22 @@ def _describe(row: dict, listings: list[dict]) -> str:
     if tags:
         parts.append(f"Feed tags: {', '.join(sorted(tags))}.")
     return " ".join(parts)
+
+
+def _osint_vendors(rows: list[dict]) -> list[tuple[str, datetime | None]]:
+    """Distinct feed vendors with their earliest first-seen time, earliest first."""
+    earliest: dict[str, datetime | None] = {}
+    for row in rows:
+        vendor = row.get("vendor")
+        if not isinstance(vendor, str) or not vendor.strip():
+            continue
+        vendor = vendor.strip()
+        seen = parse_seen_time(row.get("first_seen_on"))
+        known = earliest.get(vendor)
+        if vendor not in earliest or (seen and (known is None or seen < known)):
+            earliest[vendor] = seen
+    far = datetime.max.replace(tzinfo=timezone.utc)
+    return sorted(earliest.items(), key=lambda item: (item[1] or far, item[0]))
 
 
 def _describe_osint(rows: list[dict]) -> str:

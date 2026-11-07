@@ -13,7 +13,7 @@ from connector import (
     seconds_until_next_slot,
     slot_start,
 )
-from seen_store import Cursor, SeenStore
+from seen_store import SeenStore, StateCursor
 from stix_builder import SilentPushStixBuilder, parse_seen_time
 
 MARKING = "marking-definition--826578e1-40ad-459f-bc73-ede076f81f37"
@@ -122,12 +122,20 @@ class Harness:
         instance = SilentPushConnector.__new__(SilentPushConnector)
         instance.helper = MagicMock()
         instance.helper.send_stix2_bundle.side_effect = self._send
+        # Platform connector state, JSON round-trip included.
+        self.platform_state = None
+        instance.helper.get_state.side_effect = (
+            lambda: json.loads(self.platform_state) if self.platform_state else None
+        )
+        instance.helper.set_state.side_effect = (
+            lambda state: setattr(self, "platform_state", json.dumps(state))
+        )
         instance.interval_seconds = TWELVE_HOURS
         instance.enrich_budget = 60
         instance.client = self.client
         instance.store = SeenStore(str(tmp_path), "seen_iofa.txt")
         instance.osint_store = SeenStore(str(tmp_path), "seen_osint.txt")
-        instance.osint_cursor = Cursor(str(tmp_path), "osint_last_run.txt")
+        instance.osint_cursor = StateCursor(instance.helper, "osint_last_run")
         instance.osint_initial_lookback = timedelta(hours=24)
         instance.iofa_enabled = True
         instance.osint_enabled = True
@@ -427,3 +435,23 @@ def test_seen_store_survives_a_partial_line_from_a_crash(tmp_path):
         handle.write("half-writ")
     store.append(["b.example"])
     assert {"a.example", "b.example"} <= store.load()
+
+
+
+# SP-STATE-CURSOR-V1: the OSINT cursor lives in platform connector state.
+
+def test_osint_cursor_round_trips_through_platform_state_and_keeps_other_keys(harness):
+    helper = harness.connector.helper
+    helper.set_state({"other": 1})
+    cursor = StateCursor(helper, "osint_last_run")
+    assert cursor.read() is None
+    cursor.write(START)
+    assert cursor.read() == START
+    assert helper.get_state()["other"] == 1
+
+
+def test_no_cursor_file_is_written_to_the_volume(harness, tmp_path):
+    harness.osint("198.18.0.1")
+    harness.run()
+    assert not (tmp_path / "osint_last_run.txt").exists()
+    assert harness.connector.osint_cursor.read() is not None

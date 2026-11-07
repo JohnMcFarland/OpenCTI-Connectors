@@ -143,3 +143,41 @@ def test_organization_is_the_victim_type():
 def test_other_types_are_neither(entity_type):
     context = build_context(OBS, [related(OBS, entity(entity_type, "x"))])
     assert not context.has_adversary and not context.has_victim
+
+
+# IE-VICTIM-AUTHOR-V1: the source Organization is not a victim.
+
+def _authored(rel, author_id):
+    rel = dict(rel)
+    rel["createdBy"] = {"id": author_id}
+    return rel
+
+
+def test_organization_that_authored_the_edge_is_not_a_victim():
+    source = entity("Organization", "Silent Push", entity_id="org-sp")
+    context = build_context(OBS, [_authored(related(OBS, source), "org-sp")])
+    assert context.has_victim is False
+
+
+def test_organization_that_authored_the_observable_is_not_a_victim():
+    source = entity("Organization", "MERICS", entity_id="org-src")
+    rel = related(OBS, source)
+    rel["from"] = dict(rel["from"], createdBy={"id": "org-src"})
+    assert build_context(OBS, [rel]).has_victim is False
+
+
+def test_unrelated_organization_is_still_a_victim():
+    victim = entity("Organization", "Victim Corp", entity_id="org-victim")
+    context = build_context(OBS, [_authored(related(OBS, victim), "org-reporter")])
+    assert context.has_victim is True
+
+
+def test_source_org_plus_adversary_scores_as_adversary_only():
+    source = entity("Organization", "Silent Push", entity_id="org-sp")
+    actor = entity("Intrusion-Set", "FIN7", entity_id="is-fin7")
+    context = build_context(OBS, [
+        _authored(related(OBS, source), "org-sp"),
+        _authored(related(OBS, actor), "org-sp"),
+    ])
+    assert context.has_adversary is True
+    assert context.has_victim is False
