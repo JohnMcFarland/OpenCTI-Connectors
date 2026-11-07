@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.env
+config.yml
+searches.yml
+*.pem
+state/
+*.log
+.venv/

@@ -1,0 +1,82 @@
+# Splunk connector: search definitions.
+# Copy to searches.yml and mount it at /opt/connector/searches.yml.
+#
+# Each entry is one source. Every run executes it over [last cursor, now - lag) and
+# turns the result rows into Incident Response cases in OpenCTI.
+#
+#   name                   REQUIRED, unique. Also the state key: renaming = new cursor.
+#   spl | saved_search     REQUIRED, exactly one. Only the columns referenced below are
+#                          fetched; ending the SPL with `table` is still faster.
+#   app                    Splunk app namespace for the job (default: search).
+#   enabled                default true.
+#   time_mode              index (default): window on _indextime, so late-arriving events
+#                          are picked up (within SPLUNK_INDEX_TIME_SKEW_SECONDS).
+#                          event: window on _time.
+#   lookback               -<n><s|m|h|d|w> (e.g. -7d) = re-search that rolling window
+#                          every run instead of a cursor. Use for data that changes
+#                          after indexing (ES notable dispositions). Unchanged cases
+#                          are not re-sent. Requires group_by.
+#   time_field             column holding the event time (default _time).
+#   group_by               columns whose values define one case. Omit = one case per
+#                          row (fine for notables; group raw events, or get a case each).
+#   title / description    templates. {column} = that column's first value (all of a
+#                          group_by column's values);
+#                          {search_name} {group} {count} {first_seen} {last_seen} built in.
+#                          The title identifies the case: " ({group})" is appended unless
+#                          it has {group} or every group_by column; no {count}/{last_seen}.
+#   incident_type          OpenCTI incident type (default: alert).
+#   severity_field         column mapped to severity (informational/low/medium/high/critical).
+#   severity_map           extra/override value -> low|medium|high|critical mappings.
+#   system_fields          columns naming the asset the activity was seen on. Each value
+#                          becomes a System (the Sighting target); placeholders such as
+#                          "unknown" or "-" are skipped. A value is sighted only on the
+#                          assets in its own rows. No asset in a row = the Splunk System.
+#   observables            column -> kind. Kinds: ip, ipv4-addr, ipv6-addr, domain-name,
+#                          url, email-addr, user-account, mac-addr, file-hash, port.
+#                          Invalid values are rejected and counted in the case
+#                          description.
+#   attack_pattern_fields  columns containing MITRE IDs (e.g. T1059.001); linked to
+#                          existing Attack Patterns only.
+#   max_results            rows per Splunk job (default 10000). Bigger windows are
+#                          split automatically; nothing is dropped.
+#
+# No Labels and no Indicators are ever created.
+
+searches:
+  # Splunk Enterprise Security notables closed as true positive. Analysts close
+  # notables after they are indexed, so this re-checks a rolling 7-day window.
+  - name: ES true-positive notables
+    app: SplunkEnterpriseSecuritySuite
+    time_mode: event
+    lookback: -7d
+    spl: >
+      `notable`
+      | search status_label="Closed" disposition="disposition:1"
+      | table _time event_id rule_name urgency src src_ip dest dest_ip dest_port
+              user url file_hash annotations.mitre_attack
+    group_by: event_id
+    title: "{rule_name} on {dest} ({event_id})"
+    incident_type: alert
+    severity_field: urgency
+    system_fields: dest
+    observables:
+      src: ip
+      src_ip: ip
+      dest_ip: ip
+      dest_port: port
+      user: user-account
+      url: url
+      file_hash: file-hash
+    attack_pattern_fields: annotations.mitre_attack
+
+  # Run an existing saved search as-is.
+  - name: Outbound to known-bad
+    enabled: false
+    saved_search: "Threat - Outbound Connection to Known Bad - Rule"
+    group_by: [src, dest_ip]
+    title: "Outbound to known-bad {dest_ip} from {src}"
+    system_fields: src
+    observables:
+      dest_ip: ip
+      dest_port: port
+      query: domain-name

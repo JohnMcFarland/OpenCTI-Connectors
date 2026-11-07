@@ -1,0 +1,41 @@
+# Splunk connector: sample config.
+# Copy to config.yml (gitignored) OR set the equivalent environment variables.
+# Env vars take precedence over this file. Searches live in searches.yml.
+
+opencti:
+  url: "http://localhost:8080"
+  token: "ChangeMe"
+
+connector:
+  id: "ChangeMe-uuid"
+  name: "Splunk"
+  scope: "incident"
+  duration_period: "PT15M"
+  log_level: "info"
+
+splunk:
+  base_url: "https://splunk.example.internal:8089"   # management port, not web (8000)
+  # Auth: a Splunk auth token (preferred)...
+  token: ""
+  # ...or basic auth for a service account:
+  username: ""
+  password: ""
+  verify_ssl: true
+  ca_bundle: ""              # path to internal CA PEM for a privately-signed cert
+  owner: "nobody"            # servicesNS owner the jobs run as
+  results_api: "v2"          # "v1" for Splunk older than 9.0.1
+  request_timeout: 60
+  job_timeout: 900           # seconds a single search may run
+  page_size: 10000
+
+  searches_file: "searches.yml"
+
+  initial_lookback: "-24h"   # first-run window: -<n><s|m|h|d|w>
+  ingest_lag_seconds: 300    # leave the newest N seconds for the next run
+  index_time_skew_seconds: 86400  # index time_mode: _time slack around the window
+  max_objects_per_case: 2000
+  organization_name: ""      # REQUIRED: Organization that owns the monitored assets
+  author_name: "Splunk"
+  sensor_system_name: "Splunk"
+  tlp: "TLP:AMBER+STRICT"
+  confidence: 75

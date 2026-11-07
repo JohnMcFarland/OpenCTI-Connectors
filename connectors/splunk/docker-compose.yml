@@ -1,0 +1,39 @@
+services:
+  connector-splunk:
+    build: .
+    container_name: connector-splunk
+    restart: always
+    volumes:
+      # Operator-defined searches (copy searches.yml.sample -> searches.yml).
+      - ./searches.yml:/opt/connector/searches.yml:ro
+      # Internal CA for a self-hosted Splunk with a private cert (optional).
+      # - ./splunk-ca.pem:/opt/connector/splunk-ca.pem:ro
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${SPLUNK_CONNECTOR_ID}
+      - CONNECTOR_NAME=Splunk
+      - CONNECTOR_SCOPE=incident
+      - CONNECTOR_DURATION_PERIOD=PT15M
+      - CONNECTOR_LOG_LEVEL=info
+      # --- Splunk management API ---
+      - SPLUNK_BASE_URL=${SPLUNK_BASE_URL}
+      - SPLUNK_TOKEN=${SPLUNK_TOKEN}
+      # Basic auth instead of a token:
+      # - SPLUNK_USERNAME=${SPLUNK_USERNAME}
+      # - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      - SPLUNK_VERIFY_SSL=true
+      # - SPLUNK_CA_BUNDLE=/opt/connector/splunk-ca.pem
+      - SPLUNK_OWNER=nobody
+      - SPLUNK_RESULTS_API=v2
+      - SPLUNK_SEARCHES_FILE=searches.yml
+      # --- behavior ---
+      - SPLUNK_INITIAL_LOOKBACK=-24h
+      - SPLUNK_INGEST_LAG_SECONDS=300
+      - SPLUNK_INDEX_TIME_SKEW_SECONDS=86400
+      - SPLUNK_MAX_OBJECTS_PER_CASE=2000
+      - SPLUNK_ORGANIZATION_NAME=${SPLUNK_ORGANIZATION_NAME}
+      - SPLUNK_AUTHOR_NAME=Splunk
+      - SPLUNK_SENSOR_SYSTEM_NAME=Splunk
+      - SPLUNK_TLP=TLP:AMBER+STRICT
+      - SPLUNK_CONFIDENCE=75
