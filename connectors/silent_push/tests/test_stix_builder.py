@@ -126,7 +126,7 @@ def test_row_value():
     assert row_value("domain", {}) is None
 
 
-def test_ip_gets_context_and_identity_floor(builder):
+def test_ip_gets_context_and_no_author_edge(builder):
     objects = builder.build_indicator(
         "203.0.113.9", "ipv4-addr", ip_row(listing("bp")), FEEDS
     )
@@ -143,7 +143,7 @@ def test_ip_gets_context_and_identity_floor(builder):
         (rel.relationship_type, rel.target_ref)
         for rel in of_type(objects, "relationship")
     }
-    assert ("related-to", builder.author.id) in edges
+    assert all(target != builder.author.id for _, target in edges)
     assert ("belongs-to", of_type(objects, "autonomous-system")[0].id) in edges
     assert ("located-at", of_type(objects, "location")[0].id) in edges
     assert not of_type(objects, "intrusion-set")
@@ -216,10 +216,10 @@ def test_output_is_deterministic_across_runs(builder):
     assert {obj.id for obj in first} == {obj.id for obj in second}
 
 
-def test_bare_value_still_meets_the_identity_floor(builder):
+def test_bare_value_is_just_the_observable_authored_by_silent_push(builder):
     objects = builder.build_indicator("evil.example", "domain-name", {}, FEEDS)
-    assert of_type(objects, "domain-name")
-    assert of_type(objects, "relationship")[0].target_ref == builder.author.id
+    assert [obj.type for obj in objects] == ["domain-name"]
+    assert objects[0].x_opencti_created_by_ref == builder.author.id
 
 
 def test_wrong_type_for_the_file_is_unusable(builder):
@@ -234,6 +234,6 @@ def test_report_is_stable_per_slot_and_named_for_it(builder):
     assert report.name == "Silent Push IOFA - 2026-11-07 06:00 UTC"
     assert report.report_types == ["observable-feed"]
     assert report.published == slot
-    assert report.id == builder.build_report(slot, [objects[1].id]).id
+    assert report.id == builder.build_report(slot, [builder.build_indicator("other.example", "domain-name", {}, FEEDS)[0].id]).id
     later = datetime(2026, 11, 7, 12, tzinfo=timezone.utc)
     assert report.id != builder.build_report(later, [objects[0].id]).id

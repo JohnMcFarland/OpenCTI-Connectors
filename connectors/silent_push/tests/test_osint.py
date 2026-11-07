@@ -186,14 +186,14 @@ def test_value_in_two_feeds_is_one_observable_from_the_earliest_listing(harness)
     assert ips[0]["x_opencti_score"] == 80
     assert "Green Snow (Green Snow)" in ips[0]["x_opencti_description"]
     assert "CINS Army List IP (CINS)" in ips[0]["x_opencti_description"]
-    author_edge = next(
-        obj
-        for obj in harness.bundles[0]
-        if obj["type"] == "relationship"
-        and obj["source_ref"] == ips[0]["id"]
-        and obj["target_ref"].startswith("identity--")
+    # The earliest listing (Green Snow) authors it, with no edge to the author.
+    authors = {o["id"]: o["name"] for o in harness.bundles[0] if o["type"] == "identity"}
+    assert authors[ips[0]["x_opencti_created_by_ref"]] == "Green Snow"
+    assert not any(
+        obj["type"] == "relationship" and obj["target_ref"].startswith("identity--")
+        for bundle in harness.bundles
+        for obj in bundle
     )
-    assert author_edge["start_time"].startswith("2026-11-06T14:05:00")
 
 
 def test_duplicate_feeds_are_excluded_but_shared_values_still_land(harness):

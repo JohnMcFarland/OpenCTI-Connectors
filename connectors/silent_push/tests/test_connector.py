@@ -455,3 +455,16 @@ def test_no_cursor_file_is_written_to_the_volume(harness, tmp_path):
     harness.run()
     assert not (tmp_path / "osint_last_run.txt").exists()
     assert harness.connector.osint_cursor.read() is not None
+
+
+
+# SP-NO-AUTHOR-EDGE-V1: authors are in the bundle but never Report contents.
+
+def test_report_contents_exclude_author_identities(harness):
+    harness.osint("198.18.0.7")
+    harness.run()
+    for bundle in harness.bundles:
+        report = next(obj for obj in bundle if obj["type"] == "report")
+        identity_ids = {obj["id"] for obj in bundle if obj["type"] == "identity"}
+        assert identity_ids, "authors must still travel in the bundle"
+        assert not identity_ids & set(report["object_refs"])

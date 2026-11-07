@@ -491,7 +491,11 @@ class SilentPushConnector:
     def _send_chunk(
         self, objects: dict, slot: datetime, work_id: str, stream: str
     ) -> None:
-        report = self.builder.build_report(slot, list(objects), stream)
+        # SP-NO-AUTHOR-EDGE-V1: author identities ride in the bundle so
+        # createdBy resolves, but they are not intelligence and stay out of
+        # the Report's contents.
+        contents = [ref for ref in objects if not ref.startswith("identity--")]
+        report = self.builder.build_report(slot, contents, stream)
         bundle = stix2.Bundle(
             objects=[self.builder.author, *objects.values(), report],
             allow_custom=True,

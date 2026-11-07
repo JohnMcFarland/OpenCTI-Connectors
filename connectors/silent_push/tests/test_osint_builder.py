@@ -80,7 +80,7 @@ def test_url_observable_has_no_asn_or_country():
         "https://bad.example/x",
         [{"feed": "TweetFeed URLs", "vendor": "Daniel L\u00f3pez", "asn": 1}],
     )
-    assert [obj.type for obj in objects] == ["identity", "url", "relationship"]
+    assert [obj.type for obj in objects] == ["identity", "url"]
 
 
 def test_osint_report_name_and_description():
@@ -108,18 +108,15 @@ def test_osint_observable_is_authored_by_the_earliest_feed_publisher():
     builder = SilentPushStixBuilder(MARKING, 70)
     objects = builder.build_osint_indicator("ipv4-addr", "198.18.0.9", _ipv4_rows())
     identities = {obj.name: obj for obj in objects if obj.type == "identity"}
-    assert set(identities) == {"CINS", "Green Snow"}
+    assert set(identities) == {"Green Snow"}
     ip = next(obj for obj in objects if obj.type == "ipv4-addr")
     assert ip.x_opencti_created_by_ref == identities["Green Snow"].id
 
 
-def test_each_publisher_authors_its_own_identity_floor_edge():
+def test_no_relationship_points_at_an_author():
     builder = SilentPushStixBuilder(MARKING, 70)
     objects = builder.build_osint_indicator("ipv4-addr", "198.18.0.9", _ipv4_rows())
-    ids = {obj.id: obj for obj in objects if obj.type == "identity"}
-    floor = [obj for obj in objects if obj.type == "relationship" and obj.target_ref in ids]
-    assert len(floor) == 2
-    assert all(edge.created_by_ref == edge.target_ref for edge in floor)
+    assert not [o for o in objects if o.type == "relationship" and o.target_ref.startswith("identity--")]
 
 
 def test_silent_push_still_authors_its_enrichment():
@@ -144,5 +141,5 @@ def test_person_publisher_is_an_individual():
 def test_rows_without_a_vendor_fall_back_to_silent_push():
     builder = SilentPushStixBuilder(MARKING, 70)
     objects = builder.build_osint_indicator("url", "https://bad.example/x", [{"feed": "X"}])
-    assert [obj.type for obj in objects] == ["url", "relationship"]
+    assert [obj.type for obj in objects] == ["url"]
     assert objects[0].x_opencti_created_by_ref == builder.author.id

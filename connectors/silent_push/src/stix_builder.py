@@ -6,12 +6,15 @@ row. OSINT builds from Feed Scan rows, which carry the same enrichment flattened
 into dotted keys.
 
 Output follows Data_Model_Acceptable_Relationships.csv:
-  observable related-to Organization   (mandatory Observable-to-Identity floor)
   observable related-to intrusion-set  (Threat Actor and APT feeds)
   observable related-to malware        (botnet and TDS feeds)
   observable related-to tool           (C2 framework and RMM feeds)
   ipv4-addr  belongs-to autonomous-system
   ipv4-addr  located-at country
+
+Authorship is createdBy only (SP-NO-AUTHOR-EDGE-V1, decided 2026-11-07): no
+observable is linked to its author by a relationship, and author identities
+travel in the bundle (so createdBy resolves) but are never Report contents.
 
 Observables only. Indicators are never created here; promotion belongs to the
 platform pipeline. Feed names and tags go in the description, not on Labels,
@@ -413,16 +416,7 @@ class SilentPushStixBuilder:
         observable = self._observable(
             stix_type, value, row, _describe(row, listings)
         )
-        objects = [
-            observable,
-            self._relationship(
-                "related-to",
-                observable.id,
-                self.author.id,
-                f"{value} is listed in Silent Push IOFA data.",
-                start_time,
-            ),
-        ]
+        objects = [observable]
 
         # A pair of feeds maps to one entity, and an edge is keyed on its date,
         # so take one edge per entity, from its earliest listing.
@@ -469,39 +463,16 @@ class SilentPushStixBuilder:
         scores = [score for score in scores if score is not None]
         score_row = {"sp_risk_score": max(scores)} if scores else {}
 
-        # One publisher per vendor, earliest listing first; that one authors
-        # the observable. Each publisher gets its own Identity-floor edge.
+        # The earliest-listing feed publisher authors the observable. Its
+        # identity is returned so the bundle can resolve createdBy; it is not
+        # linked to the observable and is kept out of the Report contents.
         vendors = _osint_vendors(rows)
-        publishers = [(self._source_identity(name), first) for name, first in vendors]
-        primary = publishers[0][0] if publishers else self.author
+        primary = self._source_identity(vendors[0][0]) if vendors else self.author
 
         observable = self._observable(
             stix_type, value, score_row, _describe_osint(rows), author=primary
         )
-        objects = [identity for identity, _ in publishers] + [observable]
-        if publishers:
-            for identity, first in publishers:
-                objects.append(
-                    self._relationship(
-                        "related-to",
-                        observable.id,
-                        identity.id,
-                        f"{value} is listed in an open-source feed published by "
-                        f"{identity.name}, collected by Silent Push.",
-                        first or start_time,
-                        author=identity,
-                    )
-                )
-        else:
-            objects.append(
-                self._relationship(
-                    "related-to",
-                    observable.id,
-                    self.author.id,
-                    f"{value} is listed in open-source feeds collected by Silent Push.",
-                    start_time,
-                )
-            )
+        objects = ([primary] if vendors else []) + [observable]
         if stix_type == "ipv4-addr":
             objects += self._asn_objects(observable, row, start_time)
             objects += self._country_objects(observable, row, start_time)

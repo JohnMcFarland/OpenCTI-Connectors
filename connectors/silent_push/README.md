@@ -206,10 +206,13 @@ adds to the same Report rather than creating a second one.
 
 IOFA objects are authored by the **Silent Push** Organization identity. OSINT
 observables are authored by the **original feed's publisher** (the feed
-`vendor`, e.g. CINS or Green Snow), because the author is the source of the
-information; Silent Push still authors the enrichment it adds (Autonomous
-System, Country) and the Report. Publishers that are people, such as the
-TweetFeed author, are Individuals (`INDIVIDUAL_VENDORS` in `stix_builder.py`).
+`vendor` of the earliest listing, e.g. CINS or Green Snow), because the author
+is the source of the information; Silent Push still authors the enrichment it
+adds (Autonomous System, Country) and the Report. Publishers that are people,
+such as the TweetFeed author, are Individuals (`INDIVIDUAL_VENDORS` in
+`stix_builder.py`). Authorship is `createdBy` only: no observable is linked to
+its author by a relationship, and author identities are sent in the bundle so
+`createdBy` resolves but are not part of the Report's contents.
 Everything is marked with the configured TLP. No Indicators are created
 (`x_opencti_create_indicator` is off), so promotion to Indicators stays with
 your platform's own rules. No Labels are applied, because feed names are not
@@ -221,7 +224,6 @@ collection requirements.
 | --- | --- |
 | Export value (domain) | Domain-Name observable |
 | Export value (IPv4) | IPv4-Addr observable |
-| Every value | `related-to` the Silent Push Organization |
 | `sp_risk_score` | Observable score (`x_opencti_score`, 0-100) |
 | Feed names, feed tags, first and last listed dates | Observable description |
 | `asn`, `asname` (IPv4 only) | Autonomous System, `belongs-to` from the IP |
@@ -242,15 +244,13 @@ edge to the shared entity, from the earlier listing.
 | `indicator` with `type` `domain` | Domain-Name observable |
 | `indicator` with `type` `ip` | IPv4-Addr or IPv6-Addr observable |
 | `indicator` with `type` `url` | URL observable |
-| Every value | `related-to` each feed publisher that lists it, each edge authored by that publisher (Silent Push only when a row has no vendor) |
 | `sp_risk_score` (highest across its feeds) | Observable score (`x_opencti_score`, 0-100) |
 | `feed`, `vendor`, `first_seen_on`, `last_seen_on`, tags | Observable description, such as `Listed in open-source feeds collected by Silent Push: CINS Army List IP (CINS)` |
 | `asn`, `asname` (IPv4 only) | Autonomous System, `belongs-to` from the IP |
 | `ip_location.country_code` (IPv4 only) | Country, `located-at` from the IP |
 | Each run | One `observable-feed` Report containing all of the above |
 
-The author edge starts at the earliest time the value was added to any of its
-feeds. OSINT values are not linked to Intrusion Sets, Tools or Malware: these
+OSINT values are not linked to Intrusion Sets, Tools or Malware: these
 feeds carry no attribution.
 
 **Open-source feeds.** As of November 2026, 13 of the 28 return data through
