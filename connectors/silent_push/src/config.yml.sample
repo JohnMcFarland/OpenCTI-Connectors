@@ -1,0 +1,23 @@
+opencti:
+  url: 'http://localhost:8080'
+  token: 'ChangeMe'
+
+connector:
+  id: 'ChangeMe'
+  type: 'EXTERNAL_IMPORT'
+  name: 'Silent Push'
+  scope: 'silent-push'
+  log_level: 'info'
+
+silent_push:
+  api_key: 'ChangeMe'
+  tlp: 'TLP:AMBER'
+  confidence: 70
+  interval_hours: 12
+  run_on_startup: true
+  iofa_enabled: true
+  osint_enabled: true
+  enrich_batch_budget: 60
+  osint_initial_lookback_hours: 24
+  osint_exclude_feeds: 'UrlHaus,FeodoTracker,ThreatFox Official Recent Domains,ThreatFox Recent IPs,ThreatFox Recent URLs,OpenPhish,AlienVault Domain,AlienVault IP'
+  state_dir: '/data'

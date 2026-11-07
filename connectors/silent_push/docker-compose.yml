@@ -1,0 +1,37 @@
+services:
+  connector-silent-push:
+    build: .
+    image: custom/connector-silent-push:latest
+    restart: unless-stopped
+    environment:
+      - OPENCTI_URL=${OPENCTI_URL:-http://opencti:8080}
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${CONNECTOR_SILENT_PUSH_ID}
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Silent Push
+      - CONNECTOR_SCOPE=silent-push
+      - CONNECTOR_LOG_LEVEL=info
+      # Organization > API Keys in the Silent Push console (Enterprise tier)
+      - SILENT_PUSH_API_KEY=${SILENT_PUSH_API_KEY}
+      # Paid feed: AMBER by default, never CLEAR
+      - SILENT_PUSH_TLP=TLP:AMBER
+      - SILENT_PUSH_CONFIDENCE=70
+      # Runs land on UTC multiples of this: 00:00 and 12:00
+      - SILENT_PUSH_INTERVAL_HOURS=12
+      - SILENT_PUSH_RUN_ON_STARTUP=true
+      # Two streams, each with its own Report per run
+      - SILENT_PUSH_IOFA_ENABLED=true
+      - SILENT_PUSH_OSINT_ENABLED=true
+      # Most IOFA enrichment calls per run. The monthly quota is organisation-wide.
+      - SILENT_PUSH_ENRICH_BATCH_BUDGET=60
+      # OSINT's first run takes this many hours back; later runs take what is new since the last run
+      - SILENT_PUSH_OSINT_INITIAL_LOOKBACK_HOURS=24
+      # Open-source feeds already ingested by their own connectors
+      - SILENT_PUSH_OSINT_EXCLUDE_FEEDS=UrlHaus,FeodoTracker,ThreatFox Official Recent Domains,ThreatFox Recent IPs,ThreatFox Recent URLs,OpenPhish,AlienVault Domain,AlienVault IP
+      - SILENT_PUSH_STATE_DIR=/data
+    volumes:
+      # Holds the record of what each stream has handled. Losing it forces a new baseline.
+      - silent-push-state:/data
+
+volumes:
+  silent-push-state:
