@@ -6,8 +6,8 @@ Report:
 
 | Stream | What it is | Report |
 | --- | --- | --- |
-| **IOFA** | Silent Push's own **Indicators of Future Attack**: domains and IPs it judges to be attacker infrastructure, often before they are used. 195 global feeds, about 2 million indicators | `Silent Push IOFA — <date> <time> UTC` |
-| **OSINT** | The **open-source threat feeds** Silent Push collects and enriches, such as CINS Army, Green Snow, Rutgers, blocklist.de and TweetFeed. 28 feeds, of which 8 are excluded by default | `Silent Push OSINT — <date> <time> UTC` |
+| **IOFA** | Silent Push's own **Indicators of Future Attack**: domains and IPs it judges to be attacker infrastructure, often before they are used. 195 global feeds, about 2 million indicators | `Silent Push IOFA - <date> <time> UTC` |
+| **OSINT** | The **open-source threat feeds** Silent Push collects and enriches, such as CINS Army, Green Snow, Rutgers, blocklist.de and TweetFeed. 28 feeds, of which 8 are excluded by default | `Silent Push OSINT - <date> <time> UTC` |
 
 Twice a day each stream checks for indicators that are new since its last run,
 and sends only those to OpenCTI.
@@ -196,8 +196,8 @@ A stream that finds nothing new creates no Report.
 
 Each stream's Report is named for the slot it ran in, for example:
 
-- `Silent Push IOFA — 2026-11-07 12:00 UTC`
-- `Silent Push OSINT — 2026-11-07 12:00 UTC`
+- `Silent Push IOFA - 2026-11-07 12:00 UTC`
+- `Silent Push OSINT - 2026-11-07 12:00 UTC`
 
 `published` is the slot's start time, so a run restarted within the same slot
 adds to the same Report rather than creating a second one.

@@ -352,17 +352,49 @@ class LifecycleManager:
             if marking["id"] not in current:
                 self.client.add_marking(indicator_id, marking["id"])
 
-        edges = self.client.indicates_edges(indicator_id)
-        marking_ids = sorted(current | {marking["id"] for marking in markings})
-        for attack_pattern_id in sorted(entry.attack_pattern_ids - set(edges)):
-            self.client.create_relationship(
-                indicator_id, attack_pattern_id, "indicates", score,
-                author_id, marking_ids,
-            )
-        for attack_pattern_id in sorted(set(edges) - entry.attack_pattern_ids):
-            self.client.delete_relationship(edges[attack_pattern_id])
+        self._sync_indicates(
+            indicator_id, entry.attack_pattern_ids, score, author_id,
+            sorted(current | {marking["id"] for marking in markings}),
+        )
 
         result.stats["synced"] += 1
+
+    def _sync_indicates(
+        self,
+        indicator_id: str,
+        wanted: Set[str],
+        score: int,
+        author_id: Optional[str],
+        marking_ids: List[str],
+    ) -> None:
+        """Match indicates edges to the qualifying Attack Patterns.
+
+        Edges are revoked, never deleted, and only edges this connector
+        authored are touched. An analyst's edge to one of our Indicators is
+        left alone in both directions.
+        """
+        edges = self.client.indicates_edges(indicator_id)
+        for attack_pattern_id in sorted(wanted | set(edges)):
+            existing = edges.get(attack_pattern_id, [])
+            ours = [e for e in existing if author_id and e["creator"] == author_id]
+            if attack_pattern_id in wanted:
+                if any(not e["revoked"] for e in existing):
+                    continue
+                if ours:
+                    # Came back: restore our old edge rather than mint a second.
+                    self.client.set_relationship_revoked(ours[0]["id"], False)
+                    continue
+                if existing:
+                    # Only someone else's revoked edge. Their call, not ours.
+                    continue
+                self.client.create_relationship(
+                    indicator_id, attack_pattern_id, "indicates", score,
+                    author_id, marking_ids,
+                )
+            else:
+                for edge in ours:
+                    if not edge["revoked"]:
+                        self.client.set_relationship_revoked(edge["id"], True)
 
     # -- decay -------------------------------------------------------------
 

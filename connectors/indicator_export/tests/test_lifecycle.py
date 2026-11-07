@@ -12,6 +12,7 @@ from .fakes import (
     RED,
     FakeClient,
     FakeLogger,
+    FakeStateHelper,
     ap_link,
     entity,
     ipv4,
@@ -24,9 +25,8 @@ NOW = datetime(2026, 11, 6, tzinfo=timezone.utc)
 
 @pytest.fixture
 def store(tmp_path):
-    state = StateStore(str(tmp_path))
+    state = StateStore(FakeStateHelper())
     yield state
-    state.close()
 
 
 def manager(client, store, clock=lambda: NOW, **overrides):
@@ -196,7 +196,58 @@ def test_sync_adds_new_and_removes_stale_attack_patterns(store):
     client, indicator_id = promoted(store, observable)
     client.qualifying = [ap_link(observable, "ap-2")]
     manager(client, store).run_cycle()
-    assert set(client.edges[indicator_id]) == {"ap-2"}
+    assert client.active_edges(indicator_id) == {"ap-2"}
+    # The stale edge is revoked, not deleted.
+    assert client.edges[indicator_id]["ap-1"][0]["revoked"] is True
+    assert not any(write[0] == "delete" for write in client.writes)
+
+
+def test_returning_attack_pattern_restores_the_revoked_edge(store):
+    observable = ipv4()
+    client, indicator_id = promoted(store, observable)
+    client.qualifying = [ap_link(observable, "ap-2")]
+    manager(client, store).run_cycle()
+    client.qualifying = [ap_link(observable, "ap-1"), ap_link(observable, "ap-2")]
+    client.writes.clear()
+    manager(client, store).run_cycle()
+    assert client.active_edges(indicator_id) == {"ap-1", "ap-2"}
+    assert len(client.edges[indicator_id]["ap-1"]) == 1
+    assert ("restore_edge", f"edge-{indicator_id}-ap-1") in client.writes
+    assert not any(w[0] == "relationship" and w[3] == "ap-1" for w in client.writes)
+
+
+def test_edges_authored_by_others_are_never_revoked(store):
+    observable = ipv4()
+    client, indicator_id = promoted(store, observable)
+    client.edges[indicator_id]["ap-analyst"] = [
+        {"id": "analyst-edge", "revoked": False, "creator": "analyst"}
+    ]
+    manager(client, store).run_cycle()
+    assert "ap-analyst" in client.active_edges(indicator_id)
+    assert not any(w[0] == "revoke_edge" for w in client.writes)
+
+
+def test_foreign_revoked_edge_is_not_overridden(store):
+    observable = ipv4()
+    client, indicator_id = promoted(store, observable)
+    client.edges[indicator_id]["ap-2"] = [
+        {"id": "analyst-edge", "revoked": True, "creator": "analyst"}
+    ]
+    client.qualifying = [ap_link(observable, "ap-1"), ap_link(observable, "ap-2")]
+    manager(client, store).run_cycle()
+    assert client.edges[indicator_id]["ap-2"] == [
+        {"id": "analyst-edge", "revoked": True, "creator": "analyst"}
+    ]
+    assert not any(w[0] == "relationship" and w[3] == "ap-2" for w in client.writes)
+
+
+def test_dry_run_revokes_nothing(store):
+    observable = ipv4()
+    client, indicator_id = promoted(store, observable)
+    client.dry_run = True
+    client.qualifying = [ap_link(observable, "ap-2")]
+    manager(client, store).run_cycle()
+    assert client.active_edges(indicator_id) == {"ap-1"}
 
 
 def test_pattern_held_by_someone_else_is_left_alone(store):
@@ -363,10 +414,17 @@ def test_failed_valid_until_write_leaves_decay_unrecorded(store):
     assert store.get_decay(indicator_id) is None
 
 
-def test_decay_survives_a_restart(tmp_path):
-    first = StateStore(str(tmp_path))
+def test_decay_survives_a_restart():
+    platform = FakeStateHelper()
+    first = StateStore(platform)
     first.put_decay("ind-1", DecayEntry("2026-12-01T00:00:00+00:00", None, "X"))
-    first.close()
-    second = StateStore(str(tmp_path))
+    first.save()
+    second = StateStore(platform)
     assert second.get_decay("ind-1").reason == "X"
-    second.close()
+
+
+def test_unsaved_changes_do_not_reach_the_platform():
+    platform = FakeStateHelper()
+    first = StateStore(platform)
+    first.put_decay("ind-1", DecayEntry("2026-12-01T00:00:00+00:00", None, "X"))
+    assert StateStore(platform).get_decay("ind-1") is None

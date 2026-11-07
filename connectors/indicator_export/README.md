@@ -134,8 +134,8 @@ never become labels.
    becomes `decaying`, then remove an entity link and confirm its label goes.
 5. Point `EXPORT_LOCATION` at the destination.
 
-Dry run writes nothing to OpenCTI, sends nothing, and leaves local state
-unchanged. The CSV is still written, so a dry run can be reviewed.
+Dry run writes nothing to OpenCTI, sends nothing, and leaves connector state
+unchanged apart from `last_run`. The CSV is still written, so a dry run can be reviewed.
 
 ## Settings
 
@@ -153,7 +153,7 @@ unchanged. The CSV is still written, so a dry run can be reviewed.
 | `EXPORT_BLOCKED_MARKINGS` | `Sensitive` | Comma-separated terms. Matching markings never leave. |
 | `EXPORT_MAX_LABELS` | `50` | Labels per Indicator. |
 | `EXPORT_EXCLUDED_ENTITY_TYPES` | `System,Organization,Individual,Incident` | Entity types that never become labels. |
-| `EXPORT_DATA_DIR` | `/data` | CSV files and `state.sqlite3`. |
+| `EXPORT_DATA_DIR` | `/data` | Debug CSV files and an optional CA bundle. |
 | `EXPORT_CSV_RETENTION` | `5` | CSV snapshots to keep. |
 | `EXPORT_SCHEME` | `https` | `http` or `https`. |
 | `EXPORT_PORT` | scheme default | Destination port. |
@@ -165,10 +165,16 @@ unchanged. The CSV is still written, so a dry run can be reviewed.
 
 ## Behavior worth knowing
 
-- **Local state.** `state.sqlite3` records decay deadlines, what the stream
-  destination confirmed, and pending Grouping adds. This departs from the repo's
-  no-local-state convention because OpenCTI cannot hold these. Losing it restarts
-  decay windows and re-sends objects under the same STIX ids.
+- **Connector state.** Decay deadlines, what the stream destination confirmed,
+  and pending Grouping adds live in the connector's platform state
+  (`get_state`/`set_state`), like every other connector here. Nothing is kept on
+  local disk except debug CSVs. State is saved once per cycle, so a crash
+  mid-cycle restarts decay windows and re-sends objects under the same STIX ids.
+  The `sent` map holds one short fingerprint per exported Indicator.
+- **Nothing is deleted.** When an Attack Pattern stops qualifying, this
+  connector's `indicates` edge to it is revoked, and it is restored if the
+  Attack Pattern qualifies again. Edges authored by anyone else are never
+  touched.
 - **Organization does not always mean victim.** Any direct link to an Organization
   counts, including an owner, vendor or provider.
 - **Scores can show what labels hide.** Organization labels are excluded by default,

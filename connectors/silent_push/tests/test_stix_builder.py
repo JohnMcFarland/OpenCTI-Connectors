@@ -231,7 +231,7 @@ def test_report_is_stable_per_slot_and_named_for_it(builder):
     slot = datetime(2026, 11, 7, 6, tzinfo=timezone.utc)
     objects = builder.build_indicator("evil.example", "domain-name", {}, FEEDS)
     report = builder.build_report(slot, [objects[0].id])
-    assert report.name == "Silent Push IOFA — 2026-11-07 06:00 UTC"
+    assert report.name == "Silent Push IOFA - 2026-11-07 06:00 UTC"
     assert report.report_types == ["observable-feed"]
     assert report.published == slot
     assert report.id == builder.build_report(slot, [objects[1].id]).id

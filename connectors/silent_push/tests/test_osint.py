@@ -37,7 +37,7 @@ def test_first_run_takes_the_last_24_hours_only(harness):
 
     assert harness.stream_values("OSINT") == {"198.18.0.1", "198.18.0.2"}
     assert harness.client.scan_cutoffs == [START - timedelta(hours=24)]
-    assert osint_reports(harness) == {"Silent Push OSINT — 2026-11-07 00:00 UTC"}
+    assert osint_reports(harness) == {"Silent Push OSINT - 2026-11-07 00:00 UTC"}
 
 
 def test_later_runs_take_what_is_new_since_the_last_run(harness):
@@ -50,8 +50,8 @@ def test_later_runs_take_what_is_new_since_the_last_run(harness):
     assert harness.client.scan_cutoffs[1] == START - timedelta(hours=1)
     assert harness.stream_values("OSINT") == {"198.18.0.1", "198.18.0.2"}
     assert osint_reports(harness) == {
-        "Silent Push OSINT — 2026-11-07 00:00 UTC",
-        "Silent Push OSINT — 2026-11-07 12:00 UTC",
+        "Silent Push OSINT - 2026-11-07 00:00 UTC",
+        "Silent Push OSINT - 2026-11-07 12:00 UTC",
     }
 
 
@@ -124,8 +124,8 @@ def test_osint_and_iofa_get_separate_reports_and_work_items(harness):
     harness.run()
 
     assert harness.reports() == {
-        "Silent Push IOFA — 2026-11-07 12:00 UTC",
-        "Silent Push OSINT — 2026-11-07 12:00 UTC",
+        "Silent Push IOFA - 2026-11-07 12:00 UTC",
+        "Silent Push OSINT - 2026-11-07 12:00 UTC",
     }
     assert harness.stream_values("IOFA") == {"new.example"}
     assert harness.stream_values("OSINT") == {"198.18.0.3"}
@@ -157,10 +157,10 @@ def test_observable_carries_feed_vendor_score_asn_and_country(harness):
 
 def test_urls_domains_and_ipv6_are_ingested(harness):
     harness.osint(
-        "https://bad.example/login", kind="url", feed="TweetFeed URLs", vendor="Daniel López"
+        "https://bad.example/login", kind="url", feed="TweetFeed URLs", vendor="Daniel L\u00f3pez"
     )
     harness.osint(
-        "evil.example", kind="domain", feed="TweetFeed Domains", vendor="Daniel López"
+        "evil.example", kind="domain", feed="TweetFeed Domains", vendor="Daniel L\u00f3pez"
     )
     harness.osint("2001:db8::1")
     harness.run()
@@ -217,7 +217,7 @@ def test_rows_from_other_categories_are_ignored(harness):
 def test_query_selects_global_open_source_vendors_only(harness):
     harness.run()
     query = harness.client.scan_queries[0]
-    assert '"CINS"' in query and '"Daniel López"' in query
+    assert '"CINS"' in query and '"Daniel L\u00f3pez"' in query
     assert 'feed_scope = ["GLOBAL"]' in query
     assert '"AlienVault"' not in query  # its only feed is excluded
     assert '"OpenPhish"' not in query
@@ -313,10 +313,10 @@ def test_week_of_runs_with_rotating_lists(harness):
 def test_a_vendor_with_some_feeds_kept_stays_in_the_query(harness):
     harness.connector.osint_exclude = {"TweetFeed URLs"}
     harness.client.feeds.append(
-        {"uuid": "td", "name": "TweetFeed Domains", "category": "open_source", "vendor": "Daniel López"}
+        {"uuid": "td", "name": "TweetFeed Domains", "category": "open_source", "vendor": "Daniel L\u00f3pez"}
     )
     harness.run()
-    assert '"Daniel López"' in harness.client.scan_queries[0]
+    assert '"Daniel L\u00f3pez"' in harness.client.scan_queries[0]
 
 
 def test_excluding_every_open_source_feed_fails_loudly(harness):

@@ -29,7 +29,7 @@ def main() -> None:
             },
         }
     )
-    store = StateStore(settings.data_dir)
+    store = StateStore(helper)
     client = OpenCTIClient(helper, settings.author_name, settings.dry_run)
     sink = build_sink(settings, store)
     IndicatorExportConnector(helper, settings, client, store, sink).run()

@@ -11,7 +11,18 @@ from src.opencti_client import OpenCTIClient
 from src.sinks import CsvSink, ExportError
 from src.store import StateStore
 
-from .fakes import FakeClient, FakeLogger, RED, SENSITIVE, ap_link, entity, ipv4, related, settings
+from .fakes import (
+    FakeClient,
+    FakeLogger,
+    FakeStateHelper,
+    RED,
+    SENSITIVE,
+    ap_link,
+    entity,
+    ipv4,
+    related,
+    settings,
+)
 
 
 def build(tmp_path, client, sink=None, **overrides):
@@ -19,7 +30,7 @@ def build(tmp_path, client, sink=None, **overrides):
     helper.connector_logger = FakeLogger()
     helper.get_state.return_value = {}
     config = settings(EXPORT_DATA_DIR=str(tmp_path), **overrides)
-    store = StateStore(str(tmp_path))
+    store = StateStore(FakeStateHelper())
     sink = sink or CsvSink(str(tmp_path), 5)
     return IndicatorExportConnector(helper, config, client, store, sink), helper
 
@@ -174,7 +185,7 @@ def test_dry_run_client_makes_no_write_calls():
     client, api = real_client(dry_run=True)
     assert client.create_indicator(name="x", pattern="[y]") is None
     client.create_relationship("a", "b", "based-on", 15, "author", [])
-    client.delete_relationship("r")
+    client.set_relationship_revoked("r", True)
     client.add_marking("i", "m")
     client.update_assessment("i", 75, ["malicious-activity"])
     client.set_valid_until("i", "2026-01-01T00:00:00Z")
@@ -183,6 +194,7 @@ def test_dry_run_client_makes_no_write_calls():
     api.indicator.create.assert_not_called()
     api.indicator.update_field.assert_not_called()
     api.stix_core_relationship.create.assert_not_called()
+    api.stix_core_relationship.update_field.assert_not_called()
     api.stix_core_relationship.delete.assert_not_called()
     api.stix_domain_object.add_marking_definition.assert_not_called()
 
@@ -274,3 +286,44 @@ def test_missing_sensitive_marking_warns(tmp_path):
     connector, helper = build(tmp_path, client)
     connector.process()
     assert any("EXPORT_BLOCKED_MARKINGS" in w for w in helper.connector_logger.warnings)
+
+
+def test_cycle_saves_state_to_the_platform_not_disk(tmp_path):
+    client = FakeClient()
+    client.qualifying = [ap_link(ipv4())]
+    platform = FakeStateHelper()
+    helper = MagicMock()
+    helper.connector_logger = FakeLogger()
+    store = StateStore(platform)
+    connector = IndicatorExportConnector(
+        helper,
+        settings(EXPORT_DATA_DIR=str(tmp_path), INDICATOR_DRY_RUN="false"),
+        client,
+        store,
+        CsvSink(str(tmp_path), 5),
+    )
+    connector.process()
+    assert platform.saves == 1
+    saved = platform.get_state()
+    assert saved["last_run"]
+    assert set(saved) >= {"decay", "sent", "grouped"}
+    assert not glob.glob(str(tmp_path / "*.sqlite3"))
+
+
+def test_state_is_saved_even_when_the_cycle_fails(tmp_path):
+    client = FakeClient()
+
+    def boom():
+        raise RuntimeError("platform down")
+
+    client.marking_definitions = boom
+    platform = FakeStateHelper()
+    helper = MagicMock()
+    helper.connector_logger = FakeLogger()
+    connector = IndicatorExportConnector(
+        helper, settings(EXPORT_DATA_DIR=str(tmp_path)), client,
+        StateStore(platform), CsvSink(str(tmp_path), 5),
+    )
+    connector.process()
+    assert platform.saves == 1
+    assert helper.api.work.to_processed.call_args.kwargs["in_error"] is True

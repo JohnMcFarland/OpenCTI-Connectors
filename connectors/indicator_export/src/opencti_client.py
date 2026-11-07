@@ -81,6 +81,8 @@ _BASED_ON_ATTRIBUTES = """
 
 _INDICATES_ATTRIBUTES = """
     id
+    revoked
+    createdBy { ... on Identity { id } }
     to { ... on AttackPattern { id } }
 """
 
@@ -203,8 +205,13 @@ class OpenCTIClient:
                 return observable
         return None
 
-    def indicates_edges(self, indicator_id: str) -> Dict[str, str]:
-        """Map Attack Pattern id to relationship id for an Indicator."""
+    def indicates_edges(self, indicator_id: str) -> Dict[str, List[Dict[str, Any]]]:
+        """Map Attack Pattern id to every indicates edge from this Indicator.
+
+        Each edge is {"id", "revoked", "creator"}. Revoked edges are included so
+        a returning Attack Pattern can reuse its old edge instead of creating a
+        second one.
+        """
         relationships = self.api.stix_core_relationship.list(
             fromId=indicator_id,
             relationship_type="indicates",
@@ -212,11 +219,17 @@ class OpenCTIClient:
             customAttributes=_INDICATES_ATTRIBUTES,
             getAll=True,
         )
-        edges: Dict[str, str] = {}
+        edges: Dict[str, List[Dict[str, Any]]] = {}
         for relationship in relationships:
             target = (relationship.get("to") or {}).get("id")
             if target:
-                edges[target] = relationship["id"]
+                edges.setdefault(target, []).append(
+                    {
+                        "id": relationship["id"],
+                        "revoked": bool(relationship.get("revoked")),
+                        "creator": creator_id(relationship),
+                    }
+                )
         return edges
 
     # -- writes ------------------------------------------------------------
@@ -251,11 +264,15 @@ class OpenCTIClient:
             objectMarking=marking_ids,
         )
 
-    def delete_relationship(self, relationship_id: str) -> None:
+    def set_relationship_revoked(self, relationship_id: str, revoked: bool) -> None:
+        """Revoke or restore an edge. Nothing is ever deleted from OpenCTI."""
         if self.dry_run:
-            self._would(f"delete relationship {relationship_id}")
+            action = "revoke" if revoked else "restore"
+            self._would(f"{action} relationship {relationship_id}")
             return
-        self.api.stix_core_relationship.delete(id=relationship_id)
+        self.api.stix_core_relationship.update_field(
+            id=relationship_id, input=[{"key": "revoked", "value": [revoked]}]
+        )
 
     def add_marking(self, indicator_id: str, marking_id: str) -> None:
         if self.dry_run:

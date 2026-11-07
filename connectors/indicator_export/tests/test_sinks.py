@@ -14,7 +14,7 @@ from src.records import ExportRecord
 from src.sinks import CsvSink, ExportError, StixStreamSink, build_sink, neutralize_formula
 from src.store import StateStore
 
-from .fakes import settings
+from .fakes import FakeStateHelper, settings
 
 NOW = datetime(2026, 11, 6, 12, 0, tzinfo=timezone.utc)
 STIX_ID = "indicator--8e2e2d2b-17d4-4cbf-938f-98ee46b3cd3f"
@@ -88,9 +88,8 @@ def receiver():
 
 @pytest.fixture
 def store(tmp_path):
-    state = StateStore(str(tmp_path / "state"))
+    state = StateStore(FakeStateHelper())
     yield state
-    state.close()
 
 
 def stream_sink(url, store, **overrides):

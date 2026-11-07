@@ -78,7 +78,7 @@ def test_url_observable_has_no_asn_or_country():
     objects = builder.build_osint_indicator(
         "url",
         "https://bad.example/x",
-        [{"feed": "TweetFeed URLs", "vendor": "Daniel López", "asn": 1}],
+        [{"feed": "TweetFeed URLs", "vendor": "Daniel L\u00f3pez", "asn": 1}],
     )
     assert [obj.type for obj in objects] == ["url", "relationship"]
 
@@ -88,7 +88,7 @@ def test_osint_report_name_and_description():
     slot = datetime(2026, 11, 7, 12, tzinfo=timezone.utc)
     ref = "ipv4-addr--ff1b2a3c-4d5e-5f60-8a7b-1c2d3e4f5a6b"
     report = builder.build_report(slot, [ref], "OSINT")
-    assert report.name == "Silent Push OSINT — 2026-11-07 12:00 UTC"
+    assert report.name == "Silent Push OSINT - 2026-11-07 12:00 UTC"
     assert "open-source" in report.description
     iofa = builder.build_report(slot, [ref], "IOFA")
     assert iofa.id != report.id

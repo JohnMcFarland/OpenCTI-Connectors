@@ -467,7 +467,7 @@ class SilentPushStixBuilder:
     def build_report(
         self, slot: datetime, object_refs: list[str], stream: str = STREAM_IOFA
     ) -> stix2.Report:
-        name = f"Silent Push {stream} — {slot:%Y-%m-%d %H:%M} UTC"
+        name = f"Silent Push {stream} - {slot:%Y-%m-%d %H:%M} UTC"
         if stream == STREAM_OSINT:
             description = (
                 "Indicators newly listed in the open-source threat feeds that "

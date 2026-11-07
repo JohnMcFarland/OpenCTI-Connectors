@@ -6,7 +6,8 @@ services:
     container_name: connector-indicator-export
     restart: always
     volumes:
-      # Holds the CSV snapshots and state.sqlite3. Treat it like the most restricted data it holds.
+      # Holds debug CSV snapshots (and an optional CA bundle). Treat it like the most
+      # restricted data it holds. Connector state lives on the platform, not here.
       - ./data:/data
     environment:
       - OPENCTI_URL=

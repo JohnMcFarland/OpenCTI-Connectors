@@ -63,14 +63,18 @@ class IndicatorExportConnector:
         in_error = False
         try:
             message, in_error = self._run_cycle()
-            state = self.helper.get_state() or {}
-            state["last_run"] = now.isoformat()
-            self.helper.set_state(state)
         except Exception as exc:  # noqa: BLE001 - the work item must always close
             message = f"Cycle failed: {exc}"
             in_error = True
             self.logger.error(message)
         finally:
+            # Saved on failure too, so decay entries and stream confirmations
+            # made before the failure are kept.
+            try:
+                self.store.save(last_run=now.isoformat())
+            except Exception as exc:  # noqa: BLE001
+                self.logger.error(f"Could not save connector state: {exc}")
+                in_error = True
             self.helper.api.work.to_processed(work_id, message, in_error=in_error)
 
     def _run_cycle(self) -> Tuple[str, bool]:

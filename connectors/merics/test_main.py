@@ -100,15 +100,13 @@ def _resp(status=200, text="", content=b""):
     return r
 
 
-def _article(native=b"%PDF-native"):
+def _article():
     return {
         "title": "Cleantech report",
         "description": "Summary text.",
         "published": datetime(2026, 10, 15, 13, 37, 5, tzinfo=timezone.utc),
-        "pdf_url": "https://merics.org" + PDF_PATH if native else None,
         "pdf": b"%PDF-rendered",
         "html": b"<html></html>",
-        "native_pdf": native,
     }
 
 
@@ -189,15 +187,11 @@ class TestExtractMetadata:
         assert md["title"] == "Cleantech report"
         assert md["description"] == "Summary text."
         assert md["published"] == datetime(2026, 10, 15, 13, 37, 5, tzinfo=timezone.utc)
-        assert md["pdf_url"] == "https://merics.org" + PDF_PATH
+        assert "pdf_url" not in md
 
     def test_ignores_related_content_date(self):
         md = _extract_metadata(_page(date=None), REPORT_URL)
         assert md["published"] is None
-
-    def test_ignores_pdf_outside_download_block(self):
-        md = _extract_metadata(_page(pdf_href=None), REPORT_URL)
-        assert md["pdf_url"] is None
 
     def test_h1_fallback_for_title(self):
         html = "<html><body><h1> Heading </h1></body></html>"
@@ -278,60 +272,20 @@ class TestRenderViaService:
             connector._render_via_service(REPORT_URL)
 
 
-class TestDownloadNativePdf:
-    def test_valid_pdf(self, connector):
-        connector.session.get.return_value = _resp(content=b"%PDF-1.7 data")
-        assert connector._download_native_pdf("u") == b"%PDF-1.7 data"
-
-    def test_rejects_non_pdf(self, connector):
-        connector.session.get.return_value = _resp(content=b"<html>challenge</html>")
-        with pytest.raises(RuntimeError, match="not a PDF"):
-            connector._download_native_pdf("u")
-
-    def test_server_error_is_transient(self, connector):
-        connector.session.get.return_value = _resp(status=500)
-        with pytest.raises(Exception):
-            connector._download_native_pdf("u")
-
-    @pytest.mark.parametrize("status", [404, 410])
-    def test_dead_link_returns_none(self, connector, status):
-        connector.session.get.return_value = _resp(status=status)
-        assert connector._download_native_pdf("u") is None
-        connector.helper.log_warning.assert_called()
-
-
 # --------------------------------------------------------------------------- #
 # Article loading
 # --------------------------------------------------------------------------- #
 
 class TestLoadArticle:
-    def test_full_load(self, connector):
-        connector.session.get.side_effect = [
-            _resp(text=_page()),
-            _resp(content=b"%PDF-native"),
-        ]
+    def test_full_load_fetches_page_once_and_never_the_native_pdf(self, connector):
+        connector.session.get.return_value = _resp(text=_page())
         connector._render_via_service = MagicMock(return_value=(b"%PDF-r", b"<h/>"))
         art = connector._load_article(REPORT_URL)
         assert art["pdf"] == b"%PDF-r"
         assert art["html"] == b"<h/>"
-        assert art["native_pdf"] == b"%PDF-native"
-
-    def test_native_failure_skips_render(self, connector):
-        connector.session.get.side_effect = [
-            _resp(text=_page()),
-            _resp(content=b"<html>challenge</html>"),
-        ]
-        connector._render_via_service = MagicMock()
-        with pytest.raises(RuntimeError, match="not a PDF"):
-            connector._load_article(REPORT_URL)
-        connector._render_via_service.assert_not_called()
-
-    def test_no_native_pdf(self, connector):
-        connector.session.get.return_value = _resp(text=_page(pdf_href=None))
-        connector._render_via_service = MagicMock(return_value=(b"%PDF-r", b"<h/>"))
-        art = connector._load_article(BRIEF_URL)
-        assert art["native_pdf"] is None
+        assert "native_pdf" not in art
         assert connector.session.get.call_count == 1
+        connector._render_via_service.assert_called_once_with(REPORT_URL)
 
     @pytest.mark.parametrize("status", [404, 410])
     def test_gone_is_permanent(self, connector, status):
@@ -403,31 +357,26 @@ class TestCreateReport:
         assert kw["externalReferences"] == ["ext-ref"]
         assert kw["update"] is True
 
-    def test_attaches_rendered_raw_and_native(self, connector):
+    def test_attaches_rendered_pdf_and_raw_html_only(self, connector):
         connector._create_report(REPORT_URL, _article())
         calls = connector.helper.api.stix_domain_object.add_file.call_args_list
         assert [c.kwargs["file_name"] for c in calls] == [
             "merics-report-rendered-germany-and-china-cleantech.pdf",
             "merics-report-raw-germany-and-china-cleantech.html",
-            "MER-Report-Cleantech.pdf",
         ]
         assert [c.kwargs["mime_type"] for c in calls] == [
-            "application/pdf", "text/html", "application/pdf",
+            "application/pdf", "text/html",
         ]
         assert all(c.kwargs["id"] == "report-id" for c in calls)
 
-    def test_native_filename_is_url_decoded(self, connector):
-        art = _article()
-        art["pdf_url"] = (
-            "https://merics.org/sites/default/files/2026-10/"
-            "OCt.%208%202026_MERICS%20China%20Essentials%20EN.pdf"
-        )
-        connector._create_report(BRIEF_URL, art)
+    def test_every_file_carries_the_tlp_marking(self, connector):
+        connector._create_report(REPORT_URL, _article())
         calls = connector.helper.api.stix_domain_object.add_file.call_args_list
-        assert calls[-1].kwargs["file_name"] == "OCt. 8 2026_MERICS China Essentials EN.pdf"
+        assert calls
+        assert all(c.kwargs["fileMarkings"] == ["marking-id"] for c in calls)
 
-    def test_brief_without_native(self, connector):
-        connector._create_report(BRIEF_URL, _article(native=None))
+    def test_brief_names(self, connector):
+        connector._create_report(BRIEF_URL, _article())
         calls = connector.helper.api.stix_domain_object.add_file.call_args_list
         assert [c.kwargs["file_name"] for c in calls] == [
             "merics-merics-briefs-rendered-eu-china-trade-talks.pdf",
@@ -435,7 +384,7 @@ class TestCreateReport:
         ]
 
     def test_skips_empty_html(self, connector):
-        art = _article(native=None)
+        art = _article()
         art["html"] = b""
         connector._create_report(REPORT_URL, art)
         assert connector.helper.api.stix_domain_object.add_file.call_count == 1

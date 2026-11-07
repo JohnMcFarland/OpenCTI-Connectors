@@ -52,7 +52,9 @@ class ExportRecord:
             "labels": sorted(self.labels),
         }
         encoded = json.dumps(content, sort_keys=True).encode("utf-8")
-        return hashlib.sha256(encoded).hexdigest()
+        # 64 bits is ample to detect a change, and keeps the per-Indicator
+        # entry in the platform-side connector state small.
+        return hashlib.sha256(encoded).hexdigest()[:16]
 
     def to_stix(self, modified: datetime) -> Dict[str, Any]:
         """Build the STIX 2.1 Indicator.

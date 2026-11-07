@@ -5,9 +5,11 @@ Purpose
 -------
 External-import connector that ingests Reports and Briefs from MERICS
 (https://merics.org/en/) and creates one OpenCTI Report container per
-article. Each Report carries a rendered PDF and raw HTML snapshot of the
-article page (via the centralised pdf-renderer service) plus the native
-publication PDF that MERICS attaches to the article.
+article. Each Report carries the live-page PDF and raw HTML snapshot from
+the centralised pdf-renderer service, the same as every other connector.
+MERICS's own downloadable publication PDF is not attached: the rendered
+live page is the one PDF per Report (locked 2026-10-24). Every attached
+file carries the Report's TLP marking at upload.
 
 Collection model
 ----------------
@@ -32,9 +34,10 @@ Failure handling
 ----------------
 Permanent failures (404/410, missing title, missing publication date)
 raise _SkipArticle and are never retried. Transient failures (HTTP
-errors, render-service errors, native PDF download errors) are retried
-with exponential backoff; if all attempts fail, nothing is written so the
-article is picked up again on the next poll.
+errors, render-service errors) are retried with exponential backoff; if
+all attempts fail, nothing is written so the article is picked up again
+on the next poll. If the render service is down, the article is skipped
+and backfilled on a later poll.
 
 Design philosophy
 -----------------
@@ -61,7 +64,7 @@ import time
 import traceback
 import uuid
 from datetime import datetime, timezone
-from urllib.parse import unquote, urljoin, urlparse
+from urllib.parse import urlparse
 from xml.etree import ElementTree as ET
 
 import requests
@@ -89,7 +92,6 @@ _ARTICLE_PATH_RE = re.compile(
 
 CONTENT_SELECTOR = "article.content--type-microsite"
 DATE_SELECTOR = ".block-field-blocknodemicrositefield-date-published time[datetime]"
-NATIVE_PDF_SELECTOR = ".block-field-blocknodemicrositefield-download a.file-download-pdf"
 
 STRIP_SELECTORS = [
     ".block-mrcs-common-node-share-block",
@@ -165,7 +167,7 @@ def _meta_content(soup, selector):
 
 
 def _extract_metadata(page_html, url):
-    """Parse title, description, publication date and native PDF link."""
+    """Parse title, description and publication date."""
     soup = BeautifulSoup(page_html, "html.parser")
 
     title = _meta_content(soup, 'meta[property="og:title"]')
@@ -182,14 +184,10 @@ def _extract_metadata(page_html, url):
     time_tag = soup.select_one(DATE_SELECTOR)
     published = _parse_iso_datetime(time_tag.get("datetime")) if time_tag else None
 
-    pdf_link = soup.select_one(NATIVE_PDF_SELECTOR)
-    pdf_url = urljoin(url, pdf_link["href"]) if pdf_link and pdf_link.get("href") else None
-
     return {
         "title": title,
         "description": _truncate(description),
         "published": published,
-        "pdf_url": pdf_url,
     }
 
 
@@ -366,25 +364,12 @@ class MericsConnector:
         data = resp.json()
         return base64.b64decode(data["pdf"]), base64.b64decode(data["html"])
 
-    def _download_native_pdf(self, pdf_url):
-        """Return native PDF bytes, or None when MERICS links a dead file."""
-        resp = self.session.get(pdf_url, timeout=120)
-        if resp.status_code in (404, 410):
-            self.helper.log_warning(
-                f"Native PDF link is dead (HTTP {resp.status_code}): {pdf_url}"
-            )
-            return None
-        resp.raise_for_status()
-        if not resp.content.startswith(b"%PDF"):
-            raise RuntimeError(f"Native PDF at {pdf_url} is not a PDF")
-        return resp.content
-
     # ------------------------------------------------------------------ #
     # Article loading
     # ------------------------------------------------------------------ #
 
     def _load_article(self, url):
-        """Fetch, validate and acquire all attachments for one article."""
+        """Fetch and validate one article, then render it via the service."""
         resp = self.session.get(url, timeout=60)
         if resp.status_code in (404, 410):
             raise _SkipArticle(f"HTTP {resp.status_code}")
@@ -396,12 +381,6 @@ class MericsConnector:
         if metadata["published"] is None:
             raise _SkipArticle("no date-published field on page")
 
-        # Native download first: it is far cheaper than a render, so a
-        # transient native failure doesn't burn a render on every retry.
-        metadata["native_pdf"] = (
-            self._download_native_pdf(metadata["pdf_url"])
-            if metadata["pdf_url"] else None
-        )
         metadata["pdf"], metadata["html"] = self._render_via_service(url)
         return metadata
 
@@ -464,15 +443,14 @@ class MericsConnector:
             (f"{prefix}-rendered-{slug}.pdf", article["pdf"], "application/pdf"),
             (f"{prefix}-raw-{slug}.html", article["html"], "text/html"),
         ]
-        if article["native_pdf"]:
-            native_name = unquote(urlparse(article["pdf_url"]).path.rsplit("/", 1)[-1])
-            attachments.append((native_name, article["native_pdf"], "application/pdf"))
-
+        # fileMarkings puts TLP:CLEAR on the file object itself; a file does not
+        # inherit the Report's marking on its own.
         for file_name, data, mime_type in attachments:
             if data:
                 self.helper.api.stix_domain_object.add_file(
                     id=report["id"], file_name=file_name,
                     data=data, mime_type=mime_type,
+                    fileMarkings=[self.marking_id],
                 )
 
         self.helper.log_info(

@@ -27,7 +27,7 @@ FEEDS = [
     {"uuid": "av", "name": "AlienVault IP", "category": "open_source", "vendor": "AlienVault"},
     {"uuid": "ci", "name": "CINS Army List IP", "category": "open_source", "vendor": "CINS"},
     {"uuid": "op", "name": "OpenPhish", "category": "open_source", "vendor": "OpenPhish"},
-    {"uuid": "tf", "name": "TweetFeed URLs", "category": "open_source", "vendor": "Daniel López"},
+    {"uuid": "tf", "name": "TweetFeed URLs", "category": "open_source", "vendor": "Daniel L\u00f3pez"},
 ]
 
 
@@ -246,7 +246,7 @@ def test_only_additions_are_enriched_and_ingested(harness):
 
     assert harness.values() == {"new.example", "192.0.2.2"}
     assert sorted(kind for kind, _ in harness.client.enrich_calls) == ["domain", "ipv4"]
-    assert harness.reports() == {"Silent Push IOFA — 2026-11-07 12:00 UTC"}
+    assert harness.reports() == {"Silent Push IOFA - 2026-11-07 12:00 UTC"}
     objects = harness.bundles[0]
     assert any(obj["type"] == "intrusion-set" for obj in objects)
     report = next(obj for obj in objects if obj["type"] == "report")
@@ -417,7 +417,7 @@ def test_week_of_runs_with_a_moving_clock_and_churn(harness):
     assert harness.values() == expected
     assert len(harness.failed_runs()) == 1
     assert len(harness.reports()) == 13  # 14 slots minus the one that failed
-    assert "Silent Push IOFA — 2026-11-08 00:00 UTC" in harness.reports()
+    assert "Silent Push IOFA - 2026-11-08 00:00 UTC" in harness.reports()
 
 
 def test_seen_store_survives_a_partial_line_from_a_crash(tmp_path):

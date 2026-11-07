@@ -5,10 +5,10 @@
 version: '3'
 services:
   merics:
-    build:
-      # Parent context so the Dockerfile can copy the shared microservices/.
-      context: ..
-      dockerfile: merics/Dockerfile
+    build: .
+    volumes:
+      # Shared classify_report module, same mount as every other connector.
+      - ../microservices:/microservices:ro
     container_name: opencti-connector-merics
     environment:
       # --- OpenCTI platform connection ---

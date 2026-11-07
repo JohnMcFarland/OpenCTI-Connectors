@@ -8,7 +8,7 @@ from src.grouping import flush_groupings, grouping_day, grouping_name
 from src.sinks import CsvSink, Delivery, ExportError
 from src.store import StateStore
 
-from .fakes import SENSITIVE, FakeClient, FakeLogger, ap_link, ipv4, settings
+from .fakes import SENSITIVE, FakeClient, FakeLogger, FakeStateHelper, ap_link, ipv4, settings
 
 
 def utc(*parts):
@@ -34,9 +34,8 @@ def test_name():
 
 @pytest.fixture
 def store(tmp_path):
-    state = StateStore(str(tmp_path))
+    state = StateStore(FakeStateHelper())
     yield state
-    state.close()
 
 
 def flush(client, store, today="2026-11-06"):
@@ -88,12 +87,12 @@ def test_finished_days_are_forgotten_but_today_is_kept(store):
     assert store.pending_grouping() == []
 
 
-def build(tmp_path, client, sink=None, **overrides):
+def build(tmp_path, client, sink=None, state_helper=None, **overrides):
     helper = MagicMock()
     helper.connector_logger = FakeLogger()
     helper.get_state.return_value = {}
     config = settings(EXPORT_DATA_DIR=str(tmp_path), **overrides)
-    state = StateStore(str(tmp_path))
+    state = StateStore(state_helper or FakeStateHelper())
     connector = IndicatorExportConnector(
         helper, config, client, state, sink or CsvSink(str(tmp_path), 5)
     )
@@ -111,7 +110,6 @@ def test_created_and_exported_indicator_is_in_todays_grouping_once(tmp_path):
     connector.process()
     connector.process()
     assert client.groupings[today_name()] == list(client.indicators)
-    state.close()
 
 
 def test_exported_indicator_created_on_another_day_joins_todays_grouping(tmp_path):
@@ -127,7 +125,6 @@ def test_exported_indicator_created_on_another_day_joins_todays_grouping(tmp_pat
 
     connector.process()
     assert client.groupings[today_name()] == [indicator_id]
-    state.close()
 
 
 def test_sensitive_indicator_is_grouped_but_not_exported(tmp_path):
@@ -136,7 +133,6 @@ def test_sensitive_indicator_is_grouped_but_not_exported(tmp_path):
     connector, _, state = build(tmp_path, client, INDICATOR_DRY_RUN="false")
     connector.process()
     assert client.groupings[today_name()] == list(client.indicators)
-    state.close()
 
 
 def test_dry_run_creates_no_grouping(tmp_path):
@@ -145,26 +141,25 @@ def test_dry_run_creates_no_grouping(tmp_path):
     connector, _, state = build(tmp_path, client)
     connector.process()
     assert client.groupings == {}
-    state.close()
 
 
 def test_dry_run_leaves_groupings_alone_when_indicators_already_exist(tmp_path):
     client = FakeClient()
     observable = ipv4()
     client.qualifying = [ap_link(observable)]
-    live, _, live_state = build(tmp_path, client, INDICATOR_DRY_RUN="false")
+    shared = FakeStateHelper()
+    live, _, live_state = build(tmp_path, client, state_helper=shared, INDICATOR_DRY_RUN="false")
     live.process()
     client.based_on[next(iter(client.indicators))] = observable
     live_state.prune_grouped("9999-12-31")
-    live_state.close()
+    live_state.save()
     client.groupings.clear()
     client.dry_run = True
 
-    dry, _, dry_state = build(tmp_path, client)
+    dry, _, dry_state = build(tmp_path, client, state_helper=shared)
     dry.process()
     assert client.groupings == {}
     assert dry_state.pending_grouping() == []
-    dry_state.close()
 
 
 def test_grouping_failure_does_not_stop_the_export_and_flags_the_cycle(tmp_path):
@@ -175,7 +170,6 @@ def test_grouping_failure_does_not_stop_the_export_and_flags_the_cycle(tmp_path)
     connector.process()
     assert helper.api.work.to_processed.call_args.kwargs["in_error"] is True
     assert state.pending_grouping()
-    state.close()
 
 
 def test_batches_delivered_before_a_failure_are_still_grouped(tmp_path):
@@ -194,7 +188,6 @@ def test_batches_delivered_before_a_failure_are_still_grouped(tmp_path):
     client.groupings.clear()
     connector.process()
     assert client.groupings[today_name()] == [indicator_id]
-    state.close()
 
 
 def test_nothing_delivered_adds_nothing_new(tmp_path):
@@ -212,4 +205,3 @@ def test_nothing_delivered_adds_nothing_new(tmp_path):
     client.groupings.clear()
     connector.process()
     assert client.groupings == {}
-    state.close()

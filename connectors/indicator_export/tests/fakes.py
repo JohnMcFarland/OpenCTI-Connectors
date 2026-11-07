@@ -28,6 +28,25 @@ def settings(**overrides: str):
     return load_settings({**BASE_ENV, **overrides})
 
 
+class FakeStateHelper:
+    """Stands in for OpenCTIConnectorHelper's platform state, JSON round-trip
+    included, so a test can 'restart' by building a new StateStore on it."""
+
+    def __init__(self, state: Optional[Dict[str, Any]] = None) -> None:
+        import json
+
+        self._json = json
+        self.raw = json.dumps(state) if state else None
+        self.saves = 0
+
+    def get_state(self):
+        return self._json.loads(self.raw) if self.raw else None
+
+    def set_state(self, state):
+        self.raw = self._json.dumps(state)
+        self.saves += 1
+
+
 def ipv4(obs_id: str = "obs-1", value: str = "1.2.3.4", markings=None, labels=None):
     return {
         "id": obs_id,
@@ -92,7 +111,8 @@ class FakeClient:
         self.relationships: Dict[str, List[Dict[str, Any]]] = {}
         self.indicators: Dict[str, Dict[str, Any]] = {}
         self.based_on: Dict[str, Dict[str, Any]] = {}
-        self.edges: Dict[str, Dict[str, str]] = {}
+        # indicator id -> attack pattern id -> [{"id", "revoked", "creator"}]
+        self.edges: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
         self.foreign: Dict[str, Dict[str, Any]] = {}
         self.writes: List[Any] = []
         self.fail_relationships_for: set = set()
@@ -142,7 +162,17 @@ class FakeClient:
         return self.based_on.get(indicator_id)
 
     def indicates_edges(self, indicator_id):
-        return dict(self.edges.get(indicator_id, {}))
+        return {
+            target: [dict(edge) for edge in edges]
+            for target, edges in self.edges.get(indicator_id, {}).items()
+        }
+
+    def active_edges(self, indicator_id):
+        return {
+            target
+            for target, edges in self.edges.get(indicator_id, {}).items()
+            if any(not edge["revoked"] for edge in edges)
+        }
 
     def create_indicator(self, **fields):
         if self.dry_run:
@@ -177,16 +207,19 @@ class FakeClient:
         if self.dry_run:
             return
         if relationship_type == "indicates":
-            self.edges.setdefault(from_id, {})[to_id] = f"edge-{to_id}"
+            self.edges.setdefault(from_id, {}).setdefault(to_id, []).append(
+                {"id": f"edge-{from_id}-{to_id}", "revoked": False, "creator": author_id}
+            )
 
-    def delete_relationship(self, relationship_id):
-        self.writes.append(("delete", relationship_id))
+    def set_relationship_revoked(self, relationship_id, revoked):
+        self.writes.append(("revoke_edge" if revoked else "restore_edge", relationship_id))
         if self.dry_run:
             return
-        for edges in self.edges.values():
-            for key, value in list(edges.items()):
-                if value == relationship_id:
-                    del edges[key]
+        for targets in self.edges.values():
+            for edges in targets.values():
+                for edge in edges:
+                    if edge["id"] == relationship_id:
+                        edge["revoked"] = revoked
 
     def add_marking(self, indicator_id, marking_id):
         self.writes.append(("marking", indicator_id, marking_id))
