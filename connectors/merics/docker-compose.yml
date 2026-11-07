@@ -20,9 +20,9 @@ services:
       - CONNECTOR_NAME=MERICS
       - CONNECTOR_SCOPE=merics
       - CONNECTOR_LOG_LEVEL=info
-      # --- PDF render service ---
-      - RENDER_SERVICE_URL=http://pdf-renderer:8080/render
-      - RENDER_TIMEOUT=120
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      - MERICS_PDF_RENDER_TIMEOUT=120
       # --- Source / behaviour (non-sensitive; defaults shown) ---
       - MERICS_BASE_URL=https://merics.org
       - MERICS_SITEMAP_URL=                        # empty = derived from base_url

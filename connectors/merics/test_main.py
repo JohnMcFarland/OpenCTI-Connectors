@@ -1,6 +1,5 @@
 """Unit tests for the MERICS connector."""
 
-import base64
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
@@ -8,7 +7,9 @@ import pytest
 
 import main
 from main import (
+    ContentUnavailable,
     MericsConnector,
+    RendererUnavailable,
     _SkipArticle,
     _article_match,
     _extract_metadata,
@@ -106,7 +107,6 @@ def _article():
         "description": "Summary text.",
         "published": datetime(2026, 10, 15, 13, 37, 5, tzinfo=timezone.utc),
         "pdf": b"%PDF-rendered",
-        "html": b"<html></html>",
     }
 
 
@@ -243,33 +243,23 @@ class TestEnumeratePosts:
 # PDF acquisition
 # --------------------------------------------------------------------------- #
 
-class TestRenderConfig:
-    def test_structure(self, connector):
-        cfg = connector._render_config(REPORT_URL)
-        assert cfg["url"] == REPORT_URL
-        assert cfg["content_selector"] == "article.content--type-microsite"
-        assert cfg["hide_selectors"] == main.STRIP_SELECTORS
-        assert cfg["timeout_sec"] == 120
+class TestRenderLive:
+    def test_uses_house_client_with_site_selectors(self, connector):
+        md = _extract_metadata(_page(), REPORT_URL)
+        with patch.object(main, "render_live_pdf", return_value=b"%PDF-x") as render:
+            assert connector._render_live(REPORT_URL, md) == b"%PDF-x"
+        args, kwargs = render.call_args
+        assert args == (REPORT_URL, "Cleantech report", "MERICS")
+        assert kwargs["selectors"] == ["article.content--type-microsite"]
+        assert kwargs["strip"] == main.STRIP_SELECTORS
+        assert kwargs["byline"] == {"publisher": "MERICS", "published": "2026-10-15"}
+        assert kwargs["timeout"] == 120
 
-
-class TestRenderViaService:
-    def test_decodes_pdf_and_html(self, connector):
-        resp = MagicMock()
-        resp.json.return_value = {
-            "pdf": base64.b64encode(b"%PDF-x").decode(),
-            "html": base64.b64encode(b"<html/>").decode(),
-            "title": "T",
-        }
-        connector.session.post.return_value = resp
-        assert connector._render_via_service(REPORT_URL) == (b"%PDF-x", b"<html/>")
-        assert connector.session.post.call_args.kwargs["timeout"] == 150
-
-    def test_http_error_propagates(self, connector):
-        resp = MagicMock()
-        resp.raise_for_status.side_effect = Exception("503")
-        connector.session.post.return_value = resp
-        with pytest.raises(Exception, match="503"):
-            connector._render_via_service(REPORT_URL)
+    def test_renderer_down_propagates(self, connector):
+        md = _extract_metadata(_page(), REPORT_URL)
+        with patch.object(main, "render_live_pdf", side_effect=RendererUnavailable("503")):
+            with pytest.raises(RendererUnavailable):
+                connector._render_live(REPORT_URL, md)
 
 
 # --------------------------------------------------------------------------- #
@@ -279,13 +269,26 @@ class TestRenderViaService:
 class TestLoadArticle:
     def test_full_load_fetches_page_once_and_never_the_native_pdf(self, connector):
         connector.session.get.return_value = _resp(text=_page())
-        connector._render_via_service = MagicMock(return_value=(b"%PDF-r", b"<h/>"))
+        connector._render_live = MagicMock(return_value=b"%PDF-r")
         art = connector._load_article(REPORT_URL)
         assert art["pdf"] == b"%PDF-r"
-        assert art["html"] == b"<h/>"
+        assert "html" not in art
         assert "native_pdf" not in art
         assert connector.session.get.call_count == 1
-        connector._render_via_service.assert_called_once_with(REPORT_URL)
+        connector._render_live.assert_called_once()
+
+    def test_no_usable_content_keeps_report_without_pdf(self, connector):
+        connector.session.get.return_value = _resp(text=_page())
+        connector._render_live = MagicMock(side_effect=ContentUnavailable("HTTP 422"))
+        art = connector._load_article(REPORT_URL)
+        assert art["pdf"] is None
+        connector.helper.log_warning.assert_called()
+
+    def test_renderer_down_is_transient(self, connector):
+        connector.session.get.return_value = _resp(text=_page())
+        connector._render_live = MagicMock(side_effect=RendererUnavailable("HTTP 503"))
+        with pytest.raises(RendererUnavailable):
+            connector._load_article(REPORT_URL)
 
     @pytest.mark.parametrize("status", [404, 410])
     def test_gone_is_permanent(self, connector, status):
@@ -301,17 +304,17 @@ class TestLoadArticle:
 
     def test_missing_title_is_permanent_and_skips_render(self, connector):
         connector.session.get.return_value = _resp(text=_page(title=None))
-        connector._render_via_service = MagicMock()
+        connector._render_live = MagicMock()
         with pytest.raises(_SkipArticle, match="title"):
             connector._load_article(REPORT_URL)
-        connector._render_via_service.assert_not_called()
+        connector._render_live.assert_not_called()
 
     def test_missing_date_is_permanent_and_skips_render(self, connector):
         connector.session.get.return_value = _resp(text=_page(date=None))
-        connector._render_via_service = MagicMock()
+        connector._render_live = MagicMock()
         with pytest.raises(_SkipArticle, match="date"):
             connector._load_article(REPORT_URL)
-        connector._render_via_service.assert_not_called()
+        connector._render_live.assert_not_called()
 
 
 class TestLoadWithRetry:
@@ -357,16 +360,13 @@ class TestCreateReport:
         assert kw["externalReferences"] == ["ext-ref"]
         assert kw["update"] is True
 
-    def test_attaches_rendered_pdf_and_raw_html_only(self, connector):
+    def test_attaches_one_live_pdf_only(self, connector):
         connector._create_report(REPORT_URL, _article())
         calls = connector.helper.api.stix_domain_object.add_file.call_args_list
         assert [c.kwargs["file_name"] for c in calls] == [
             "merics-report-rendered-germany-and-china-cleantech.pdf",
-            "merics-report-raw-germany-and-china-cleantech.html",
         ]
-        assert [c.kwargs["mime_type"] for c in calls] == [
-            "application/pdf", "text/html",
-        ]
+        assert [c.kwargs["mime_type"] for c in calls] == ["application/pdf"]
         assert all(c.kwargs["id"] == "report-id" for c in calls)
 
     def test_every_file_carries_the_tlp_marking(self, connector):
@@ -380,14 +380,14 @@ class TestCreateReport:
         calls = connector.helper.api.stix_domain_object.add_file.call_args_list
         assert [c.kwargs["file_name"] for c in calls] == [
             "merics-merics-briefs-rendered-eu-china-trade-talks.pdf",
-            "merics-merics-briefs-raw-eu-china-trade-talks.html",
         ]
 
-    def test_skips_empty_html(self, connector):
+    def test_report_without_pdf_attaches_nothing(self, connector):
         art = _article()
-        art["html"] = b""
+        art["pdf"] = None
         connector._create_report(REPORT_URL, art)
-        assert connector.helper.api.stix_domain_object.add_file.call_count == 1
+        connector.helper.api.report.create.assert_called_once()
+        assert connector.helper.api.stix_domain_object.add_file.call_count == 0
 
 
 # --------------------------------------------------------------------------- #

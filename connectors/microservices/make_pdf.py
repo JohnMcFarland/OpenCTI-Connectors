@@ -259,3 +259,112 @@ def render_page_to_pdf(browser, url, connector_name="",
     finally:
         page.close()
         context.close()
+
+
+# -- pdf-renderer service client (PDF-RENDERER-CLIENT-V1) ------------------ #
+#
+# House standard: every connector attaches ONE PDF per Report, the live
+# article rendered by the pdf-renderer service (extract, strip, defang links,
+# single title, byline, metadata). The functions above remain only until each
+# connector is migrated.
+
+
+class RendererUnavailable(Exception):
+    """pdf-renderer unreachable, busy, timed out or failed (5xx/503/504).
+
+    Policy: the connector skips the Report; backfill later from external
+    references.
+    """
+
+
+class ContentUnavailable(Exception):
+    """pdf-renderer reached but no usable article (422) or URL blocked (403).
+
+    Policy: the connector creates the Report without a PDF and logs it.
+    """
+
+
+def _renderer_base_url():
+    """pdf-renderer base URL; overridable with PDF_RENDERER_URL."""
+    import os as _os
+    return _os.environ.get("PDF_RENDERER_URL", "http://pdf-renderer:8000").rstrip("/")
+
+
+def _post_render(path, payload, timeout):
+    """POST a JSON render request and return PDF bytes, mapping failures to
+    RendererUnavailable / ContentUnavailable."""
+    import json as _json
+    import urllib.error
+    import urllib.request
+    req = urllib.request.Request(
+        _renderer_base_url() + path,
+        data=_json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout + 30) as resp:
+            return resp.read()
+    except urllib.error.HTTPError as exc:
+        detail = exc.read()[:300].decode("utf-8", "ignore")
+        if exc.code in (403, 422):
+            raise ContentUnavailable(f"HTTP {exc.code}: {detail}")
+        raise RendererUnavailable(f"HTTP {exc.code}: {detail}")
+    except Exception as exc:  # URLError, timeout, connection refused
+        raise RendererUnavailable(f"{type(exc).__name__}: {exc}")
+
+
+def render_live_pdf(url, title, connector, byline=None, selectors="generic",
+                    strip=None, timeout=120):
+    """Render the live article at url to PDF bytes via pdf-renderer.
+
+    Input:
+        url: article URL (the service applies its SSRF policy).
+        title: verbatim source title (feed title, never the page <title>).
+        connector: connector name, written to PDF metadata only.
+        byline: optional {"author", "publisher", "published"} strings.
+        selectors: "generic" (readability) or a site-specific CSS list.
+        strip: extra site-specific CSS selectors to remove.
+        timeout: render timeout in seconds, enforced by the service.
+
+    Output: PDF bytes.
+    Raises: RendererUnavailable, ContentUnavailable.
+    """
+    payload = {
+        "url": url,
+        "title": title,
+        "connector": connector,
+        "byline": byline or {},
+        "selectors": selectors,
+        "strip": list(strip or []),
+        "timeout": int(timeout),
+    }
+    return _post_render("/render/url", payload, int(timeout))
+
+
+def resolve_marking_id(helper, definition="TLP:CLEAR"):
+    """Return the internal OpenCTI id of a marking definition (e.g. TLP:CLEAR)."""
+    marking = helper.api.marking_definition.read(
+        filters={
+            "mode": "and",
+            "filters": [{"key": "definition", "values": [definition]}],
+            "filterGroups": [],
+        }
+    )
+    if not marking:
+        raise RuntimeError(f"marking definition '{definition}' not found")
+    return marking["id"]
+
+
+def attach_pdf(helper, report_id, file_name, pdf_bytes, marking_id):
+    """Upload pdf_bytes to a Report with the file itself marked (fileMarkings).
+
+    marking_id: internal id from resolve_marking_id (TLP:CLEAR for OSINT).
+    """
+    return helper.api.stix_domain_object.add_file(
+        id=report_id,
+        file_name=file_name,
+        data=pdf_bytes,
+        mime_type="application/pdf",
+        fileMarkings=[marking_id],
+    )

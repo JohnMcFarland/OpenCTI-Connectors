@@ -10,8 +10,6 @@ connector:
   name: 'MERICS'
   scope: 'merics'
   log_level: 'info'
-  render_service_url: 'http://pdf-renderer:8080/render'
-  render_timeout: 120
 merics:
   base_url: 'https://merics.org'
   sitemap_url: ''
@@ -19,6 +17,7 @@ merics:
   request_delay: 3
   max_reports: 0
   render_retries: 3
+  pdf_render_timeout: 120
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'

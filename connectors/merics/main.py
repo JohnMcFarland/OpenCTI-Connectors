@@ -5,11 +5,13 @@ Purpose
 -------
 External-import connector that ingests Reports and Briefs from MERICS
 (https://merics.org/en/) and creates one OpenCTI Report container per
-article. Each Report carries the live-page PDF and raw HTML snapshot from
-the centralised pdf-renderer service, the same as every other connector.
-MERICS's own downloadable publication PDF is not attached: the rendered
-live page is the one PDF per Report (locked 2026-10-24). Every attached
-file carries the Report's TLP marking at upload.
+article. Each Report carries one PDF: the live article page rendered by
+the centralised pdf-renderer service through the house client in
+microservices/make_pdf.py (render_live_pdf, PDF-RENDERER-CLIENT-V1), the
+same path as every migrated connector. MERICS's own downloadable
+publication PDF is not attached (one live-page PDF per Report, locked
+2026-10-24). The PDF carries the Report's TLP marking at upload
+(attach_pdf -> fileMarkings).
 
 Collection model
 ----------------
@@ -34,10 +36,11 @@ Failure handling
 ----------------
 Permanent failures (404/410, missing title, missing publication date)
 raise _SkipArticle and are never retried. Transient failures (HTTP
-errors, render-service errors) are retried with exponential backoff; if
+errors, RendererUnavailable) are retried with exponential backoff; if
 all attempts fail, nothing is written so the article is picked up again
-on the next poll. If the render service is down, the article is skipped
-and backfilled on a later poll.
+on the next poll (house policy: renderer down -> skip, backfill later).
+ContentUnavailable (renderer reached, no usable article or URL blocked)
+is not retried: the Report is created without a PDF and logged.
 
 Design philosophy
 -----------------
@@ -56,7 +59,6 @@ Key decisions
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
-import base64
 import os
 import re
 import sys
@@ -74,6 +76,12 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from microservices.classify_report import classify_report
+from microservices.make_pdf import (
+    ContentUnavailable,
+    RendererUnavailable,
+    attach_pdf,
+    render_live_pdf,
+)
 
 
 # --------------------------------------------------------------------------- #
@@ -252,12 +260,10 @@ class MericsConnector:
             default="MERICS",
         )
 
-        self.render_url = get_config_variable(
-            "RENDER_SERVICE_URL", ["connector", "render_service_url"], config,
-            default="http://pdf-renderer:8080/render",
-        )
+        # Renderer address comes from PDF_RENDERER_URL inside make_pdf
+        # (default http://pdf-renderer:8000); only the timeout is set here.
         self.render_timeout = int(get_config_variable(
-            "RENDER_TIMEOUT", ["connector", "render_timeout"], config,
+            "MERICS_PDF_RENDER_TIMEOUT", ["merics", "pdf_render_timeout"], config,
             isNumber=True, default=120,
         ))
 
@@ -345,24 +351,24 @@ class MericsConnector:
     # PDF acquisition
     # ------------------------------------------------------------------ #
 
-    def _render_config(self, url):
-        return {
-            "url": url,
-            "content_selector": CONTENT_SELECTOR,
-            "hide_selectors": STRIP_SELECTORS,
-            "timeout_sec": self.render_timeout,
-        }
+    def _render_live(self, url, metadata):
+        """Render the live article via pdf-renderer and return PDF bytes.
 
-    def _render_via_service(self, url):
-        """POST to the render service and return (pdf_bytes, html_bytes)."""
-        resp = self.session.post(
-            self.render_url,
-            json=self._render_config(url),
-            timeout=self.render_timeout + 30,
+        Raises RendererUnavailable (transient, retried) or ContentUnavailable
+        (permanent for this poll; the Report is created without a PDF).
+        """
+        return render_live_pdf(
+            url,
+            metadata["title"],
+            self.author_name,
+            byline={
+                "publisher": self.author_name,
+                "published": metadata["published"].strftime("%Y-%m-%d"),
+            },
+            selectors=[CONTENT_SELECTOR],
+            strip=STRIP_SELECTORS,
+            timeout=self.render_timeout,
         )
-        resp.raise_for_status()
-        data = resp.json()
-        return base64.b64decode(data["pdf"]), base64.b64decode(data["html"])
 
     # ------------------------------------------------------------------ #
     # Article loading
@@ -381,7 +387,13 @@ class MericsConnector:
         if metadata["published"] is None:
             raise _SkipArticle("no date-published field on page")
 
-        metadata["pdf"], metadata["html"] = self._render_via_service(url)
+        try:
+            metadata["pdf"] = self._render_live(url, metadata)
+        except ContentUnavailable as exc:
+            # House policy: the article exists but has no renderable body.
+            # Keep the Report, skip the PDF, say why.
+            self.helper.log_warning(f"No PDF for {url}: {exc}")
+            metadata["pdf"] = None
         return metadata
 
     def _load_with_retry(self, url):
@@ -439,19 +451,13 @@ class MericsConnector:
         prefix = f"merics-{match.group('type').lower()}"
         slug = match.group("slug")
 
-        attachments = [
-            (f"{prefix}-rendered-{slug}.pdf", article["pdf"], "application/pdf"),
-            (f"{prefix}-raw-{slug}.html", article["html"], "text/html"),
-        ]
-        # fileMarkings puts TLP:CLEAR on the file object itself; a file does not
-        # inherit the Report's marking on its own.
-        for file_name, data, mime_type in attachments:
-            if data:
-                self.helper.api.stix_domain_object.add_file(
-                    id=report["id"], file_name=file_name,
-                    data=data, mime_type=mime_type,
-                    fileMarkings=[self.marking_id],
-                )
+        # attach_pdf sets fileMarkings, so the file itself carries the TLP
+        # marking; a file does not inherit the Report's marking on its own.
+        if article["pdf"]:
+            attach_pdf(
+                self.helper, report["id"], f"{prefix}-rendered-{slug}.pdf",
+                article["pdf"], self.marking_id,
+            )
 
         self.helper.log_info(
             f"Created Report for {url} ({name[:80]}) published {published[:10]}"
