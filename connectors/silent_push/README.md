@@ -6,8 +6,8 @@ Report:
 
 | Stream | What it is | Report |
 | --- | --- | --- |
-| **IOFA** | Silent Push's own **Indicators of Future Attack**: domains and IPs it judges to be attacker infrastructure, often before they are used. 195 global feeds, about 2 million indicators | `Silent Push IOFA - <date> <time> UTC` |
-| **OSINT** | The **open-source threat feeds** Silent Push collects and enriches, such as CINS Army, Green Snow, Rutgers, blocklist.de and TweetFeed. 28 feeds, of which 8 are excluded by default | `Silent Push OSINT - <date> <time> UTC` |
+| **IOFA** | Silent Push's own **Indicators of Future Attack**: domains and IPs it judges to be attacker infrastructure, often before they are used. 195 global feeds, about 2 million indicators | `Silent Push IOFA \| <feed> \| <date> <time> UTC` |
+| **OSINT** | The **open-source threat feeds** Silent Push collects and enriches, such as CINS Army, Green Snow, Rutgers, blocklist.de and TweetFeed. 28 feeds, of which 8 are excluded by default | `Silent Push OSINT \| <feed> \| <date> <time> UTC` |
 
 Twice a day each stream checks for indicators that are new since its last run,
 and sends only those to OpenCTI.
@@ -16,8 +16,9 @@ and sends only those to OpenCTI.
   IPv4-Addr, IPv6-Addr and URL observables from OSINT.
 - **How often:** every 12 hours, at 00:00 and 12:00 UTC. Both streams run in
   each slot, one after the other.
-- **How it groups them:** one `observable-feed` Report per stream per run,
-  created only when that stream found something new.
+- **How it groups them:** one `observable-feed` Report per source feed per
+  stream per run, holding only that feed's new observables. A value listed in
+  several feeds is in each of their Reports.
 - **First run:** IOFA records what already exists and ingests nothing. OSINT
   takes the last 24 hours (`OSINT_INITIAL_LOOKBACK_HOURS`).
 - **Every later run:** only what is new since the previous successful run.
@@ -118,7 +119,7 @@ Each setting can be given as an environment variable or in `src/config.yml`.
 | `SILENT_PUSH_RUN_ON_STARTUP` | `silent_push.run_on_startup` | `true` | Also run at start, instead of waiting for the next slot |
 | `SILENT_PUSH_IOFA_ENABLED` | `silent_push.iofa_enabled` | `true` | Run the IOFA stream |
 | `SILENT_PUSH_OSINT_ENABLED` | `silent_push.osint_enabled` | `true` | Run the OSINT stream |
-| `SILENT_PUSH_ENRICH_BATCH_BUDGET` | `silent_push.enrich_batch_budget` | `60` | Most IOFA enrichment API calls per run |
+| `SILENT_PUSH_ENRICH_BATCH_BUDGET` | `silent_push.enrich_batch_budget` | `60` | Most IOFA enrichment API calls per run. Keep `budget x runs per day` within your quota share |
 | `SILENT_PUSH_OSINT_INITIAL_LOOKBACK_HOURS` | `silent_push.osint_initial_lookback_hours` | `24` | How far back OSINT's first run reaches. Later runs ignore it |
 | `SILENT_PUSH_OSINT_EXCLUDE_FEEDS` | `silent_push.osint_exclude_feeds` | see below | Comma-separated open-source feed names to leave out |
 | `SILENT_PUSH_STATE_DIR` | `silent_push.state_dir` | `/data` | Where the state files live. Must be persistent |
@@ -186,18 +187,28 @@ At each slot the IOFA stream runs, then the OSINT stream.
 ### Sending and recording
 
 Objects go to OpenCTI in bundles of up to 1,000. Each bundle carries its own
-copy of that stream's Report, holding that bundle's objects, so OpenCTI can
-process them in any order. Values are appended to the stream's state file only
+copy of every feed Report it touches, holding that bundle's observables for
+that feed, so OpenCTI can process them in any order and merges the refs. Values are appended to the stream's state file only
 after their bundle is sent.
 
 A stream that finds nothing new creates no Report.
 
 ### Report naming
 
-Each stream's Report is named for the slot it ran in, for example:
+Each Report is named for its stream, source feed and slot (SP-FEED-REPORTS-V1),
+for example:
 
-- `Silent Push IOFA - 2026-11-07 12:00 UTC`
-- `Silent Push OSINT - 2026-11-07 12:00 UTC`
+- `Silent Push IOFA | Threat Actor - FIN7 Domains | 2026-11-07 12:00 UTC`
+- `Silent Push OSINT | CINS Army List IP | 2026-11-07 12:00 UTC`
+
+Values with no named feed go to `Silent Push <stream> | unattributed | <slot>`.
+Feed names are folded to ASCII in the Report name.
+
+**Contents are observables only.** Relationships, Autonomous Systems,
+Countries, feed entities (Intrusion Set, Tool, Malware) and author identities
+are sent in the same bundle but are not Report members, which keeps each
+Report small enough for OpenCTI's container views. Those edges remain on each
+observable.
 
 `published` is the slot's start time, so a run restarted within the same slot
 adds to the same Report rather than creating a second one.
@@ -231,7 +242,7 @@ collection requirements.
 | Threat actor and APT feeds | Intrusion Set, `related-to` from the observable |
 | C2 framework and RMM feeds | Tool, `related-to` from the observable |
 | Botnet and traffic distribution system feeds | Malware, `related-to` from the observable |
-| Each run | One `observable-feed` Report containing all of the above |
+| Each run | One `observable-feed` Report per source feed, containing that feed's observables |
 
 Relationships carry the date the value was first listed in that feed as their
 start time. A value listed in both the Domain and IP feed of a pair gets one
@@ -248,7 +259,7 @@ edge to the shared entity, from the earlier listing.
 | `feed`, `vendor`, `first_seen_on`, `last_seen_on`, tags | Observable description, such as `Listed in open-source feeds collected by Silent Push: CINS Army List IP (CINS)` |
 | `asn`, `asname` (IPv4 only) | Autonomous System, `belongs-to` from the IP |
 | `ip_location.country_code` (IPv4 only) | Country, `located-at` from the IP |
-| Each run | One `observable-feed` Report containing all of the above |
+| Each run | One `observable-feed` Report per source feed, containing that feed's observables |
 
 OSINT values are not linked to Intrusion Sets, Tools or Malware: these
 feeds carry no attribution.
@@ -349,7 +360,7 @@ connector in this repository. Only the seen-value sets stay on disk in
 
 | Where | Stream | Holds |
 | --- | --- | --- |
-| `seen_iofa.txt` | IOFA | Every value handled. Starts at about 30 MB, grows by roughly 6,000 to 11,000 lines a day |
+| `seen_iofa.txt` | IOFA | Every value handled. Starts at about 30 MB, grows by up to what the enrichment budget covers: at the defaults, roughly 12,000 to 24,000 lines a day |
 | `seen_osint.txt` | OSINT | Every value handled. Grows by the number of new OSINT values |
 | platform state `osint_last_run` | OSINT | When the last successful OSINT run started |
 
@@ -381,8 +392,8 @@ organisation**. You can check the balance with `GET /api/v1/users-quota/`.
 | --- | --- |
 | IOFA export downloads | 2 per run, 4 a day |
 | Feed catalogue | A few per run |
-| IOFA enrichment | About 50-90 a day expected, based on a 1% sample from November 2026 |
-| IOFA enrichment ceiling | `ENRICH_BATCH_BUDGET` per run: 120 a day, about 3,600 a month at the defaults |
+| IOFA enrichment | Early estimate from a 1% sample was 50-90 a day. Live, on 2026-11-08 one run found 24,355 new values, far more than the budget covers, so the ceiling below is what is actually spent |
+| IOFA enrichment ceiling | `ENRICH_BATCH_BUDGET` per run: 60 x 2 = 120 a day, about 3,600 a month at the defaults |
 | OSINT Feed Scan | One request per 1,000-row page. With the default exclusions a 24-hour window was about 11 pages in November 2026: about 6 per 12-hour run, 11 a day, about 330 a month |
 
 An IOFA enrichment call that comes back empty is retried up to twice more, so a
@@ -453,7 +464,12 @@ the volume of additions.
   with the default exclusions a 24-hour first run reads for about 5 minutes,
   and a 12-hour run about 2 to 3.
 - **Run frequency depends on Silent Push.** If Silent Push refreshes the IOFA
-  export once a day, only one of the two daily IOFA runs will find new values.
+  export once a day, only one of the two daily IOFA runs finds new values; the
+  other works through the carried-over backlog within its budget.
+- **IOFA volume exceeds the default budget.** Live additions (24,355 in one run
+  on 2026-11-08) are far above what 120 enrichment calls a day can cover, so
+  `carried_over` grows. Raising the budget spends shared quota and adds
+  OpenCTI load; narrowing which IOFA feeds are ingested is the alternative.
 - **IOFA attribution comes from feed names.** Silent Push has no field saying
   which feeds name an actor or tool. A feed renamed outside the patterns above
   stops producing its entity, and its values still arrive without one.
