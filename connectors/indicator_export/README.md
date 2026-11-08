@@ -12,9 +12,12 @@ Observables.
    Indicator, with `based-on` and `indicates` relationships. No Attack Pattern
    means no Indicator, however strong its other links are.
    Only IP addresses, file hashes, domains and URLs qualify
-   (`INDICATOR_ALLOWED_OBSERVABLE_TYPES`).
+   (`INDICATOR_ALLOWED_OBSERVABLE_TYPES`), and only values that pass the
+   [scope filter](#scope-filter). The Indicator also
+   [inherits](#inherited-relationships) the Observable's links to adversary
+   and capability entities.
 2. **Reconcile.** Existing Indicators get their score, types, markings and
-   `indicates` edges synced, so scores follow the graph up and down. If the
+   managed edges synced, so scores follow the graph up and down. If the
    Observable stops qualifying, the Indicator enters decay for
    `INDICATOR_DECAY_DAYS` and is then revoked. If it qualifies again during decay,
    it is restored.
@@ -24,6 +27,56 @@ Observables.
 
 Labels exist only on the exported copy. They are never written to OpenCTI, where
 labels are reserved for collection requirements.
+
+## Scope filter
+
+Crucible extraction links reference material to Attack Patterns as well as real
+infrastructure. Before promotion every candidate goes through a deterministic
+filter (`src/scope.py`, marker `IE-SCOPE-FILTER-V1`). Rules, first match wins:
+
+1. **Refang.** `hxxp`, `[.]`, `(.)` and `[:]` are undone before the pattern is
+   built, so `rfa[.]ink` becomes `[domain-name:value = 'rfa.ink']`. The
+   Observable in OpenCTI is not changed.
+2. **Public IPs only.** Private, loopback, link-local, CGNAT, documentation and
+   other non-global addresses are dropped, bare or as a URL host.
+3. **URL schemes.** Only `http`, `https`, `ftp` and `ftps`.
+4. **Reserved names and placeholders.** `.internal`, `.local`, `.test`,
+   `example.*` and values containing `placeholder` are dropped.
+5. **Excluded domains.** Publishers, vendors, advisories, social sites and
+   first-party service endpoints (Microsoft sign-in, office.com, AI APIs).
+   Matches the domain and every subdomain. Drops URLs and domains.
+6. **Shared hosting.** Platforms that host user content (GitHub raw, Google
+   Drive and Storage, Discord, pastebins, S3, OneDrive and similar). Matches
+   the exact host only: the bare domain and a root URL are dropped, a URL with
+   a specific path or query is kept, and attacker-named subdomains such as S3
+   buckets are kept.
+
+Both lists are in `src/scope.py`. `INDICATOR_EXCLUDED_DOMAINS` and
+`INDICATOR_SHARED_HOSTING_DOMAINS` add to them; they cannot remove or empty a
+built-in entry. Each cycle logs `Out of scope, not promoted:` with a count per
+rule, and the summary carries `out_of_scope`.
+
+## Inherited relationships
+
+An Indicator mirrors its Observable's direct links, using the edges permitted
+for indicator-sourced relationships in the data model
+(`src/inherit.py`, marker `IE-INHERIT-EDGES-V1`):
+
+| Observable links to | Indicator gets |
+|---|---|
+| Attack Pattern | `indicates` (the qualifying rule) |
+| Malware, Threat Actor (group or individual), Campaign, Infrastructure, Tool | `indicates` |
+| Intrusion Set | `related-to` |
+| Anything else | nothing; reachable through `based-on` |
+
+- Revoked Observable relationships are not inherited.
+- An inherited edge carries the Indicator's markings plus those of the
+  Observable relationship it came from, so it is never less restricted.
+- When the Observable loses a link, this connector's inherited edge is
+  revoked, and restored if the link returns. Edges authored by anyone else are
+  never touched.
+- The summary's `inherited_edges` counts edges created (or, in a dry run,
+  that would be created).
 
 ## Scoring
 
@@ -131,6 +184,9 @@ never become labels.
 ## Deployment
 
 1. Add the override block with real values and leave `INDICATOR_DRY_RUN=true`.
+   The platform's Pattern type vocabulary (`pattern_type_ov`) must contain
+   `stix`; without it every Indicator create fails with
+   `Missing mandatory attribute for vocabulary`.
 2. Run one cycle, then review the CSV and the counts in the connector's work
    message: `promoted`, `collisions`, `errors` and `Blocked by marking`.
 3. Set `INDICATOR_DRY_RUN=false` to create Indicators.
@@ -154,6 +210,8 @@ unchanged apart from `last_run`. The CSV is still written, so a dry run can be r
 | `INDICATOR_ALLOWED_OBSERVABLE_TYPES` | `IPv4-Addr,IPv6-Addr,StixFile,Domain-Name,Url` | Only these types become Indicators. File patterns are hash-only. A blank value falls back to the default. |
 | `INDICATOR_EXCLUDED_OBSERVABLE_TYPES` | empty | Added to Network-Traffic and Persona, which are always excluded. |
 | `INDICATOR_EXCLUDED_LABELS` | empty | Observables with these labels are not promoted. |
+| `INDICATOR_EXCLUDED_DOMAINS` | empty | Added to the built-in excluded-domain list. Matches a domain and its subdomains. |
+| `INDICATOR_SHARED_HOSTING_DOMAINS` | empty | Added to the built-in shared-hosting list. Exact host match. |
 | `EXPORT_LOCATION` | none | Required. `debug` or an IP address. |
 | `EXPORT_BLOCKED_MARKINGS` | `Sensitive` | Comma-separated terms. Matching markings never leave. |
 | `EXPORT_MAX_LABELS` | `50` | Labels per Indicator. |
@@ -176,21 +234,30 @@ unchanged apart from `last_run`. The CSV is still written, so a dry run can be r
   local disk except debug CSVs. State is saved once per cycle, so a crash
   mid-cycle restarts decay windows and re-sends objects under the same STIX ids.
   The `sent` map holds one short fingerprint per exported Indicator.
-- **Nothing is deleted.** When an Attack Pattern stops qualifying, this
-  connector's `indicates` edge to it is revoked, and it is restored if the
-  Attack Pattern qualifies again. Edges authored by anyone else are never
+- **Nothing is deleted.** When an Attack Pattern stops qualifying or an
+  inherited link disappears, this connector's edge is revoked, and it is
+  restored if the target returns. Edges authored by anyone else are never
   touched.
+- **`valid_from` is the creation time.** OpenCTI derives `valid_until` and the
+  start of its decay from `valid_from`, so a backdated value creates an
+  Indicator that is already expired (`IE-VALIDFROM-NOW-V1`).
 - **Organization does not always mean victim.** Any direct link to an Organization
   other than the author counts, including an owner, vendor or provider.
 - **Scores can show what labels hide.** Organization labels are excluded by default,
   so a 100 will not show which victim produced it.
-- **Score and platform decay.** If OpenCTI lowers a score through its own decay
-  rules, the next cycle sets it back.
+- **Score and platform decay.** OpenCTI's decay rules lower scores over time and
+  revoke Indicators at the end of their lifetime. This connector compares its
+  Diamond score with `decay_base_score`, not the decayed score, and writes
+  only when the assessment itself changes (`IE-DECAY-BASESCORE-V1`). Aging is
+  left to the platform.
 - **Pattern collisions.** An Indicator with the same pattern from another source
   is the same object in OpenCTI. It is left alone, not exported, and counted in
   `collisions`.
 - **Revocation is final.** A revoked Indicator that qualifies again is counted in
-  `revoked_but_qualifying` and stays revoked.
+  `revoked_but_qualifying` and stays revoked. This includes Indicators revoked
+  by platform decay.
+- **Indicator names use the stored Observable value.** A defanged Observable
+  gives a defanged name, while the pattern is refanged.
 - **Empty query guard.** If no observables qualify but Indicators exist, the cycle
   skips reconciliation and reports an error, so a broken query cannot put every
   Indicator into decay.
@@ -205,6 +272,5 @@ unchanged apart from `last_run`. The CSV is still written, so a dry run can be r
 python -m pytest
 ```
 
-The tests use fakes for OpenCTI and a real local HTTP server for the stream. The
-GraphQL queries have not run against a live platform, so the first dry run is
-their first real test.
+The tests use fakes for OpenCTI and a real local HTTP server for the stream.
+The connector has run live against OpenCTI 6.9.13 since 2026-11-07.
