@@ -491,6 +491,41 @@ class SilentPushStixBuilder:
             {report_feed_name(listing["name"]) for listing in _iofa_listings(row, feeds)}
         )
 
+    def iofa_feed_members(
+        self, row: dict, feeds: dict[str, dict], objects: list
+    ) -> dict:
+        """Report feed -> member ids for one IOFA value (SP-FEED-REPORTS-V2).
+
+        Each feed's Report gets the observable with its AS and Country context,
+        plus the Intrusion Set, Malware or Tool the feed is attributed to and
+        the observable's related-to edge to it. Notes and authors stay out.
+        A value with no
+        feed goes to the unattributed Report (key None). objects is the
+        build_indicator output, whose first item is the observable.
+        """
+        observable = objects[0]
+        entities = {
+            (obj.type, obj.name): obj.id
+            for obj in objects
+            if obj.type in ("intrusion-set", "malware", "tool")
+        }
+        edges = {
+            obj.target_ref: obj.id
+            for obj in objects
+            if obj.type == "relationship"
+            and obj.relationship_type == "related-to"
+            and obj.source_ref == observable.id
+        }
+        base = [observable.id] + context_members(observable.id, objects)
+        members: dict = {}
+        for listing in _iofa_listings(row, feeds):
+            ids = members.setdefault(report_feed_name(listing["name"]), list(base))
+            entity = feed_entity(listing["name"])
+            entity_id = entities.get(entity) if entity else None
+            if entity_id in edges and entity_id not in ids:
+                ids += [entity_id, edges[entity_id]]
+        return members or {None: base}
+
     @staticmethod
     def osint_feed_names(rows: list[dict]) -> list[str]:
         """Names of the open-source feeds that list this value (SP-FEED-REPORTS-V1)."""
@@ -509,8 +544,10 @@ class SilentPushStixBuilder:
         stream: str = STREAM_IOFA,
         feed: str | None = None,
     ) -> stix2.Report:
-        # SP-FEED-REPORTS-V1: one Report per source feed per slot, holding only
-        # that feed's observables. Values with no feed go to "unattributed".
+        # SP-FEED-REPORTS-V1: one Report per source feed per slot. Values with
+        # no feed go to "unattributed". SP-FEED-REPORTS-V2: Reports also hold
+        # each IP's AS and Country with their edges, and IOFA Reports the
+        # feed's attributed entity and the related-to edges to it.
         feed_label = _ascii(feed) if feed else UNATTRIBUTED
         name = f"Silent Push {stream} | {feed_label} | {slot:%Y-%m-%d %H:%M} UTC"
         if stream == STREAM_OSINT:
@@ -530,7 +567,13 @@ class SilentPushStixBuilder:
                 "observable's description names its source feeds."
             )
         if feed:
-            description += f" This Report holds the observables listed in the feed '{feed_label}'."
+            description += (
+                f" This Report holds the observables listed in the feed '{feed_label}',"
+                " each IP's Autonomous System and Country with the edges to them,"
+                " and, when Silent Push attributes the feed to an Intrusion Set,"
+                " Malware or Tool, that entity and each observable's related-to"
+                " edge to it."
+            )
         else:
             description += " This Report holds the observables no source feed was named for."
         return stix2.Report(
@@ -545,6 +588,26 @@ class SilentPushStixBuilder:
             object_refs=object_refs,
             allow_custom=True,
         )
+
+
+_CONTEXT_EDGES = ("belongs-to", "located-at")
+
+
+def context_members(observable_id: str, objects: list) -> list[str]:
+    """AS and Country context of one observable (SP-FEED-REPORTS-V2).
+
+    The targets of the observable's belongs-to and located-at edges, each
+    followed by its edge, so the container graph draws them connected.
+    """
+    ids: list[str] = []
+    for obj in objects:
+        if (
+            obj.type == "relationship"
+            and obj.source_ref == observable_id
+            and obj.relationship_type in _CONTEXT_EDGES
+        ):
+            ids += [obj.target_ref, obj.id]
+    return ids
 
 
 _FEED_PART = re.compile(r"\s+Part\s+\d+\s*$", re.IGNORECASE)

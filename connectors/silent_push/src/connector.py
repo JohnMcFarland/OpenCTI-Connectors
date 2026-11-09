@@ -47,6 +47,7 @@ from stix_builder import (
     STREAM_IOFA,
     STREAM_OSINT,
     SilentPushStixBuilder,
+    context_members,
     is_excluded,
     osint_value,
     row_value,
@@ -359,10 +360,11 @@ class SilentPushConnector:
                 stats["ingested"] += 1
                 # Keyed by id so shared entities appear once per bundle.
                 buffer.update({obj.id: obj for obj in objects})
-                _add_member(
-                    members, objects, EXPECTED_TYPE[kind],
-                    self.builder.iofa_feed_names(row, feeds),
-                )
+                # SP-FEED-REPORTS-V2: the feed's attributed entity and the
+                # observable's related-to edge join the observable.
+                feed_members = self.builder.iofa_feed_members(row, feeds, objects)
+                for feed, ids in feed_members.items():
+                    members.setdefault(feed, set()).update(ids)
 
             if len(buffer) >= CHUNK_SIZE:
                 flush()
@@ -508,11 +510,13 @@ class SilentPushConnector:
         work_id: str,
         stream: str,
     ) -> None:
-        # SP-FEED-REPORTS-V1: one Report per source feed, holding only that
-        # feed's observables. Relationships, ASNs, countries, feed entities and
-        # author identities ride in the bundle but are never Report contents
-        # (SP-NO-AUTHOR-EDGE-V1). Each chunk carries its own copy of every
-        # Report it touches; the platform merges refs on upsert.
+        # SP-FEED-REPORTS-V1: one Report per source feed. SP-FEED-REPORTS-V2:
+        # each holds its feed's observables, each IP's AS and Country with
+        # their edges, and, for attributed IOFA feeds, the entity and the
+        # related-to edges to it. Notes and author identities ride in the
+        # bundle but are never Report contents (SP-NO-AUTHOR-EDGE-V1). Each
+        # chunk carries its own copy of every Report it touches; the platform
+        # merges refs on upsert.
         reports = [
             self.builder.build_report(slot, sorted(ids), stream, feed)
             for feed, ids in sorted(members.items(), key=lambda item: item[0] or "")
@@ -534,8 +538,10 @@ def _add_member(
     observable = next((obj for obj in objects if obj.type == stix_type), None)
     if observable is None:
         return
+    # SP-FEED-REPORTS-V2: the AS and Country context rides with the observable.
+    ids = [observable.id] + context_members(observable.id, objects)
     for feed in feed_names or [None]:
-        members.setdefault(feed, set()).add(observable.id)
+        members.setdefault(feed, set()).update(ids)
 
 
 def _unseen(values: list[str], seen: set[str]) -> list[str]:

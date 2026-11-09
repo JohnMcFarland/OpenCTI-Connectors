@@ -261,10 +261,33 @@ def test_only_additions_are_enriched_and_ingested(harness):
     }
     objects = harness.bundles[0]
     assert any(obj["type"] == "intrusion-set" for obj in objects)
-    values = {obj["id"] for obj in objects if obj["type"] in ("domain-name", "ipv4-addr")}
+    # SP-FEED-REPORTS-V2: observables, AS and Country context, attributed
+    # entities and the edges between them; never Notes or authors.
+    allowed = {
+        obj["id"] for obj in objects
+        if obj["type"] in (
+            "domain-name", "ipv4-addr", "intrusion-set", "malware", "tool",
+            "autonomous-system", "location",
+        )
+    }
+    allowed |= {
+        obj["id"] for obj in objects
+        if obj["type"] == "relationship"
+        and obj["relationship_type"] in ("related-to", "belongs-to", "located-at")
+    }
     for report in (obj for obj in objects if obj["type"] == "report"):
-        # Observables only: no relationships, ASNs, countries or entities.
-        assert report["object_refs"] and set(report["object_refs"]) <= values
+        assert report["object_refs"] and set(report["object_refs"]) <= allowed
+    everything = [obj for bundle in harness.bundles for obj in bundle]
+    fin7 = next(
+        obj for obj in everything
+        if obj["type"] == "report" and "FIN7" in obj["name"]
+    )
+    entity = next(obj for obj in everything if obj["type"] == "intrusion-set")
+    edge = next(
+        obj for obj in everything
+        if obj["type"] == "relationship" and obj["target_ref"] == entity["id"]
+    )
+    assert {entity["id"], edge["id"]} <= set(fin7["object_refs"])
 
 
 def test_a_run_with_no_additions_makes_no_report_and_no_calls(harness):

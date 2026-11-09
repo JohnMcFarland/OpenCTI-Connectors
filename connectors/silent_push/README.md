@@ -17,8 +17,10 @@ and sends only those to OpenCTI.
 - **How often:** every 12 hours, at 00:00 and 12:00 UTC. Both streams run in
   each slot, one after the other.
 - **How it groups them:** one `observable-feed` Report per source feed per
-  stream per run, holding only that feed's new observables. A value listed in
-  several feeds is in each of their Reports.
+  stream per run, holding that feed's new observables, each IP's Autonomous
+  System and Country with the edges to them, and, for IOFA feeds attributed
+  to an actor, malware or tool, that entity and the observables' `related-to`
+  edges to it. A value listed in several feeds is in each of their Reports.
 - **First run:** IOFA records what already exists and ingests nothing. OSINT
   takes the last 24 hours (`OSINT_INITIAL_LOOKBACK_HOURS`).
 - **Every later run:** only what is new since the previous successful run.
@@ -207,11 +209,14 @@ Silent Push splits some large feeds into numbered parts (`Bulletproof Hosting IP
 Part 3`). Parts share their base feed's Report (`SP-FEED-PARTS-V1`); each
 observable's description still names the exact part.
 
-**Contents are observables only.** Relationships, Autonomous Systems,
-Countries, feed entities (Intrusion Set, Tool, Malware) and author identities
-are sent in the same bundle but are not Report members, which keeps each
-Report small enough for OpenCTI's container views. Those edges remain on each
-observable.
+**Contents (SP-FEED-REPORTS-V2).** Each Report holds its feed's observables
+with their context, so the container graph is connected: each IP's
+Autonomous System and Country with its `belongs-to` and `located-at` edges,
+and, for an IOFA feed Silent Push attributes to an Intrusion Set, Malware or
+Tool, that entity and each observable's `related-to` edge to it. Assessment
+Notes and author identities are sent in the same bundle but are not Report
+members. Large feeds such as Bulletproof Hosting produce large Reports; the
+context is kept on purpose.
 
 `published` is the slot's start time, so a run restarted within the same slot
 adds to the same Report rather than creating a second one.
@@ -245,7 +250,7 @@ collection requirements.
 | Threat actor and APT feeds | Intrusion Set, `related-to` from the observable |
 | C2 framework and RMM feeds | Tool, `related-to` from the observable |
 | Botnet and traffic distribution system feeds | Malware, `related-to` from the observable |
-| Each run | One `observable-feed` Report per source feed, containing that feed's observables |
+| Each run | One `observable-feed` Report per source feed, containing that feed's observables, their AS and Country context, its attributed entity and the edges between them |
 
 Relationships carry the date the value was first listed in that feed as their
 start time. A value listed in both the Domain and IP feed of a pair gets one
