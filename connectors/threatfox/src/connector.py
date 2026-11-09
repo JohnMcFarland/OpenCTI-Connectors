@@ -17,7 +17,7 @@ from . import config
 from .mitre_lookup import MitreLookup
 from .stix_converter import StixConverter
 from .threatfox_client import ThreatFoxClient
-from .uuid_generator import report_id
+from .bundler import chunk_bundles, report_description, report_name
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 from microservices.classify_report import classify_report
@@ -96,118 +96,30 @@ class ThreatFoxConnector:
         stix_objects = self._converter.convert(ioc_data)
         self.helper.log_info(f"Generated {len(stix_objects)} STIX objects")
 
-        # Push all content objects via bundle
-        bundle = {
-            "type": "bundle",
-            "id": f"bundle--{str(uuid.uuid4())}",
-            "objects": stix_objects,
-        }
-        self.helper.log_info("Sending STIX bundle to OpenCTI...")
-        self.helper.send_stix2_bundle(json.dumps(bundle), update=True, work_id=work_id)
-        self.helper.log_info("STIX bundle sent successfully")
-
-        # Create Report container via direct API call
+        # THREATFOX-REPORT-IN-BUNDLE-V1: each chunk carries its own copy of the
+        # day's Report with that chunk's refs; no per-object API calls after
+        # the send, and no race with the workers.
         date_str = now.strftime("%Y-%m-%d")
-        self.helper.log_info(f"Creating report container: Threat Fox Feed {date_str}")
-        self._create_report(date_str, now, stix_objects)
+        published = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
+        report_types = classify_report(
+            title=report_name(date_str),
+            description=report_description(date_str),
+            content=report_description(date_str),
+            source="ThreatFox", source_url="",
+            default_types=["observable-feed"],
+        )
+        chunks = chunk_bundles(stix_objects, date_str, published, report_types)
+        for chunk in chunks:
+            bundle = {
+                "type": "bundle",
+                "id": f"bundle--{str(uuid.uuid4())}",
+                "objects": chunk,
+            }
+            self.helper.send_stix2_bundle(json.dumps(bundle), update=True, work_id=work_id)
+        self.helper.log_info(
+            f"Sent {len(stix_objects)} objects in {len(chunks)} chunk(s) "
+            f"with Report {report_name(date_str)}"
+        )
 
         self.helper.set_state({"last_run": now.isoformat()})
 
-    def _create_report(
-        self, date_str: str, now: datetime, stix_objects: list[dict]
-    ) -> None:
-        ts = now.strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        name = f"Threat Fox Feed {date_str}"
-
-        content_ids = [
-            obj["id"] for obj in stix_objects
-            if obj.get("type") not in ("marking-definition",)
-            and obj.get("id") != config.THREATFOX_IDENTITY_ID
-        ]
-
-        # Resolve the internal OpenCTI ID for the ThreatFox identity.
-        # pycti report.create() createdBy requires the internal UUID, not the STIX ID.
-        # Use name-based lookup — standard_id may diverge from computed value due to
-        # OpenCTI worker-side ID derivation differences.
-        created_by_internal_id = None
-        try:
-            identities = self.helper.api.identity.list(
-                filters={
-                    "mode": "and",
-                    "filters": [
-                        {"key": "name", "values": [config.THREATFOX_IDENTITY_NAME],
-                         "operator": "eq", "mode": "or"},
-                        {"key": "entity_type", "values": ["Organization"],
-                         "operator": "eq", "mode": "or"},
-                    ],
-                    "filterGroups": [],
-                },
-                first=1,
-            )
-            if isinstance(identities, list) and identities:
-                created_by_internal_id = identities[0]["id"]
-                logger.info("Resolved ThreatFox identity: %s", created_by_internal_id)
-            else:
-                logger.warning("Could not resolve ThreatFox identity by name — createdBy will be unset")
-        except Exception as e:
-            logger.warning("Could not resolve ThreatFox identity ID: %s", e)
-
-        # Resolve the internal OpenCTI ID for TLP:CLEAR marking definition.
-        marking_internal_id = None
-        try:
-            marking = self.helper.api.marking_definition.read(
-                filters={
-                    "mode": "and",
-                    "filters": [{"key": "definition", "values": ["TLP:CLEAR"]}],
-                    "filterGroups": [],
-                }
-            )
-            if marking:
-                marking_internal_id = marking["id"]
-        except Exception as e:
-            logger.warning("Could not resolve TLP:CLEAR marking ID: %s", e)
-
-        try:
-            create_kwargs = {
-                "name": name,
-                "description": (
-                    f"Automated ThreatFox IOC ingestion for {date_str}. "
-                    "Contains observables, malware family references, and reporter identities "
-                    "sourced from the ThreatFox abuse.ch feed."
-                ),
-                "published": ts,
-                "report_types": ["observable-feed"],
-                "stix_id": report_id(date_str),
-                "update": True,
-            }
-            if created_by_internal_id:
-                create_kwargs["createdBy"] = created_by_internal_id
-            if marking_internal_id:
-                create_kwargs["objectMarking"] = [marking_internal_id]
-
-            create_kwargs["report_types"] = classify_report(
-                title=name, description=create_kwargs.get("description", ""),
-                content=create_kwargs.get("description", ""),
-                source="ThreatFox", source_url="",
-                default_types=["observable-feed"],
-            )
-
-            report = self.helper.api.report.create(**create_kwargs)
-
-            if report and report.get("id"):
-                self.helper.log_info(
-                    f"Report created/updated: {report['id']} — adding {len(content_ids)} object refs"
-                )
-                for stix_id in content_ids:
-                    try:
-                        self.helper.api.report.add_stix_object_or_stix_relationship(
-                            id=report["id"],
-                            stixObjectOrStixRelationshipId=stix_id,
-                        )
-                    except Exception as e:
-                        logger.debug("Could not add %s to report: %s", stix_id, e)
-            else:
-                self.helper.log_error("Report creation returned no ID")
-
-        except Exception as e:
-            self.helper.log_error(f"Failed to create report container: {str(e)}")
