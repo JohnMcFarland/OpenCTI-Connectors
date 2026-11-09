@@ -231,9 +231,19 @@ def test_report_is_stable_per_slot_and_named_for_it(builder):
     slot = datetime(2026, 11, 7, 6, tzinfo=timezone.utc)
     objects = builder.build_indicator("evil.example", "domain-name", {}, FEEDS)
     report = builder.build_report(slot, [objects[0].id])
-    assert report.name == "Silent Push IOFA - 2026-11-07 06:00 UTC"
+    assert report.name == "Silent Push IOFA | unattributed | 2026-11-07 06:00 UTC"
     assert report.report_types == ["observable-feed"]
     assert report.published == slot
     assert report.id == builder.build_report(slot, [builder.build_indicator("other.example", "domain-name", {}, FEEDS)[0].id]).id
     later = datetime(2026, 11, 7, 12, tzinfo=timezone.utc)
     assert report.id != builder.build_report(later, [objects[0].id]).id
+
+
+# SP-FEED-REPORTS-V1: the feed is part of the Report's identity.
+def test_feed_report_is_named_for_its_feed(builder):
+    slot = datetime(2026, 11, 7, 6, tzinfo=timezone.utc)
+    ref = builder.build_indicator("evil.example", "domain-name", {}, FEEDS)[0].id
+    plain = builder.build_report(slot, [ref])
+    fin7 = builder.build_report(slot, [ref], "IOFA", "Threat Actor - FIN7 Domains")
+    assert fin7.name == "Silent Push IOFA | Threat Actor - FIN7 Domains | 2026-11-07 06:00 UTC"
+    assert fin7.id != plain.id

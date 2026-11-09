@@ -11,6 +11,8 @@ import os
 from dataclasses import dataclass
 from typing import FrozenSet, Mapping, Optional, Union
 
+from .scope import DEFAULT_EXCLUDED_DOMAINS, DEFAULT_SHARED_HOSTING_DOMAINS
+
 MODE_DEBUG = "debug"
 MODE_STREAM = "stream"
 
@@ -68,6 +70,13 @@ def _parse_csv_set(value: str) -> FrozenSet[str]:
     return frozenset(item.strip() for item in value.split(",") if item.strip())
 
 
+def _parse_domain_set(value: str) -> FrozenSet[str]:
+    """Comma list of domains, lowercased, without leading or trailing dots."""
+    return frozenset(
+        item.strip().lower().strip(".") for item in value.split(",") if item.strip().strip(".")
+    )
+
+
 @dataclass(frozen=True)
 class Settings:
     opencti_url: str
@@ -85,6 +94,8 @@ class Settings:
     excluded_observable_types: FrozenSet[str]
     allowed_observable_types: FrozenSet[str]
     excluded_labels: FrozenSet[str]
+    excluded_domains: FrozenSet[str]
+    shared_hosting_domains: FrozenSet[str]
 
     target: ExportTarget
     scheme: str
@@ -166,6 +177,12 @@ def load_settings(env: Optional[Mapping[str, str]] = None) -> Settings:
             optional("INDICATOR_ALLOWED_OBSERVABLE_TYPES", DEFAULT_ALLOWED_OBSERVABLE_TYPES)
         ),
         excluded_labels=_parse_csv_set(source.get("INDICATOR_EXCLUDED_LABELS", "")),
+        # Scope lists (IE-SCOPE-FILTER-V1): env values add to the built-in
+        # defaults in scope.py; they never replace or empty them.
+        excluded_domains=DEFAULT_EXCLUDED_DOMAINS
+        | _parse_domain_set(source.get("INDICATOR_EXCLUDED_DOMAINS", "")),
+        shared_hosting_domains=DEFAULT_SHARED_HOSTING_DOMAINS
+        | _parse_domain_set(source.get("INDICATOR_SHARED_HOSTING_DOMAINS", "")),
         target=parse_export_location(source.get("EXPORT_LOCATION", "")),
         scheme=scheme,
         port=port,

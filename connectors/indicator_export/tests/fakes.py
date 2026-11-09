@@ -161,9 +161,11 @@ class FakeClient:
     def based_on_observable(self, indicator_id):
         return self.based_on.get(indicator_id)
 
-    def indicates_edges(self, indicator_id):
+    def managed_edges(self, indicator_id):
         return {
-            target: [dict(edge) for edge in edges]
+            (edges[0].get("type", "indicates") if edges else "indicates", target): [
+                dict(edge) for edge in edges
+            ]
             for target, edges in self.edges.get(indicator_id, {}).items()
         }
 
@@ -206,9 +208,10 @@ class FakeClient:
         self.writes.append(("relationship", from_id, relationship_type, to_id, tuple(marking_ids)))
         if self.dry_run:
             return
-        if relationship_type == "indicates":
+        if relationship_type != "based-on":
             self.edges.setdefault(from_id, {}).setdefault(to_id, []).append(
-                {"id": f"edge-{from_id}-{to_id}", "revoked": False, "creator": author_id}
+                {"id": f"edge-{from_id}-{to_id}", "revoked": False, "creator": author_id,
+                 "type": relationship_type}
             )
 
     def set_relationship_revoked(self, relationship_id, revoked):

@@ -295,13 +295,15 @@ class SilentPushConnector:
         stats: dict,
     ) -> None:
         buffer: dict[str, object] = {}
+        members: dict[str | None, set[str]] = {}
         handled: list[str] = []
         empty_streak = 0
 
         def flush() -> None:
             if buffer:
-                self._send_chunk(buffer, slot, work_id, STREAM_IOFA)
+                self._send_chunk(buffer, members, slot, work_id, STREAM_IOFA)
                 buffer.clear()
+                members.clear()
             self.store.append(handled)
             handled.clear()
 
@@ -357,6 +359,10 @@ class SilentPushConnector:
                 stats["ingested"] += 1
                 # Keyed by id so shared entities appear once per bundle.
                 buffer.update({obj.id: obj for obj in objects})
+                _add_member(
+                    members, objects, EXPECTED_TYPE[kind],
+                    self.builder.iofa_feed_names(row, feeds),
+                )
 
             if len(buffer) >= CHUNK_SIZE:
                 flush()
@@ -453,12 +459,14 @@ class SilentPushConnector:
         )
 
         buffer: dict[str, object] = {}
+        members: dict[str | None, set[str]] = {}
         handled: list[str] = []
 
         def flush() -> None:
             if buffer:
-                self._send_chunk(buffer, slot, work_id, STREAM_OSINT)
+                self._send_chunk(buffer, members, slot, work_id, STREAM_OSINT)
                 buffer.clear()
+                members.clear()
             self.osint_store.append(handled)
             handled.clear()
 
@@ -481,6 +489,10 @@ class SilentPushConnector:
                 continue
             stats["ingested"] += 1
             buffer.update({obj.id: obj for obj in objects})
+            _add_member(
+                members, objects, stix_type,
+                self.builder.osint_feed_names(value_rows),
+            )
             if len(buffer) >= CHUNK_SIZE:
                 flush()
         flush()
@@ -489,20 +501,41 @@ class SilentPushConnector:
         return stats
 
     def _send_chunk(
-        self, objects: dict, slot: datetime, work_id: str, stream: str
+        self,
+        objects: dict,
+        members: dict,
+        slot: datetime,
+        work_id: str,
+        stream: str,
     ) -> None:
-        # SP-NO-AUTHOR-EDGE-V1: author identities ride in the bundle so
-        # createdBy resolves, but they are not intelligence and stay out of
-        # the Report's contents.
-        contents = [ref for ref in objects if not ref.startswith("identity--")]
-        report = self.builder.build_report(slot, contents, stream)
+        # SP-FEED-REPORTS-V1: one Report per source feed, holding only that
+        # feed's observables. Relationships, ASNs, countries, feed entities and
+        # author identities ride in the bundle but are never Report contents
+        # (SP-NO-AUTHOR-EDGE-V1). Each chunk carries its own copy of every
+        # Report it touches; the platform merges refs on upsert.
+        reports = [
+            self.builder.build_report(slot, sorted(ids), stream, feed)
+            for feed, ids in sorted(members.items(), key=lambda item: item[0] or "")
+            if ids
+        ]
         bundle = stix2.Bundle(
-            objects=[self.builder.author, *objects.values(), report],
+            objects=[self.builder.author, *objects.values(), *reports],
             allow_custom=True,
         )
         self.helper.send_stix2_bundle(
             bundle.serialize(), update=True, work_id=work_id
         )
+
+
+def _add_member(
+    members: dict, objects: list, stix_type: str, feed_names: list[str]
+) -> None:
+    """File the value's observable under each feed that lists it."""
+    observable = next((obj for obj in objects if obj.type == stix_type), None)
+    if observable is None:
+        return
+    for feed in feed_names or [None]:
+        members.setdefault(feed, set()).add(observable.id)
 
 
 def _unseen(values: list[str], seen: set[str]) -> list[str]:

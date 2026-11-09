@@ -7,9 +7,11 @@ raise on failure so the caller counts the error and retries next cycle.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from pycti import Grouping, Identity
+
+from .inherit import MANAGED_TARGET_TYPES
 
 GROUPING_CONTEXT = "suspicious-activity"
 
@@ -70,6 +72,7 @@ _QUALIFYING_ATTRIBUTES = """
 _RELATED_ATTRIBUTES = """
     id
     relationship_type
+    revoked
     createdBy { ... on Identity { id } }
     %s
     from { %s }
@@ -85,7 +88,7 @@ _INDICATES_ATTRIBUTES = """
     id
     revoked
     createdBy { ... on Identity { id } }
-    to { ... on AttackPattern { id } }
+    to { ... on BasicObject { id } }
 """
 
 INDICATOR_ATTRIBUTES = """
@@ -96,6 +99,7 @@ INDICATOR_ATTRIBUTES = """
     pattern_type
     confidence
     x_opencti_score
+    decay_base_score
     created
     modified
     valid_from
@@ -207,31 +211,35 @@ class OpenCTIClient:
                 return observable
         return None
 
-    def indicates_edges(self, indicator_id: str) -> Dict[str, List[Dict[str, Any]]]:
-        """Map Attack Pattern id to every indicates edge from this Indicator.
+    def managed_edges(
+        self, indicator_id: str
+    ) -> Dict[Tuple[str, str], List[Dict[str, Any]]]:
+        """Map (relationship_type, target id) to every edge of a type this
+        connector manages: indicates to Attack Patterns and inherited entities,
+        related-to to Intrusion Sets (IE-INHERIT-EDGES-V1).
 
         Each edge is {"id", "revoked", "creator"}. Revoked edges are included so
-        a returning Attack Pattern can reuse its old edge instead of creating a
-        second one.
+        a returning target can reuse its old edge instead of creating a second.
         """
-        relationships = self.api.stix_core_relationship.list(
-            fromId=indicator_id,
-            relationship_type="indicates",
-            toTypes=["Attack-Pattern"],
-            customAttributes=_INDICATES_ATTRIBUTES,
-            getAll=True,
-        )
-        edges: Dict[str, List[Dict[str, Any]]] = {}
-        for relationship in relationships:
-            target = (relationship.get("to") or {}).get("id")
-            if target:
-                edges.setdefault(target, []).append(
-                    {
-                        "id": relationship["id"],
-                        "revoked": bool(relationship.get("revoked")),
-                        "creator": creator_id(relationship),
-                    }
-                )
+        edges: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+        for relationship_type, to_types in MANAGED_TARGET_TYPES.items():
+            relationships = self.api.stix_core_relationship.list(
+                fromId=indicator_id,
+                relationship_type=relationship_type,
+                toTypes=list(to_types),
+                customAttributes=_INDICATES_ATTRIBUTES,
+                getAll=True,
+            )
+            for relationship in relationships:
+                target = (relationship.get("to") or {}).get("id")
+                if target:
+                    edges.setdefault((relationship_type, target), []).append(
+                        {
+                            "id": relationship["id"],
+                            "revoked": bool(relationship.get("revoked")),
+                            "creator": creator_id(relationship),
+                        }
+                    )
         return edges
 
     # -- writes ------------------------------------------------------------

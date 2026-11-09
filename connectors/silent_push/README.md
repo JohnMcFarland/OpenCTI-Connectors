@@ -203,6 +203,9 @@ for example:
 
 Values with no named feed go to `Silent Push <stream> | unattributed | <slot>`.
 Feed names are folded to ASCII in the Report name.
+Silent Push splits some large feeds into numbered parts (`Bulletproof Hosting IPs
+Part 3`). Parts share their base feed's Report (`SP-FEED-PARTS-V1`); each
+observable's description still names the exact part.
 
 **Contents are observables only.** Relationships, Autonomous Systems,
 Countries, feed entities (Intrusion Set, Tool, Malware) and author identities

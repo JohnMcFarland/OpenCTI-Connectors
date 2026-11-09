@@ -54,7 +54,7 @@ def test_promotion_creates_indicator_and_both_edges(store):
     assert result.stats["promoted"] == 1
     indicator = next(iter(client.indicators.values()))
     assert indicator["pattern"] == "[ipv4-addr:value = '1.2.3.4']"
-    assert indicator["valid_from"] == "2026-01-01T00:00:00Z"
+    assert indicator["valid_from"] == NOW.isoformat()
     kinds = {write[2] for write in client.writes if write[0] == "relationship"}
     assert kinds == {"based-on", "indicates"}
 
@@ -448,3 +448,30 @@ def test_allowlist_is_configurable_but_never_blank(store):
         settings().allowed_observable_types
     )
     assert settings(INDICATOR_ALLOWED_OBSERVABLE_TYPES="Url").allowed_observable_types == frozenset(["Url"])
+
+
+def test_valid_from_is_creation_time_not_first_link(store):
+    # IE-VALIDFROM-NOW-V1: a backdated valid_from makes OpenCTI create the
+    # Indicator already expired.
+    client = FakeClient()
+    client.qualifying = [ap_link(ipv4(), created_at="2026-04-01T00:00:00Z")]
+    manager(client, store).run_cycle()
+    assert next(iter(client.indicators.values()))["valid_from"] == NOW.isoformat()
+
+
+def test_decayed_score_is_not_pushed_back(store):
+    # IE-DECAY-BASESCORE-V1: decay lowered the score; the base score still
+    # matches the Diamond score, so no assessment write.
+    client, indicator_id = promoted(store)
+    client.indicators[indicator_id]["x_opencti_score"] = 20
+    client.indicators[indicator_id]["decay_base_score"] = 50
+    manager(client, store).run_cycle()
+    assert not any(w[0] == "assessment" for w in client.writes)
+
+
+def test_changed_diamond_score_is_still_written(store):
+    client, indicator_id = promoted(store)
+    client.indicators[indicator_id]["x_opencti_score"] = 20
+    client.indicators[indicator_id]["decay_base_score"] = 75
+    manager(client, store).run_cycle()
+    assert ("assessment", indicator_id, 50) in client.writes

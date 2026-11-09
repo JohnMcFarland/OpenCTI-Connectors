@@ -18,9 +18,11 @@ from pycti import Indicator
 
 from .config import Settings
 from .grouping import grouping_day
+from .inherit import EdgeKey, inherited_edges
 from .labels import ObservableContext, build_context
 from .opencti_client import OpenCTIClient, creator_id
 from .patterns import build_pattern
+from .scope import classify
 from .store import DecayEntry, StateStore
 
 REASON_OBSERVABLE_MISSING = "OBSERVABLE_MISSING"
@@ -56,6 +58,7 @@ class CycleResult:
 
     observables: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     contexts: Dict[str, ObservableContext] = field(default_factory=dict)
+    relationships: Dict[str, List[Dict[str, Any]]] = field(default_factory=dict)
     previews: List[Dict[str, Any]] = field(default_factory=list)
     decaying: Set[str] = field(default_factory=set)
     stats: Dict[str, int] = field(
@@ -68,6 +71,8 @@ class CycleResult:
             "collisions": 0,
             "revoked_but_qualifying": 0,
             "unpatternable": 0,
+            "out_of_scope": 0,
+            "inherited_edges": 0,
             "errors": 0,
         }
     )
@@ -112,7 +117,7 @@ class LifecycleManager:
                 result.observables[indicator["id"]] = observable
                 owned_by_observable.setdefault(observable["id"], indicator)
 
-        qualifying = self._collect_qualifying()
+        qualifying = self._collect_qualifying(result)
 
         matched: Set[str] = set()
         for observable_id, entry in qualifying.items():
@@ -163,15 +168,35 @@ class LifecycleManager:
     def context_for(self, observable_id: str, result: CycleResult) -> ObservableContext:
         """Fetch relationships once per cycle, for score and labels both."""
         if observable_id not in result.contexts:
-            result.contexts[observable_id] = build_context(
-                observable_id, self.client.observable_relationships(observable_id)
-            )
+            relationships = self.client.observable_relationships(observable_id)
+            result.relationships[observable_id] = relationships
+            result.contexts[observable_id] = build_context(observable_id, relationships)
         return result.contexts[observable_id]
+
+    def _wanted_edges(
+        self, entry: Qualifying, marking_ids: List[str], result: CycleResult
+    ) -> Dict[EdgeKey, List[str]]:
+        """Attack Pattern edges plus edges inherited from the observable.
+
+        IE-INHERIT-EDGES-V1: an inherited edge carries the Indicator's markings
+        plus those of the observable edge it came from.
+        """
+        base = set(marking_ids)
+        wanted: Dict[EdgeKey, List[str]] = {
+            ("indicates", ap_id): sorted(base) for ap_id in entry.attack_pattern_ids
+        }
+        observable_id = entry.observable["id"]
+        self.context_for(observable_id, result)
+        inherited = inherited_edges(observable_id, result.relationships.get(observable_id, []))
+        for key, source_markings in inherited.items():
+            wanted.setdefault(key, sorted(base | source_markings))
+        return wanted
 
     # -- promotion ---------------------------------------------------------
 
-    def _collect_qualifying(self) -> Dict[str, Qualifying]:
+    def _collect_qualifying(self, result: CycleResult) -> Dict[str, Qualifying]:
         qualifying: Dict[str, Qualifying] = {}
+        dropped: Dict[str, Set[str]] = {}
         for relationship in self.client.qualifying_relationships():
             observable = relationship.get("from") or {}
             attack_pattern = relationship.get("to") or {}
@@ -188,11 +213,26 @@ class LifecycleManager:
             }
             if labels & self.settings.excluded_labels:
                 continue
+            # IE-SCOPE-FILTER-V1: drop reference material and non-routable
+            # values; refang the value the pattern is built from.
+            reason, value = classify(
+                entity_type, observable.get("value"),
+                self.settings.excluded_domains, self.settings.shared_hosting_domains,
+            )
+            if reason:
+                dropped.setdefault(reason, set()).add(observable_id)
+                continue
+            if value != observable.get("value"):
+                observable = {**observable, "value": value}
             entry = qualifying.setdefault(observable_id, Qualifying(observable))
             entry.attack_pattern_ids.add(attack_pattern["id"])
             linked = relationship.get("created_at")
             if linked and (entry.earliest_link is None or linked < entry.earliest_link):
                 entry.earliest_link = linked
+        result.stats["out_of_scope"] = sum(len(ids) for ids in dropped.values())
+        if dropped:
+            detail = ", ".join(f"{k}={len(v)}" for k, v in sorted(dropped.items()))
+            self.logger.info(f"Out of scope, not promoted: {detail}")
         return qualifying
 
     def _process_qualifying(
@@ -260,7 +300,10 @@ class LifecycleManager:
         entity_type = observable["entity_type"]
         value = observable.get("observable_value") or pattern
         name = f"{entity_type}: {value}"[:_MAX_NAME_LENGTH]
-        valid_from = entry.earliest_link or self.clock().isoformat()
+        # IE-VALIDFROM-NOW-V1: valid_from is creation time. OpenCTI derives
+        # valid_until and the decay start from valid_from, so a backdated
+        # value creates the Indicator already expired (born revoked).
+        valid_from = self.clock().isoformat()
         marking_ids = [marking["id"] for marking in markings]
 
         created = self.client.create_indicator(
@@ -277,6 +320,11 @@ class LifecycleManager:
         result.stats["promoted"] += 1
 
         if created is None:  # dry run
+            # Count the inherited edges a live run would create.
+            wanted = self._wanted_edges(entry, marking_ids, result)
+            result.stats["inherited_edges"] += sum(
+                1 for _, target in wanted if target not in entry.attack_pattern_ids
+            )
             now = self.clock().isoformat()
             result.previews.append(
                 {
@@ -307,11 +355,7 @@ class LifecycleManager:
         self.client.create_relationship(
             indicator_id, observable["id"], "based-on", score, author_id, marking_ids
         )
-        for attack_pattern_id in sorted(entry.attack_pattern_ids):
-            self.client.create_relationship(
-                indicator_id, attack_pattern_id, "indicates", score,
-                author_id, marking_ids,
-            )
+        self._sync_edges(indicator_id, entry, marking_ids, score, author_id, result)
         return indicator_id
 
     # -- sync --------------------------------------------------------------
@@ -341,8 +385,13 @@ class LifecycleManager:
                 self.store.clear_decay(indicator_id)
             result.stats["restored"] += 1
 
+        # IE-DECAY-BASESCORE-V1: platform decay lowers x_opencti_score over
+        # time and ignores an update back to the base score. Compare against
+        # decay_base_score so only a changed Diamond assessment is written.
+        base_score = indicator.get("decay_base_score")
+        current_score = base_score if base_score is not None else indicator.get("x_opencti_score")
         if (
-            indicator.get("x_opencti_score") != score
+            current_score != score
             or indicator.get("confidence") != score
             or sorted(indicator.get("indicator_types") or []) != sorted(indicator_types)
         ):
@@ -355,32 +404,34 @@ class LifecycleManager:
             if marking["id"] not in current:
                 self.client.add_marking(indicator_id, marking["id"])
 
-        self._sync_indicates(
-            indicator_id, entry.attack_pattern_ids, score, author_id,
-            sorted(current | {marking["id"] for marking in markings}),
-        )
+        marking_ids = sorted(current | {marking["id"] for marking in markings})
+        self._sync_edges(indicator_id, entry, marking_ids, score, author_id, result)
 
         result.stats["synced"] += 1
 
-    def _sync_indicates(
+    def _sync_edges(
         self,
         indicator_id: str,
-        wanted: Set[str],
+        entry: Qualifying,
+        marking_ids: List[str],
         score: int,
         author_id: Optional[str],
-        marking_ids: List[str],
+        result: CycleResult,
     ) -> None:
-        """Match indicates edges to the qualifying Attack Patterns.
+        """Match managed edges to the wanted set: indicates to qualifying
+        Attack Patterns, plus edges inherited from the observable.
 
         Edges are revoked, never deleted, and only edges this connector
         authored are touched. An analyst's edge to one of our Indicators is
         left alone in both directions.
         """
-        edges = self.client.indicates_edges(indicator_id)
-        for attack_pattern_id in sorted(wanted | set(edges)):
-            existing = edges.get(attack_pattern_id, [])
+        wanted = self._wanted_edges(entry, marking_ids, result)
+        edges = self.client.managed_edges(indicator_id)
+        for key in sorted(set(wanted) | set(edges)):
+            relationship_type, target_id = key
+            existing = edges.get(key, [])
             ours = [e for e in existing if author_id and e["creator"] == author_id]
-            if attack_pattern_id in wanted:
+            if key in wanted:
                 if any(not e["revoked"] for e in existing):
                     continue
                 if ours:
@@ -391,9 +442,11 @@ class LifecycleManager:
                     # Only someone else's revoked edge. Their call, not ours.
                     continue
                 self.client.create_relationship(
-                    indicator_id, attack_pattern_id, "indicates", score,
-                    author_id, marking_ids,
+                    indicator_id, target_id, relationship_type, score,
+                    author_id, wanted[key],
                 )
+                if target_id not in entry.attack_pattern_ids:
+                    result.stats["inherited_edges"] += 1
             else:
                 for edge in ours:
                     if not edge["revoked"]:

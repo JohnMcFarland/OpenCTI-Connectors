@@ -37,7 +37,7 @@ def test_first_run_takes_the_last_24_hours_only(harness):
 
     assert harness.stream_values("OSINT") == {"198.18.0.1", "198.18.0.2"}
     assert harness.client.scan_cutoffs == [START - timedelta(hours=24)]
-    assert osint_reports(harness) == {"Silent Push OSINT - 2026-11-07 00:00 UTC"}
+    assert osint_reports(harness) == {"Silent Push OSINT | CINS Army List IP | 2026-11-07 00:00 UTC"}
 
 
 def test_later_runs_take_what_is_new_since_the_last_run(harness):
@@ -50,8 +50,8 @@ def test_later_runs_take_what_is_new_since_the_last_run(harness):
     assert harness.client.scan_cutoffs[1] == START - timedelta(hours=1)
     assert harness.stream_values("OSINT") == {"198.18.0.1", "198.18.0.2"}
     assert osint_reports(harness) == {
-        "Silent Push OSINT - 2026-11-07 00:00 UTC",
-        "Silent Push OSINT - 2026-11-07 12:00 UTC",
+        "Silent Push OSINT | CINS Army List IP | 2026-11-07 00:00 UTC",
+        "Silent Push OSINT | CINS Army List IP | 2026-11-07 12:00 UTC",
     }
 
 
@@ -124,8 +124,8 @@ def test_osint_and_iofa_get_separate_reports_and_work_items(harness):
     harness.run()
 
     assert harness.reports() == {
-        "Silent Push IOFA - 2026-11-07 12:00 UTC",
-        "Silent Push OSINT - 2026-11-07 12:00 UTC",
+        "Silent Push IOFA | Threat Actor - FIN7 Domains | 2026-11-07 12:00 UTC",
+        "Silent Push OSINT | CINS Army List IP | 2026-11-07 12:00 UTC",
     }
     assert harness.stream_values("IOFA") == {"new.example"}
     assert harness.stream_values("OSINT") == {"198.18.0.3"}

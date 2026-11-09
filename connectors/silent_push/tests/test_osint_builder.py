@@ -87,11 +87,20 @@ def test_osint_report_name_and_description():
     builder = SilentPushStixBuilder(MARKING, 70)
     slot = datetime(2026, 11, 7, 12, tzinfo=timezone.utc)
     ref = "ipv4-addr--ff1b2a3c-4d5e-5f60-8a7b-1c2d3e4f5a6b"
-    report = builder.build_report(slot, [ref], "OSINT")
-    assert report.name == "Silent Push OSINT - 2026-11-07 12:00 UTC"
-    assert "open-source" in report.description
-    iofa = builder.build_report(slot, [ref], "IOFA")
+    report = builder.build_report(slot, [ref], "OSINT", "CINS Army List IP")
+    assert report.name == "Silent Push OSINT | CINS Army List IP | 2026-11-07 12:00 UTC"
+    assert "open-source" in report.description and "CINS Army List IP" in report.description
+    iofa = builder.build_report(slot, [ref], "IOFA", "CINS Army List IP")
     assert iofa.id != report.id
+    # SP-FEED-REPORTS-V1: names are ASCII-folded; distinct feeds, distinct Reports.
+    folded = builder.build_report(slot, [ref], "OSINT", "Daniel L\u00f3pez  Feed")
+    assert folded.name == "Silent Push OSINT | Daniel Lopez Feed | 2026-11-07 12:00 UTC"
+    assert folded.id != report.id
+
+
+def test_osint_feed_names_are_distinct_and_sorted():
+    rows = [{"feed": "OpenPhish"}, {"feed": " CINS Army List IP "}, {"feed": "OpenPhish"}, {"feed": None}]
+    assert SilentPushStixBuilder.osint_feed_names(rows) == ["CINS Army List IP", "OpenPhish"]
 
 
 # SP-OSINT-AUTHOR-V1: OSINT objects are authored by the original feed publisher.

@@ -23,6 +23,7 @@ since they are not collection requirements.
 
 import ipaddress
 import re
+import unicodedata
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
@@ -43,6 +44,7 @@ AUTHOR_NAME = "Silent Push"
 REPORT_TYPE = "observable-feed"
 STREAM_IOFA = "IOFA"
 STREAM_OSINT = "OSINT"
+UNATTRIBUTED = "unattributed"
 MAX_URL_LENGTH = 2048
 ACTOR_SUFFIX = " (SilentPush)"
 
@@ -478,10 +480,39 @@ class SilentPushStixBuilder:
             objects += self._country_objects(observable, row, start_time)
         return objects
 
+    def iofa_feed_names(self, row: dict, feeds: dict[str, dict]) -> list[str]:
+        """Report feeds that list this value (SP-FEED-REPORTS-V1).
+
+        Silent Push splits large feeds into numbered parts ("Bulletproof
+        Hosting IPs Part 3"); each part folds into its base feed's Report
+        (SP-FEED-PARTS-V1).
+        """
+        return sorted(
+            {report_feed_name(listing["name"]) for listing in _iofa_listings(row, feeds)}
+        )
+
+    @staticmethod
+    def osint_feed_names(rows: list[dict]) -> list[str]:
+        """Names of the open-source feeds that list this value (SP-FEED-REPORTS-V1)."""
+        return sorted(
+            {
+                report_feed_name(row["feed"])
+                for row in rows
+                if isinstance(row.get("feed"), str) and row["feed"].strip()
+            }
+        )
+
     def build_report(
-        self, slot: datetime, object_refs: list[str], stream: str = STREAM_IOFA
+        self,
+        slot: datetime,
+        object_refs: list[str],
+        stream: str = STREAM_IOFA,
+        feed: str | None = None,
     ) -> stix2.Report:
-        name = f"Silent Push {stream} - {slot:%Y-%m-%d %H:%M} UTC"
+        # SP-FEED-REPORTS-V1: one Report per source feed per slot, holding only
+        # that feed's observables. Values with no feed go to "unattributed".
+        feed_label = _ascii(feed) if feed else UNATTRIBUTED
+        name = f"Silent Push {stream} | {feed_label} | {slot:%Y-%m-%d %H:%M} UTC"
         if stream == STREAM_OSINT:
             description = (
                 "Indicators newly listed in the open-source threat feeds that "
@@ -498,6 +529,10 @@ class SilentPushStixBuilder:
                 "patterns and may not yet have been used in an attack. Each "
                 "observable's description names its source feeds."
             )
+        if feed:
+            description += f" This Report holds the observables listed in the feed '{feed_label}'."
+        else:
+            description += " This Report holds the observables no source feed was named for."
         return stix2.Report(
             id=Report.generate_id(name, slot),
             name=name,
@@ -510,6 +545,25 @@ class SilentPushStixBuilder:
             object_refs=object_refs,
             allow_custom=True,
         )
+
+
+_FEED_PART = re.compile(r"\s+Part\s+\d+\s*$", re.IGNORECASE)
+
+
+def report_feed_name(name: str) -> str:
+    """Base feed name for Report grouping: drop a trailing "Part <n>".
+
+    SP-FEED-PARTS-V1. Only the Report grouping uses this; observable
+    descriptions keep the full part names.
+    """
+    base = _FEED_PART.sub("", name.strip())
+    return base or name.strip()
+
+
+def _ascii(text: str) -> str:
+    """ASCII-only Report names: non-ASCII titles diverge STIX ids in OpenCTI."""
+    folded = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    return " ".join(folded.split()) or UNATTRIBUTED
 
 
 def _iofa_listings(row: dict, feeds: dict[str, dict]) -> list[dict]:

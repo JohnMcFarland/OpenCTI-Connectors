@@ -254,11 +254,17 @@ def test_only_additions_are_enriched_and_ingested(harness):
 
     assert harness.values() == {"new.example", "192.0.2.2"}
     assert sorted(kind for kind, _ in harness.client.enrich_calls) == ["domain", "ipv4"]
-    assert harness.reports() == {"Silent Push IOFA - 2026-11-07 12:00 UTC"}
+    # SP-FEED-REPORTS-V1: one Report per source feed per slot.
+    assert harness.reports() == {
+        "Silent Push IOFA | Threat Actor - FIN7 Domains | 2026-11-07 12:00 UTC",
+        "Silent Push IOFA | Bulletproof Hosting IPs | 2026-11-07 12:00 UTC",
+    }
     objects = harness.bundles[0]
     assert any(obj["type"] == "intrusion-set" for obj in objects)
-    report = next(obj for obj in objects if obj["type"] == "report")
-    assert set(report["object_refs"]) <= {obj["id"] for obj in objects}
+    values = {obj["id"] for obj in objects if obj["type"] in ("domain-name", "ipv4-addr")}
+    for report in (obj for obj in objects if obj["type"] == "report"):
+        # Observables only: no relationships, ASNs, countries or entities.
+        assert report["object_refs"] and set(report["object_refs"]) <= values
 
 
 def test_a_run_with_no_additions_makes_no_report_and_no_calls(harness):
@@ -424,8 +430,9 @@ def test_week_of_runs_with_a_moving_clock_and_churn(harness):
 
     assert harness.values() == expected
     assert len(harness.failed_runs()) == 1
-    assert len(harness.reports()) == 13  # 14 slots minus the one that failed
-    assert "Silent Push IOFA - 2026-11-08 00:00 UTC" in harness.reports()
+    # Two feeds (domains, IPs) per slot; 14 slots minus the one that failed.
+    assert len(harness.reports()) == 26
+    assert "Silent Push IOFA | Threat Actor - FIN7 Domains | 2026-11-08 00:00 UTC" in harness.reports()
 
 
 def test_seen_store_survives_a_partial_line_from_a_crash(tmp_path):
@@ -468,3 +475,33 @@ def test_report_contents_exclude_author_identities(harness):
         identity_ids = {obj["id"] for obj in bundle if obj["type"] == "identity"}
         assert identity_ids, "authors must still travel in the bundle"
         assert not identity_ids & set(report["object_refs"])
+
+
+# SP-FEED-REPORTS-V1
+
+def test_a_value_in_two_feeds_is_in_both_reports_and_unlisted_values_are_unattributed(harness):
+    harness.run()
+    harness.client.domains += ["both.example", "nofeed.example"]
+    enrich = harness.client.enrich
+
+    def two_feeds(kind, values):
+        rows = enrich(kind, values)
+        for row in rows:
+            name = (row.get("domaininfo") or {}).get("domain")
+            if name == "both.example":
+                row["listing_score_feeds_explain"].append({"feed_uuid": "iv", "listed_first": 20261102})
+            if name == "nofeed.example":
+                row["listing_score_feeds_explain"] = []
+        return rows
+
+    harness.client.enrich = two_feeds
+    harness.run()
+    reports = {
+        obj["name"]: obj for bundle in harness.bundles for obj in bundle if obj["type"] == "report"
+    }
+    ids = {obj["value"]: obj["id"] for bundle in harness.bundles for obj in bundle
+           if obj["type"] == "domain-name"}
+    slot = "2026-11-07 12:00 UTC"
+    assert ids["both.example"] in reports[f"Silent Push IOFA | Threat Actor - FIN7 Domains | {slot}"]["object_refs"]
+    assert ids["both.example"] in reports[f"Silent Push IOFA | Keitaro C2 IPs | {slot}"]["object_refs"]
+    assert reports[f"Silent Push IOFA | unattributed | {slot}"]["object_refs"] == [ids["nofeed.example"]]

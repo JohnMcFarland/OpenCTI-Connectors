@@ -225,7 +225,7 @@ def test_every_list_call_pages_through_all_results():
     client.qualifying_relationships()
     client.observable_relationships("o")
     client.based_on_observable("i")
-    client.indicates_edges("i")
+    client.managed_edges("i")
     client.owned_indicators("a")
     for call in api.stix_core_relationship.list.call_args_list:
         assert call.kwargs["getAll"] is True
