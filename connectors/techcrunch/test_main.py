@@ -1,6 +1,5 @@
 """Unit tests for the TechCrunch connector."""
 
-import base64
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -11,9 +10,13 @@ import main
 from main import (
     ALLOWED_HOSTS,
     CONTENT_SELECTOR,
+    CONTENT_SELECTORS,
+    HIDE_SELECTORS,
     MAX_DESCRIPTION_CHARS,
     MAX_PDF_BYTES,
     MAX_TRANSIENT_ATTEMPTS,
+    ContentUnavailable,
+    RendererUnavailable,
     TechCrunchConnector,
     _canonical_link,
     _html_to_text,
@@ -40,13 +43,7 @@ def _feed(links, pub="Mon, 09 Nov 2026 12:00:00 GMT"):
     return f"<rss><channel>{body}</channel></rss>".encode()
 
 
-def _pdf_response(pdf=b"%PDF-1.7 body", html_bytes=b"<html></html>"):
-    resp = MagicMock()
-    payload = {"pdf": base64.b64encode(pdf).decode()}
-    if html_bytes is not None:
-        payload["html"] = base64.b64encode(html_bytes).decode()
-    resp.json.return_value = payload
-    return resp
+PDF = b"%PDF-1.7 body"
 
 
 class FakeGraph:
@@ -99,15 +96,22 @@ class FakeGraph:
 
 
 @pytest.fixture
-def connector():
+def render_mock():
+    """The house pdf-renderer client (make_pdf.render_live_pdf), mocked."""
+    with patch.object(main, "render_live_pdf", return_value=PDF) as mock:
+        yield mock
+
+
+@pytest.fixture
+def connector(render_mock):
     with patch.object(TechCrunchConnector, "__init__", lambda self: None):
         c = TechCrunchConnector()
+    c.render_mock = render_mock
     c.feed_url = "https://techcrunch.com/feed/"
     c.session = MagicMock()
     c.session.get.return_value = MagicMock(content=b"", text="", status_code=200)
     c.request_delay = 0
     c.render_retries = 2
-    c.render_url = "http://pdf-renderer:8080/render"
     c.render_timeout = 120
     c.confidence = 50
     c.report_type = "open-source-reporting"
@@ -132,7 +136,9 @@ def connector():
 
 
 @pytest.fixture(autouse=True)
-def no_sleep_or_classifier():
+def no_sleep_or_classifier(monkeypatch):
+    # Standalone by default; tests that need the Collector set it themselves.
+    monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
     with patch.object(main.time, "sleep"), \
          patch.object(main, "classify_report", side_effect=lambda **kw: kw["default_types"]):
         yield
@@ -140,7 +146,11 @@ def no_sleep_or_classifier():
 
 def _serve(c, xml_bytes, render=None):
     c.session.get.return_value = MagicMock(content=xml_bytes, text="", status_code=200)
-    c.session.post.side_effect = render or (lambda *a, **k: _pdf_response())
+    c.render_mock.side_effect = render
+
+
+def _down(*a, **k):
+    raise RendererUnavailable("HTTP 503: renderer busy")
 
 
 # --------------------------------------------------------------------------- #
@@ -268,7 +278,7 @@ class TestDedupByExternalReferenceUrl:
         _serve(connector, _feed([_link(1)]))
         connector._process()
         connector.helper.api.work.initiate_work.assert_not_called()
-        connector.session.post.assert_not_called()
+        connector.render_mock.assert_not_called()
         connector.helper.api.report.create.assert_not_called()
 
     def test_empty(self, connector):
@@ -281,26 +291,41 @@ class TestDedupByExternalReferenceUrl:
 # --------------------------------------------------------------------------- #
 
 class TestRender:
-    def test_config_uses_verified_selectors(self, connector):
-        cfg = connector._render_config(_link(1))
-        assert cfg["url"] == _link(1)
-        assert cfg["content_selector"] == CONTENT_SELECTOR == ".seamless-scroll-container"
-        assert cfg["hide_selectors"]
-        assert cfg["timeout_sec"] == 120
+    def test_house_client_called_with_site_selectors_and_byline(self, connector):
+        item = dict(_item(), creator="Jane Doe")
+        assert connector._render_with_retry(item, "2026-11-09T22:09:33+00:00") == PDF
+        args, kw = connector.render_mock.call_args
+        assert args == (_link(1), "Story", main.SOURCE_NAME)
+        assert kw["selectors"] == CONTENT_SELECTORS and CONTENT_SELECTORS[0] == CONTENT_SELECTOR
+        assert CONTENT_SELECTOR == ".seamless-scroll-container"
+        assert kw["strip"] == HIDE_SELECTORS
+        assert kw["timeout"] == 120
+        assert kw["byline"] == {"author": "Jane Doe", "publisher": "TechCrunch",
+                                "published": "2026-11-09"}
 
-    def test_non_pdf_payload_is_failure(self, connector):
-        connector.session.post.return_value = _pdf_response(pdf=b"<html>")
-        assert connector._render_with_retry(_link(1)) == (None, None)
-        assert connector.session.post.call_count == 2
+    def test_byline_without_creator_has_no_author(self, connector):
+        connector._render_with_retry(_item(), "2026-11-09T22:09:33+00:00")
+        assert "author" not in connector.render_mock.call_args.kwargs["byline"]
+
+    def test_renderer_unavailable_retried_then_raised(self, connector):
+        connector.render_mock.side_effect = _down
+        with pytest.raises(RendererUnavailable):
+            connector._render_with_retry(_item(), "2026-11-09T00:00:00+00:00")
+        assert connector.render_mock.call_count == connector.render_retries
 
     def test_retry_then_success(self, connector):
-        connector.session.post.side_effect = [requests.Timeout("t"), _pdf_response()]
-        pdf, html_bytes = connector._render_with_retry(_link(1))
-        assert pdf.startswith(b"%PDF") and html_bytes == b"<html></html>"
+        connector.render_mock.side_effect = [RendererUnavailable("504"), PDF]
+        assert connector._render_with_retry(_item(), "2026-11-09T00:00:00+00:00") == PDF
 
-    def test_missing_html_tolerated(self, connector):
-        connector.session.post.return_value = _pdf_response(html_bytes=None)
-        assert connector._render_with_retry(_link(1)) == (b"%PDF-1.7 body", None)
+    def test_content_unavailable_is_not_retried(self, connector):
+        connector.render_mock.side_effect = ContentUnavailable("HTTP 422: no body")
+        assert connector._render_with_retry(_item(), "2026-11-09T00:00:00+00:00") is None
+        assert connector.render_mock.call_count == 1
+
+    def test_non_pdf_payload_is_transient(self, connector):
+        connector.render_mock.return_value = b"<html>"
+        with pytest.raises(RendererUnavailable):
+            connector._render_with_retry(_item(), "2026-11-09T00:00:00+00:00")
 
 
 # --------------------------------------------------------------------------- #
@@ -312,8 +337,7 @@ def _item(n=1, title="Story", pub="Mon, 09 Nov 2026 17:09:33 -0500"):
 
 
 class TestIngestItem:
-    def test_single_create_mutation_with_inline_files(self, connector):
-        connector.session.post.return_value = _pdf_response()
+    def test_single_create_mutation_with_inline_pdf(self, connector):
         assert connector._ingest_item(_item()) == "created"
 
         kw = connector.helper.api.report.create.call_args.kwargs
@@ -331,39 +355,44 @@ class TestIngestItem:
         assert "content" not in kw
         assert "objectLabel" not in kw and "labels" not in kw
         assert "objects" not in kw
-        names = [f.name for f in kw["files"]]
-        assert names[0].startswith("techcrunch-rendered-") and names[0].endswith(".pdf")
-        assert names[1].startswith("techcrunch-raw-") and names[1].endswith(".html")
-        assert [f.mime for f in kw["files"]] == ["application/pdf", "text/html"]
-        assert kw["filesMarkings"] == [["marking-id"], ["marking-id"]]
+        # House standard: exactly one PDF, the file itself TLP-marked.
+        assert len(kw["files"]) == 1
+        pdf = kw["files"][0]
+        assert pdf.name.startswith("techcrunch-rendered-") and pdf.name.endswith(".pdf")
+        assert pdf.mime == "application/pdf" and pdf.data == PDF
+        assert kw["filesMarkings"] == [["marking-id"]]
         connector.helper.api.stix_domain_object.add_file.assert_not_called()
 
     def test_undated_item_is_skipped_never_stamped_now(self, connector):
         assert connector._ingest_item(_item(pub="garbage")) == "skipped-permanent"
-        connector.session.post.assert_not_called()
+        connector.render_mock.assert_not_called()
         connector.helper.api.report.create.assert_not_called()
         assert _link(1) in connector.permanent_skips
 
-    def test_failed_render_creates_nothing(self, connector):
-        connector.session.post.side_effect = requests.Timeout("t")
+    def test_renderer_down_creates_nothing(self, connector):
+        connector.render_mock.side_effect = _down
         assert connector._ingest_item(_item()) == "failed"
         connector.helper.api.report.create.assert_not_called()
+        connector.helper.api.external_reference.create.assert_not_called()
+        assert _link(1) not in connector.permanent_skips
 
-    def test_oversized_pdf_is_permanent(self, connector):
-        connector.session.post.return_value = _pdf_response(pdf=b"%PDF" + b"0" * MAX_PDF_BYTES)
-        assert connector._ingest_item(_item()) == "skipped-permanent"
-        connector.helper.api.report.create.assert_not_called()
-
-    def test_oversized_html_is_dropped_pdf_kept(self, connector):
-        connector.session.post.return_value = _pdf_response(html_bytes=b"x" * (10 * 1024 * 1024 + 1))
-        connector._ingest_item(_item())
+    def test_content_unavailable_creates_report_without_pdf(self, connector):
+        connector.render_mock.side_effect = ContentUnavailable("HTTP 422: no article")
+        assert connector._ingest_item(_item()) == "created"
         kw = connector.helper.api.report.create.call_args.kwargs
-        assert len(kw["files"]) == 1 and kw["filesMarkings"] == [["marking-id"]]
+        assert "files" not in kw and "filesMarkings" not in kw
+        assert any("No PDF for" in str(c) for c in connector.helper.log_warning.call_args_list)
+        assert any("(no PDF)" in str(c) for c in connector.helper.log_info.call_args_list)
+
+    def test_oversized_pdf_creates_report_without_pdf(self, connector):
+        connector.render_mock.return_value = b"%PDF" + b"0" * MAX_PDF_BYTES
+        assert connector._ingest_item(_item()) == "created"
+        assert "files" not in connector.helper.api.report.create.call_args.kwargs
 
     def test_empty_title_uses_url(self, connector):
-        connector.session.post.return_value = _pdf_response()
         connector._ingest_item(_item(title=""))
         assert connector.helper.api.report.create.call_args.kwargs["name"] == _link(1)
+        assert connector.render_mock.call_args.args[1] == _link(1)
 
 
 class TestResolveGraphReferences:
@@ -394,8 +423,12 @@ class TestResolveGraphReferences:
 # --------------------------------------------------------------------------- #
 
 class TestClassification:
-    def _content_sent(self, connector, item, html_bytes):
-        connector.session.post.return_value = _pdf_response(html_bytes=html_bytes)
+    def _content_sent(self, connector, item, page_bytes, monkeypatch=None):
+        connector._precheck = lambda item: None   # site prechecks tested separately
+        if page_bytes is not None:
+            monkeypatch.setenv("CRUCIBLE_COLLECTOR_URL", "http://collector.example:8004")
+            connector.session.get.return_value = MagicMock(
+                content=page_bytes, text="", status_code=200)
         with patch.object(main, "classify_report",
                           side_effect=lambda **kw: ["threat-report"]) as clf:
             assert connector._ingest_item(item) == "created"
@@ -406,8 +439,9 @@ class TestClassification:
 
     def test_feed_full_text_preferred(self, connector):
         item = dict(_item(), full_text="Full feed body about ransomware.")
-        kw = self._content_sent(connector, item, b"<html>page</html>")
+        kw = self._content_sent(connector, item, None)
         assert kw["content"] == "Full feed body about ransomware."
+        connector.session.get.assert_not_called()   # no page fetch needed
         assert kw["description"] == "Summary."
         assert kw["source"] == main.SOURCE_NAME and kw["source_url"] == _link(1)
         assert kw["default_types"] == ["open-source-reporting"]
@@ -420,23 +454,34 @@ class TestClassification:
 
     def test_standalone_without_shared_helper(self, connector, monkeypatch):
         monkeypatch.setattr(main, "classify_report", None)
-        connector.session.post.return_value = _pdf_response()
         assert connector._ingest_item(_item()) == "created"
         assert connector.helper.api.report.create.call_args.kwargs["report_types"] == [
             "open-source-reporting"]
 
-    def test_rendered_article_text_when_feed_has_none(self, connector):
+    def test_page_article_text_when_feed_has_none(self, connector, monkeypatch):
         page = (
             "<html><body><nav>Menu Login</nav>"
             + '<div class="seamless-scroll-container extra-class"><h1>Title</h1><p>Article body text</p><script>tracker()</script></div>'
             + "<footer>Copyright</footer></body></html>"
         ).encode()
-        kw = self._content_sent(connector, _item(), page)
+        kw = self._content_sent(connector, _item(), page, monkeypatch)
         assert "Article body text" in kw["content"]
+        assert connector.session.get.call_args.args[0] == _link(1)
         assert "Menu Login" not in kw["content"] and "Copyright" not in kw["content"]
         assert "tracker()" not in kw["content"]
 
     def test_falls_back_to_summary_without_any_text(self, connector):
+        kw = self._content_sent(connector, _item(), None)
+        assert kw["content"] == "Summary."
+
+    def test_no_page_fetch_in_standalone_mode(self, connector, monkeypatch):
+        monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
+        self._content_sent(connector, _item(), None)
+        connector.session.get.assert_not_called()
+
+    def test_page_fetch_failure_falls_back_to_summary(self, connector, monkeypatch):
+        monkeypatch.setenv("CRUCIBLE_COLLECTOR_URL", "http://collector.example:8004")
+        connector.session.get.side_effect = requests.ConnectionError("down")
         kw = self._content_sent(connector, _item(), None)
         assert kw["content"] == "Summary."
 
@@ -463,9 +508,28 @@ class TestClassification:
         text = main._article_text(page)
         assert text.endswith("THE-END") and len(text) > 100000
 
+    def test_article_text_tries_fallback_selectors(self):
+        fallbacks = CONTENT_SELECTORS[1:]
+        if not fallbacks:
+            pytest.skip("no fallback selectors for this site")
+        tag, ident, classes = main._selector_parts(fallbacks[0])
+        attrs = (f' id="{ident}"' if ident else "") + (
+            f' class="{" ".join(sorted(classes))}"' if classes else "")
+        page = (f"<html><body><nav>Menu</nav><{tag or 'div'}{attrs}><p>Fallback body</p>"
+                f"</{tag or 'div'}></body></html>").encode()
+        assert main._article_text(page) == "Fallback body"
+
     def test_article_text_falls_back_to_page(self):
         assert main._article_text(b"<html><body><p>Only text</p></body></html>") == "Only text"
         assert main._article_text(None) == ""
+
+    def test_feed_creator_parsed_for_byline(self):
+        xml = (f"<rss xmlns:dc='http://purl.org/dc/elements/1.1/'><channel>"
+               f"<item><title>a</title><link>{_link(1)}</link>"
+               f"<dc:creator><![CDATA[Jane &amp; Doe]]></dc:creator></item>"
+               f"</channel></rss>").encode()
+        assert _parse_feed(xml)[0]["creator"] == "Jane & Doe"
+        assert _parse_feed(_feed([_link(1)]))[0]["creator"] == ""
 
     def test_feed_full_text_parsed_in_full(self):
         body = "<p>" + "x " * 60000 + "THE-END</p>"
@@ -515,8 +579,8 @@ class TestProcess:
         def flaky(*a, **k):
             calls["n"] += 1
             if calls["n"] <= connector.render_retries:
-                raise requests.Timeout("render down")
-            return _pdf_response()
+                raise RendererUnavailable("render down")
+            return PDF
 
         _serve(connector, _feed([_link(1), _link(2)]), render=flaky)
         connector._process()
@@ -525,14 +589,13 @@ class TestProcess:
         assert connector.transient_failures == {_link(1): 1}
 
     def test_transient_failure_gives_up_after_cap(self, connector):
-        _serve(connector, _feed([_link(1)]),
-               render=lambda *a, **k: (_ for _ in ()).throw(requests.Timeout("t")))
+        _serve(connector, _feed([_link(1)]), render=_down)
         for _ in range(MAX_TRANSIENT_ATTEMPTS):
             connector._process()
         assert _link(1) in connector.permanent_skips
-        renders = connector.session.post.call_count
+        renders = connector.render_mock.call_count
         connector._process()
-        assert connector.session.post.call_count == renders  # no more renders
+        assert connector.render_mock.call_count == renders  # no more renders
 
     def test_no_gap_warning_after_all_failed_poll(self, connector):
         """An outage poll leaves nothing ingested; the next poll must not
@@ -541,8 +604,8 @@ class TestProcess:
 
         def render(*a, **k):
             if down["on"]:
-                raise requests.Timeout("render down")
-            return _pdf_response()
+                raise RendererUnavailable("render down")
+            return PDF
 
         _serve(connector, _feed([_link(1), _link(2)]), render=render)
         connector._process()                       # first poll: all fail
@@ -558,11 +621,11 @@ class TestProcess:
         duplicated; the scroll-off warning fires only when polls lose overlap."""
         state = {"failed": False}
 
-        def render(url, **kw):
-            if kw["json"]["url"] == _link(12) and not state["failed"]:
+        def render(url, *a, **kw):
+            if url == _link(12) and not state["failed"]:
                 state["failed"] = True
-                raise requests.Timeout("render outage")
-            return _pdf_response()
+                raise RendererUnavailable("render outage")
+            return PDF
 
         connector.render_retries = 1
         windows = [range(10, 0, -1), range(14, 4, -1), range(18, 8, -1),

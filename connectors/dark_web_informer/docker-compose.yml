@@ -8,7 +8,8 @@ services:
     build: .
     container_name: opencti-connector-dark-web-informer
     volumes:
-      # Shared Crucible classifier helper, read-only, at /microservices.
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
       - ../microservices:/microservices:ro
     environment:
       # --- OpenCTI platform connection ---
@@ -20,9 +21,8 @@ services:
       - CONNECTOR_NAME=Dark Web Informer
       - CONNECTOR_SCOPE=dark_web_informer
       - CONNECTOR_LOG_LEVEL=info
-      # --- PDF render service ---
-      - RENDER_SERVICE_URL=http://pdf-renderer:8080/render
-      - RENDER_TIMEOUT=120
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
       # --- Report type (Crucible Collector /classify) ---
       # Set the URL in docker-compose.override.yml. Blank = standalone: no
       # call is made and every Report gets the default report_type.
@@ -34,6 +34,7 @@ services:
       - DARK_WEB_INFORMER_REQUEST_DELAY=3
       - DARK_WEB_INFORMER_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
       - DARK_WEB_INFORMER_RENDER_RETRIES=3
+      - DARK_WEB_INFORMER_PDF_RENDER_TIMEOUT=120
       - DARK_WEB_INFORMER_CONFIDENCE=50
       - DARK_WEB_INFORMER_REPORT_TYPE=open-source-reporting
       - DARK_WEB_INFORMER_TLP=TLP:CLEAR

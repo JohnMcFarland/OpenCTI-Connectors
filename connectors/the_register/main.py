@@ -4,8 +4,8 @@ The Register OpenCTI connector.
 Purpose
 -------
 External-import connector that creates one container-only OpenCTI Report per
-The Register article, with the article page attached as a rendered PDF plus a raw
-HTML snapshot. Part of the Feedly replacement program: The Register was previously
+The Register article, with the live article page attached as one rendered PDF.
+Part of the Feedly replacement program: The Register was previously
 ingested through the (now deprecated) Feedly connector.
 
 Collection model
@@ -26,7 +26,7 @@ Data model conformance
 ----------------------
 - Container-only: a Report (external assertion, "what the world says") with an
   author Organization, a TLP marking, one External Reference to the article,
-  and the rendered PDF + raw HTML attached. No SDOs, Observables,
+  and the rendered PDF attached. No SDOs, Observables,
   Relationships, Sightings or Labels are created (feed categories are not
   collection requirements, so they are never applied as Labels).
 - published = the article's own publication date from the feed. An item with
@@ -43,26 +43,37 @@ connector keeps both query and write volume low:
 - Exact-match keyword filters only; no full-text ``search`` queries.
 - A work record is opened only when a poll has new items, so idle polls write
   nothing to the history index.
-- One mutation per new article: the Report is created with its PDF and HTML
-  attached inline (``files``) and update=False, so there is no follow-up
-  file-upload update and no upsert rewrite of existing Reports.
+- One mutation per new article: the Report is created with its PDF attached
+  inline (``files``, marked via ``filesMarkings``) and update=False, so
+  there is no follow-up file-upload update and no upsert rewrite of existing
+  Reports.
 - The Report description is plain text capped at MAX_DESCRIPTION_CHARS; full
-  article text lives only in the attached files (object storage), never in
-  the indexed Report document. Attachments are size-capped.
+  article text lives only in the attached PDF (object storage), never in
+  the indexed Report document. The PDF is size-capped.
 - Author, marking and vocabulary are resolved once at startup, not per item.
 
 PDF creation
 ------------
-Delegated to the shared pdf-renderer service (POST {RENDER_SERVICE_URL}),
-which renders the live page with Playwright and returns the PDF plus the raw
-HTML snapshot. Site-specific selectors isolate the article.
+House standard (PDF-RENDERER-CLIENT-V1): one PDF per Report, the live
+article rendered by the pdf-renderer service through the shared client
+microservices/make_pdf.py (render_live_pdf -> POST $PDF_RENDERER_URL/render/url,
+default http://pdf-renderer:8000). The service extracts the article with the
+site-specific CONTENT_SELECTORS, strips HIDE_SELECTORS plus its own default
+chrome list, defangs links, and adds the feed title and a byline (author,
+publisher, date). Failure policy:
+- RendererUnavailable (service down, busy, timed out, 5xx): retried
+  render_retries times with backoff, then the item is a transient failure and
+  no Report is written (retried on a later poll);
+- ContentUnavailable (page reached but no usable article, or URL blocked):
+  the Report is created without a PDF and a WARNING is logged.
 
 Report type (Crucible Collector)
 --------------------------------
 When CRUCIBLE_COLLECTOR_URL is set, each new article's full text (the feed's
-content:encoded where present, otherwise the rendered page's article text) is
-POSTed through the shared microservices/classify_report.py helper, and the
-returned type becomes report_types. The Collector's collection_requirements
+content:encoded where present, otherwise the article page's text, fetched
+with one plain GET only when the Collector is configured) is POSTed through
+the shared microservices/classify_report.py helper, and the returned type
+becomes report_types. The Collector's collection_requirements
 are ignored (Labels are reserved for collection requirements). On error or
 timeout the helper logs a WARNING and the Report gets open-source-reporting.
 With the variable unset, or the shared helper not mounted, no call is made.
@@ -78,13 +89,12 @@ skipped before the expensive render. New Reports also get a deterministic
 STIX id (uuid5 over the canonical article URL). Failures are split:
 - permanent (no usable date): remembered in memory for the
   life of the process and never retried;
-- transient (render or API error): retried on later polls while the item is
-  still in the feed, up to MAX_TRANSIENT_ATTEMPTS polls.
+- transient (renderer unavailable or API error): retried on later polls
+  while the item is still in the feed, up to MAX_TRANSIENT_ATTEMPTS polls.
 
 Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 """
 
-import base64
 import html
 from html.parser import HTMLParser
 import os
@@ -111,6 +121,14 @@ try:
 except ImportError:
     classify_report = None
 
+# House pdf-renderer client (PDF-RENDERER-CLIENT-V1). Required: every Report
+# carries the rendered live article, so the shared package must be mounted.
+from microservices.make_pdf import (  # noqa: E402
+    ContentUnavailable,
+    RendererUnavailable,
+    render_live_pdf,
+)
+
 
 # --------------------------------------------------------------------------- #
 # Constants
@@ -132,6 +150,10 @@ ALLOWED_HOSTS = {"www.theregister.com", "theregister.com"}
 # Nov 2026). It wraps the headline, byline and body.
 CONTENT_SELECTOR = "section#main"
 
+# Selectors tried in order, first match wins (renderer and text extraction).
+# Fallbacks cover article layouts seen live that lack the primary container.
+CONTENT_SELECTORS = [CONTENT_SELECTOR]
+
 # Chrome inside (or around) the container that is not part of the story.
 HIDE_SELECTORS = [
     ".google-ad",                        # ads
@@ -144,7 +166,6 @@ HIDE_SELECTORS = [
 # full and is never stored on the Report.)
 MAX_DESCRIPTION_CHARS = 2000
 MAX_PDF_BYTES = 25 * 1024 * 1024
-MAX_HTML_BYTES = 10 * 1024 * 1024
 
 # Give up on an item after this many polls with transient failures.
 MAX_TRANSIENT_ATTEMPTS = 5
@@ -153,6 +174,7 @@ MAX_TRANSIENT_ATTEMPTS = 5
 MIN_VALID_YEAR = 1990
 
 RSS_CONTENT_NS = "{http://purl.org/rss/1.0/modules/content/}encoded"
+DC_CREATOR_NS = "{http://purl.org/dc/elements/1.1/}creator"
 
 
 # --------------------------------------------------------------------------- #
@@ -305,23 +327,25 @@ class _ArticleTextParser(HTMLParser):
 
 
 def _article_text(html_bytes, limit=None):
-    """Return the article's full plain text from the rendered HTML snapshot.
+    """Return the article's full plain text from the article page HTML.
 
-    Uses the content selector's element; falls back to the whole page's text
-    when the element is not found. Not capped unless `limit` is given.
+    Uses the first CONTENT_SELECTORS element that yields text; falls back to
+    the whole page's text when none matches. Not capped unless `limit` is
+    given.
     """
     if not html_bytes:
         return ""
     page = html_bytes.decode("utf-8", errors="replace")
-    parser = _ArticleTextParser(CONTENT_SELECTOR)
-    try:
-        parser.feed(page)
-    except Exception:  # malformed markup: fall back to the whole page
-        parser.parts = []
-    text = " ".join(parser.parts) if parser.parts else ""
-    if not text.strip():
-        return _html_to_text(page, limit)
-    return _html_to_text(html.escape(text), limit)
+    for selector in CONTENT_SELECTORS:
+        parser = _ArticleTextParser(selector)
+        try:
+            parser.feed(page)
+        except Exception:  # malformed markup: try the next selector
+            continue
+        text = " ".join(parser.parts)
+        if text.strip():
+            return _html_to_text(html.escape(text), limit)
+    return _html_to_text(page, limit)
 
 
 def _canonical_link(link):
@@ -353,6 +377,8 @@ def _parse_feed(xml_bytes):
             "link": link,
             "description": _html_to_text(item_el.findtext("description")),
             "pub_date": (item_el.findtext("pubDate") or "").strip(),
+            # Byline author for the PDF header (dc:creator, when present).
+            "creator": html.unescape((item_el.findtext(DC_CREATOR_NS) or "").strip()),
             # Full text when the feed carries it; used only for classification.
             "full_text": _html_to_text(item_el.findtext(RSS_CONTENT_NS), None),
         })
@@ -397,14 +423,9 @@ class TheRegisterConnector:
         self.tlp_name = setting("tlp", "TLP:CLEAR")
         self.author_name = setting("author_name", "The Register")
 
-        self.render_url = get_config_variable(
-            "RENDER_SERVICE_URL", ["connector", "render_service_url"], config,
-            default="http://pdf-renderer:8080/render",
-        ) or "http://pdf-renderer:8080/render"
-        self.render_timeout = int(get_config_variable(
-            "RENDER_TIMEOUT", ["connector", "render_timeout"], config,
-            isNumber=True, default=120,
-        ) or 120)
+        # The renderer address comes from PDF_RENDERER_URL inside the shared
+        # client (default http://pdf-renderer:8000); only the timeout is set here.
+        self.render_timeout = setting("pdf_render_timeout", 120, number=True)
 
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": BROWSER_UA})
@@ -541,66 +562,90 @@ class TheRegisterConnector:
         return None
 
     # ------------------------------------------------------------------ #
-    # PDF rendering (via centralised render service)
+    # PDF rendering (house pdf-renderer client)
     # ------------------------------------------------------------------ #
 
-    def _render_config(self, url):
-        """Build the JSON payload for the render service."""
-        return {
-            "url": url,
-            "content_selector": CONTENT_SELECTOR,
-            "hide_selectors": HIDE_SELECTORS,
-            "timeout_sec": self.render_timeout,
-        }
+    def _render_live(self, item, published):
+        """Render the live article to PDF bytes via the pdf-renderer service.
 
-    def _render_via_service(self, url):
-        """POST to the render service and return (pdf_bytes, html_bytes)."""
-        resp = self.session.post(
-            self.render_url,
-            json=self._render_config(url),
-            timeout=self.render_timeout + 30,
+        Raises RendererUnavailable or ContentUnavailable (see module docstring).
+        """
+        byline = {"publisher": self.author_name, "published": published[:10]}
+        if item.get("creator"):
+            byline["author"] = item["creator"]
+        return render_live_pdf(
+            item["link"],
+            item["title"] or item["link"],   # verbatim feed title
+            SOURCE_NAME,
+            byline=byline,
+            selectors=CONTENT_SELECTORS,
+            strip=HIDE_SELECTORS,
+            timeout=self.render_timeout,
         )
-        resp.raise_for_status()
-        data = resp.json()
-        pdf_bytes = base64.b64decode(data["pdf"])
-        if not pdf_bytes.startswith(b"%PDF"):
-            raise RuntimeError("render service returned a non-PDF payload")
-        html_b64 = data.get("html")
-        return pdf_bytes, (base64.b64decode(html_b64) if html_b64 else None)
 
-    def _render_with_retry(self, url):
-        """Render with exponential backoff. Returns (pdf, html) or (None, None)."""
+    def _render_with_retry(self, item, published):
+        """Return PDF bytes, or None when there is no usable article.
+
+        RendererUnavailable is retried with exponential backoff and re-raised
+        after the last attempt (transient: no Report is written). A
+        ContentUnavailable or oversized PDF returns None: the Report is still
+        created, without a PDF, and a WARNING says why.
+        """
+        url = item["link"]
         delay = max(self.request_delay, 1)
         for attempt in range(1, self.render_retries + 1):
             try:
-                return self._render_via_service(url)
-            except Exception as exc:
+                pdf_bytes = self._render_live(item, published)
+                if not pdf_bytes.startswith(b"%PDF"):
+                    raise RendererUnavailable("pdf-renderer returned a non-PDF payload")
+            except ContentUnavailable as exc:
+                self.helper.log_warning(f"No PDF for {url}: {exc}")
+                return None
+            except RendererUnavailable as exc:
                 self.helper.log_warning(
                     f"Render attempt {attempt}/{self.render_retries} failed for "
                     f"{url}: {exc}"
                 )
-                if attempt < self.render_retries:
-                    time.sleep(delay)
-                    delay *= 2
-        return None, None
+                if attempt >= self.render_retries:
+                    raise
+                time.sleep(delay)
+                delay *= 2
+                continue
+            if len(pdf_bytes) > MAX_PDF_BYTES:
+                self.helper.log_warning(
+                    f"No PDF for {url}: rendered PDF is {len(pdf_bytes)} bytes "
+                    f"(cap {MAX_PDF_BYTES})"
+                )
+                return None
+            return pdf_bytes
+        raise RendererUnavailable("render_retries is 0")
+
+    def _page_text(self, url):
+        """Article text for the classifier when the feed has no full text.
+
+        One plain GET of the article page, made only when the Collector is
+        configured. Any failure returns "" (the summary is used instead).
+        """
+        if not os.environ.get("CRUCIBLE_COLLECTOR_URL"):
+            return ""
+        try:
+            resp = self.session.get(url, timeout=60)
+            resp.raise_for_status()
+            return _article_text(resp.content)
+        except Exception as exc:
+            self.helper.log_warning(f"Article text fetch failed for {url}: {exc}")
+            return ""
 
     # ------------------------------------------------------------------ #
     # Report creation
     # ------------------------------------------------------------------ #
 
-    def _build_files(self, slug, pdf_bytes, html_bytes):
-        """Return (files, files_markings) for the inline upload."""
-        files = [File(f"{FILE_PREFIX}-rendered-{slug}.pdf", pdf_bytes, "application/pdf")]
-        if html_bytes and len(html_bytes) <= MAX_HTML_BYTES:
-            files.append(File(f"{FILE_PREFIX}-raw-{slug}.html", html_bytes, "text/html"))
-        elif html_bytes:
-            self.helper.log_warning(
-                f"HTML snapshot for {slug} is {len(html_bytes)} bytes; not attached."
-            )
-        return files, [[self.marking_id] for _ in files]
+    def _create_report(self, item, published, pdf_bytes):
+        """Create the External Reference and the Report, PDF attached inline.
 
-    def _create_report(self, item, published, pdf_bytes, html_bytes):
-        """Create the External Reference and the Report with files attached."""
+        pdf_bytes may be None (ContentUnavailable): the Report is created
+        without a file.
+        """
         url = item["link"]
         name = item["title"] or url
         description = item["description"]
@@ -612,12 +657,12 @@ class TheRegisterConnector:
         )
 
         # Report type from the Crucible Collector, sent the full article text
-        # (feed full text, else the rendered page's article text). The shared
+        # (feed full text, else the article page's text). The shared
         # helper returns the default type and logs a WARNING on error or
         # timeout, and makes no call when CRUCIBLE_COLLECTOR_URL is unset.
         report_types = [self.report_type]
         if classify_report is not None:
-            article_text = (item.get("full_text") or _article_text(html_bytes)
+            article_text = (item.get("full_text") or self._page_text(url)
                             or description)
             report_types = classify_report(
                 title=name, description=description, content=article_text,
@@ -626,9 +671,15 @@ class TheRegisterConnector:
                 logger=self.helper.log_warning,
             )
 
-        files, files_markings = self._build_files(
-            _slug_from_url(url), pdf_bytes, html_bytes
-        )
+        # One PDF, the file itself marked with the Report's TLP (a file does
+        # not inherit the Report's marking on its own).
+        file_kwargs = {}
+        if pdf_bytes:
+            file_kwargs = {
+                "files": [File(f"{FILE_PREFIX}-rendered-{_slug_from_url(url)}.pdf",
+                               pdf_bytes, "application/pdf")],
+                "filesMarkings": [[self.marking_id]],
+            }
         self.helper.api.report.create(
             stix_id=_report_id(url),
             name=name,
@@ -639,13 +690,13 @@ class TheRegisterConnector:
             createdBy=self.author_id,
             objectMarking=[self.marking_id],
             externalReferences=[external_reference["id"]],
-            files=files,
-            filesMarkings=files_markings,
             update=False,
+            **file_kwargs,
         )
         # Log the report type actually applied (Collector result or default).
         self.helper.log_info(
             f"Created Report for {url} ({name[:80]}) report_types={report_types}"
+            + ("" if pdf_bytes else " (no PDF)")
         )
 
     # ------------------------------------------------------------------ #
@@ -674,15 +725,12 @@ class TheRegisterConnector:
         if reason:
             return self._skip_permanently(url, reason)
 
-        pdf_bytes, html_bytes = self._render_with_retry(url)
-        if pdf_bytes is None:
-            return "failed"
-        if len(pdf_bytes) > MAX_PDF_BYTES:
-            return self._skip_permanently(
-                url, f"rendered PDF is {len(pdf_bytes)} bytes (cap {MAX_PDF_BYTES})"
-            )
+        try:
+            pdf_bytes = self._render_with_retry(item, published)
+        except RendererUnavailable:
+            return "failed"   # house policy: renderer down -> skip, retry later
 
-        self._create_report(item, published, pdf_bytes, html_bytes)
+        self._create_report(item, published, pdf_bytes)
         return "created"
 
     def _record_transient(self, link):

@@ -10,14 +10,13 @@ connector:
   name: 'The Record'
   scope: 'the_record'
   log_level: 'info'
-  render_service_url: 'http://pdf-renderer:8080/render'
-  render_timeout: 120
 the_record:
   feed_url: 'https://therecord.media/feed/'
   poll_interval: 900         # seconds between feed polls
-  request_delay: 3           # seconds between renders
+  request_delay: 3           # seconds between articles (and retry backoff base)
   max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
   render_retries: 3
+  pdf_render_timeout: 120     # seconds, enforced by pdf-renderer
   confidence: 50
   report_type: 'open-source-reporting'
   tlp: 'TLP:CLEAR'

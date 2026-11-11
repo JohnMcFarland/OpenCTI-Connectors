@@ -1,7 +1,7 @@
 # Dark Web Informer connector
 
 External-import connector that creates one container-only OpenCTI **Report**
-per Dark Web Informer article, with a rendered PDF and a raw HTML snapshot attached.
+per Dark Web Informer article, with the live article attached as one rendered PDF.
 Replaces Dark Web Informer coverage from the deprecated Feedly connector.
 
 | | |
@@ -10,11 +10,11 @@ Replaces Dark Web Informer coverage from the deprecated Feedly connector.
 | Collection | Feed only, new posts only. No backfill. |
 | Default poll | every 30 minutes |
 | Dedup | Graph-driven by External Reference URL (cited by a Report). No state file. |
-| PDF | Shared `pdf-renderer` service; content `main#main` |
+| PDF | One per Report, live article via the house `pdf-renderer` client (`microservices/make_pdf.py`, `PDF_RENDERER_URL`); content `main#main` |
 | Author | `Dark Web Informer` Organization |
 | Marking / confidence | TLP:CLEAR / 50 |
 | report_type | From the Crucible Collector (`CRUCIBLE_COLLECTOR_URL`); `open-source-reporting` when unset or on error |
-| Graph objects | Report + External Reference + attached files only. No Labels, entities, Observables or Relationships. |
+| Graph objects | Report + External Reference + attached PDF only. No Labels, entities, Observables or Relationships. |
 
 Ghost CMS. Public posts only (user decision 2026-11-11): before rendering,
 the connector fetches the article page and skips it permanently if the page
@@ -41,7 +41,8 @@ When `CRUCIBLE_COLLECTOR_URL` is set, each new article is POSTed through the
 shared `microservices/classify_report.py` helper to
 `$CRUCIBLE_COLLECTOR_URL/classify` with its title, feed summary, URL and the
 full article text (the feed's full text where the feed has it, otherwise the
-text of the rendered page's article element). The returned type becomes
+text of the article page's content element, fetched with one plain GET only
+when the Collector is configured). The returned type becomes
 `report_types`. The article text is sent only to the Collector; it is not
 stored on the Report.
 
@@ -59,11 +60,11 @@ stored on the Report.
   References by URL, then the Reports citing them), id/url fields only, no
   full-text search queries.
 - Idle polls write nothing (no work record unless there is something new).
-- One `report.create` per new article with the PDF and HTML attached inline and
-  `update=False`, so there are no follow-up file uploads or upsert rewrites.
+- One `report.create` per new article with the PDF attached inline (the file
+  marked TLP:CLEAR via `filesMarkings`) and `update=False`, so there are no
+  follow-up file uploads or upsert rewrites.
 - Report descriptions are plain text, capped at 2,000 characters. Full text
-  stays in the attached files. PDFs over 25 MB are skipped; HTML snapshots over
-  10 MB are not attached.
+  stays in the attached PDF. PDFs over 25 MB are not attached.
 
 ## Deduplication
 
@@ -74,18 +75,22 @@ behind by a failed Report create does not block a retry.
 
 ## Failures
 
-- Permanent (no date, members-only post, oversized PDF): skipped for the life
-  of the process.
-- Transient (render or API error): retried on later polls while the item is in
+- Permanent (no date, members-only post): skipped for the life of the process.
+- Renderer unavailable (pdf-renderer down, busy, timed out, 5xx) or API error:
+  transient. Nothing is written; retried on later polls while the item is in
   the feed, up to 5 polls.
+- No usable article (pdf-renderer 422 or 403) or a PDF over 25 MB: the Report
+  is created without a PDF and a WARNING is logged (house policy).
 - If the dedup lookup fails, the whole poll is skipped (nothing written).
 - If no item in a poll was already ingested, the connector warns that posts may
   have scrolled off the feed between polls.
 
 ## Running
 
-Self-contained build; the shared `microservices/` package is volume-mounted at
-`/microservices` (see `docker-compose.yml`):
+Self-contained build; the shared `microservices/` package (pdf-renderer
+client and Crucible classifier) is volume-mounted at `/microservices` (see
+`docker-compose.yml`). The `pdf-renderer` service must be on the same Docker
+network (`PDF_RENDERER_URL`, default `http://pdf-renderer:8000`):
 
 ```bash
 docker compose -f dark_web_informer/docker-compose.yml build

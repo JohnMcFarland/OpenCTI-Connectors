@@ -8,7 +8,8 @@ services:
     build: .
     container_name: opencti-connector-the-record
     volumes:
-      # Shared Crucible classifier helper, read-only, at /microservices.
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
       - ../microservices:/microservices:ro
     environment:
       # --- OpenCTI platform connection ---
@@ -20,9 +21,8 @@ services:
       - CONNECTOR_NAME=The Record
       - CONNECTOR_SCOPE=the_record
       - CONNECTOR_LOG_LEVEL=info
-      # --- PDF render service ---
-      - RENDER_SERVICE_URL=http://pdf-renderer:8080/render
-      - RENDER_TIMEOUT=120
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
       # --- Report type (Crucible Collector /classify) ---
       # Set the URL in docker-compose.override.yml. Blank = standalone: no
       # call is made and every Report gets the default report_type.
@@ -34,6 +34,7 @@ services:
       - THE_RECORD_REQUEST_DELAY=3
       - THE_RECORD_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
       - THE_RECORD_RENDER_RETRIES=3
+      - THE_RECORD_PDF_RENDER_TIMEOUT=120
       - THE_RECORD_CONFIDENCE=50
       - THE_RECORD_REPORT_TYPE=open-source-reporting
       - THE_RECORD_TLP=TLP:CLEAR

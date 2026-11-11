@@ -2,9 +2,9 @@
 # Crucible-integrated connectors. The shared microservices/ package is NOT
 # copied in: it is volume-mounted at /microservices (the parent of /app, where
 # main.py looks for it) by docker-compose.yml / docker-compose.override.yml.
-# Without the mount the connector runs standalone with its default
-# report_type. PDF rendering is delegated to the pdf-renderer service, so
-# there are no Playwright or WeasyPrint dependencies.
+# The mount is required (it carries the pdf-renderer client, make_pdf.py).
+# PDF rendering is delegated to the pdf-renderer service, so there are no
+# Playwright or WeasyPrint dependencies.
 FROM python:3.11-slim-bookworm
 
 # libmagic1: required by python-magic, a pycti dependency.
