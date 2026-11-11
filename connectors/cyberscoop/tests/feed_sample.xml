@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>CyberScoop</title>
+	<atom:link href="https://cyberscoop.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cyberscoop.com/</link>
+	<description></description>
+	<lastBuildDate>Tue, 10 Nov 2026 22:40:54 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+
+<image>
+	<url>https://cyberscoop.com/wp-content/uploads/sites/3/2023/01/cropped-cs_favicon-2.png?w=32</url>
+	<title>CyberScoop</title>
+	<link>https://cyberscoop.com/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<item>
+		<title>CISA director pick already drawing concern from Hill Dems over Palantir connection</title>
+		<link>https://cyberscoop.com/michael-losapio-cisa-director-nomination-palantir-scrutiny/</link>
+		
+		<dc:creator><![CDATA[Tim Starks]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 22:38:16 +0000</pubDate>
+				<category><![CDATA[Government]]></category>
+		<category><![CDATA[Privacy]]></category>
+		<category><![CDATA[Workforce]]></category>
+		<category><![CDATA[Andrew Garbarino]]></category>
+		<category><![CDATA[Bennie Thompson]]></category>
+		<category><![CDATA[CATO Institute]]></category>
+		<category><![CDATA[Cybersecurity and Infrastructure Security Agency (CISA)]]></category>
+		<category><![CDATA[Department of Homeland Security (DHS)]]></category>
+		<category><![CDATA[Gary Peters]]></category>
+		<category><![CDATA[House Homeland Security Committee]]></category>
+		<category><![CDATA[Immigration and Customs Enforcement (ICE)]]></category>
+		<category><![CDATA[Institute for Security and Technology]]></category>
+		<category><![CDATA[Josh Corman]]></category>
+		<category><![CDATA[maggie hassan]]></category>
+		<category><![CDATA[Michael LoSapio]]></category>
+		<category><![CDATA[Nick Andersen]]></category>
+		<category><![CDATA[Palantir]]></category>
+		<category><![CDATA[rand paul]]></category>
+		<category><![CDATA[Senate Homeland Security and Governmental Affairs Committee]]></category>
+		<category><![CDATA[surveillance]]></category>
+		<guid isPermaLink="false">https://cyberscoop.com/?p=91527</guid>
+
+					<description><![CDATA[<p>Others touted Michael LoSapio as a fit for the job due to his technical credentials as CISO for the company.</p>
+<p>The post <a href="https://cyberscoop.com/michael-losapio-cisa-director-nomination-palantir-scrutiny/">CISA director pick already drawing concern from Hill Dems over Palantir connection</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">The two expected incoming leaders of the Senate and House homeland security panels expressed reservations Tuesday about the Trump administration’s pick to lead the Cybersecurity and Infrastructure Security Agency because he currently works for the oft-controversial tech company Palantir.</p>
+
+
+
+<p class="wp-block-paragraph">The Trump administration on Monday announced its intent to nominate <a href="https://cyberscoop.com/trump-picks-palantirs-losapio-to-head-cisa/">Michael LoSapio</a>, chief information security officer for Palantir, to fill the long-vacant Senate-confirmed position of CISA director.</p>
+
+
+
+<p class="wp-block-paragraph">The Senate Homeland Security and Governmental Affairs Committee has authority over approving CISA director nominees. A spokesperson for its current chairman, Rand Paul, R-Ky., didn’t respond to a request for comment, but he won’t hold the gavel much longer with Sen. Maggie Hassan, D-N.H., in line to take over as chair in 2027.</p>
+
+
+
+<p class="wp-block-paragraph">Hassan and her counterpart on the House side, prospective Homeland Security Committee Chairman Bennie Thompson, D-Miss., both voiced concerns about Palantir’s work at the Department of Homeland Security and with its subagency, Immigration and Customs Enforcement.</p>
+
+
+
+<p class="wp-block-paragraph">“CISA plays a critical role in protecting our nation’s cybersecurity infrastructure, and the Trump-Vance administration has undermined CISA by cutting its funding, reducing agency staff, and making us vulnerable to cyberattacks from our adversaries,” Hassan said in a statement to CyberScoop. “I will carefully review Mr. LoSapio’s nomination to lead CISA, as I do with any nominee. But given his senior role at Palantir, which has provided tools that helped enable ICE&#8217;s lawless behavior under this administration, I have serious questions about whether he has the independence and judgement needed for this position.”&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">Thompson expressed apprehensions for similar reasons.</p>
+
+
+
+<p class="wp-block-paragraph">“CISA is at a critical juncture, rebuilding after a year of reckless efforts to hack up the agency. I don’t know much about Mr. LoSapio, but certainly his relationship with Palantir raises very serious concerns given its role in DHS surveillance programs,” he said in a statement to CyberScoop. “I’m concerned that baggage will be an unnecessary distraction from the urgent rebuilding efforts at CISA. I urge my Senate colleagues to thoroughly vet Mr. LoSapio before proceeding with his nomination.”</p>
+
+
+
+<p class="wp-block-paragraph">The current top Democrat on the Senate panel, the retiring Gary Peters of Michigan, also cited the threats CISA is facing amid cutbacks: “Mr. LoSapio must demonstrate that he possesses the independent judgment and qualifications to decisively place national security and the national interest above political pressure.”</p>
+
+
+
+<p class="wp-block-paragraph">The current chairman of the House panel, Andrew Garbarino, R-N.Y., said he appreciated Trump putting forward a nominee given the need for a Senate-confirmed director, something CISA has lacked for his second term, even as he praised the leadership of <a href="https://cyberscoop.com/nick-andersen-cisa-acting-director-nomination/">acting director Nick Andersen</a>.</p>
+
+
+
+<p class="wp-block-paragraph">“I look forward to reviewing the qualifications of Michael LoSapio and urge the Senate to do so with urgency,” he said in a statement.</p>
+
+
+
+<p class="wp-block-paragraph">Unlike another of the top cybersecurity officials in the Trump administration prior to his nomination, National Cyber Director Sean Cairncross, LoSapio comes with technical credentials.</p>
+
+
+
+<p class="wp-block-paragraph">A former Trump administration official said that LoSapio’s name was first floated months ago, and said his cybersecurity certifications and experience managing cyber risk for a major public company would make him a good fit for the role.</p>
+
+
+
+<p class="wp-block-paragraph">A cybersecurity executive who knows and has worked with LoSapio said he was an “exceptional choice” for the job.</p>
+
+
+
+<p class="wp-block-paragraph">“Mike LoSapio is an extremely competent and talented cybersecurity leader. He knows his stuff,” the executive said. “He defends one of the most targeted organizations on the planet” because of Palantir’s sensitive government work.</p>
+
+
+
+<p class="wp-block-paragraph">CISA is primarily a technical agency, so “that work is best done by someone who knows how to do it,” the executive said. LoSapio is also a “high-integrity” person who isn’t “dogmatic or political&#8221; or “the kind of person that would be cowed by political pressure.”</p>
+
+
+
+<p class="wp-block-paragraph">But his role at Palantir is drawing criticism, something the executive said he understood given concerns about surveillance in the United States, even as the executive noted LoSapio has proven capable of navigating those “thorny issues.”</p>
+
+
+
+<p class="wp-block-paragraph">Patrick Eddington, a senior fellow at the libertarian Cato Institute think tank, acknowledged LoSapio’s technical background but said his lack of a government background and no public record of weighing in on the subject matter CISA works on adds up to a “thin resume.” More worrisome, he said, is that <a href="https://www.usaspending.gov/award/CONT_AWD_70RCSJ26FC0000028_7001_70RTAC26A00000001_7001">CISA is a Palantir customer</a>.</p>
+
+
+
+<p class="wp-block-paragraph">“The nominee would come from the vendor whose software is already being bought, without competition, by the office he’d run,” Eddington said. “And the agency responsible for judging the security of federal civilian systems would be led by the former security chief of a vendor whose platforms now run across DHS. That’s where ethics rules would normally help, yet this administration has weakened them.”</p>
+
+
+
+<p class="wp-block-paragraph">Before confirming LoSapio, senators should find out what kind of Palantir stock or other holdings LoSapio has and whether he&#8217;ll divest it, whether he&#8217;ll recuse himself from Palantir matters for longer than the Trump administration would require, whether he has made bargains to return to Palantir after CISA service and other answers about potential conflicts of interest.</p>
+
+
+
+<p class="wp-block-paragraph">“Bottom line: Palantir’s business is fusing government data at scale, and DHS has made it the default analytics vendor across the department,” Eddington said. “Putting the company’s security chief in charge of the agency that sets the security bar for those systems, with a one-year recusal as the main safeguard, risks making CISA one vendor’s customer, regulator and alumni network all at once. Even if LoSapio is entirely well-intentioned, that’s the wrong setup.”</p>
+
+
+
+<p class="wp-block-paragraph">A Palantir spokesperson didn’t respond to requests for comment.</p>
+
+
+
+<p class="wp-block-paragraph">Even in optimal circumstances for a nominee, it can take some time to work through the Senate confirmation process and then begin shaping an agency as its leader, said Joshua Corman, a former CISA adviser and now executive in residence for public safety and resilience at the Institute for Security and Technology.</p>
+
+
+
+<p class="wp-block-paragraph">Andersen and his team, even amid budget cutbacks, “never gave up” on the agency, Corman said, and set important priorities for “the most life-safety of our critical functions.”</p>
+
+
+
+<p class="wp-block-paragraph">With two years left in Trump’s term, “it may be hard to have much of a dent, no matter who gets the nod, and as such, I really hope they lean on the current steward” in Andersen, Corman said. </p>
+
+
+
+<p class="wp-block-paragraph"><em>Madison Alder contributed reporting to this story.</em></p>
+<p>The post <a href="https://cyberscoop.com/michael-losapio-cisa-director-nomination-palantir-scrutiny/">CISA director pick already drawing concern from Hill Dems over Palantir connection</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">91527</post-id>	</item>
+		<item>
+		<title>The US wants its quantum lead to turn into factories and supply chains</title>
+		<link>https://cyberscoop.com/us-quantum-computing-industry-manufacturing-push/</link>
+		
+		<dc:creator><![CDATA[djohnson]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 21:50:46 +0000</pubDate>
+				<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Geopolitics]]></category>
+		<category><![CDATA[Government]]></category>
+		<category><![CDATA[Policy]]></category>
+		<category><![CDATA[Technology]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[Department of Commerce]]></category>
+		<category><![CDATA[manufacturing]]></category>
+		<category><![CDATA[quantum computing]]></category>
+		<category><![CDATA[supply chain]]></category>
+		<guid isPermaLink="false">https://cyberscoop.com/?p=91518</guid>
+
+					<description><![CDATA[<p>There’s bipartisan support for further investment in the U.S. quantum industry, along with worries that America’s industrial capacity won’t keep up with demand.</p>
+<p>The post <a href="https://cyberscoop.com/us-quantum-computing-industry-manufacturing-push/">The US wants its quantum lead to turn into factories and supply chains</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Policymakers from Congress and the executive branch are looking for ways to further boost the U.S. quantum computing industry, including by growing industrial capacity to translate scientific breakthroughs into workable technology.</p>
+
+
+
+<p class="wp-block-paragraph">Deputy Secretary of Commerce Paul Dabbar said the American industry is “by far the greatest leader in quantum technologies,” with a tech stack that is the envy of the world. The challenge will be translating those technological gains into real, brick-and-mortar industrialization and manufacturing dominance.</p>
+
+
+
+<p class="wp-block-paragraph">Dabbar pointed to other examples of federal support, such as grant funding from the CHIPS and Science Act and letters of intent signed earlier this year with nine companies investing more than $2 billion into different quantum technologies.</p>
+
+
+
+<p class="wp-block-paragraph">But one of the primary questions that Commerce officials ask companies when making decisions on federal investments is “How do we move a bit further down the road from discovery towards actually supporting individual technologies that can commercialize?” he said.</p>
+
+
+
+<p class="wp-block-paragraph">That question is being driven by U.S. assessments that the country’s quantum technology edge is real but is being threatened by countries such as China that have more robust industrial capacity.</p>
+
+
+
+<p class="wp-block-paragraph">Dabbar said the federal government is also attempting to follow its own example, citing White House executive orders on quantum computing and more aggressive timelines for agencies to migrate to quantum encryption, measures that CyberScoop was <a href="https://cyberscoop.com/trump-administration-quantum-computing-executive-action/">first to report</a> last year. Commerce is the first agency scheduled to deploy its post-quantum encryption.</p>
+
+
+
+<p class="wp-block-paragraph">The department also has the authority to place export controls on technologies, <a href="https://cyberscoop.com/us-government-anthropic-fable-5-mythos-5-export-controls/">as it did</a> for Anthropic’s Mythos and Fable AI models earlier this year. Dabbar expressed caution but suggested Commerce officials were willing to use such controls to advance the interests of American technology makers.</p>
+
+
+
+<p class="wp-block-paragraph">“We have to be very careful about American leadership on the frontier on all technologies, and quantum is certainly one of them,” Dabbar said. “We want to be very thoughtful about making certain that which is invented by people in this room are retained by people in this room and are not copied or stolen.”</p>
+
+
+
+<p class="wp-block-paragraph">Dabbar’s comments came the same day that the Commission on U.S. Quantum Primacy released a <a href="https://www.scsp.ai/defining-the-american-quantum-era/?">report</a> detailing the major challenges facing the American quantum industry.</p>
+
+
+
+<p class="wp-block-paragraph">The report warned that while research, software and private investment are “major strengths” for U.S. industry in its global competition with China, China’s manufacturing and supply chain production threatens to erode that edge.</p>
+
+
+
+<p class="wp-block-paragraph">“American scientific strengths may not translate into leadership in deployment and industrial production,” the report stated.<br><br>Boosting American industrial capacity in quantum is among the report’s top recommendations, including investments in physical infrastructure such as factories, foundries and suppliers that can “turn future breakthroughs into reliable systems.”</p>
+
+
+
+<p class="wp-block-paragraph">“To date, many quantum milestones have rightfully been measured in technical and scientific terms,” the report stated. “But national leadership requires a broader ambition: quantum primacy—the ability to turn scientific advances into sustained strategic advantage across quantum technologies.”</p>
+
+
+
+<p class="wp-block-paragraph">The commission is due to issue a final report in Spring 2027.</p>
+
+
+
+<p class="wp-block-paragraph">Sens. Ben Ray Luján, D-N.M. and Todd Young, R-Ind., served as co-chairs of the commission.</p>
+
+
+
+<p class="wp-block-paragraph">Meanwhile, Luján pointed to an alleged national security incident involving Nvidia CEO Jensen Huang as evidence that U.S. private industry can’t be trusted to protect America’s tech secrets. According to <a href="https://www.nytimes.com/2026/11/10/technology/alice-huang-megaspeed-nvidia-jensen-huang.html">media reports</a> Huang, who is married, had an affair with Chinese tech executive Alice Huang, later identified by U.S. intelligence agencies as a foreign intelligence asset working for China.</p>
+
+
+
+<p class="wp-block-paragraph">When asked about how to maintain U.S. competitiveness in quantum computing and other technologies, Luján said tech executives “need to be smarter” about protecting America’s tech secrets.</p>
+
+
+
+<p class="wp-block-paragraph">“People need to make better decisions when you’re entrusted with that kind of power and responsibility,” he said.</p>
+
+
+
+<p class="wp-block-paragraph">Luján, who did not mention Huang by name, said tech executives “know that other countries, they send people here to do bad things and get people locked up into telling secrets and things of that nature.”</p>
+
+
+
+<p class="wp-block-paragraph">“That clearly happens, and now we’re learning about it and the stock market’s reacting…don’t be stupid,” Luján said.</p>
+
+
+
+<p class="wp-block-paragraph">Luján said that while Democrats taking control of Congress will involve efforts to “push back” against executive branch overreach, he is open to working with the Trump administration and Republicans on legislation focused on the workforce and bringing “substantial investments across the United States in this space to ensure that the United States is going to stay in the front” of quantum computing.</p>
+
+
+
+<p class="wp-block-paragraph">But he suggested those investments could be wasted if Congress does not intervene with “good policy” and if tech executives can’t self-police their behavior. He pointed to another emerging technology, AI, where an innovation-at-all-costs approach <a href="https://cyberscoop.com/ai-agent-hacking-apocalypse-cybersecurity/">has left industry</a> poorly positioned to deal with cybersecurity and safety concerns.</p>
+
+
+
+<p class="wp-block-paragraph">“As we’re learning now from whistleblowers and others from some AI companies that we also need policy and guardrails, and the United States is qualified in a few [of those] areas,” Luján said.</p>
+<p>The post <a href="https://cyberscoop.com/us-quantum-computing-industry-manufacturing-push/">The US wants its quantum lead to turn into factories and supply chains</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">91518</post-id>	</item>
+		<item>
+		<title>Microsoft fixes over 1,000 vulnerabilities in November Patch Tuesday</title>
+		<link>https://cyberscoop.com/microsoft-patch-tuesday-november-2026/</link>
+		
+		<dc:creator><![CDATA[Greg Otto]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 21:47:01 +0000</pubDate>
+				<category><![CDATA[Cybersecurity]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[Patch Tuesday]]></category>
+		<guid isPermaLink="false">https://cyberscoop.com/?p=91521</guid>
+
+					<description><![CDATA[<p>Microsoft&#8217;s November security update addresses roughly 1,090 vulnerabilities across Windows, Office, Azure and the company&#8217;s other product lines, the second consecutive monthly release to exceed the totals of all previous years. The release formally lists 1,094 CVEs, with Windows accounting for 726 and Office 174. A smaller number of patches went to SQL Server, Exchange [&#8230;]</p>
+<p>The post <a href="https://cyberscoop.com/microsoft-patch-tuesday-november-2026/">Microsoft fixes over 1,000 vulnerabilities in November Patch Tuesday</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Microsoft&#8217;s November security update addresses roughly 1,090 vulnerabilities across Windows, Office, Azure and the company&#8217;s other product lines, the second consecutive monthly release to exceed the totals of all previous years.</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://msrc.microsoft.com/update-guide/releaseNote/2026-Nov">The release</a> formally lists 1,094 CVEs, with Windows accounting for 726 and Office 174. A smaller number of patches went to SQL Server, Exchange Server, SharePoint Server, Azure and other products.</p>
+
+
+
+<p class="wp-block-paragraph">Despite the number of patches, only one flaw is under active attack, and none were publicly known before the release. Dustin Childs, head of threat awareness at TrendAI’s Zero Day Initiative, read that shift as a sign of changing attacker methods rather than diminished exploitation.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;While this is encouraging, it does not mean we&#8217;re seeing less exploitation in the wild,&#8221; he wrote <a href="https://www.zerodayinitiative.com/blog/2026/11/10/the-november-2026-security-update-review">in a blog post</a> analyzing the updates. &#8220;It does mean we are seeing fewer 0-days exploited in the wild. This makes sense, as AI is better at reversing patches than it is at finding and exploiting bugs in closed-source software.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">The exploited zero-day flaw, CVE-2026-124194, is an Outlook spoofing vulnerability. A specially crafted message file makes Outlook connect to an attacker-controlled network location without the usual external-content warning. The flaw was added to CISA’s Known Exploited Vulnerability (KEV) <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">list</a> shortly after Microsoft released this month’s advisory.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">The most severe fixes include CVE-2026-116928, a Windows Search vulnerability reachable through Exchange Server. &#8220;It is a zero-click code execution bug on a high-value target,&#8221; Childs wrote, more severe than any of the nine fixes Exchange receives this month. A separate Windows LDAP flaw, also rated 9.8, could be &#8220;quite destructive, especially on Domain Controllers,&#8221; he said.</p>
+
+
+
+<p class="wp-block-paragraph">The array of vulnerabilities was actually less than <a href="https://cyberscoop.com/microsoft-patch-tuesday-october-2026/">last month</a>, which saw a record-breaking 1,413 defects affecting the company’s various enterprise products and services.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+<p>The post <a href="https://cyberscoop.com/microsoft-patch-tuesday-november-2026/">Microsoft fixes over 1,000 vulnerabilities in November Patch Tuesday</a> appeared first on <a href="https://cyberscoop.com">CyberScoop</a>.</p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">91521</post-id>	</item>
+</channel>
+</rss>

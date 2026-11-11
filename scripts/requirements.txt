@@ -1,1 +1,2 @@
 pycti==6.9.13
+ruamel.yaml==0.18.6

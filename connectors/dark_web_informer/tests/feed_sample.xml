@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[Dark Web Informer]]></title><description><![CDATA[A real-time cyber threat intelligence platform that monitors the dark web and clearnet for data breaches, ransomware campaigns, darknet market activity, leaked databases, and active threat actors.]]></description><link>https://darkwebinformer.com/</link><image><url>https://darkwebinformer.com/favicon.png</url><title>Dark Web Informer</title><link>https://darkwebinformer.com/</link></image><generator>Ghost 6.77</generator><lastBuildDate>Wed, 11 Nov 2026 00:54:38 GMT</lastBuildDate><atom:link href="https://darkwebinformer.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information]]></title><description><![CDATA[An actor using the handle "ChimeraZ" claims to have leaked a database associated with Geofixe, a French telecommunications service that provides virtual landline numbers.]]></description><link>https://darkwebinformer.com/geofixe-data-leak-claim-lists-1-656-records-with-customer-billing-and-payment-information/</link><guid isPermaLink="false">6af375d8ff0fca00016cd690</guid><category><![CDATA[Leaks]]></category><dc:creator><![CDATA[Dark Web Informer]]></dc:creator><pubDate>Tue, 10 Nov 2026 19:53:18 GMT</pubDate><media:content url="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/geofixe_france_1.png" medium="image"/><content:encoded><![CDATA[
+<!--kg-card-begin: html-->
+<div class="dwi-root" data-design="spectral" data-subscription-state="pending">
+<article class="shell">
+
+  <header class="hero pane">
+    <div class="eyebrow">
+      <span class="pill key"><span class="dot"></span>Data Exposure Report</span>
+      <span class="pill country-badge"><img src="https://flagcdn.com/w20/fr.png" srcset="https://flagcdn.com/w40/fr.png 2x" width="20" height="15" alt="Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information">France</span>
+      <span class="pill warn">Telecommunications</span>
+      <span class="pill warn">Customer &amp; Billing Data</span>
+      <span class="pill">Leak Claim</span>
+      <span class="pill verification-badge"><span class="dot" aria-hidden="true"></span>Unverified</span>
+    </div>
+
+    <h2 class="hl">Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information</h2>
+
+    <div class="kpis" aria-label="Key listing details">
+      <div class="kpi pane"><span class="label">Claimed lines</span><span class="value">1,656</span></div>
+      <div class="kpi pane"><span class="label">Emails</span><span class="value">130</span></div>
+      <div class="kpi pane"><span class="label">Phones</span><span class="value">56</span></div>
+      <div class="kpi pane"><span class="label">Claimed size</span><span class="value">328 MB</span></div>
+    </div>
+
+    <div class="sev pane" style="--severity: 84%" role="img" aria-label="Potential severity if the claim is accurate: high">
+      <span class="lbl">Severity</span>
+      <span class="track"><span class="fill"></span></span>
+      <span class="val">HIGH</span>
+    </div>
+  </header>
+
+  <section class="summary pane" aria-label="Report overview">
+    <h3 class="section-label">Overview</h3>
+    <img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/geofixe_france_1.png" alt="Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information"><p class="lede">An actor using the handle <strong>&quot;ChimeraZ&quot;</strong> claims to have leaked a <strong>database associated with Geofixe</strong>, a French telecommunications service that provides virtual landline numbers.</p>
+    <p class="lede">The listing advertises <strong>1,656 lines</strong> in a <strong>328 MB CSV dataset</strong>, with <strong>130 email addresses</strong> and <strong>56 phone numbers</strong>. The visible files include <strong>cards.csv</strong>, <strong>charges.csv</strong>, <strong>invoices.csv</strong> and <strong>people.csv</strong>, with samples showing customer names, email addresses, phone numbers, billing addresses, card-related fields, charge records and invoice/payment data. <strong>The dataset, its source, the stated counts and current availability have not been independently verified.</strong></p>
+  </section>
+
+  <div class="grid">
+
+    <section class="card pane c-blue post-details">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l4 4v14H4V3h4Zm6 0v6h6M8 13h8M8 17h5"/></svg></span>Post details</h3>
+      <div class="details">
+        <div class="detail"><span class="k">Organization</span><span class="v">Geofixe</span></div>
+        <div class="detail"><span class="k">Country</span><span class="v"><img src="https://flagcdn.com/w20/fr.png" srcset="https://flagcdn.com/w40/fr.png 2x" width="20" height="15" alt="Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information" style="display:inline-block;vertical-align:-2px;margin-right:6px">France</span></div>
+        <div class="detail"><span class="k">Sector</span><span class="v">Telecommunications / virtual landline services</span></div>
+        <div class="detail"><span class="k">Actor</span><span class="v">&quot;ChimeraZ&quot;</span></div>
+        <div class="detail"><span class="k">Claimed lines</span><span class="v">1,656</span></div>
+        <div class="detail"><span class="k">Emails</span><span class="v">130</span></div>
+        <div class="detail"><span class="k">Phones</span><span class="v">56</span></div>
+        <div class="detail"><span class="k">Format / size</span><span class="v">CSV / 328 MB</span></div>
+      </div>
+    </section>
+
+    <section class="card pane c-rose post-claims">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-8 12h6l-1 8 9-13h-6l0-7Z"/></svg></span>What the post claims</h3>
+
+      <ul class="chips">
+        <li>1,656 total lines</li>
+        <li>130 email addresses</li>
+        <li>56 phone numbers</li>
+        <li>328 MB dataset size</li>
+        <li>CSV format</li>
+        <li>cards.csv referenced</li>
+        <li>charges.csv referenced</li>
+        <li>invoices.csv referenced</li>
+        <li>people.csv referenced</li>
+        <li>Customer names included</li>
+        <li>Email addresses included</li>
+        <li>Phone numbers included</li>
+        <li>Billing / postal addresses included</li>
+        <li>Card-related fields included</li>
+        <li>Charge and payment records included</li>
+        <li>Invoice records included</li>
+        <li>Multiple download mirrors provided</li>
+      </ul>
+
+      <p class="prose" style="margin-top:26px">The visible samples contain direct customer identity, contact, billing and payment information. Those individual values, invoice URLs, card-related values and payment references are not transcribed in this report.</p>
+    </section>
+
+    <aside class="sponsored-block" data-ad="whiteintel" aria-label="Sponsored">
+      <div class="sponsored-label">Sponsored</div>
+      <a class="adbanner banner-placeholder" style="--banner-ratio: 1200 / 200" href="https://whiteintel.io/?utm_source=darkwebinformer.com&amp;utm_medium=referral&amp;utm_campaign=whiteintel" target="_blank" rel="nofollow noopener sponsored" referrerpolicy="origin">
+        <img referrerpolicy="no-referrer" src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/08/whiteintel_io_banner.jpg" alt="Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information" loading="lazy" decoding="async" width="800" height="151">
+      </a>
+    </aside>
+
+    <section class="card pane c-violet span-2 evidence">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 6"/></svg></span>Screenshots</h3>
+
+      <figure>
+        <div class="shots">
+          <a class="shot" style="--shot-ratio: 1600 / 1230" href="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/geofixe_france.png" target="_blank" rel="noopener noreferrer">
+            <span class="shot-meta"><span class="cap">Screenshot 1</span><span class="cap red">Source screenshot</span></span>
+            <span class="shot-image">
+              <img referrerpolicy="no-referrer" src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/geofixe_france.png" alt="Geofixe Data Leak Claim Lists 1,656 Records With Customer, Billing and Payment Information" loading="lazy" decoding="async" width="1600" height="1230">
+              <span class="shot-expand" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3h7v7M21 3l-8 8M10 21H3v-7m0 7 8-8"/></svg></span>
+            </span>
+          </a>
+        </div>
+
+        <figcaption class="shot-caption">The supplied capture shows the Geofixe claim, the stated line, email, phone, size and format figures, samples from card, charge, invoice and people CSV files, download mirrors and actor contact identifiers. Personal/payment sample values and direct download mirrors are not reproduced here.</figcaption>
+      </figure>
+    </section>
+
+    <section class="card pane span-2 ioc-section" aria-label="IOCs and identifiers">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6M10 7v6M7 10h6"/></svg></span>IOCs &amp; identifiers</h3>
+
+      <p class="ioc-intro">Identifiers directly visible or supported by the supplied material. These support correlation and do not independently verify the dataset claim.</p>
+
+      <table class="ioc-table" aria-label="Observed identifiers and screenshot sources">
+        <thead>
+          <tr><th scope="col">Type</th><th scope="col">Identifier</th><th scope="col">Source</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Actor handle</th><td><code class="ioc-value">ChimeraZ</code></td><td>Screenshot 1</td></tr>
+          <tr><th scope="row">Telegram</th><td><code class="ioc-value">@chimeradbs</code></td><td>Screenshot 1</td></tr>
+          <tr><th scope="row">XMPP</th><td><code class="ioc-value">chimeraz@xmpp.is</code></td><td>Screenshot 1</td></tr>
+          <tr><th scope="row">Named organization domain</th><td><code class="ioc-value">geofixe[.]com</code></td><td>Screenshot 1</td></tr>
+        </tbody>
+      </table>
+
+      <p class="ioc-note">The organization domain identifies the entity named in the claim, not malicious infrastructure. No malware hash, Tox ID, Session ID or attacker-controlled IP address is visible in the supplied screenshot. Customer identifiers, payment links and direct download mirrors shown in the source material are intentionally not reproduced here.</p>
+    </section>
+
+    <section class="card pane c-blue span-2 techniques">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M12 8v4H5v4m7-4h7v4"/></svg></span>Mapped techniques</h3>
+
+      <p class="ttp-note"><strong>Claimed</strong> identifies behavior explicitly described by the actor. <strong>Inferred</strong> identifies an analytical mapping supported by the supplied material. Neither label means the activity has been independently verified.</p>
+
+      <ul class="ttps">
+        <li>
+          <span class="tac">Collection</span>
+          <a class="tid" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">T1213.006</a>
+          <a class="tname" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">Data from Information Repositories: Databases</a>
+          <span class="tsrc">Inferred</span>
+          <span class="tevi">The listing presents structured CSV datasets containing people, card, charge and invoice information. The supplied material does not disclose how the data was obtained or independently establish unauthorized access to Geofixe systems.</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card pane c-gold impact">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 18H2L12 3Z M12 9v5m0 3v1"/></svg></span>Potential impact</h3>
+
+      <p class="prose">If authentic, the claimed dataset could expose <strong>customer names, email addresses, phone numbers, postal addresses, billing records, card-related information and invoice/payment metadata</strong>. That combination could support targeted phishing, identity fraud, payment fraud, impersonation or other customer-focused abuse.</p>
+    </section>
+
+    <section class="card pane c-red status-card verification">
+      <h3><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 9 4v6c0 5-9 10-9 10S3 17 3 12V6l9-4Z M12 7v6m0 3v1"/></svg></span>Status <span class="status-badge"><span class="dot"></span>Unverified</span></h3>
+
+      <p class="prose">Dark Web Informer has <strong>not independently verified</strong> the dataset&apos;s authenticity, source, completeness, 1,656-line count, email or phone totals, 328 MB size, sample contents or current availability. The supplied screenshot documents the listing and visible samples, not independent confirmation of the underlying data.</p>
+    </section>
+
+  </div>
+
+  <div class="cta pane banner-placeholder" data-ad="subscription">
+    <p>Want everything on this threat? <strong>Paid subscribers</strong> get the full unredacted claim details and more. After subscribing, check out the <a href="https://darkwebinformer.com/threat-feed/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=geofixe-data-leak-2026-11-10&amp;utm_content=threat-feed" target="_blank" rel="noopener noreferrer" class="md-link">threat feed</a> and search there for this alert.</p>
+
+    <a class="cta-btn" href="https://darkwebinformer.com/pricing?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=geofixe-data-leak-2026-11-10&amp;utm_content=pricing-button" target="_blank" rel="noopener noreferrer">View pricing &#x2192;</a>
+  </div>
+
+</article>
+
+<p class="foot"><a href="https://darkwebinformer.com/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=geofixe-data-leak-2026-11-10&amp;utm_content=footer" target="_blank" rel="noopener noreferrer" class="foot-link">Dark Web Informer</a></p>
+
+<script>
+(function () {
+  const root = document.currentScript.closest('.dwi-root');
+  if (!root) return;
+
+  async function checkSubscription() {
+    try {
+      const response = await fetch('/members/api/member/', {
+        credentials: 'same-origin',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' }
+      });
+
+      if (response.status === 204 || response.status === 401) {
+        root.dataset.subscriptionState = 'free';
+        return;
+      }
+
+      if (!response.ok) throw new Error('Membership unavailable');
+
+      const member = await response.json();
+
+      if (member === null) {
+        root.dataset.subscriptionState = 'free';
+      } else if (typeof member.paid === 'boolean') {
+        root.dataset.subscriptionState = member.paid ? 'paid' : 'free';
+      } else {
+        root.dataset.subscriptionState = 'unknown';
+      }
+    } catch (_) {
+      root.dataset.subscriptionState = 'unknown';
+    }
+  }
+
+  checkSubscription();
+})();
+</script>
+</div>
+<!--kg-card-end: html-->
+]]></content:encoded></item><item><title><![CDATA[Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses]]></title><description><![CDATA[An actor using the handle "ChimeraZ" claims to be selling a database associated with Lithos, described in the listing as a decentralized exchange built on the Plasma blockchain.]]></description><link>https://darkwebinformer.com/lithos-dex-database-sale-claim-lists-173-146-wallet-addresses-and-50-239-ip-addresses/</link><guid isPermaLink="false">6af3700aff0fca00016cd66c</guid><category><![CDATA[Leaks]]></category><dc:creator><![CDATA[Dark Web Informer]]></dc:creator><pubDate>Tue, 10 Nov 2026 19:29:11 GMT</pubDate><media:content url="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/lithos_3.png" medium="image"/><content:encoded><![CDATA[
+<!--kg-card-begin: html-->
+<div class="dwi-root" data-design="spectral" data-subscription-state="pending">
+<article class="shell">
+<header class="hero pane">
+  <div class="eyebrow">
+    <span class="pill key"><span class="dot"></span>Data Exposure Report</span>
+    <span class="pill warn">Cryptocurrency</span>
+    <span class="pill warn">DEX User Data</span>
+    <span class="pill warn">Wallet &amp; IP Data</span>
+    <span class="pill">For Sale</span>
+    <span class="pill verification-badge"><span class="dot" aria-hidden="true"></span>Unverified</span>
+  </div>
+  <h2 class="hl">Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses</h2>
+  <div class="kpis" aria-label="Key listing details">
+    <div class="kpi pane"><span class="label">Claimed lines</span><span class="value">173,146</span></div>
+    <div class="kpi pane"><span class="label">Wallet addresses</span><span class="value">173,146</span></div>
+    <div class="kpi pane"><span class="label">IP addresses</span><span class="value">50,239</span></div>
+    <div class="kpi pane"><span class="label">Claimed size</span><span class="value">411 MB</span></div>
+  </div>
+  <div class="sev pane" style="--severity:88%" role="img" aria-label="Potential severity if the claim is accurate: high"><span class="lbl">Severity</span><span class="track"><span class="fill"></span></span><span class="val">HIGH</span></div>
+</header>
+<section class="summary pane" aria-label="Report overview">
+  <h3 class="section-label">Overview</h3>
+  <img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/lithos_3.png" alt="Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses"><p class="lede">An actor using the handle <strong>&quot;ChimeraZ&quot;</strong> claims to be selling a database associated with <strong>Lithos</strong>, described in the listing as a decentralized exchange built on the Plasma blockchain.</p>
+  <p class="lede">The post advertises <strong>173,146 records</strong> collected from <strong>2025 to 2026</strong>. It lists <strong>173,146 wallet addresses</strong>, <strong>134,325 usernames</strong>, <strong>112,436 names</strong>, <strong>50,239 IP addresses</strong> and records spanning <strong>142 countries</strong>. The archive is described as <strong>411 MB in JSONL format</strong>. <strong>The dataset, its source, the stated counts and current availability have not been independently verified.</strong></p>
+</section>
+<div class="grid">
+<section class="card pane c-blue post-details">
+  <h3>Post details</h3>
+  <div class="details">
+    <div class="detail"><span class="k">Organization</span><span class="v">Lithos</span></div>
+    <div class="detail"><span class="k">Sector</span><span class="v">Cryptocurrency / decentralized exchange</span></div>
+    <div class="detail"><span class="k">Actor</span><span class="v">&quot;ChimeraZ&quot;</span></div>
+    <div class="detail"><span class="k">Claimed period</span><span class="v">2025&#x2013;2026</span></div>
+    <div class="detail"><span class="k">Claimed lines</span><span class="v">173,146</span></div>
+    <div class="detail"><span class="k">Countries represented</span><span class="v">142</span></div>
+    <div class="detail"><span class="k">Format / size</span><span class="v">JSONL / 411 MB</span></div>
+    <div class="detail"><span class="k">Post date shown</span><span class="v"><time datetime="2026-11-10T18:30:00">Nov 10, 2026 at 6:30 PM</time></span></div>
+  </div>
+</section>
+<section class="card pane c-rose post-claims">
+  <h3>What the post claims</h3>
+  <ul class="chips">
+    <li>173,146 total lines</li><li>173,146 wallet addresses</li><li>134,325 usernames</li><li>112,436 names</li><li>50,239 IP addresses</li><li>142 countries represented</li><li>2025&#x2013;2026 data range</li><li>411 MB JSONL archive</li><li>Social IDs included</li><li>Country fields included</li><li>Wallet-provider fields included</li><li>Wallet-chain fields included</li><li>Referral-code fields included</li><li>Follow / social metadata included</li><li>Multiple wallet-provider address fields included</li><li>200 sample records advertised</li><li>Price listed as make offer</li><li>XMR payment requested; escrow accepted</li>
+  </ul>
+  <p class="prose" style="margin-top:26px">The visible sample contains direct wallet addresses, IP addresses, usernames and other account-level metadata. Those individual values are not transcribed in this report.</p>
+</section>
+<aside class="sponsored-block" data-ad="whiteintel" aria-label="Sponsored"><div class="sponsored-label">Sponsored</div><a class="adbanner banner-placeholder" style="--banner-ratio:1200 / 200" href="https://whiteintel.io/?utm_source=darkwebinformer.com&amp;utm_medium=referral&amp;utm_campaign=whiteintel" target="_blank" rel="nofollow noopener sponsored"><img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/08/whiteintel_io_banner.jpg" alt="Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses" loading="lazy" width="800" height="151"></a></aside>
+<section class="card pane c-violet span-2 evidence">
+  <h3>Screenshots</h3><figure><div class="shots">
+    <a class="shot" style="--shot-ratio:1600 / 1314" href="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/lithos.png" target="_blank" rel="noopener noreferrer"><span class="shot-meta"><span class="cap">Screenshot 1</span><span class="cap red">Source screenshot</span></span><span class="shot-image"><img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/lithos.png" alt="Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses" loading="lazy" width="1600" height="1314"></span></a>
+    <a class="shot" style="--shot-ratio:1600 / 1313" href="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/lithos_2.png" target="_blank" rel="noopener noreferrer"><span class="shot-meta"><span class="cap">Screenshot 2</span><span class="cap red">Source screenshot</span></span><span class="shot-image"><img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/lithos_2.png" alt="Lithos DEX Database Sale Claim Lists 173,146 Wallet Addresses and 50,239 IP Addresses" loading="lazy" width="1600" height="1313"></span></a>
+  </div><figcaption class="shot-caption">The supplied captures show the Lithos sale claim, record counts, country and wallet-provider distributions, JSONL sample records, sample mirrors, pricing terms and actor contact identifiers. Direct sample mirrors and individual wallet/IP/user values are not reproduced here.</figcaption></figure>
+</section>
+<section class="card pane span-2 ioc-section" aria-label="IOCs and identifiers">
+  <h3>IOCs &amp; identifiers</h3><p class="ioc-intro">Identifiers directly visible or supported by the supplied material. These support correlation and do not independently verify the dataset claim.</p>
+  <table class="ioc-table"><thead><tr><th>Type</th><th>Identifier</th><th>Source</th></tr></thead><tbody>
+    <tr><th>Actor handle</th><td><code class="ioc-value">ChimeraZ</code></td><td>Screenshots 1&#x2013;2</td></tr>
+    <tr><th>Telegram</th><td><code class="ioc-value">@chimeradbs</code></td><td>Screenshot 2</td></tr>
+    <tr><th>XMPP</th><td><code class="ioc-value">chimeraz@xmpp.is</code></td><td>Screenshot 2</td></tr>
+    <tr><th>Named organization domain</th><td><code class="ioc-value">lithos[.]to</code></td><td>Screenshots 1&#x2013;2</td></tr>
+  </tbody></table>
+  <p class="ioc-note">The organization domain identifies the entity named in the claim, not malicious infrastructure. Individual wallet addresses, IP addresses, usernames and sample values shown in the source material are intentionally not reproduced here.</p>
+</section>
+<section class="card pane c-blue span-2 techniques">
+  <h3>Mapped techniques</h3><p class="ttp-note"><strong>Claimed</strong> identifies behavior explicitly described by the actor. <strong>Inferred</strong> identifies an analytical mapping supported by the supplied material. Neither label means the activity has been independently verified.</p>
+  <ul class="ttps"><li><span class="tac">Collection</span><a class="tid" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">T1213.006</a><a class="tname" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">Data from Information Repositories: Databases</a><span class="tsrc">Inferred</span><span class="tevi">The listing presents a structured JSONL database containing account, wallet, social and network metadata. The supplied material does not disclose how the data was obtained or independently establish unauthorized access to Lithos systems.</span></li></ul>
+</section>
+<section class="card pane c-gold impact"><h3>Potential impact</h3><p class="prose">If authentic, the claimed dataset could link <strong>wallet addresses, usernames, names, IP addresses, country information and wallet-provider metadata</strong> across a large population of DEX users. That combination could support user profiling, targeted phishing, wallet-focused social engineering, deanonymization attempts or other privacy-related abuse.</p></section>
+<section class="card pane c-red status-card verification"><h3>Status <span class="status-badge"><span class="dot"></span>Unverified</span></h3><p class="prose">Dark Web Informer has <strong>not independently verified</strong> the dataset&apos;s authenticity, source, completeness, 173,146-line count, wallet, username, name or IP totals, sample contents or current availability. The supplied screenshots document the listing and visible samples, not independent confirmation of the underlying data.</p></section>
+</div>
+<div class="cta pane banner-placeholder" data-ad="subscription"><p>Want everything on this threat? <strong>Paid subscribers</strong> get the full unredacted claim details and more. After subscribing, check out the <a href="https://darkwebinformer.com/threat-feed/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=lithos-data-leak-2026-11-10&amp;utm_content=threat-feed" target="_blank" rel="noopener noreferrer" class="md-link">threat feed</a> and search there for this alert.</p><a class="cta-btn" href="https://darkwebinformer.com/pricing?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=lithos-data-leak-2026-11-10&amp;utm_content=pricing-button" target="_blank" rel="noopener noreferrer">View pricing &#x2192;</a></div>
+</article>
+<p class="foot"><a href="https://darkwebinformer.com/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=lithos-data-leak-2026-11-10&amp;utm_content=footer" target="_blank" rel="noopener noreferrer" class="foot-link">Dark Web Informer</a></p>
+</div>
+<!--kg-card-end: html-->
+]]></content:encoded></item><item><title><![CDATA[Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data]]></title><description><![CDATA[An actor using the handle "ChimeraZ" claims to have leaked a database associated with Adems14, a company based in Carpiquet, Normandy, specializing in heating, air conditioning and technical maintenance.]]></description><link>https://darkwebinformer.com/adems14-data-leak-claim-lists-100-826-records-covering-36-628-people-and-property-service-data/</link><guid isPermaLink="false">6af224fcccc9a20001fa8914</guid><category><![CDATA[Leaks]]></category><dc:creator><![CDATA[Dark Web Informer]]></dc:creator><pubDate>Mon, 09 Nov 2026 19:57:27 GMT</pubDate><media:content url="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/adems14_france_2.png" medium="image"/><content:encoded><![CDATA[
+<!--kg-card-begin: html-->
+<div class="dwi-root" data-design="spectral" data-subscription-state="pending">
+<article class="shell">
+
+<header class="hero pane">
+  <div class="eyebrow">
+    <span class="pill key"><span class="dot"></span>Data Exposure Report</span>
+    <span class="pill country-badge"><img src="https://flagcdn.com/w20/fr.png" srcset="https://flagcdn.com/w40/fr.png 2x" width="20" height="15" alt="Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data">France</span>
+    <span class="pill warn">Heating &amp; Maintenance</span>
+    <span class="pill warn">Customer &amp; Property Data</span>
+    <span class="pill">Leak Claim</span>
+    <span class="pill verification-badge"><span class="dot" aria-hidden="true"></span>Unverified</span>
+  </div>
+
+  <h2 class="hl">Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data</h2>
+
+  <div class="kpis" aria-label="Key listing details">
+    <div class="kpi pane"><span class="label">Claimed lines</span><span class="value">100,826</span></div>
+    <div class="kpi pane"><span class="label">Claimed people</span><span class="value">36,628</span></div>
+    <div class="kpi pane"><span class="label">Claimed size</span><span class="value">67 MB</span></div>
+    <div class="kpi pane"><span class="label">Format</span><span class="value" style="font-size:22px">JSONL</span></div>
+  </div>
+
+  <div class="sev pane" style="--severity:86%" role="img" aria-label="Potential severity if the claim is accurate: high">
+    <span class="lbl">Severity</span><span class="track"><span class="fill"></span></span><span class="val">HIGH</span>
+  </div>
+</header>
+
+<section class="summary pane" aria-label="Report overview">
+  <h3 class="section-label">Overview</h3>
+  <img src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/11/adems14_france_2.png" alt="Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data"><p class="lede">An actor using the handle <strong>&quot;ChimeraZ&quot;</strong> claims to have leaked a <strong>database associated with Adems14</strong>, a company based in Carpiquet, Normandy, specializing in heating, air conditioning and technical maintenance.</p>
+  <p class="lede">The listing advertises <strong>100,826 lines</strong> covering <strong>36,628 people</strong> in approximately <strong>67 MB of JSONL data</strong>. Three datasets are shown: <strong>54K intervention records</strong>, <strong>43K housing/property records</strong> and <strong>2K site records</strong>. The visible samples include service-visit details, housing contact information, addresses, email addresses, telephone fields, client references and building/site metadata. <strong>The dataset, its source, the stated counts and current availability have not been independently verified.</strong></p>
+</section>
+
+<div class="grid">
+
+<section class="card pane c-blue post-details">
+  <h3>Post details</h3>
+  <div class="details">
+    <div class="detail"><span class="k">Organization</span><span class="v">Adems14</span></div>
+    <div class="detail"><span class="k">Country</span><span class="v"><img src="https://flagcdn.com/w20/fr.png" srcset="https://flagcdn.com/w40/fr.png 2x" width="20" height="15" alt="Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data" style="display:inline-block;vertical-align:-2px;margin-right:6px">France</span></div>
+    <div class="detail"><span class="k">Location described</span><span class="v">Carpiquet, Normandy</span></div>
+    <div class="detail"><span class="k">Sector</span><span class="v">Heating, air conditioning &amp; technical maintenance</span></div>
+    <div class="detail"><span class="k">Actor</span><span class="v">&quot;ChimeraZ&quot;</span></div>
+    <div class="detail"><span class="k">Claimed lines</span><span class="v">100,826</span></div>
+    <div class="detail"><span class="k">Claimed people</span><span class="v">36,628</span></div>
+    <div class="detail"><span class="k">Format / size</span><span class="v">JSONL / 67 MB</span></div>
+  </div>
+</section>
+
+<section class="card pane c-rose post-claims">
+  <h3>What the post claims</h3>
+  <ul class="chips">
+    <li>100,826 total lines</li>
+    <li>36,628 people</li>
+    <li>67 MB JSONL dataset</li>
+    <li>54K interventions.jsonl records</li>
+    <li>43K logements.jsonl records</li>
+    <li>2K sites.jsonl records</li>
+    <li>Service intervention dates and statuses</li>
+    <li>Client-agreement and appointment metadata</li>
+    <li>Housing / property records</li>
+    <li>Names and contact information</li>
+    <li>Email addresses and phone fields</li>
+    <li>Street addresses and postal codes</li>
+    <li>Building / site names</li>
+    <li>Heating and energy-type fields</li>
+    <li>Multiple download mirrors provided</li>
+  </ul>
+  <p class="prose" style="margin-top:26px">The visible samples contain direct customer names, email addresses, phone numbers and addresses. Those personal values are not transcribed in this report.</p>
+</section>
+
+<aside class="sponsored-block" data-ad="whiteintel" aria-label="Sponsored">
+  <div class="sponsored-label">Sponsored</div>
+  <a class="adbanner banner-placeholder" style="--banner-ratio:1200 / 200" href="https://whiteintel.io/?utm_source=darkwebinformer.com&amp;utm_medium=referral&amp;utm_campaign=whiteintel" target="_blank" rel="nofollow noopener sponsored" referrerpolicy="origin">
+    <img referrerpolicy="no-referrer" src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/2026/08/whiteintel_io_banner.jpg" alt="Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data" loading="lazy" decoding="async" width="800" height="151">
+  </a>
+</aside>
+
+<section class="card pane c-violet span-2 evidence">
+  <h3>Screenshots</h3>
+  <figure>
+    <div class="shots">
+      <a class="shot" style="--shot-ratio:1600 / 1080" href="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/adems14_france.png" target="_blank" rel="noopener noreferrer">
+        <span class="shot-meta"><span class="cap">Screenshot 1</span><span class="cap red">Source screenshot</span></span>
+        <span class="shot-image"><img referrerpolicy="no-referrer" src="https://storage.ghost.io/c/6b/16/6b16ac9c-cd67-432f-b0f3-bbec941084ff/content/images/size/w1304/format/webp/2026/11/adems14_france.png" alt="Adems14 Data Leak Claim Lists 100,826 Records Covering 36,628 People and Property Service Data" loading="lazy" decoding="async"><span class="shot-expand" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3h7v7M21 3l-8 8M10 21H3v-7m0 7 8-8"/></svg></span></span>
+      </a>
+    </div>
+    <figcaption class="shot-caption">The supplied capture shows the Adems14 claim, the stated line, person, size and format figures, samples from intervention, housing and site datasets, download mirrors and actor contact identifiers. Personal sample values and direct download mirrors are not reproduced here.</figcaption>
+  </figure>
+</section>
+
+<section class="card pane span-2 ioc-section" aria-label="IOCs and identifiers">
+  <h3>IOCs &amp; identifiers</h3>
+  <p class="ioc-intro">Identifiers directly visible or supported by the supplied material. These support correlation and do not independently verify the dataset claim.</p>
+  <table class="ioc-table">
+    <thead><tr><th>Type</th><th>Identifier</th><th>Source</th></tr></thead>
+    <tbody>
+      <tr><th>Actor handle</th><td><code class="ioc-value">ChimeraZ</code></td><td>Screenshot 1</td></tr>
+      <tr><th>Telegram</th><td><code class="ioc-value">@chimeradbs</code></td><td>Screenshot 1</td></tr>
+      <tr><th>XMPP</th><td><code class="ioc-value">chimeraz@xmpp.is</code></td><td>Screenshot 1</td></tr>
+      <tr><th>Named organization domain</th><td><code class="ioc-value">adems14[.]fr</code></td><td>Screenshot 1</td></tr>
+    </tbody>
+  </table>
+  <p class="ioc-note">The organization domain identifies the entity named in the claim, not malicious infrastructure. No malware hash, Tox ID, Session ID or attacker-controlled IP address is visible in the supplied screenshot. Direct download mirrors and personal identifiers shown in the source material are intentionally not reproduced here.</p>
+</section>
+
+<section class="card pane c-blue span-2 techniques">
+  <h3>Mapped techniques</h3>
+  <p class="ttp-note"><strong>Claimed</strong> identifies behavior explicitly described by the actor. <strong>Inferred</strong> identifies an analytical mapping supported by the supplied material. Neither label means the activity has been independently verified.</p>
+  <ul class="ttps">
+    <li>
+      <span class="tac">Collection</span>
+      <a class="tid" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">T1213.006</a>
+      <a class="tname" href="https://attack.mitre.org/techniques/T1213/006/" target="_blank" rel="noopener noreferrer">Data from Information Repositories: Databases</a>
+      <span class="tsrc">Inferred</span>
+      <span class="tevi">The listing presents multiple structured JSONL datasets containing intervention, customer, property and site information. The supplied material does not disclose how the data was obtained or independently establish unauthorized access to Adems14 systems.</span>
+    </li>
+  </ul>
+</section>
+
+<section class="card pane c-gold impact">
+  <h3>Potential impact</h3>
+  <p class="prose">If authentic, the claimed dataset could expose <strong>customer names, email addresses, phone numbers, residential addresses, property records and service-intervention history</strong>. That combination could support targeted phishing, impersonation, social engineering, property-related profiling or other privacy abuse.</p>
+</section>
+
+<section class="card pane c-red status-card verification">
+  <h3>Status <span class="status-badge"><span class="dot"></span>Unverified</span></h3>
+  <p class="prose">Dark Web Informer has <strong>not independently verified</strong> the dataset&apos;s authenticity, source, completeness, 100,826-line count, 36,628-person count, 67 MB size, sample contents or current availability. The supplied screenshot documents the listing and visible samples, not independent confirmation of the underlying data.</p>
+</section>
+
+</div>
+
+<div class="cta pane banner-placeholder" data-ad="subscription">
+  <p>Want everything on this threat? <strong>Paid subscribers</strong> get the full unredacted claim details and more. After subscribing, check out the <a href="https://darkwebinformer.com/threat-feed/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=adems14-data-leak-2026-11-09&amp;utm_content=threat-feed" target="_blank" rel="noopener noreferrer" class="md-link">threat feed</a> and search there for this alert.</p>
+  <a class="cta-btn" href="https://darkwebinformer.com/pricing?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=adems14-data-leak-2026-11-09&amp;utm_content=pricing-button" target="_blank" rel="noopener noreferrer">View pricing &#x2192;</a>
+</div>
+
+</article>
+<p class="foot"><a href="https://darkwebinformer.com/?utm_source=alert&amp;utm_medium=card&amp;utm_campaign=adems14-data-leak-2026-11-09&amp;utm_content=footer" target="_blank" rel="noopener noreferrer" class="foot-link">Dark Web Informer</a></p>
+</div>
+<!--kg-card-end: html-->
+]]></content:encoded></item>
+</channel>
+</rss>

@@ -1,0 +1,41 @@
+# TechCrunch OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  techcrunch:
+    build: .
+    container_name: opencti-connector-techcrunch
+    volumes:
+      # Shared Crucible classifier helper, read-only, at /microservices.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=TechCrunch
+      - CONNECTOR_SCOPE=techcrunch
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service ---
+      - RENDER_SERVICE_URL=http://pdf-renderer:8080/render
+      - RENDER_TIMEOUT=120
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - TECHCRUNCH_FEED_URL=https://techcrunch.com/feed/
+      - TECHCRUNCH_POLL_INTERVAL=900
+      - TECHCRUNCH_REQUEST_DELAY=3
+      - TECHCRUNCH_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - TECHCRUNCH_RENDER_RETRIES=3
+      - TECHCRUNCH_CONFIDENCE=50
+      - TECHCRUNCH_REPORT_TYPE=open-source-reporting
+      - TECHCRUNCH_TLP=TLP:CLEAR
+      - TECHCRUNCH_AUTHOR_NAME=TechCrunch
+    restart: always

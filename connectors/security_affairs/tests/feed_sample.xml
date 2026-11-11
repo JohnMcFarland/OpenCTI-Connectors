@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Security Affairs</title>
+	<atom:link href="https://securityaffairs.com/feed" rel="self" type="application/rss+xml" />
+	<link>https://securityaffairs.com/</link>
+	<description>Read, think, share … Security is everyone&#039;s responsibility</description>
+	<lastBuildDate>Wed, 11 Nov 2026 10:42:38 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+<site xmlns="com-wordpress:feed-additions:1">29506073</site>	<item>
+		<title>Hackers Advertise a $1,000 Gmail Tool That Allegedly Survives Password Resets</title>
+		<link>https://securityaffairs.com/202853/malware/hackers-advertise-a-1000-gmail-tool-that-allegedly-survives-password-resets.html</link>
+		
+		<dc:creator><![CDATA[Pierluigi Paganini]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 10:42:36 +0000</pubDate>
+				<category><![CDATA[Breaking News]]></category>
+		<category><![CDATA[Cyber Crime]]></category>
+		<category><![CDATA[Hacking]]></category>
+		<category><![CDATA[Malware]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[Cybercrime]]></category>
+		<category><![CDATA[Gmail]]></category>
+		<category><![CDATA[hacking news]]></category>
+		<category><![CDATA[information security news]]></category>
+		<category><![CDATA[IT Information Security]]></category>
+		<category><![CDATA[malware]]></category>
+		<category><![CDATA[Pierluigi Paganini]]></category>
+		<category><![CDATA[Remus Stealer]]></category>
+		<category><![CDATA[Security Affairs]]></category>
+		<category><![CDATA[Security News]]></category>
+		<guid isPermaLink="false">https://securityaffairs.com/?p=202853</guid>
+
+					<description><![CDATA[Hackers advertise a $1,000-a-month tool claiming persistent Gmail access after password resets, but its effectiveness remains unverified. A developer of hacking tools is selling a $1,000 per month feature that allegedly gives criminals continuous access to Gmail inboxes. The cybersecurity firm Hudson Rock reports that the tool can keep reading a victim’s mailbox after a [&#8230;]]]></description>
+										<content:encoded><![CDATA[<div style="margin-top: 0px; margin-bottom: 0px;" class="sharethis-inline-share-buttons" ></div>
+<h2 class="wp-block-heading">Hackers advertise a $1,000-a-month tool claiming persistent Gmail access after password resets, but its effectiveness remains unverified.</h2>
+
+
+
+<p class="wp-block-paragraph">A developer of hacking tools is selling a $1,000 per month feature that allegedly gives criminals continuous access to Gmail inboxes. The cybersecurity firm Hudson Rock reports that the tool can keep reading a victim’s mailbox after a password change, after the browser closes and after sessions are revoked. </p>
+
+
+
+<p class="wp-block-paragraph"><em>&#8220;Remus Stealer is advertising a way for criminals to open a compromised Gmail inbox directly from a stolen-device record.&#8221; reads the <a href="https://www.infostealers.com/article/remus-stealer-markets-persistent-gmail-access-hudson-rock-investigates/">report</a> published by cybersecurity firm Hudson Rock. &#8220;Its latest pitch goes further: the operator claims access continues even after the victim changes their password or revokes sessions.&#8221;</em></p>
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-20.png?ssl=1"><img data-recalc-dims="1" fetchpriority="high" decoding="async" width="565" height="196" src="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-20.png?resize=565%2C196&#038;ssl=1" alt="" class="wp-image-202864" srcset="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-20.png?w=565&amp;ssl=1 565w, https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-20.png?resize=300%2C104&amp;ssl=1 300w" sizes="(max-width: 565px) 100vw, 565px" /></a></figure>
+</div>
+
+
+<p class="wp-block-paragraph">The tool belongs to <a href="https://securityaffairs.com/tag/remus-stealer" data-type="post_tag" data-id="17591">Remus Stealer</a>, an infostealer, meaning malware that steals data from infected computers. Remus supposedly gives its operators a searchable inbox right inside a stolen-device dashboard. Hudson Rock says it spoke with the developer and with a customer who used it, and the customer supplied screenshots of messages, timestamps and a control for sharing a mailbox with other operators.</p>
+
+
+
+<p class="wp-block-paragraph">If the claims are true, the risk goes beyond a single Gmail inbox. Attackers could read password reset links and verification codes, allowing them to access other accounts linked to that email address. This makes Gmail a valuable target because many online services use it to recover accounts.</p>
+
+
+
+<p class="wp-block-paragraph"><em>&#8220;In the supplied <a href="https://forum.exploit.in/topic/277363/?do=findComment&amp;comment=1746171" target="_blank" rel="noopener">version 1.3.9 announcement</a>, Remus promotes email-code interception without collecting browser cookie files, claims that password changes and session revocation do not stop it, and advertises shareable mailbox links. The feature is listed as Enterprise-only; the <a href="https://forum.exploit.in/topic/277363/" target="_blank" rel="noopener">main sales thread</a> advertises that tier at $1,000 per month.&#8221; continues the report. &#8220;The sharing claim concerns giving other operators access to an already acquired mailbox through the service. The material does not show a victim being infected by opening one of those links.&#8221;</em></p>
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-21.png?ssl=1"><img data-recalc-dims="1" decoding="async" width="774" height="839" src="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-21.png?resize=774%2C839&#038;ssl=1" alt="" class="wp-image-202865" srcset="https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-21.png?w=774&amp;ssl=1 774w, https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-21.png?resize=277%2C300&amp;ssl=1 277w, https://i0.wp.com/securityaffairs.com/wp-content/uploads/2026/11/image-21.png?resize=768%2C832&amp;ssl=1 768w" sizes="(max-width: 774px) 100vw, 774px" /></a></figure>
+</div>
+
+
+<p class="wp-block-paragraph">It is still unclear how the tool works. Hudson Rock says Remus does not steal browser cookies, while its developer claims that changing the Gmail password does not stop access. The developer has not shared technical details. He only said that the malware interacts with browser memory, but this does not explain how it can maintain access after a password change or when active sessions are revoked.</p>
+
+
+
+<p class="wp-block-paragraph">Hudson Rock believes Remus may obtain or create an authorization token while the victim is logged into Gmail through a browser. A remote component could then use this authorization to access emails even after the malware has stopped running, as long as Google continues to accept it. Tom&#8217;s Guide <a href="https://www.tomsguide.com/computing/malware-adware/dangerous-new-gmail-exploit-lets-hackers-read-your-emails-for-a-monthly-fee-of-usd1-000-and-it-even-works-after-a-password-reset">also reports</a> that the tool can bypass Google&#8217;s anti-fraud checks and says it has contacted Google for comment.</p>
+
+
+
+<p class="wp-block-paragraph">However, other reports highlight some important uncertainties. CyberInsider says Hudson Rock has not confirmed that the tool can maintain access after a password change, nor has it established that the feature exploits a Gmail vulnerability. Hudson Rock has not conducted a controlled test to show that Remus can still access newly received emails after the victim changes their password and revokes existing sessions and third-party access. According to Cybernews, the developer describes the feature as a Gmail &#8220;zero-day&#8221;. However, this claim has not been independently reproduced.</p>
+
+
+
+<p class="wp-block-paragraph">The business side is more concrete. CyberInsider says the mailbox feature sits in an Enterprise tier at $1,000 per month, with shareable mailbox links so criminals can hand an inbox they’ve already compromised to others. The actor behind Remus Stealer offers the MaaS with three subscription tiers: Basic at $250, Pro at $500 and Enterprise at $1,000.</p>
+
+
+
+<p class="wp-block-paragraph">This kind of claim has a history. In late 2023, a developer called PRISMA <a href="https://securityaffairs.com/156723/hacking/exploit-regenerates-google-cookies.html">surfaced an exploit</a> that regenerated persistent Google cookies by manipulating a token and account ID pair, and Lumma then used it so access continued after a password reset. It’s a precedent and not proof, since Remus’ mechanism is unknown, and Hudson Rock still treats a Google password change as an essential recovery step, while saying victims should also look for other ways an attacker could keep access.</p>
+
+
+
+<p class="wp-block-paragraph">The tool is marketed to &#8220;enterprise&#8221; customers, so most users are unlikely to be targeted. It will probably be used mainly against organizations and high-profile individuals. Hudson Rock recommends that victims first disconnect and clean the infected computer before accessing their trusted accounts again. They should then change compromised passwords using a clean device and review their signed-in devices to remove suspicious sessions and third-party access.</p>
+
+
+
+<p class="wp-block-paragraph">Hudson Rock also advises users to check Gmail settings for unauthorized changes and secure any other accounts that use the compromised mailbox for password resets or verification codes. Other basic precautions remain important: watch out for phishing emails with urgent messages, spelling mistakes or suspicious sender addresses, and keep antivirus software up to date. Tom&#8217;s Guide expects Google to introduce additional Gmail protections if the tool proves as effective as its developer claims.</p>
+
+
+
+<p class="wp-block-paragraph">For now, this is a vendor&#8217;s marketing claim supported by customer screenshots and Hudson Rock&#8217;s investigation, not a confirmed Gmail vulnerability. One important detail offers some reassurance: attackers must first infect the victim&#8217;s computer and compromise their mailbox before they can use the tool.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Remus is marketing an integrated mailbox-reading capability, and a customer has endorsed its claimed persistence. The most plausible broad model is reuse of access obtained or established during endpoint compromise.&#8221; concludes the report. &#8220;The evidence does not identify the mechanism or show fresh mail remaining accessible after comprehensive recovery.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Follow me on Twitter:&nbsp;</strong><a href="https://twitter.com/securityaffairs"><strong>@securityaffairs</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://www.facebook.com/sec.affairs"><strong>Facebook</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://infosec.exchange/@securityaffairs"><strong>Mastodon</strong></a><strong></strong></p>
+
+
+
+<p class="wp-block-paragraph"><a href="http://www.linkedin.com/pub/pierluigi-paganini/b/742/559"><strong>Pierluigi&nbsp;Paganini</strong></a><strong></strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>(</strong><a href="http://securityaffairs.co/wordpress/"><strong>SecurityAffairs</strong></a><strong> – hacking, Gmail)</strong></p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">202853</post-id>	</item>
+		<item>
+		<title>Microsoft November Patch Tuesday: one exploited Outlook bug and 30 wormable flaws</title>
+		<link>https://securityaffairs.com/202839/hacking/microsoft-november-patch-tuesday-one-exploited-outlook-bug-and-30-wormable-flaws.html</link>
+		
+		<dc:creator><![CDATA[Pierluigi Paganini]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 09:03:48 +0000</pubDate>
+				<category><![CDATA[Breaking News]]></category>
+		<category><![CDATA[Hacking]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[hacking news]]></category>
+		<category><![CDATA[information security news]]></category>
+		<category><![CDATA[IT Information Security]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[Outlook]]></category>
+		<category><![CDATA[Patch Tuesday]]></category>
+		<category><![CDATA[Pierluigi Paganini]]></category>
+		<category><![CDATA[Security Affairs]]></category>
+		<category><![CDATA[Security News]]></category>
+		<guid isPermaLink="false">https://securityaffairs.com/?p=202839</guid>
+
+					<description><![CDATA[Microsoft November Patch Tuesday security updates fix 1,090 flaws, including one exploited Outlook bug and 30 potentially wormable issues. Microsoft November Patch Tuesday addressed about 1,090 new vulnerabilities, which is less than the roughly 1,400 last month. Two months in a row now exceed every previous year from Microsoft, and the overall count is a [&#8230;]]]></description>
+										<content:encoded><![CDATA[<div style="margin-top: 0px; margin-bottom: 0px;" class="sharethis-inline-share-buttons" ></div>
+<h2 class="wp-block-heading">Microsoft November Patch Tuesday security updates fix 1,090 flaws, including one exploited Outlook bug and 30 potentially wormable issues.</h2>
+
+
+
+<p class="wp-block-paragraph">Microsoft November Patch Tuesday addressed about 1,090 new vulnerabilities, which is less than the roughly 1,400 last month. Two months in a row now exceed every previous year from Microsoft, and the overall count is a bit confusing, so other trackers report different totals.</p>
+
+
+
+<p class="wp-block-paragraph">The release covers Windows and its components, Office, networking and remote access, graphics, media and printing, storage and file systems, .NET and Visual Studio, security and identity, Azure and cloud, Exchange Server, Dynamics and Xbox. Only one bug is under active attack and none is publicly known. ZDI says that doesn’t mean less exploitation, only fewer zero-days, and it guesses that AI is better at reversing patches than at finding and exploiting bugs in closed-source software.</p>
+
+
+
+<p class="wp-block-paragraph">The exploited bug is <a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-124194">CVE-2026-124194</a>, an Outlook spoofing flaw, and its name undersells the impact. An attacker sends a crafted message file and talks the user into opening it, and Outlook connects to an attacker-controlled location without the usual external-content warning, which leaks the user’s NTLMv2 hash. </p>
+
+
+
+<p class="wp-block-paragraph"><em>&#8220;An unauthenticated attacker could send a specially crafted message file and convince a user to open it in an affected version of Microsoft Outlook. Opening the file could cause Outlook to connect to an attacker-controlled network location without displaying the usual external-content warning, potentially disclosing authentication information that could be used to impersonate the user. Exploitation requires network connectivity and user interaction.&#8221; reads the <a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-124194">advisory</a>. &#8220;An attacker must send a user a malicious Office file and convince them to open it.&#8221;</em></p>
+
+
+
+<p class="wp-block-paragraph">The attacker can then authenticate as that user. The Preview Pane isn’t an attack path and the CVSS score is only 6.5, but ZDI says to put it first because Microsoft marks it as exploited.</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-116928">CVE-2026-116928</a> is a Windows Search remote code execution bug reached through Exchange Server. An unauthenticated attacker emails a crafted attachment, and the bug triggers when the server indexes it automatically, so the recipient never opens anything. It’s zero-click, scores CVSS 9.8, and ZDI rates it more severe than any of the nine patches Exchange gets this month.</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-119958">CVE-2026-119958</a> hits the Windows LDAP service. An unauthenticated attacker sends crafted LDAP calls over the network, triggers an out-of-bounds write and runs code in the service context, which could be destructive on domain controllers. ZDI says to test and deploy it quickly. CVE-2026-119952, a Schannel remote code execution flaw, is marked “Exploitation More Likely”, one of only a few Critical patches with that rating, and its high attack complexity is why the score is lower.</p>
+
+
+
+<p class="wp-block-paragraph"><a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2026-119990">CVE-2026-119990</a>, an Azure OpenAI elevation of privilege bug, got a bulletin that said “Customer Action Required: Yes” and then listed nothing to do. An unauthenticated attacker could send a crafted request over the internet and reach orchestration information, change workflows or disrupt the service. Microsoft has since revised it to say no customer action is needed. A bulletin that says action required and lists none is the most relaxed urgent notice you’ll read this month.</p>
+
+
+
+<p class="wp-block-paragraph">Two more stand out for their components. CVE-2026-95962 is a use-after-free in the little-documented Windows Virtual Filtering Platform, reachable with a crafted network packet and needing no authentication or user interaction. It involves a race condition, but ZDI notes those get beaten all the time at Pwn2Own. CVE-2026-112967 is a heap overflow in the Xbox Live Networking Service with a CVSS of 9.8, and ZDI doesn’t think exploitation is likely but enjoys imagining Xbox Live exploits in the wild.</p>
+
+
+
+<p class="wp-block-paragraph">ZDI <a href="https://www.zerodayinitiative.com/blog/2026/11/10/the-november-2026-security-update-review">counts 30 wormable bugs</a> this month, down from 59 last month. Seventeen carry advisory wording about an unauthenticated attacker running code over the network with no interaction, and 13 use variant wording or have no FAQ but show the same pattern in their summaries and CVSS vectors. ZDI warns it may be wrong on some, since a few advisories are light on detail.</p>
+
+
+
+<figure class="wp-block-table"><table class="has-fixed-layout"><thead><tr><th>Component</th><th>CVEs</th></tr></thead><tbody><tr><td>Message Queuing (5)</td><td>CVE-2026-116710, 119963, 119964, 109459, 119967</td></tr><tr><td>DNS (4)</td><td>CVE-2026-81384, 96092, 96177, 88218</td></tr><tr><td>Color Management (2)</td><td>CVE-2026-96067, 96078</td></tr><tr><td>DHCP Server (2)</td><td>CVE-2026-88243, 72998</td></tr><tr><td>DirectMusic (2)</td><td>CVE-2026-95882, 95901</td></tr><tr><td>Xbox (2)</td><td>CVE-2026-112967, 66801</td></tr><tr><td>One each (13)</td><td>Exchange Server (116928), LDAP (119958), Schannel (119952), CredSSP (119962), Deployment Services (119951), IIS (119961), NAT (113862), RPC Runtime (118737), Media Foundation (96157), iSCSI (88234), Virtual Filtering Platform (95962), eSCL Scanner (95956), Modern Device Management (119945)</td></tr></tbody></table></figure>
+
+
+
+<p class="wp-block-paragraph">Network-facing services like DNS, DHCP, LDAP and Exchange deserve the earliest attention. </p>
+
+
+
+<p class="wp-block-paragraph"><em>&#8220;I may be wrong about some of these, since a few advisories are light on detail.&#8221; concludes ZDI. &#8220;As always, I recommend testing and deploying these patches quickly, especially for network-facing services like DNS, DHCP, LDAP, and Exchange&#8221;</em></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Follow me on Twitter:&nbsp;</strong><a href="https://twitter.com/securityaffairs"><strong>@securityaffairs</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://www.facebook.com/sec.affairs"><strong>Facebook</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://infosec.exchange/@securityaffairs"><strong>Mastodon</strong></a><strong></strong></p>
+
+
+
+<p class="wp-block-paragraph"><a href="http://www.linkedin.com/pub/pierluigi-paganini/b/742/559"><strong>Pierluigi&nbsp;Paganini</strong></a><strong></strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>(</strong><a href="http://securityaffairs.co/wordpress/"><strong>SecurityAffairs</strong></a><strong> – hacking, Patch Tuesday)</strong></p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">202839</post-id>	</item>
+		<item>
+		<title>U.S. CISA adds IBM, SignalWire FreeSwitch, OpenSSH, and GPUStack flaws to its Known Exploited Vulnerabilities catalog</title>
+		<link>https://securityaffairs.com/202813/hacking/u-s-cisa-adds-ibm-signalwire-freeswitch-openssh-and-gpustack-flaws-to-its-known-exploited-vulnerabilities-catalog.html</link>
+		
+		<dc:creator><![CDATA[Pierluigi Paganini]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 21:31:24 +0000</pubDate>
+				<category><![CDATA[Breaking News]]></category>
+		<category><![CDATA[Hacking]]></category>
+		<category><![CDATA[Security]]></category>
+		<category><![CDATA[CISA]]></category>
+		<category><![CDATA[hacking news]]></category>
+		<category><![CDATA[information security news]]></category>
+		<category><![CDATA[IT Information Security]]></category>
+		<category><![CDATA[Known Exploited Vulnerabilities Catalog]]></category>
+		<category><![CDATA[Pierluigi Paganini]]></category>
+		<category><![CDATA[Security Affairs]]></category>
+		<category><![CDATA[Security News]]></category>
+		<guid isPermaLink="false">https://securityaffairs.com/?p=202813</guid>
+
+					<description><![CDATA[U.S. Cybersecurity and Infrastructure Security Agency (CISA) adds IBM, SignalWire FreeSwitch, OpenSSH, and GPUStack flaws to its Known Exploited Vulnerabilities catalog. The U.S. Cybersecurity and Infrastructure Security Agency (CISA) added IBM, SignalWire FreeSwitch, OpenSSH, and GPUStack vulnerabilities to its Known Exploited Vulnerabilities (KEV) catalog: Below are the flaws added to the catalog: The first issue added to the catalog, [&#8230;]]]></description>
+										<content:encoded><![CDATA[<div style="margin-top: 0px; margin-bottom: 0px;" class="sharethis-inline-share-buttons" ></div>
+<h2 class="wp-block-heading">U.S. Cybersecurity and Infrastructure Security Agency (CISA) adds IBM, SignalWire FreeSwitch, OpenSSH, and GPUStack flaws to its Known Exploited Vulnerabilities catalog.</h2>
+
+
+
+<p class="wp-block-paragraph">The U.S. Cybersecurity and Infrastructure Security Agency (CISA) <a href="https://www.cisa.gov/news-events/alerts/2026/11/09/cisa-adds-four-known-exploited-vulnerabilities-catalog">added</a> IBM, SignalWire FreeSwitch, OpenSSH, and GPUStack vulnerabilities to its <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">Known Exploited Vulnerabilities (KEV) catalog</a>:</p>
+
+
+
+<p class="wp-block-paragraph">Below are the flaws added to the catalog:</p>
+
+
+
+<ul class="wp-block-list">
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-102895" target="_blank" rel="noopener"><u>CVE-2026-102895</u></a> GPUStack Improper Authentication Vulnerability </li>
+
+
+
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-116779" target="_blank" rel="noopener"><u>CVE-2026-116779</u></a> SignalWire FreeSwitch Code Injection Vulnerability </li>
+
+
+
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-123158" target="_blank" rel="noopener"><u>CVE-2026-123158</u></a> OpenBSD OpenSSH Unexpected Status Code or Return Value Vulnerability </li>
+
+
+
+<li><a href="https://www.cve.org/CVERecord?id=CVE-2026-123218" target="_blank" rel="noopener"><u>CVE-2026-123218</u></a> IBM Aspera Faspex Incorrect Authorization Vulnerability </li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">The first issue added to the catalog, <a href="https://www.cve.org/CVERecord?id=CVE-2026-102895">CVE-2026-102895</a> (CVSS score of 9.8), is an improper authentication vulnerability affecting GPUStack, an open-source platform used to manage GPU clusters and AI model deployments. The flaw allows remote, unauthenticated attackers to bypass authentication and obtain administrator privileges by making requests appear to originate from the local system. Successful exploitation can expose sensitive information, create persistent administrator API keys, modify configurations and potentially execute arbitrary code. Exploitation has been observed in the wild against a GPUStack 2.1.1 deployment. Security researcher Javier Sixto <a href="https://www.tenable.com/cve/CVE-2026-102895">reported</a> the in-the-wild exploitation, but no specific threat group has been identified. The issue affects versions before 2.2.0. </p>
+
+
+
+<p class="wp-block-paragraph">The second issue, <a href="https://www.cve.org/CVERecord?id=CVE-2026-116779">CVE-2026-116779</a> (CVSS score of 9.8), is a code injection vulnerability in SignalWire FreeSWITCH, an open-source communications platform. The flaw allows attackers to send specially crafted SIP MESSAGE requests and abuse the API chat protocol to execute FreeSWITCH API commands. Depending on the configuration, this can expose credentials and configuration data, manipulate telephone calls and execute operating system commands with the privileges of the FreeSWITCH process. SignalWire <a href="https://github.com/SignalWire/freeswitch/security/advisories/GHSA-mg63-h38w-8p9p?utm_source=chatgpt.com">confirmed</a> that exploitation has been observed in the wild. The vulnerability was added to CISA&#8217;s KEV catalog on November 9, 2026, but no information identifying the attackers or a specific campaign has been disclosed. FreeSWITCH versions before 1.11.3 are affected. </p>
+
+
+
+<p class="wp-block-paragraph">The third issue, <a href="https://www.cve.org/CVERecord?id=CVE-2026-123158">CVE-2026-123158</a> (CVSS score of 8.1), is an authentication bypass vulnerability affecting OpenSSH. Under specific conditions, when OpenSSH runs on Linux systems using the musl C library without Pluggable Authentication Modules (PAM), the SSH server may incorrectly interpret password input as a password hash. A remote, unauthenticated attacker can exploit the flaw by submitting a specially crafted password to bypass authentication and access affected accounts. CISA added the vulnerability to its KEV catalog on November 6, 2026, indicating that <a href="https://access.redhat.com/security/cve/cve-2026-123158">exploitation has been observed</a>. However, no specific threat actor or attack campaign has been publicly identified. OpenSSH versions before 10.6p2 are affected. </p>
+
+
+
+<p class="wp-block-paragraph">The fourth issue, <a href="https://www.cve.org/CVERecord?id=CVE-2026-123218">CVE-2026-123218</a> (CVSS score of 9.8), is an incorrect authorization vulnerability affecting IBM Aspera Faspex 5. It allows an authenticated user to craft a specific message that bypasses authorization checks and potentially gain full administrative privileges. Successful exploitation could give attackers access to sensitive information and allow them to modify or disrupt the affected system. IBM disclosed the vulnerability on November 7, 2026, and released a fix in Aspera Faspex 5.0.19 PL1. I found no public confirmation of exploitation in the wild or information identifying attackers at the time of writing. Versions 5.0.0 through 5.0.19 are affected. </p>
+
+
+
+<p class="wp-block-paragraph">According to&nbsp;<a href="https://cyber.dhs.gov/bod/22-01/" target="_blank" rel="noreferrer noopener">Binding Operational Directive (BOD) 22-01: Reducing the Significant Risk of Known Exploited Vulnerabilities</a>, FCEB agencies have to address the identified vulnerabilities by the due date to protect their networks against attacks exploiting the flaws in the catalog.</p>
+
+
+
+<p class="wp-block-paragraph">Experts also recommend that private organizations review the&nbsp;<a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog" target="_blank" rel="noreferrer noopener">Catalog</a>&nbsp;and address the vulnerabilities in their infrastructure.</p>
+
+
+
+<p class="wp-block-paragraph">CISA orders federal agencies to fix the two vulnerabilities by November 12, 2026.</p>
+
+
+
+<p class="wp-block-paragraph"><strong>Follow me on Twitter:&nbsp;</strong><a href="https://twitter.com/securityaffairs"><strong>@securityaffairs</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://www.facebook.com/sec.affairs"><strong>Facebook</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://infosec.exchange/@securityaffairs"><strong>Mastodon</strong></a></p>
+
+
+
+<p class="wp-block-paragraph"><a href="http://www.linkedin.com/pub/pierluigi-paganini/b/742/559"><strong>Pierluigi&nbsp;Paganini</strong></a></p>
+
+
+
+<p class="wp-block-paragraph"><strong>(</strong><a href="http://securityaffairs.co/wordpress/"><strong>SecurityAffairs</strong></a><strong>&nbsp;–&nbsp;hacking,&nbsp;<a href="https://securityaffairs.com/tag/cisa">CISA</a>)</strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>Follow me on Twitter:&nbsp;</strong><a href="https://twitter.com/securityaffairs"><strong>@securityaffairs</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://www.facebook.com/sec.affairs"><strong>Facebook</strong></a><strong>&nbsp;and&nbsp;</strong><a href="https://infosec.exchange/@securityaffairs"><strong>Mastodon</strong></a></p>
+
+
+
+<p class="wp-block-paragraph"><a href="http://www.linkedin.com/pub/pierluigi-paganini/b/742/559"><strong>Pierluigi&nbsp;Paganini</strong></a><strong></strong></p>
+
+
+
+<p class="wp-block-paragraph"><strong>(</strong><a href="http://securityaffairs.co/wordpress/"><strong>SecurityAffairs</strong></a><strong> – hacking, <a href="https://securityaffairs.com/tag/cisa" data-type="post_tag" data-id="8913">CISA</a>)</strong></p>
+
+
+
+<p class="wp-block-paragraph"></p>
+]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">202813</post-id>	</item>
+</channel>
+</rss>

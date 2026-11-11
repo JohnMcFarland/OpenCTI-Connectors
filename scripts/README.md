@@ -106,3 +106,24 @@ running it:
 - Connectors that stamp `created_by` on every object (e.g. URLHaus) will leave
   pre-existing observables authored by the old identity. Remapping those is a
   larger, separate operation not covered here.
+
+## wire_crucible_classify.py
+
+Wires Crucible Collector report-type classification into the OpenCTI VM's
+`docker-compose.override.yml` for a list of connector services: sets
+`CRUCIBLE_COLLECTOR_URL` (and optionally `CRUCIBLE_CLASSIFY_TIMEOUT`) and mounts
+the shared `microservices/` package read-only at `/microservices`.
+
+- **Dry run by default.** `--apply` writes, after saving a timestamped `.bak`.
+- **Round-trip YAML** (ruamel.yaml): never string substitution. Comments and
+  key order survive; indentation is normalised to one style.
+- **Idempotent and non-destructive.** Only those keys change; services missing
+  from the file are reported and skipped. Validate afterwards with
+  `docker compose config -q`.
+
+```bash
+python3 wire_crucible_classify.py --file docker-compose.override.yml \
+    --collector-url http://<collector-host>:8004 \
+    --microservices-path ./connectors/microservices \
+    --services <service> [<service> ...]          # add --apply to write
+```
