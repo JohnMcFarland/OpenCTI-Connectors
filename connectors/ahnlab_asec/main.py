@@ -104,6 +104,7 @@ Targets pycti==6.9.13 and the classic OpenCTIConnectorHelper stack.
 
 import html
 from html.parser import HTMLParser
+import json
 import os
 import re
 import sys
@@ -111,7 +112,7 @@ import time
 import uuid
 from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urljoin, urlparse, urlunparse
 from xml.etree import ElementTree
 
 import requests
@@ -188,6 +189,22 @@ SLUG_FROM_ID = True
 BYLINE_AUTHOR = False
 NO_CONTENT_IS_TRANSIENT = False
 
+# Discovery: "feed" (RSS 2.0 / Atom), "sitemap" (XML sitemap or sitemap
+# index), "listing" (article links matched on an HTML listing page) or "json"
+# (a JSON API). Items found without a title or date get them from the
+# article page itself (see _page_meta).
+DISCOVERY = "feed"
+DISCOVERY_CONFIG = {}
+# Hosts whose feed links are redirectors: each link is resolved once (HEAD,
+# no body) to the real article URL, which is what the Report cites.
+RESOLVE_REDIRECT_HOSTS = set()
+# Optional selector of an element whose text carries the article date, used
+# only when the page has no machine-readable date.
+DATE_TEXT_SELECTOR = None
+# At most this many article pages are fetched per poll only to learn an
+# item's date or title; the rest wait for the next poll.
+MAX_PAGE_PROBES = 50
+
 # Chrome inside (or around) the container that is not part of the story.
 HIDE_SELECTORS = [
     ".CONTENT_AD_PLACE",                 # AhnLab TIP subscription CTA
@@ -239,9 +256,10 @@ def _slug_from_url(url):
     """Return a filesystem-safe slug from the URL path ('report' for root)."""
     segments = [s for s in urlparse(url).path.split("/") if s]
     if SLUG_FROM_ID:
-        for seg in reversed(segments):
-            if seg.isdigit():
-                return f"{FILE_PREFIX}-{seg}"
+        # The longest numeric segment is the article id (/article/5357/1 -> 5357).
+        ids = [seg for seg in segments if seg.isdigit()]
+        if ids:
+            return f"{FILE_PREFIX}-{max(ids, key=len)}"
     # Prefer the last non-numeric segment (some sites end with a numeric id).
     for seg in reversed(segments):
         if not seg.isdigit():
@@ -251,19 +269,99 @@ def _slug_from_url(url):
 
 
 def _parse_date(date_str):
-    """Parse a feed date (RFC 2822 or ISO 8601) to an ISO-8601 UTC string."""
+    """Parse a date (RFC 2822, ISO 8601, or a common written form such as
+    "Friday, October 30, 2026 - 17:15" or "11 Nov 2026 12:00:00 AM CET") to
+    an ISO-8601 UTC string."""
+    if (date_str and _LOOSE_FIRST_RE.search(date_str)
+            and not re.match(r"\s*\d{4}-", date_str)):
+        return _parse_loose_date(date_str)
     parsed = _parse_rfc2822(date_str)
     if parsed or not date_str:
         return parsed
     try:
         dt = datetime.fromisoformat(date_str.strip().replace("Z", "+00:00"))
     except ValueError:
-        return None
+        return _parse_loose_date(date_str)
     if dt.year < MIN_VALID_YEAR:
         return None
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+
+
+# Written dates the RFC 2822 parser gets wrong (it ignores AM/PM and a
+# colon offset such as +02:00): parsed by _parse_loose_date first.
+_LOOSE_FIRST_RE = re.compile(r"\d\s*[AaPp]\.?[Mm]\b|[+-]\d{2}:\d{2}\s*$")
+_MONTHS = {m: i for i, m in enumerate(
+    ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"), 1)}
+_TZ_HOURS = {"utc": 0, "gmt": 0, "z": 0, "wet": 0, "bst": 1, "cet": 1, "cest": 2,
+             "eet": 2, "eest": 3, "est": -5, "edt": -4, "cst": -6, "cdt": -5,
+             "mst": -7, "mdt": -6, "pst": -8, "pdt": -7, "aest": 10, "aedt": 11}
+_LOOSE_DATE_RE = re.compile(
+    r"(?:(?P<d1>\d{1,2})(?:st|nd|rd|th)?\s+(?P<m1>[A-Za-z]{3,9})\.?,?\s+(?P<y1>\d{4})"
+    r"|(?P<m2>[A-Za-z]{3,9})\.?\s+(?P<d2>\d{1,2})(?:st|nd|rd|th)?,?\s+(?P<y2>\d{4})"
+    r"|(?P<y3>\d{4})-(?P<o3>\d{1,2})-(?P<d3>\d{1,2}))"
+    r"(?:[\sT,@-]{0,4}(?P<h>\d{1,2}):(?P<mi>\d{2})(?::(?P<s>\d{2}))?"
+    r"\s*(?P<ap>[AaPp]\.?[Mm]\b\.?)?)?"
+    r"(?:\s*(?P<tz>[A-Za-z]{1,4}\b|[+-]\d{2}:?\d{2}))?")
+
+
+_RELATIVE_RE = re.compile(r"\b(\d+|an?|one)\s+(minute|hour|day|week)s?\s+ago\b"
+    r"|\b(yesterday|today)\b", re.IGNORECASE)
+_RELATIVE_UNITS = {"minute": 60, "hour": 3600, "day": 86400, "week": 604800}
+
+
+def _parse_relative_date(date_str, now=None):
+    """Parse "8 hours ago", "1 day ago", "yesterday" against `now` (UTC), or None."""
+    match = _RELATIVE_RE.search(date_str or "")
+    if not match:
+        return None
+    now = now or datetime.now(timezone.utc)
+    if match.group(3):
+        delta = timedelta(days=1 if match.group(3).lower() == "yesterday" else 0)
+    else:
+        count = match.group(1).lower()
+        count = 1 if count in ("a", "an", "one") else int(count)
+        delta = timedelta(seconds=count * _RELATIVE_UNITS[match.group(2).lower()])
+    return (now - delta).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+
+
+def _parse_loose_date(date_str):
+    """Parse a written date ("Nov 11, 2026 1:11pm", "30 October 2026"), or None.
+
+    Known zone abbreviations and numeric offsets are applied; anything else
+    is taken as UTC (the date is what matters for a Report).
+    """
+    for match in _LOOSE_DATE_RE.finditer(date_str or ""):
+        g = match.groupdict()
+        month_name = g["m1"] or g["m2"]
+        if month_name:
+            month = _MONTHS.get(month_name[:3].lower())
+            day, year = int(g["d1"] or g["d2"]), int(g["y1"] or g["y2"])
+        else:
+            month, day, year = int(g["o3"]), int(g["d3"]), int(g["y3"])
+        if not month:
+            continue
+        hour, minute, second = int(g["h"] or 0), int(g["mi"] or 0), int(g["s"] or 0)
+        if g["ap"]:
+            hour = hour % 12 + (12 if g["ap"][0] in "Pp" else 0)
+        offset = timedelta(0)
+        tz = (g["tz"] or "").lower()
+        if tz[:1] in "+-" and tz:
+            digits = tz[1:].replace(":", "")
+            offset = timedelta(hours=int(digits[:2]), minutes=int(digits[2:] or 0))
+            offset = offset if tz[0] == "+" else -offset
+        elif tz in _TZ_HOURS:
+            offset = timedelta(hours=_TZ_HOURS[tz])
+        try:
+            dt = datetime(year, month, day, hour, minute, second, tzinfo=timezone.utc) - offset
+        except ValueError:
+            continue
+        if dt.year < MIN_VALID_YEAR:
+            continue
+        return dt.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    # Listing/byline text such as "8 hours ago" (relative to now).
+    return _parse_relative_date(date_str)
 
 
 def _parse_rfc2822(date_str):
@@ -306,6 +404,8 @@ def _html_to_text(value, limit=MAX_DESCRIPTION_CHARS):
     text = _NON_TEXT_RE.sub(" ", value)
     text = _TAG_RE.sub(" ", text)
     text = html.unescape(text)
+    # Some feeds entity-encode their HTML twice ("&lt;p&gt;"): strip again.
+    text = _TAG_RE.sub(" ", text)
     text = _WS_RE.sub(" ", text).strip()
     text = _WP_TRAILER_RE.sub("", text)
     # Remove a trailing "read more" truncation marker.
@@ -344,52 +444,170 @@ def _matches(parts, tag, attrs):
 
 
 def _hide_parts():
-    """Simple hide selectors (id/class compounds) usable by the text parser.
+    """Simple hide selectors (tag / id / class compounds) usable by the text parser.
 
-    Sibling (~), descendant and attribute selectors are left to the renderer.
+    Sibling (~), descendant, attribute and pseudo-class selectors are left to
+    the renderer.
     """
     parts = []
     for sel in HIDE_SELECTORS:
-        if any(ch in sel for ch in "~[ >"):
+        if any(ch in sel for ch in "~[ >:+"):
             continue
         p = _selector_parts(sel)
-        if p[1] or p[2]:
+        if p[0] or p[1] or p[2]:
             parts.append(p)
     return parts
 
 
 _META_KEYS = ("og:description", "description", "twitter:description")
+_TITLE_KEYS = ("og:title", "twitter:title")
+_DATE_KEYS = ("article:published_time", "og:published_time", "datepublished",
+              "citation_publication_date", "dc.date.issued", "dcterms.issued",
+              "dc.date", "date", "pubdate", "publish-date", "article.published")
 
 
-class _MetaDescriptionParser(HTMLParser):
-    """Collect the page's description <meta> tags (any attribute order)."""
+class _PageMetaParser(HTMLParser):
+    """Collect a page's description/title/date metadata (any attribute order).
+
+    Gathers <meta> name/property/itemprop values, JSON-LD script bodies,
+    <time datetime>, the first <h1> and <title> texts, and the text of the
+    first element matching DATE_TEXT_SELECTOR.
+    """
 
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.found = {}
+        self.ld_json = []
+        self.times = []
+        self.h1 = self.title = self.date_text = ""
+        self._capture = None      # "h1" | "title" | "ld" | "date"
+        self._buf = []
+        self._date_parts = (_selector_parts(DATE_TEXT_SELECTOR)
+                            if DATE_TEXT_SELECTOR else None)
+        self._date_depth = 0
 
     def handle_starttag(self, tag, attrs):
-        if tag != "meta":
-            return
         attrs = dict(attrs)
-        key = (attrs.get("property") or attrs.get("name") or "").strip().lower()
-        if key in _META_KEYS and (attrs.get("content") or "").strip():
-            self.found.setdefault(key, attrs["content"])
+        if tag == "meta":
+            key = (attrs.get("property") or attrs.get("name")
+                   or attrs.get("itemprop") or "").strip().lower()
+            if key and (attrs.get("content") or "").strip():
+                self.found.setdefault(key, attrs["content"].strip())
+            return
+        if tag == "time" and attrs.get("datetime"):
+            self.times.append(attrs["datetime"])
+        if (attrs.get("itemprop") or "").lower() == "datepublished":
+            value = attrs.get("datetime") or attrs.get("content")
+            if value:
+                self.found.setdefault("datepublished", value)
+        if self._capture == "date" and tag not in _VOID_TAGS:
+            self._date_depth += 1
+            return
+        if self._capture is None:
+            if tag == "script" and "ld+json" in (attrs.get("type") or ""):
+                self._capture, self._buf = "ld", []
+            elif tag == "h1" and not self.h1:
+                self._capture, self._buf = "h1", []
+            elif tag == "title" and not self.title:
+                self._capture, self._buf = "title", []
+            elif (self._date_parts and not self.date_text
+                  and _matches(self._date_parts, tag, attrs)):
+                self._capture, self._buf, self._date_depth = "date", [], 1
+
+    def handle_endtag(self, tag):
+        if self._capture == "date":
+            if tag in _VOID_TAGS:
+                return
+            self._date_depth -= 1
+            if self._date_depth > 0:
+                return
+            self.date_text = " ".join(self._buf).strip()
+        elif self._capture == "ld" and tag == "script":
+            self.ld_json.append("".join(self._buf))
+        elif self._capture in ("h1", "title") and tag == self._capture:
+            setattr(self, self._capture, _WS_RE.sub(" ", " ".join(self._buf)).strip())
+        else:
+            return
+        self._capture = None
+
+    def handle_data(self, data):
+        if self._capture:
+            self._buf.append(data)
 
 
-def _meta_description(html_bytes):
-    """The page's own summary (og:description, then description), or ""."""
+def _ld_values(node, key):
+    """Every value of `key` anywhere in a parsed JSON-LD document."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if k == key and isinstance(v, str):
+                yield v
+            else:
+                yield from _ld_values(v, key)
+    elif isinstance(node, list):
+        for v in node:
+            yield from _ld_values(v, key)
+
+
+def _page_meta(html_bytes):
+    """Parsed page metadata (a _PageMetaParser), or None for an empty page."""
     if not html_bytes:
-        return ""
-    parser = _MetaDescriptionParser()
+        return None
+    parser = _PageMetaParser()
     try:
         parser.feed(html_bytes.decode("utf-8", errors="replace"))
     except Exception:  # malformed markup: use whatever was collected
         pass
+    return parser
+
+
+def _meta_description(html_bytes):
+    """The page's own summary (og:description, then description), or ""."""
+    meta = _page_meta(html_bytes)
+    if meta is None:
+        return ""
     for key in _META_KEYS:
-        if parser.found.get(key):
-            return _html_to_text(html.escape(parser.found[key]))
+        if meta.found.get(key):
+            return _html_to_text(html.escape(meta.found[key]))
     return ""
+
+
+def _page_title(html_bytes):
+    """The article's title from its page (og:title, h1, then <title>), or ""."""
+    meta = _page_meta(html_bytes)
+    if meta is None:
+        return ""
+    name = re.escape(SOURCE_NAME)
+    affix = re.compile(rf"^\s*{name}\s*[:|\u2013-]\s*|\s*[:|\u2013-]\s*{name}\s*$",
+                       re.IGNORECASE)
+    for value in [meta.found.get(k) for k in _TITLE_KEYS] + [meta.h1, meta.title]:
+        if value and value.strip():
+            # Drop a "Site Name: " prefix or " | Site Name" suffix.
+            title = html.unescape(_WS_RE.sub(" ", value)).strip()
+            return affix.sub("", title).strip() or title
+    return ""
+
+
+def _page_date(html_bytes):
+    """The article's publication date from its page (ISO-8601 UTC), or None.
+
+    Order: publication <meta> tags, JSON-LD datePublished, the first
+    <time datetime>, then the DATE_TEXT_SELECTOR element's text.
+    """
+    meta = _page_meta(html_bytes)
+    if meta is None:
+        return None
+    candidates = [meta.found.get(k) for k in _DATE_KEYS]
+    for block in meta.ld_json:
+        try:
+            candidates.extend(_ld_values(json.loads(block), "datePublished"))
+        except ValueError:
+            continue
+    candidates += meta.times[:1] + [meta.date_text]
+    for value in candidates:
+        parsed = _parse_date(value) if value else None
+        if parsed:
+            return parsed
+    return None
 
 
 class _ArticleTextParser(HTMLParser):
@@ -462,8 +680,12 @@ def _canonical_link(link):
         parsed = urlparse((link or "").strip())
     except ValueError:
         return None
-    if parsed.scheme != "https" or (parsed.hostname or "") not in ALLOWED_HOSTS:
+    host = parsed.hostname or ""
+    if parsed.scheme not in ("https", "http") or (
+            host not in ALLOWED_HOSTS and host not in RESOLVE_REDIRECT_HOSTS):
         return None
+    # Allow-listed hosts all serve https; an http:// feed link is upgraded.
+    parsed = parsed._replace(scheme="https", path=parsed.path.replace(" ", "%20"))
     # Drop utm_* pairs from the raw query; every other byte is kept as-is so
     # the URL still matches References stored by earlier runs or Feedly.
     query = "&".join(p for p in parsed.query.split("&")
@@ -509,7 +731,14 @@ def _parse_xml(xml_bytes):
     try:
         return ElementTree.fromstring(xml_bytes)
     except ElementTree.ParseError:
-        return ElementTree.fromstring(_repair_xml(xml_bytes))
+        repaired = _repair_xml(xml_bytes)
+    try:
+        return ElementTree.fromstring(repaired)
+    except ElementTree.ParseError:
+        # Last resort for a feed with invalid UTF-8 bytes (e.g. Mac-Roman
+        # dashes): replace them and drop the encoding declaration.
+        text = repaired.decode("utf-8", errors="replace")
+        return ElementTree.fromstring(re.sub(r"^<\?xml[^>]*\?>", "", text.lstrip()))
 
 
 def _out_of_scope(item, max_age_days=MAX_AGE_DAYS, now=None):
@@ -527,11 +756,20 @@ def _out_of_scope(item, max_age_days=MAX_AGE_DAYS, now=None):
     elif EXCLUDE_TITLE_RE is not None and EXCLUDE_TITLE_RE.search(item["title"]):
         return "title excluded"
     if max_age_days:
-        published = _parse_date(item.get("pub_date"))
+        # A sitemap lastmod is never earlier than publication, so an item
+        # whose lastmod is already too old was published too long ago.
+        published = _parse_date(item.get("pub_date")) or _parse_date(item.get("lastmod"))
         now = now or datetime.now(timezone.utc)
         if published and datetime.fromisoformat(published) < now - timedelta(days=max_age_days):
             return "older than max_age_days"
     return None
+
+
+def _el_text(el):
+    """All text inside an element (child markup such as <a> included), unescaped."""
+    if el is None:
+        return ""
+    return html.unescape(_WS_RE.sub(" ", "".join(el.itertext())).strip())
 
 
 def _atom_link(entry):
@@ -563,7 +801,7 @@ def _parse_atom(root):
         summary = _atom_text(entry.find(ATOM_NS + "summary"))
         content = _atom_text(entry.find(ATOM_NS + "content"))
         items.append({
-            "title": html.unescape((entry.findtext(ATOM_NS + "title") or "").strip()),
+            "title": _el_text(entry.find(ATOM_NS + "title")),
             "link": link,
             "description": _html_to_text(summary or content),
             # Published date; updated only when the feed has no published.
@@ -593,16 +831,117 @@ def _parse_feed(xml_bytes):
             continue
         seen.add(link)
         items.append({
-            "title": html.unescape((item_el.findtext("title") or "").strip()),
+            "title": _el_text(item_el.find("title")),
             "link": link,
             "description": _html_to_text(item_el.findtext("description")),
             "pub_date": (item_el.findtext("pubDate") or "").strip(),
             # Byline author for the PDF header (dc:creator, when present).
-            "creator": html.unescape((item_el.findtext(DC_CREATOR_NS) or "").strip()),
+            "creator": _el_text(item_el.find(DC_CREATOR_NS)),
             "categories": [html.unescape(c.text or "") for c in item_el.findall("category")],
             # Full text when the feed carries it; used only for classification.
             "full_text": _html_to_text(item_el.findtext(RSS_CONTENT_NS), None),
         })
+    return items
+
+
+SITEMAP_NS = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+NEWS_NS = "{http://www.google.com/schemas/sitemap-news/0.9}"
+
+
+def _new_item(link, title="", pub_date="", description="", lastmod=""):
+    """An item dict as the feed parser makes them (no categories/full text)."""
+    return {"title": title, "link": link, "description": description,
+            "pub_date": pub_date, "lastmod": lastmod, "creator": "",
+            "categories": [], "full_text": ""}
+
+
+def _parse_sitemap(xml_bytes):
+    """Parse a sitemap: ("index", [(loc, lastmod)]) or ("urlset", [items]).
+
+    Article URLs are filtered by DISCOVERY_CONFIG["url_re"] when set; a
+    news-sitemap publication date becomes the item's pub_date.
+    """
+    root = _parse_xml(xml_bytes)
+    if root.tag == SITEMAP_NS + "sitemapindex":
+        return "index", [((s.findtext(SITEMAP_NS + "loc") or "").strip(),
+                          (s.findtext(SITEMAP_NS + "lastmod") or "").strip())
+                         for s in root.iter(SITEMAP_NS + "sitemap")]
+    url_re = DISCOVERY_CONFIG.get("url_re")
+    items, seen = [], set()
+    for url_el in root.iter(SITEMAP_NS + "url"):
+        link = _canonical_link(url_el.findtext(SITEMAP_NS + "loc"))
+        if not link or link in seen or (url_re and not re.search(url_re, link)):
+            continue
+        seen.add(link)
+        items.append(_new_item(
+            link,
+            title=_el_text(url_el.find(f"{NEWS_NS}news/{NEWS_NS}title")),
+            pub_date=(url_el.findtext(f"{NEWS_NS}news/{NEWS_NS}publication_date") or "").strip(),
+            lastmod=(url_el.findtext(SITEMAP_NS + "lastmod") or "").strip()))
+    # Newest first, so the item cap keeps the recent end.
+    items.sort(key=lambda i: _parse_date(i["lastmod"] or i["pub_date"]) or "", reverse=True)
+    return "urlset", items[:DISCOVERY_CONFIG.get("max_items", 200)]
+
+
+_ANCHOR_RE = re.compile(r"<a\b[^>]*?\bhref\s*=\s*([\"'])(.*?)\1[^>]*>(.*?)</a\s*>",
+                        re.IGNORECASE | re.DOTALL)
+_GENERIC_ANCHOR_RE = re.compile(
+    r"^\W*(?:(?:read|learn|see|view|find out)(?: the)? more|more|read|continue reading|"
+    r"read (?:the )?(?:full )?(?:story|article|post)|full story|click here)\W*$", re.IGNORECASE)
+
+
+def _parse_listing(html_bytes, base_url):
+    """Article links on an HTML listing page: hrefs matching
+    DISCOVERY_CONFIG["link_re"], in page order, anchor text as the title."""
+    page = html_bytes.decode("utf-8", errors="replace")
+    link_re = re.compile(DISCOVERY_CONFIG["link_re"])
+    items, seen = [], {}
+    for match in _ANCHOR_RE.finditer(page):
+        href = html.unescape(match.group(2)).strip()
+        link = _canonical_link(urljoin(base_url, href)) if link_re.search(href) else None
+        if not link:
+            continue
+        # Cards often link an article twice (image or "Read more" plus the
+        # headline): generic or empty anchor text is no title, and a later
+        # anchor to the same article supplies it.
+        title = _html_to_text(match.group(3), 300)
+        title = "" if _GENERIC_ANCHOR_RE.match(title) else title
+        if link in seen:
+            if title and not seen[link]["title"]:
+                seen[link]["title"] = title
+            continue
+        seen[link] = _new_item(link, title=title)
+        items.append(seen[link])
+    return items[:DISCOVERY_CONFIG.get("max_items", 200)]
+
+
+def _json_path(node, path):
+    for key in [k for k in (path or "").split(".") if k]:
+        node = node.get(key) if isinstance(node, dict) else None
+    return node
+
+
+def _parse_json(raw):
+    """Items from a JSON API: records at DISCOVERY_CONFIG["items"] (dotted
+    path), fields mapped by DISCOVERY_CONFIG["title"/"date"/"description"],
+    link built from DISCOVERY_CONFIG["link"] (a str.format template over the
+    record's fields)."""
+    records = _json_path(json.loads(raw), DISCOVERY_CONFIG.get("items", ""))
+    items, seen = [], set()
+    for rec in records if isinstance(records, list) else []:
+        if not isinstance(rec, dict):
+            continue
+        try:
+            link = _canonical_link(DISCOVERY_CONFIG["link"].format(**rec))
+        except (KeyError, IndexError, ValueError):
+            continue
+        if not link or link in seen:
+            continue
+        seen.add(link)
+        field = lambda name: str(_json_path(rec, DISCOVERY_CONFIG.get(name, "")) or "")  # noqa: E731
+        items.append(_new_item(link, title=html.unescape(field("title")).strip(),
+                               pub_date=field("date").strip(),
+                               description=_html_to_text(field("description"))))
     return items
 
 
@@ -652,7 +991,9 @@ class AhnlabAsecConnector:
         self.render_timeout = setting("pdf_render_timeout", 120, number=True)
 
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": BROWSER_UA})
+        self.session.headers.update({"User-Agent": BROWSER_UA,
+                                     "Accept-Language": "en-US,en;q=0.9"})
+        self.resolved = {}             # redirector link -> article link (or None)
 
         self.author_id = None
         self.marking_id = None
@@ -720,10 +1061,8 @@ class AhnlabAsecConnector:
         failures = 0
         for feed_url in self.feed_urls:
             try:
-                resp = self.session.get(feed_url, timeout=60)
-                resp.raise_for_status()
-                parsed = _parse_feed(resp.content)
-            except ElementTree.ParseError as exc:
+                parsed = self._fetch_source(feed_url)
+            except (ElementTree.ParseError, ValueError) as exc:
                 self.helper.log_error(f"Failed to parse feed XML from {feed_url}: {exc}")
                 failures += 1
                 continue
@@ -738,7 +1077,83 @@ class AhnlabAsecConnector:
         self.fetch_complete = failures == 0
         if failures == len(self.feed_urls):
             return None
-        return items
+        return self._resolve_redirects(items)
+
+    def _get(self, url):
+        resp = self.session.get(url, timeout=60)
+        resp.raise_for_status()
+        return resp.content
+
+    def _fetch_source(self, url):
+        """Fetch one source URL and parse it with the site's discovery mode."""
+        content = self._get(url)
+        if DISCOVERY == "feed":
+            return _parse_feed(content)
+        if DISCOVERY == "listing":
+            return _parse_listing(content, url)
+        if DISCOVERY == "json":
+            return _parse_json(content)
+        kind, entries = _parse_sitemap(content)
+        if kind == "urlset":
+            return entries
+        # Sitemap index: read the newest matching child sitemaps.
+        child_re = DISCOVERY_CONFIG.get("child_re")
+        children = [(loc, mod) for loc, mod in entries
+                    if loc and (not child_re or re.search(child_re, loc))]
+        if DISCOVERY_CONFIG.get("child_order") == "lastmod":
+            children.sort(key=lambda c: _parse_date(c[1]) or "", reverse=True)
+        else:   # numbered children (post-sitemap1..N): the last ones are newest
+            children.reverse()
+        items = []
+        for loc, _mod in children[:DISCOVERY_CONFIG.get("children", 1)]:
+            kind, child_items = _parse_sitemap(self._get(loc))
+            if kind == "urlset":
+                items.extend(child_items)
+        items.sort(key=lambda i: _parse_date(i["lastmod"] or i["pub_date"]) or "", reverse=True)
+        return items[:DISCOVERY_CONFIG.get("max_items", 200)]
+
+    def _resolve_redirects(self, items):
+        """Replace redirector links (RESOLVE_REDIRECT_HOSTS) by the article URL.
+
+        One HEAD per new link (no body, redirects read from Location, at
+        most 5 hops), cached for the life of the process. Links that do not
+        resolve to an allow-listed host are dropped.
+        """
+        if not RESOLVE_REDIRECT_HOSTS:
+            return items
+        out, seen = [], set()
+        for item in items:
+            link = item["link"]
+            if (urlparse(link).hostname or "") in RESOLVE_REDIRECT_HOSTS:
+                if link not in self.resolved:
+                    self.resolved[link] = self._follow(link)
+                target = self.resolved[link]
+                if not target:
+                    continue
+                item = dict(item, link=target)
+            if item["link"] not in seen:
+                seen.add(item["link"])
+                out.append(item)
+        return out
+
+    def _follow(self, link):
+        url = link
+        try:
+            for _ in range(5):
+                if (urlparse(url).hostname or "") not in RESOLVE_REDIRECT_HOSTS:
+                    break
+                resp = self.session.head(url, timeout=30, allow_redirects=False)
+                location = resp.headers.get("Location")
+                if not location:
+                    return None
+                url = urljoin(url, location)
+        except Exception as exc:
+            self.helper.log_warning(f"Could not resolve redirect {link}: {exc}")
+            return None
+        target = _canonical_link(url)
+        if not target or (urlparse(target).hostname or "") not in ALLOWED_HOSTS:
+            return None
+        return target
 
     def _ingested_links(self, items):
         """Return the item links already ingested, by External Reference URL.
@@ -834,7 +1249,9 @@ class AhnlabAsecConnector:
         created, without a PDF, and a WARNING says why.
         """
         url = item["link"]
-        delay = max(self.request_delay, 1)
+        # Backoff starts at request_delay (a site's crawl delay) but is capped:
+        # these retries wait for the renderer, not the site.
+        delay = min(max(self.request_delay, 1), 30)
         for attempt in range(1, self.render_retries + 1):
             try:
                 pdf_bytes = self._render_live(item, published)
@@ -869,14 +1286,20 @@ class AhnlabAsecConnector:
         raise RendererUnavailable("render_retries is 0")
 
     def _fetch_page(self, url):
-        """One plain GET of the article page; b"" on any failure."""
+        """One plain GET of the article page; None on any failure."""
         try:
             resp = self.session.get(url, timeout=60)
             resp.raise_for_status()
             return resp.content or b""
         except Exception as exc:
             self.helper.log_warning(f"Article page fetch failed for {url}: {exc}")
-            return b""
+            return None
+
+    def _page_for(self, item):
+        """The item's article page, fetched at most once per ingest (None on failure)."""
+        if "_page" not in item:
+            item["_page"] = self._fetch_page(item["link"])
+        return item["_page"]
 
     # ------------------------------------------------------------------ #
     # Report creation
@@ -901,7 +1324,7 @@ class AhnlabAsecConnector:
                     and bool(os.environ.get("CRUCIBLE_COLLECTOR_URL")))
         page = b""
         if not description or (classify and not item.get("full_text")):
-            page = self._fetch_page(url)
+            page = self._page_for(item) or b""
         if not description:
             description = _meta_description(page)
 
@@ -975,6 +1398,21 @@ class AhnlabAsecConnector:
 
         # Cheap validation before any network or render work.
         published = _parse_date(item["pub_date"])
+        if not published or not item["title"]:
+            # Feed (or sitemap/listing/API) without a date or title: read
+            # them from the article page, then re-apply the scope rules.
+            fetched = "_page" not in item
+            page = self._page_for(item)
+            if fetched:
+                time.sleep(self.request_delay)   # politeness between page probes
+            if page is None:
+                return "failed"     # page fetch failed: retry next poll
+            published = published or _page_date(page)
+            item["title"] = item["title"] or _page_title(page)
+            if published:
+                reason = _out_of_scope(dict(item, pub_date=published), self.max_age_days)
+                if reason:
+                    return self._skip_permanently(url, f"{reason} (from the article page)")
         if not published:
             return self._skip_permanently(url, "no usable publication date")
 
@@ -1058,6 +1496,14 @@ class AhnlabAsecConnector:
                 f"posts may have scrolled off the feed between polls. Consider "
                 f"lowering poll_interval (now {self.poll_interval}s)."
             )
+
+        # Items that need their article page just to learn a date or title
+        # are capped per poll; the rest wait for the next poll.
+        probes = [i for i in new_items if not _parse_date(i["pub_date"]) or not i["title"]]
+        if len(probes) > MAX_PAGE_PROBES:
+            later = {i["link"] for i in probes[MAX_PAGE_PROBES:]}
+            new_items = [i for i in new_items if i["link"] not in later]
+            self.helper.log_info(f"{len(later)} undated items wait for the next poll.")
 
         # Work records are only opened when there is something to write.
         work_id = self.helper.api.work.initiate_work(

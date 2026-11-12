@@ -128,6 +128,7 @@ def connector(render_mock):
     c.prev_poll_clean = True
     c.permanent_skips = {}
     c.transient_failures = {}
+    c.resolved = {}
     c.helper = MagicMock()
     c.graph = FakeGraph()
     c.helper.api.report.list.side_effect = c.graph.report_list
@@ -146,7 +147,14 @@ SITE_SCOPE = {
     "EXCLUDE_URL_RE": main.EXCLUDE_URL_RE, "EXCLUDE_TITLE_RE": main.EXCLUDE_TITLE_RE,
     "BYLINE_AUTHOR": main.BYLINE_AUTHOR,
     "NO_CONTENT_IS_TRANSIENT": main.NO_CONTENT_IS_TRANSIENT,
+    "DISCOVERY": main.DISCOVERY, "DISCOVERY_CONFIG": main.DISCOVERY_CONFIG,
+    "RESOLVE_REDIRECT_HOSTS": main.RESOLVE_REDIRECT_HOSTS,
+    "DATE_TEXT_SELECTOR": main.DATE_TEXT_SELECTOR,
 }
+# Whether the recon sample's items carry their own date / title (some
+# sources only give them on the article page).
+SAMPLE_HAS_DATES = True
+SAMPLE_HAS_TITLES = True
 
 
 @pytest.fixture(autouse=True)
@@ -162,6 +170,10 @@ def no_sleep_or_classifier(monkeypatch):
     monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", None)
     monkeypatch.setattr(main, "BYLINE_AUTHOR", True)
     monkeypatch.setattr(main, "NO_CONTENT_IS_TRANSIENT", False)
+    monkeypatch.setattr(main, "DISCOVERY", "feed")
+    monkeypatch.setattr(main, "DISCOVERY_CONFIG", {})
+    monkeypatch.setattr(main, "RESOLVE_REDIRECT_HOSTS", set())
+    monkeypatch.setattr(main, "DATE_TEXT_SELECTOR", None)
     with patch.object(main.time, "sleep"), \
          patch.object(main, "classify_report", side_effect=lambda **kw: kw["default_types"]):
         yield
@@ -401,6 +413,10 @@ class TestSiteScope:
             "EXCLUDE_TITLE_RE": None,
             "BYLINE_AUTHOR": True,
             "NO_CONTENT_IS_TRANSIENT": False,
+            "DISCOVERY": 'feed',
+            "DISCOVERY_CONFIG": {},
+            "RESOLVE_REDIRECT_HOSTS": set(),
+            "DATE_TEXT_SELECTOR": None,
         }
 
     # Real titles seen in the live feed: (title, categories, in scope?).
@@ -409,14 +425,16 @@ class TestSiteScope:
     def test_real_titles(self, monkeypatch):
         for name, value in SITE_SCOPE.items():
             monkeypatch.setattr(main, name, value)
-        for title, cats, keep in self.SCOPE_CASES:
-            item = {"link": _link(1), "title": title, "categories": cats}
+        for case in self.SCOPE_CASES:
+            title, cats, keep = case[:3]
+            link = case[3] if len(case) > 3 else _link(1)    # real URL when the rule is URL-based
+            item = {"link": link, "title": title, "categories": cats}
             assert (main._out_of_scope(item, 0) is None) == keep, title
 
     def test_real_feed_sample_scoped_without_error(self, monkeypatch):
         for name, value in SITE_SCOPE.items():
             monkeypatch.setattr(main, name, value)
-        for item in _parse_feed(FIXTURE.read_bytes()):
+        for item in _sample_items():
             main._out_of_scope(item, 0)
 
 
@@ -424,6 +442,7 @@ class TestSiteFlags:
     def test_slug_from_id(self, monkeypatch):
         monkeypatch.setattr(main, "SLUG_FROM_ID", True)
         assert _slug_from_url(f"https://{HOST}/en/96477/") == f"{main.FILE_PREFIX}-96477"
+        assert _slug_from_url(f"https://{HOST}/article/5357/1") == f"{main.FILE_PREFIX}-5357"
         # No numeric segment: falls back to the descriptive slug.
         assert _slug_from_url(f"https://{HOST}/blog/some-post/") == "some-post"
 
@@ -468,7 +487,7 @@ class TestPureHelpers:
 
     @pytest.mark.parametrize("link,ok", [
         (f"https://{HOST}/a/b/", True),
-        (f"http://{HOST}/a/", False),
+        (f"http://{HOST}/a/", True),     # upgraded to https
         ("https://evil.example/a/", False),
         (f"https://{HOST}.evil.example/a/", False),
         ("javascript:alert(1)", False),
@@ -476,6 +495,9 @@ class TestPureHelpers:
     ])
     def test_canonical_link(self, link, ok):
         assert (_canonical_link(link) is not None) is ok
+
+    def test_canonical_link_upgrades_http_and_escapes_spaces(self):
+        assert _canonical_link(f"http://{HOST}/a b/") == f"https://{HOST}/a%20b/"
 
     def test_canonical_link_drops_fragment(self):
         assert _canonical_link(f"https://{HOST}/a/#comments") == f"https://{HOST}/a/"
@@ -488,16 +510,34 @@ class TestPureHelpers:
         assert HOST in ALLOWED_HOSTS
 
 
+def _sample_items():
+    """Parse the recon sample with the site's own discovery mode."""
+    raw = FIXTURE.read_bytes()
+    if main.DISCOVERY == "feed":
+        return _parse_feed(raw)
+    if main.DISCOVERY == "listing":
+        return main._parse_listing(raw, "https://feeds.feedburner.com/threatintelligence/pvexyqv7v0v".split(",")[0])
+    if main.DISCOVERY == "json":
+        return main._parse_json(raw)
+    kind, items = main._parse_sitemap(raw)
+    assert kind == "urlset"
+    return items
+
+
 class TestLiveFeedSample:
     """Parses a trimmed copy of the real feed captured during recon."""
 
-    def test_parses_real_feed(self):
-        items = _parse_feed(FIXTURE.read_bytes())
+    def test_parses_real_feed(self, monkeypatch):
+        for name, value in SITE_SCOPE.items():
+            monkeypatch.setattr(main, name, value)
+        items = _sample_items()
         assert len(items) >= 2
         for item in items:
-            assert item["link"].startswith(f"https://{HOST}/")
-            assert item["title"]
-            assert _parse_date(item["pub_date"]) is not None
+            host = main.urlparse(item["link"]).hostname
+            assert item["link"].startswith("https://")
+            assert host in ALLOWED_HOSTS or host in main.RESOLVE_REDIRECT_HOSTS
+            assert bool(item["title"]) or not SAMPLE_HAS_TITLES
+            assert (_parse_date(item["pub_date"]) is not None) or not SAMPLE_HAS_DATES
             assert "<" not in item["description"]
             assert len(item["description"]) <= MAX_DESCRIPTION_CHARS
 
@@ -515,6 +555,230 @@ class TestLiveFeedSample:
     def test_malformed_raises(self):
         with pytest.raises(Exception):
             _parse_feed(b"<rss><channel><item>")
+
+
+class TestDatesTitlesAndDiscovery:
+    @pytest.mark.parametrize("raw,iso", [
+        ("Tue, 11 Nov 2026 12:00:00 AM CET", "2026-11-10T23:00:00+00:00"),
+        ("Friday, October 30, 2026 - 17:15", "2026-10-30T17:15:00+00:00"),
+        ("Nov 11, 2026 1:11pm", "2026-11-11T13:11:00+00:00"),
+        ("November 11, 2026", "2026-11-11T00:00:00+00:00"),
+        ("Posted 3rd March 2026 at noon", "2026-03-03T00:00:00+00:00"),
+        ("2026-11-11 09:30 EST", "2026-11-11T14:30:00+00:00"),
+        ("Oct 2, 2026 10:00 +02:00", "2026-10-02T08:00:00+00:00"),
+        ("Somewhere 31, 2026", None),
+        ("published just now", None),
+        ("February 30, 2026", None),
+        ("", None),
+    ])
+    def test_loose_dates(self, raw, iso):
+        assert _parse_date(raw) == iso
+
+    def test_relative_dates(self):
+        now = main.datetime(2026, 11, 11, 12, 0, tzinfo=main.timezone.utc)
+        assert main._parse_relative_date("8 hours ago", now) == "2026-11-11T04:00:00+00:00"
+        assert main._parse_relative_date("an hour ago", now) == "2026-11-11T11:00:00+00:00"
+        assert main._parse_relative_date("1 day ago", now) == "2026-11-10T12:00:00+00:00"
+        assert main._parse_relative_date("2 weeks ago", now) == "2026-10-28T12:00:00+00:00"
+        assert main._parse_relative_date("Yesterday", now) == "2026-11-10T12:00:00+00:00"
+        assert main._parse_relative_date("Today", now) == "2026-11-11T12:00:00+00:00"
+        assert main._parse_relative_date("ago", now) is None
+        assert _parse_date("20 minutes ago") is not None
+
+    def test_title_with_child_markup(self):
+        xml = (f"<rss><channel><item><title>A <a href='x'>linked</a> &amp; title</title>"
+               f"<link>{_link(1)}</link></item></channel></rss>").encode()
+        assert _parse_feed(xml)[0]["title"] == "A linked & title"
+
+    def test_invalid_utf8_feed_parses(self):
+        xml = (b"<?xml version='1.0' encoding='utf-8'?><rss><channel><item>"
+               b"<title>Space \xd0 race</title><link>" + _link(1).encode()
+               + b"</link></item></channel></rss>")
+        assert _parse_feed(xml)[0]["title"].startswith("Space")
+
+    def test_page_date_sources(self, monkeypatch):
+        meta = b"<meta content='2026-11-01T10:00:00Z' property='article:published_time'>"
+        ld = (b'<script type="application/ld+json">{"@graph": [{"@type": "NewsArticle",'
+              b' "datePublished": "2026-11-02T10:00:00+00:00"}]}</script>')
+        tm = b"<p><time datetime='2026-11-03'>3 Nov</time></p>"
+        assert main._page_date(meta + ld + tm) == "2026-11-01T10:00:00+00:00"
+        assert main._page_date(ld + tm) == "2026-11-02T10:00:00+00:00"
+        assert main._page_date(tm) == "2026-11-03T00:00:00+00:00"
+        assert main._page_date(b"<p class='byline'>By X | November 4, 2026</p>") is None
+        monkeypatch.setattr(main, "DATE_TEXT_SELECTOR", ".byline")
+        assert main._page_date(
+            b"<p class='byline'>By X | <b>November 4, 2026</b></p>") == "2026-11-04T00:00:00+00:00"
+        assert main._page_date(b'<script type="application/ld+json">{bad</script>') is None
+        assert main._page_date(b"") is None
+
+    def test_page_title_sources(self):
+        assert main._page_title(b"<meta property='og:title' content='OG &amp; T'>"
+                                b"<h1>H</h1><title>T</title>") == "OG & T"
+        assert main._page_title(b"<title>T | Site</title><h1> The <i>H</i> </h1>") == "The H"
+        assert main._page_title(b"<title>Only title</title>") == "Only title"
+        assert main._page_title(b"") == ""
+        name = main.html.escape(main.SOURCE_NAME).encode()
+        assert main._page_title(b'<meta property="og:title" content="' + name + b': Real">') == "Real"
+        assert main._page_title(b"<title>Real | " + name + b"</title>") == "Real"
+        assert main._page_title(b"<title>" + name + b"</title>") == main.SOURCE_NAME
+
+    def _undated(self, connector, page, **extra):
+        connector._precheck = lambda item: None
+        connector.session.get.return_value = MagicMock(content=page, status_code=200)
+        return connector._ingest_item(dict(_item(), pub_date="", **extra))
+
+    def test_undated_item_uses_page_date(self, connector):
+        page = b"<meta property='article:published_time' content='2026-11-09T08:00:00Z'>"
+        assert self._undated(connector, page) == "created"
+        kw = connector.helper.api.report.create.call_args.kwargs
+        assert kw["published"] == "2026-11-09T08:00:00+00:00"
+        assert connector.session.get.call_count == 1      # one page fetch, reused
+
+    def test_undated_item_too_old_on_page(self, connector):
+        connector.max_age_days = 30
+        page = b"<meta property='article:published_time' content='2015-01-01T00:00:00Z'>"
+        assert self._undated(connector, page) == "skipped-permanent"
+        assert "from the article page" in connector.permanent_skips[_link(1)]
+
+    def test_undated_item_page_fetch_failure_is_transient(self, connector):
+        connector._precheck = lambda item: None
+        connector.session.get.side_effect = requests.ConnectionError("down")
+        assert connector._ingest_item(dict(_item(), pub_date="")) == "failed"
+        assert _link(1) not in connector.permanent_skips
+
+    def test_untitled_item_uses_page_title_and_rescopes(self, connector, monkeypatch):
+        connector._precheck = lambda item: None
+        connector.session.get.return_value = MagicMock(
+            content=b"<meta property='og:title' content='Webinar: join us'>", status_code=200)
+        monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", main.re.compile(r"^Webinar"))
+        assert connector._ingest_item(dict(_item(), title="")) == "skipped-permanent"
+        monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", None)
+        connector.permanent_skips.clear()
+        assert connector._ingest_item(dict(_item(), title="")) == "created"
+        assert connector.helper.api.report.create.call_args.kwargs["name"] == "Webinar: join us"
+
+    def test_page_probes_capped_per_poll(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "MAX_PAGE_PROBES", 1)
+        connector._precheck = lambda item: None
+        xml = (f"<rss><channel><item><title>a</title><link>{_link(1)}</link></item>"
+               f"<item><title>b</title><link>{_link(2)}</link></item></channel></rss>").encode()
+        page = b"<meta property='article:published_time' content='2026-11-09T08:00:00Z'>"
+        connector.session.get.side_effect = lambda url, **k: MagicMock(
+            content=xml if url == connector.feed_urls[0] else page, status_code=200)
+        connector._process()
+        assert connector.helper.api.report.create.call_count == 1
+        connector._process()
+        assert connector.helper.api.report.create.call_count == 2
+
+    def test_lastmod_age_filter(self):
+        now = main.datetime(2026, 11, 11, tzinfo=main.timezone.utc)
+        item = {"link": _link(1), "title": "", "pub_date": "", "lastmod": "2026-01-01"}
+        assert main._out_of_scope(item, 30, now) == "older than max_age_days"
+        assert main._out_of_scope(dict(item, lastmod="2026-11-10"), 30, now) is None
+
+    def test_sitemap_urlset_filtered_and_newest_first(self, monkeypatch):
+        monkeypatch.setattr(main, "DISCOVERY_CONFIG", {
+            "url_re": main.re.escape(_link(0)[:-2]), "max_items": 2})
+        sm = ("<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>"
+              f"<url><loc>{_link(1)}</loc><lastmod>2026-11-01</lastmod></url>"
+              f"<url><loc>https://{HOST}/about/</loc><lastmod>2026-11-09</lastmod></url>"
+              f"<url><loc>{_link(2)}</loc><lastmod>2026-11-05</lastmod></url>"
+              f"<url><loc>{_link(3)}</loc><lastmod>2026-10-01</lastmod></url>"
+              "</urlset>").encode()
+        kind, items = main._parse_sitemap(sm)
+        assert kind == "urlset"
+        assert [i["link"] for i in items] == [_link(2), _link(1)]
+        assert items[0]["lastmod"] == "2026-11-05" and items[0]["title"] == ""
+
+    def test_sitemap_index_reads_newest_children(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "DISCOVERY", "sitemap")
+        monkeypatch.setattr(main, "DISCOVERY_CONFIG", {"child_re": r"post-sitemap", "children": 1})
+        ns = "xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'"
+        index = (f"<sitemapindex {ns}><sitemap><loc>https://{HOST}/post-sitemap1.xml</loc></sitemap>"
+                 f"<sitemap><loc>https://{HOST}/page-sitemap.xml</loc></sitemap>"
+                 f"<sitemap><loc>https://{HOST}/post-sitemap2.xml</loc></sitemap></sitemapindex>")
+        child = f"<urlset {ns}><url><loc>{_link(7)}</loc></url></urlset>"
+        pages = {"idx": index.encode(), f"https://{HOST}/post-sitemap2.xml": child.encode()}
+        connector.session.get.side_effect = lambda url, **k: MagicMock(
+            content=pages.get(url, b"<x/>"), status_code=200)
+        items = connector._fetch_source("idx")
+        assert [i["link"] for i in items] == [_link(7)]
+
+    def test_listing_links(self, monkeypatch):
+        monkeypatch.setattr(main, "DISCOVERY_CONFIG", {"link_re": r"/news/[^/]+$"})
+        page = (b"<a href='/news/first item'>First <b>one</b></a>"
+                b"<a href=\"https://" + HOST.encode() + b"/news/second\">Second</a>"
+                b"<a href='/news/first item'>dup</a><a href='/about'>About</a>"
+                b"<a href='https://evil.example/news/x'>Evil</a>")
+        items = main._parse_listing(page, f"https://{HOST}/news/")
+        assert [i["link"] for i in items] == [f"https://{HOST}/news/first%20item",
+                                              f"https://{HOST}/news/second"]
+        assert items[0]["title"] == "First one" and items[0]["pub_date"] == ""
+
+    def test_listing_generic_anchor_text(self, monkeypatch):
+        monkeypatch.setattr(main, "DISCOVERY_CONFIG", {"link_re": r"/news/[^/]+$"})
+        page = (b"<a href='/news/a'><img src='x'></a><a href='/news/a'>Read more &raquo;</a>"
+                b"<a href='/news/a'>Real headline</a><a href='/news/a'>Later text</a>"
+                b"<a href='/news/b'>Learn more</a><a href='/news/c'>Read more about tariffs</a>")
+        items = main._parse_listing(page, f"https://{HOST}/news/")
+        assert [i["title"] for i in items] == ["Real headline", "", "Read more about tariffs"]
+
+    def test_json_items(self, monkeypatch):
+        monkeypatch.setattr(main, "DISCOVERY_CONFIG", {
+            "items": "value", "title": "Title", "date": "Published", "description": "Summary",
+            "link": f"https://{HOST}/item/{{UrlName}}"})
+        raw = ('{"value": [{"Title": "Outbreak &amp; X", "Published": "2026-11-09T10:00:00Z",'
+               ' "Summary": "<p>Text</p>", "UrlName": "2026-DON1"},'
+               ' {"Title": "no url"}, "junk"]}').encode()
+        items = main._parse_json(raw)
+        assert len(items) == 1
+        assert items[0]["link"] == f"https://{HOST}/item/2026-DON1"
+        assert items[0]["title"] == "Outbreak & X" and items[0]["description"] == "Text"
+        assert _parse_date(items[0]["pub_date"]) == "2026-11-09T10:00:00+00:00"
+
+    def test_redirect_links_resolved_once(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "RESOLVE_REDIRECT_HOSTS", {"go.example"})
+        hops = {"https://go.example/r?id=1": f"https://{HOST}/real/1/",
+                "https://go.example/r?id=2": "https://go.example/r?id=1",
+                "https://go.example/r?id=3": "https://evil.example/x"}
+        connector.session.head.side_effect = lambda url, **k: MagicMock(
+            headers={"Location": hops[url]} if url in hops else {})
+        items = [{"link": "https://go.example/r?id=1"}, {"link": "https://go.example/r?id=2"},
+                 {"link": "https://go.example/r?id=3"}, {"link": "https://go.example/r?id=9"},
+                 {"link": _link(5)}]
+        out = connector._resolve_redirects(items)
+        assert [i["link"] for i in out] == [f"https://{HOST}/real/1/", _link(5)]
+        calls = connector.session.head.call_count
+        connector._resolve_redirects(items)
+        assert connector.session.head.call_count == calls       # cached
+
+    def test_redirect_loop_dropped(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "RESOLVE_REDIRECT_HOSTS", {"go.example"})
+        connector.session.head.side_effect = lambda url, **k: MagicMock(
+            headers={"Location": url + "x"})
+        assert connector._resolve_redirects([{"link": "https://go.example/r"}]) == []
+
+    def test_double_escaped_html(self):
+        assert _html_to_text("&lt;p&gt;On &lt;b&gt;Tuesday&lt;/b&gt;&lt;/p&gt;") == "On Tuesday"
+
+    def test_tag_only_hide_selector(self, monkeypatch):
+        monkeypatch.setattr(main, "HIDE_SELECTORS", ["figure"])
+        page = ('<div class="OYL9D extra-class">' + "<p>Body</p><figure><p>Caption junk</p></figure>"
+                + '</div>').encode()
+        assert main._article_text(page) == "Body"
+
+    def test_render_backoff_capped(self, connector):
+        connector.request_delay = 420
+        connector.render_retries = 3
+        connector.render_mock.side_effect = [RendererUnavailable("busy"), RendererUnavailable("busy"), PDF]
+        assert connector._render_with_retry(_item(), "2026-11-09T00:00:00+00:00") == PDF
+        assert [c.args[0] for c in main.time.sleep.call_args_list] == [30, 60]
+
+    def test_redirect_errors_drop_the_link(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "RESOLVE_REDIRECT_HOSTS", {"go.example"})
+        connector.session.head.side_effect = requests.ConnectionError("down")
+        assert connector._resolve_redirects([{"link": "https://go.example/r?id=1"}]) == []
+        connector.helper.log_warning.assert_called()
 
 
 # --------------------------------------------------------------------------- #
@@ -854,7 +1118,7 @@ class TestClassification:
         assert "SECRET-LONG-BODY" not in kw["description"] and "content" not in kw
 
     def test_article_text_skips_hidden_chrome(self):
-        hidden = [s for s in main.HIDE_SELECTORS if not any(ch in s for ch in "~[ >")]
+        hidden = [s for s in main.HIDE_SELECTORS if not any(ch in s for ch in "~[ >:+")]
         if not hidden:
             pytest.skip("site has no simple hide selectors")
         tag, ident, classes = main._selector_parts(hidden[0])
