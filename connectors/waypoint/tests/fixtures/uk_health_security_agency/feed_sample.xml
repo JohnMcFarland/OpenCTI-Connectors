@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en-US" xmlns="http://www.w3.org/2005/Atom">
+  <id>tag:www.gov.uk,2005:/search/news-and-communications</id>
+  <link rel="alternate" type="text/html" href="https://www.gov.uk"/>
+  <link rel="self" type="application/atom+xml" href="https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-health-security-agency"/>
+  <title>News and communications from UK Health Security Agency (UKHSA)</title>
+  <updated>2026-11-10T13:37:00+00:00</updated>
+  <author>
+    <name>HM Government</name>
+  </author>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/news/ukhsa-issues-first-cold-health-alert-of-winter-202627</id>
+    <updated>2026-11-10T13:37:00+00:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/news/ukhsa-issues-first-cold-health-alert-of-winter-202627"/>
+    <title>UKHSA issues first cold-health alert of winter 2026/27</title>
+    <summary type="html">A yellow cold-health alert has been issued for the North West and West Midlands regions.</summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/news/latest-ukhsa-weekly-winter-virus-surveillance-data</id>
+    <updated>2026-11-05T14:00:05+00:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/news/latest-ukhsa-weekly-winter-virus-surveillance-data"/>
+    <title>Latest weekly winter virus surveillance data</title>
+    <summary type="html">Report monitoring respiratory viruses for the 2026/27 season. </summary>
+  </entry>
+  <entry>
+    <id>tag:www.gov.uk,2005:/government/news/ukhsa-launches-human-biomonitoring-study</id>
+    <updated>2026-11-03T10:30:04+00:00</updated>
+    <link rel="alternate" type="text/html" href="https://www.gov.uk/government/news/ukhsa-launches-human-biomonitoring-study"/>
+    <title>UKHSA launches human biomonitoring study</title>
+    <summary type="html">UKHSA is measuring PFAS and other chemicals in blood and urine samples to establish UK exposure levels and inform future health research.</summary>
+  </entry>
+</feed>

@@ -1,0 +1,814 @@
+ 
+
+<!DOCTYPE html>
+
+<html lang="EN" dir="ltr" class="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>
+        PressBriefings
+    </title>
+    <meta name="description" />
+    <meta property="og:url" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PressBriefings" />
+    <meta property="og:description" />
+    <meta property="og:image" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/Content/images/img/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/Content/images/img/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="/Content/images/img/Emblem_Colour_RGB.png" sizes="32x32" />
+ <!--   <link rel="icon" type="image/png" href="~/Content/images/img/favicon-16x16.png" sizes="16x16" />-->
+
+
+    <meta name="application-name" content="&nbsp;" />
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="/Content/images/img/mstile-144x144.png" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-465405-9"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-465405-9');
+    </script>
+        <link rel="stylesheet" href="/Content/css/css/main.css?v=1.2" />
+
+</head>
+<body>
+
+
+    <header id="header">
+
+
+<!--MAIN NAVIGATION NAVBAR - This navigation is used ONLY for devices with larger screens-->
+
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/en" aria-label="Logo">
+            <img src="/Content/images/img/English_Colour_RGB_Horizontal.png" alt="Logo" />
+        </a>
+        <div class="nav-item d-flex align-items-center text-right" data-toggle="collapse">
+            <!-- <a href="/en/GoogleSearch/SearchPosts/Pages/Default.aspx" class="icon-button" data-toggle="modal" data-target="#search-box-modal" aria-label="Search website">
+                <i class="icon-search"></i>
+            </a>-->
+            <a class="icon-button" href="/en/GoogleSearch/SearchPosts/Default.aspx" role="button"><i class="icon-search"></i></a>
+            <!-- Mobile menu toggler -->
+            <button class="navbar-toggler mobile-menu-toggler" type="button" aria-label="Toggle navigation">
+                <span></span>
+            </button>
+            <!-- Mobile menu toggler end -->
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-desktop">
+            <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a href="https://www.imo.org/en/About/Pages/Default.aspx" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About IMO</a>
+                            <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/FAQs.aspx">FAQs</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/HistoryOfIMO/Pages/Default.aspx">History of IMO</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Careers/Pages/default.aspx">Careers at IMO</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Procurement/Pages/default.aspx">Procurement</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Membership/Pages/Default.aspx">Membership</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/Structure.aspx">Structure</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/Council-candidates.aspx">Council Candidates</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Strategy/Pages/Default.aspx">Strategic Plan</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/Annual-report.aspx">Annual report</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Conventions/Pages/Default.aspx">Conventions</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/DocumentsResources.aspx">Documents and Resources</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/about/Events/Pages/Default.aspx">IMO Events</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/Affiliated-Bodies-and-Programmes.aspx">Affiliated Bodies and Programmes</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/WMUandIMLI.aspx">World Maritime University (WMU) and IMO International Maritime Law Institute (IMLI)</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Pages/Financial-Statements.aspx">Financial Statements Summary</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/IMO-Multilingualism.aspx">IMO and Multilingualism</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/Diversity-Equity-Inclusion.aspx">Diversity, Equity and Inclusion</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Pages/ContactUs.aspx">Contact Us</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="https://www.imo.org/en/MediaCentre/Pages/default.aspx" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Media Centre</a>
+                            <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/PressBriefings/Pages/default.aspx">Press Briefings</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/MeetingSummaries/Pages/default.aspx">Meeting Summaries and schedule</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/SecretaryGeneral/Pages/Default.aspx">Secretary-General</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/SecretaryGeneral/Pages/Senior-Management-Committee.aspx">​Senior Management Committee (SMC)</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/Pages/WhatsNew.aspx">What&#39;s New</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/HotTopics/Pages/Default.aspx">Hot Topics</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/MediaCentre/IMOMediaAccreditation/Pages/Default.aspx">Attending IMO Meetings</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/About/Events/Pages/default.aspx">IMO Events</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="https://www.imo.org/en/OurWork/Pages/Default.aspx" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Our Work</a>
+                            <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Safety/Pages/default.aspx">Maritime Safety</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Security/Pages/Default.aspx">Maritime Security and Piracy</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Environment/Pages/Default.aspx">Marine Environment</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Legal/Pages/Default.aspx">Legal Affairs</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/HumanElement/Pages/Default.aspx">Human Element</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Facilitation/Pages/Default.aspx">Facilitation</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/MSAS/Pages/Default.aspx">Member State Audit Scheme</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/IIIS/Pages/default.aspx">Implementation of Instruments Support</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/TechnicalCooperation/Pages/Default.aspx">Technical Cooperation</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/PartnershipsProjects/Pages/default.aspx">Partnerships and Projects</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Conferences/Pages/Default.aspx">Conferences</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/ERO/Pages/default.aspx">External Relations</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/OurWork/Circulars/Pages/default.aspx">Circulars</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="https://www.imo.org/en/publications/Pages/Home.aspx" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Publications</a>
+                            <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/IMO-ePublications.aspx">IMO ePublications</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/Distributors-default.aspx">Distributors&#39; Details</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/CatalogueAndBookCodeLists.aspx">Catalogue ＆ Code Listings</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/JustPublished.aspx">Just Published</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/FutureTitles.aspx">Future Titles</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/Flyers.aspx">Flyers</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/SupplementsAndCDs-Default.aspx">Supplements</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/PermissionRequests.aspx">Copyright and Permission Requests</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/Counterfeit-copies.aspx">Counterfeit copies</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/IMDG Code.aspx">IMDG Code</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/IMO-Vega.aspx">The IMO-Vega Database</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/FrequentlyAskedQuestions.aspx">Frequently Asked Questions (FAQ)</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/publications/Pages/CurrentPublications.aspx">Listing of current IMO publications</a>
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="https://www.imo.org/en/KnowledgeCentre/Pages/Default.aspx" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Knowledge Centre</a>
+                            <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Pages/SearchTheOnlineCatalogueSeaLibrary.aspx">Search the MKC Online Catalogue</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Pages/FindInformation.aspx">How and Where to Find IMO Information</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/IndexofIMOResolutions/Pages/Default.aspx">Index of IMO Resolutions</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Pages/CurrentAwarenessBulletin-Default.aspx">Current Awareness Bulletin</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/ConferencesMeetings/Pages/Default.aspx">Conferences and Meetings</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Pages/MaritimeFactsFigures-Default.aspx">Maritime Facts and Figures</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Resources_for_Seafarers/Pages/default.aspx">Resources for Seafarers</a>
+                                    <a class="dropdown-item" href="https://www.imo.org/en/KnowledgeCentre/Pages/ContactUs.aspx">Contacts</a>
+                            </div>
+                        </li>
+                <li class="nav-item">
+                    <a class="icon-button" href="/en/GoogleSearch/SearchPosts/Default.aspx" role="button"><i class="icon-search"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- MAIN NAVIGATION NAVBAR END -->
+<!-- TOP BAR NAVIGATION -->
+<div id="langselect" role="navigation" class="navbar-top">
+    <div class="small-nav">
+        <span><a href="/en/About/Pages/ContactUs.aspx" class="">Contact us</a></span>
+        <span><a href="/en/About/Careers/Pages/Default.aspx" class="">Careers</a></span>
+    </div>
+    <div class="small-nav language-nav">
+              <span><a href="" class="setLang" lang="en">English</a></span>
+              <span><a href="" class="setLang" lang="fr">Français</a></span>
+              <span><a href="" class="setLang" lang="es">Español</a></span>
+              <span><a href="" class="setLang" lang="ru">Русский</a></span>
+              <span><a href="" class="setLang" lang="ar">العربية</a></span>
+              <span><a href="" class="setLang" lang="zh">汉语</a></span>
+          </div> 
+    <div class="small-nav-right d-none d-sm-block">
+        <span><a href="https://webaccounts.imo.org" class="btn btn-light-blue" target="_blank">IMO WEB ACCOUNTS</a></span>
+    </div>
+</div>
+<!-- TOP BAR NAVIGATION END
+
+<script src="~/Scripts/js/vendors.js"></script>
+<script src="~/Scripts/js/theme.js"></script>-->
+
+
+    </header>
+    <section id="main">
+       
+        
+
+
+
+<div class="main-content">
+
+    <div class="container">
+
+        <div class="page-header">
+            <h1 class="article-title">Latest Press Briefings</h1>
+            <ul class="breadcrumb">
+                <li><a href="https://www.imo.org/en/">Home</a></li>
+                <li><a href="https://www.imo.org/en/mediacentre/Pages/Default.aspx">Media Centre</a></li>
+                <li><span>Latest Press Briefings</span></li>
+            </ul>
+
+        </div>
+        <!--  <div class="page-header">
+            <ul>
+                <li><a href="https://www.imo.org/en/">Archives</a></li>
+                <li><a href="https://www.imo.org/en/">Latest Press Briefings</a></li>
+            </ul>
+        </div>-->
+        <div class="content">
+            <p><p>Click here to view Press Releases from past years&#160;(eg&#58; 2025,&#160;2024, 2023, etc.)&#58; <a href="/en/mediacentre/pressbriefings/pages/archives.aspx">archives</a></p><p> 
+   <a href="mailto&#58;media@imo.org?subject=Sign%20me%20up%20to%20receive%20latest%20IMO%20info" title="Sign up for IMO News" data-linkindex="0" data-olk-copy-source="MessageBody" target="_blank"> 
+      <strong>Sign up for IMO press releases and news</strong></a><strong>&#58; </strong>Contact
+   <a href="mailto&#58;media@imo.org?subject=Sign%20me%20up%20to%20receive%20latest%20IMO%20info" target="_blank"> media@imo.org </a> with your name, organization, and email address to receive the latest press releases and other information from IMO.<br><br></p></p>
+
+
+        </div>
+<div class="row">
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/IMO calls for_banner_alternate_medium.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">11 November 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/IMO-Secretary-General-calls-for-enforcement-of-maritime-rules.aspx">IMO Secretary-General calls on States to enforce maritime rules in the Strait of Hormuz</a></h3>
+                                    <p class="card-text">
+                                        Secretary-General urges concrete measures to ensure compliance with international maritime regulations
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/IMO-Secretary-General-calls-for-enforcement-of-maritime-rules.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/Council138PB_banner 1.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">06 November 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/IMO-Council-C138-urges-stronger-protection-of-seafarers-amid-threats-to-global-shipping-.aspx">IMO Council urges stronger protection of seafarers amid threats to global shipping </a></h3>
+                                    <p class="card-text">
+                                        Council condemns attacks on merchant shipping in the Red Sea and Black Sea, mourns loss of 25th seafarer since onset of Strait of Hormuz conflict, and renews Secretary-General’s tenure. 
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/IMO-Council-C138-urges-stronger-protection-of-seafarers-amid-threats-to-global-shipping-.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/SGSecondTerm03.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">05 November 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/IMO-Council-backs-second-term-for-Secretary-General.aspx">IMO Council backs second term for Secretary-General Arsenio Dominguez</a></h3>
+                                    <p class="card-text">
+                                        Decision to extend the Secretary-General’s mandate for another four years is subject to approval by the IMO Assembly in 2027. 
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/IMO-Council-backs-second-term-for-Secretary-General.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/2026_winner_post-1.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">04 November 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/Dalian-Maritime-University&#39;s-Yu-Jiajia-to-receive-2027-IMO-Gender-Equality-Award.aspx">Dalian Maritime University&#39;s Yu Jiajia to receive 2027 IMO Gender Equality Award</a></h3>
+                                    <p class="card-text">
+                                        From the bridge to the classroom, Ms Yu has helped build a more inclusive maritime sector in China, serving as a role model for the global maritime community.
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/Dalian-Maritime-University&#39;s-Yu-Jiajia-to-receive-2027-IMO-Gender-Equality-Award.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/PublishingImages/WMDPE 26 banner_1-1.png" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">28 October 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/Maritime leaders push for stronger action on global shipping rules in Busan.aspx">Maritime leaders push for stronger action on global shipping rules in Busan  </a></h3>
+                                    <p class="card-text">
+                                        World Maritime Day Parallel Event spotlights theme “From Policy into Practice: Powering Maritime Excellence”. 
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/Maritime leaders push for stronger action on global shipping rules in Busan.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/LCLP_Oct 2026_banner_medium.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">09 October 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/IMO-adopts-marine-geoengineering-frameworks-for-research-activities.aspx">IMO adopts frameworks to assess marine geoengineering research activities</a></h3>
+                                    <p class="card-text">
+                                        New guidance will help governments evaluate marine geoengineering research proposals to ensure they are safe for the environment. 
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/IMO-adopts-marine-geoengineering-frameworks-for-research-activities.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/PublishingImages/Statement_IMO Secretary-General mourns_banner.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">02 October 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/IMO-Secretary-General-mourns-seafarers-killed-during-rescue-of-hijacked-ship-.aspx">IMO Secretary-General mourns seafarers killed during rescue of hijacked ship</a></h3>
+                                    <p class="card-text">
+                                        While three hijacked vessels have been freed after months in captivity, five seafarers have reportedly died in the crossfire of rescue operations.
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/IMO-Secretary-General-mourns-seafarers-killed-during-rescue-of-hijacked-ship-.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4 mb-md-6">
+                            <div class="card shadow">
+                                <div class="card-media-top embed-responsive embed-responsive-21by9">
+                                    <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/MediaCentre/WhatsNew/PublishingImages/WMD 2026_Press release_banner_medium 1.jpg" alt="image">
+                                    <div class="card-img-overlay">
+                                        <span class="badge badge-primary badge-sm">24 September 2026</span>
+                                    </div>
+                                    <a href="#" class="read-more" aria-label="read-more"></a>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="card-title"><a href="/en/MediaCentre/PressBriefings/pages/World-Maritime-Day-2026-From-Policy-to-Practice.aspx">World Maritime Day 2026: From Policy to Practice - Powering Maritime Excellence</a></h3>
+                                    <p class="card-text">
+                                        Global regulations will deliver safer, more resilient shipping when they are implemented worldwide. 
+                                    </p>
+                                    <a href="/en/MediaCentre/PressBriefings/Pages/World-Maritime-Day-2026-From-Policy-to-Practice.aspx" class="btn btn-link">Read more<i class="icon-chevron-right-solid"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+            </div>
+            <div class="mt-4">
+                <nav class="d-flex justify-content-center" aria-label="Page navigation example">
+                    <ul class="pagination mb-0">
+                                                    <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=1">1</a></li>-->
+                                <li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=1">1</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=2">2</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=2">2</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=3">3</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=3">3</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=4">4</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=4">4</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=5">5</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=5">5</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=6">6</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=6">6</a></li>
+                            <!--<li class="page-item active"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage=7">7</a></li>-->
+                                <li class="page-item"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=7">7</a></li>
+
+                            <!--<li class="page-item next"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspxpage = 7">Next</a></li>
+                            -->
+                            <li class="page-item next"><a class="page-link" href="/en/MediaCentre/PressBriefings/Pages/default.aspx?page=2">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+    </div>
+    <!-- MAIN COLUMN END -->
+</div><!-- .main-content -->
+<!-- SECTION -->
+<!-- SECTION END -->
+
+    </section>
+    <footer>
+<!-- SECTION -->
+<div class="section-extra-links py-10 bg-grey" style="margin-top: 100px;">
+    <div class="container-fluid">
+        <div class="row">
+                <div class="col-md-6 col-xl-3 py-4 px-xl-1 px-xll-4">
+                    <div class="card card-sm">
+                        <div class="card-media-top embed-responsive embed-responsive-65by33">
+                            <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/PublishingImages/SDGs.jpg" alt="image">
+                            <div class="card-img-overlay">
+                                <span class="bottom badge badge-primary badge-mid">SDGs</span>
+                            </div>
+                        </div>
+                        <a href="https://www.imo.org/en/MediaCentre/HotTopics/Pages/SustainableDevelopmentGoals.aspx" class="read-more" aria-label="read more"></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 py-4 px-xl-1 px-xll-4">
+                    <div class="card card-sm">
+                        <div class="card-media-top embed-responsive embed-responsive-65by33">
+                            <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/PublishingImages/IMOe-LearningLogo.png" alt="image">
+                            <div class="card-img-overlay">
+                                <span class="bottom badge badge-primary badge-mid">IMO e-Learning</span>
+                            </div>
+                        </div>
+                        <a href="https://lms.imo.org/moodle310" class="read-more" aria-label="read more"></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 py-4 px-xl-1 px-xll-4">
+                    <div class="card card-sm">
+                        <div class="card-media-top embed-responsive embed-responsive-65by33">
+                            <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/PublishingImages/TC Dashboard thumbnail_updated_medium.jpg" alt="image">
+                            <div class="card-img-overlay">
+                                <span class="bottom badge badge-primary badge-mid">TC Portal</span>
+                            </div>
+                        </div>
+                        <a href="https://tcportal.imo.org" class="read-more" aria-label="read more"></a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 py-4 px-xl-1 px-xll-4">
+                    <div class="card card-sm">
+                        <div class="card-media-top embed-responsive embed-responsive-65by33">
+                            <img class="embed-responsive-item" src="https://wwwcdn.imo.org/localresources/en/PublishingImages/entry-bg3.jpg" alt="image">
+                            <div class="card-img-overlay">
+                                <span class="bottom badge badge-primary badge-mid">PUBLICATIONS</span>
+                            </div>
+                        </div>
+                        <a href="https://www.imo.org/en/publications/Pages/Home.aspx" class="read-more" aria-label="read more"></a>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+<!-- SECTION END -->
+<footer id="footer">
+    <!-- SECTION CTA -->
+    <div class="section section-cta inverse-text has-background">
+        <div class="container">
+            <div class="row align-items-center space-between">
+                <div class=" col-sm-12 col-lg-4">
+                    <div class="media">
+                        <img src="/Content/images/img/English_White_RGB_Horizontal.png" />
+                    </div>
+                </div>
+
+                <div class="mt-md-5 m-xl-0 col-sm-5 col-lg-7">
+                    <div class="follow-us-box text-lg-right">
+                        <h6></h6>
+                        <a href="https://www.facebook.com/IMOHQ/" class="icon-button" aria-label="Facebook"><i class="icon-facebook"></i></a>
+                        <a href="https://twitter.com/imohq" class="icon-button" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/user/IMOHQ" class="icon-button" aria-label="Youtube"><i class="icon-youtube"></i></a>
+                        <a href="https://www.flickr.com/photos/imo-un/albums/" class="icon-button" aria-label="flickr"><i class="icon-flickr"></i></a>
+                        <a href="https://www.instagram.com/imo_hq/" class="icon-button" aria-label="instagram"><i class="icon-instagram"></i>  </a>
+                        <a href="https://www.linkedin.com/company/international-maritime-organization" class="icon-button" aria-label="linkedin"><i class="icon-linkedin21"></i>  </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+       
+    </div>
+    <!-- SECTION CTA END  -->
+    <!-- SECTION  -->
+    <div class="section has-background">
+        <div class="container">
+            <div class="row footer-sidebar">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="widget widget-text">
+                        <p>
+                            <strong>International Maritime Organization (IMO)</strong> 4 Albert Embankment, London SE1 7SR, United Kingdom
+                        </p>
+                        <ul>
+                            <li><a href="tel:+44 (0) 20 7735 7611"><i class="icon-left icon-phone mr-2"></i>+44 (0) 20 7735 7611</a></li>
+                            <li><a href="tel:+44 (0) 20 7735 7611"><i class="icon-left icon-fax mr-2"></i>+44 (0) 20 7735 7611</a></li>
+                            <li><a href="mailto:info@imo.org"><i class="icon-left icon-envelope mr-2"></i>info@imo.org</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!--Group by start-->
+
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="widget widget-list">
+                        <ul class="list-bulleted">
+                                    <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/IMOinUN-default.aspx">IMO in the UN</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Membership/Pages/Default.aspx">Member States</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Pages/Affiliated-Bodies-and-Programmes.aspx">Affiliated Bodies and Programs</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/Circulars/Pages/default.aspx">Circulars</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Conventions/Pages/Default.aspx">Conventions</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3">
+                    <div class="widget widget-list">
+                        <ul class="list-bulleted">
+                                    <li><a href="https://www.imo.org/en/About/Pages/FAQs.aspx">IMO FAQ</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Careers/Pages/default.aspx">Careers at IMO</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/ERO/Pages/Internship-default.aspx">Internships</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/ERO/Pages/Externships.aspx">Externships</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Procurement/Pages/default.aspx">Procurement</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/MSAS/Pages/Casualties.aspx">Casualties</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/Circulars/Pages/CP.aspx">National Contacts</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3">
+                    <div class="widget widget-list">
+                        <ul class="list-bulleted">
+                                    <li><a href="https://www.imo.org/en/publications/Pages/Distributors-default.aspx">Publications Online Ordering</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/HumanElement/Pages/CertificateVerification.aspx">Certificate Verification</a></li>
+                                    <li><a href="https://www.imo.org/en/OurWork/Safety/Pages/LRIT.aspx">LRIT</a></li>
+                                    <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/SearchTheOnlineCatalogueSeaLibrary.aspx">MKC Online Catalogue</a></li>
+                                    <li><a href="https://webaccounts.imo.org/Common/WebLogin.aspx?ReturnUrl=%2f">IMO Web Accounts</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3">
+                    <div class="widget widget-list">
+                        <ul class="list-bulleted">
+                                    <li><a href="https://www.imo.org/en/About/Pages/DocumentsResources.aspx">Documents and Resources</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Pages/Fraud-Alert.aspx">Fraud Alert</a></li>
+                                    <li><a href="http://www.imo.org/en/About/Pages/SiteIndex.aspx">Site Index</a></li>
+                                    <li><a href="https://www.imo.org/en/About/Pages/ContactUs.aspx">Contact Us</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!--Group by end-->
+        </div>
+    </div>
+    <!-- </div>-->
+    <!-- SECTION  -->
+    <!-- BOTTOM LINE -->
+    <div class="section bottom-line has-background">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <div>
+                            <p class="copyright">Copyright International Maritime Organization (IMO).</p>
+                        </div>
+                        <div>
+                            <ul class="secondary-nav">
+                                <li>    <a href="https://www.imo.org/en/About/Pages/IMO-Website-Terms-and-conditions-of-use.aspx" class="underlined">Terms of use</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/PrivacyPolicy.aspx" class="underlined">Privacy Policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="w-100">
+                            <small>
+                                The official languages of IMO are Arabic, Chinese, English, French, Russian and Spanish. The working languages are English, French and Spanish. Some content on this site is available in all official languages. The majority is presented in the working languages.
+
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- BOTTOM LINE -->
+</footer>
+
+<!--SEARCH MODAL BOX
+<div id="search-box-modal" class="modal fade" aria-hidden="true" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <a href="#" role="button" class="close icon-button" data-dismiss="modal" aria-label="Close">
+            <i class="icon-cancel" aria-hidden="true"></i>
+        </a>
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="search-form" action="search" method="post">
+                    <div class="form-group form-group-search">
+                        <input type="text" name="s" class="form-control form-control-lg" id="s"
+                               placeholder="Search IMO.org" aria-label="Search Phrase">
+                        <button type="submit" class="btn btn-lg btn-secondary" name="submit" onclick="siteSearch();">
+                            SEARCH<i class="icon-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+SEARCH MODAL BOX END -->
+
+
+<!-- MOBILE NAVIGATION -->
+    <nav id="navbar-mobile" class="navbar-mobile">
+        <ul>
+                    <li>
+                        <span>About IMO</span>
+                        <ul>
+                            <li><a href="https://www.imo.org/en/About/Pages/Default.aspx">ABOUT IMO</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/FAQs.aspx">FAQs</a></li>
+                                <li><a href="https://www.imo.org/en/About/HistoryOfIMO/Pages/Default.aspx">History of IMO</a></li>
+                                <li><a href="https://www.imo.org/en/About/Careers/Pages/default.aspx">Careers at IMO</a></li>
+                                <li><a href="https://www.imo.org/en/About/Procurement/Pages/default.aspx">Procurement</a></li>
+                                <li><a href="https://www.imo.org/en/About/Membership/Pages/Default.aspx">Membership</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/Structure.aspx">Structure</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/Council-candidates.aspx">Council Candidates</a></li>
+                                <li><a href="https://www.imo.org/en/About/Strategy/Pages/Default.aspx">Strategic Plan</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/Annual-report.aspx">Annual report</a></li>
+                                <li><a href="https://www.imo.org/en/About/Conventions/Pages/Default.aspx">Conventions</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/DocumentsResources.aspx">Documents and Resources</a></li>
+                                <li><a href="https://www.imo.org/en/about/Events/Pages/Default.aspx">IMO Events</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/Affiliated-Bodies-and-Programmes.aspx">Affiliated Bodies and Programmes</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/WMUandIMLI.aspx">World Maritime University (WMU) and IMO International Maritime Law Institute (IMLI)</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Pages/Financial-Statements.aspx">Financial Statements Summary</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/IMO-Multilingualism.aspx">IMO and Multilingualism</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/Diversity-Equity-Inclusion.aspx">Diversity, Equity and Inclusion</a></li>
+                                <li><a href="https://www.imo.org/en/About/Pages/ContactUs.aspx">Contact Us</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>Media Centre</span>
+                        <ul>
+                            <li><a href="https://www.imo.org/en/MediaCentre/Pages/default.aspx">MEDIA CENTRE</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/PressBriefings/Pages/default.aspx">Press Briefings</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/MeetingSummaries/Pages/default.aspx">Meeting Summaries and schedule</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/SecretaryGeneral/Pages/Default.aspx">Secretary-General</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/SecretaryGeneral/Pages/Senior-Management-Committee.aspx">​Senior Management Committee (SMC)</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/Pages/WhatsNew.aspx">What&#39;s New</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/HotTopics/Pages/Default.aspx">Hot Topics</a></li>
+                                <li><a href="https://www.imo.org/en/MediaCentre/IMOMediaAccreditation/Pages/Default.aspx">Attending IMO Meetings</a></li>
+                                <li><a href="https://www.imo.org/en/About/Events/Pages/default.aspx">IMO Events</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>Our Work</span>
+                        <ul>
+                            <li><a href="https://www.imo.org/en/OurWork/Pages/Default.aspx">OUR WORK</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Safety/Pages/default.aspx">Maritime Safety</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Security/Pages/Default.aspx">Maritime Security and Piracy</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Environment/Pages/Default.aspx">Marine Environment</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Legal/Pages/Default.aspx">Legal Affairs</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/HumanElement/Pages/Default.aspx">Human Element</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Facilitation/Pages/Default.aspx">Facilitation</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/MSAS/Pages/Default.aspx">Member State Audit Scheme</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/IIIS/Pages/default.aspx">Implementation of Instruments Support</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/TechnicalCooperation/Pages/Default.aspx">Technical Cooperation</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/PartnershipsProjects/Pages/default.aspx">Partnerships and Projects</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Conferences/Pages/Default.aspx">Conferences</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/ERO/Pages/default.aspx">External Relations</a></li>
+                                <li><a href="https://www.imo.org/en/OurWork/Circulars/Pages/default.aspx">Circulars</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>Publications</span>
+                        <ul>
+                            <li><a href="https://www.imo.org/en/publications/Pages/Home.aspx">PUBLICATIONS</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/IMO-ePublications.aspx">IMO ePublications</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/Distributors-default.aspx">Distributors&#39; Details</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/CatalogueAndBookCodeLists.aspx">Catalogue ＆ Code Listings</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/JustPublished.aspx">Just Published</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/FutureTitles.aspx">Future Titles</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/Flyers.aspx">Flyers</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/SupplementsAndCDs-Default.aspx">Supplements</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/PermissionRequests.aspx">Copyright and Permission Requests</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/Counterfeit-copies.aspx">Counterfeit copies</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/IMDG Code.aspx">IMDG Code</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/IMO-Vega.aspx">The IMO-Vega Database</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/FrequentlyAskedQuestions.aspx">Frequently Asked Questions (FAQ)</a></li>
+                                <li><a href="https://www.imo.org/en/publications/Pages/CurrentPublications.aspx">Listing of current IMO publications</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>Knowledge Centre</span>
+                        <ul>
+                            <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/Default.aspx">KNOWLEDGE CENTRE</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/SearchTheOnlineCatalogueSeaLibrary.aspx">Search the MKC Online Catalogue</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/FindInformation.aspx">How and Where to Find IMO Information</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/IndexofIMOResolutions/Pages/Default.aspx">Index of IMO Resolutions</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/CurrentAwarenessBulletin-Default.aspx">Current Awareness Bulletin</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/ConferencesMeetings/Pages/Default.aspx">Conferences and Meetings</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/MaritimeFactsFigures-Default.aspx">Maritime Facts and Figures</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Resources_for_Seafarers/Pages/default.aspx">Resources for Seafarers</a></li>
+                                <li><a href="https://www.imo.org/en/KnowledgeCentre/Pages/ContactUs.aspx">Contacts</a></li>
+                        </ul>
+                    </li>
+            <li><a href="/en/About/Pages/ContactUs.aspx">Contact us</a></li>
+            <li><a href="/en/About/Careers/Pages/Default.aspx">Careers</a></li>
+            <li><a href="https://webaccounts.imo.org" target="_blank">IMO Web Accounts</a></li>
+        </ul>
+    </nav>
+        <!-- MOBILE NAVIGATION END -->
+
+    </footer>
+
+    <script>
+        $(document).ready(function () {
+
+            var lang = imoorg.Cookies.getCookie("IMOPublicWebsiteLanguage");
+            imoorg.Cookies.setCookie("ISChangeLangClicked", "0", 30);
+
+            setPageLang(lang);
+            $(".setLang").on("click", function (event) {
+                var lang = $(this).attr("lang");
+                imoorg.Cookies.setCookie("ISChangeLangClicked", "1", 30);
+                imoorg.Cookies.setCookie("IMOPublicWebsiteLanguage", lang, 30);
+                imoorg.Cookies.setCookie("PressBriefingName", name, 30);
+                //location.reload();
+
+            })
+
+            function setPageLang(lang) {
+                $('#langselect a').each(function () {
+                    if ((lang == 'en' && $(this).attr('lang') == 'en') ||
+                        (lang == 'fr' && $(this).attr('lang') == 'fr') ||
+                        (lang == 'es' && $(this).attr('lang') == 'es') ||
+                        (lang == 'ru' && $(this).attr('lang') == 'ru') ||
+                        (lang == 'ar' && $(this).attr('lang') == 'ar') ||
+                        (lang == 'zh' && $(this).attr('lang') == 'zh')) {
+                        $(this).css('font-weight', 'bold');
+                    }
+                });
+            }
+        });
+        var imoorg = imoorg || {
+        };
+        imoorg.createNameSpace = function (namespace) {
+            //get the namespace string and split it
+            var namespaceArr = namespace.split('.');
+            var parent = imoorg;
+
+            // excluding the parent
+            if (namespaceArr[0] === 'imoorg') {
+                namespaceArr = namespaceArr.slice(1);
+            }
+
+            // loop through the array and create a nested namespace
+            for (var i = 0; i < namespaceArr.length; i++) {
+
+                var partname = namespaceArr[i];
+
+                // check if the current parent already has the namespace declared
+                // if it isn't, then create it
+                if (typeof parent[partname] === 'undefined') {
+                    parent[partname] = {};
+                }
+
+                // get a reference to the deepest element in the hierarchy so far
+                parent = parent[partname];
+            }
+            //  empty namespaces created and can be used.
+            return parent;
+        };
+
+        imoorg.createNameSpace("imoorg.Cookies");
+
+        imoorg.Cookies.getCookie = function (ck_name) {
+            var ck_value = document.cookie;
+            var ck_start = ck_value.indexOf(" " + ck_name + "=");
+            if (ck_start == -1) {
+                ck_start = ck_value.indexOf(ck_name + "=");
+            }
+            if (ck_start == -1) {
+                ck_value = null;
+            } else {
+                ck_start = ck_value.indexOf("=", ck_start) + 1;
+                var ck_end = ck_value.indexOf(";", ck_start);
+                if (ck_end == -1) {
+                    ck_end = ck_value.length;
+                }
+                ck_value = unescape(ck_value.substring(ck_start, ck_end));
+            }
+            return ck_value;
+        };
+
+        imoorg.Cookies.setCookie = function (ck_name, value, exdays) {
+            var exdate = new Date();
+            exdate.setDate(exdate.getDate() + exdays);
+            var ck_value = escape(value) + ((exdays == null) ? "" : "; path=/;expires=" + exdate.toUTCString());
+            document.cookie = ck_name + "=" + ck_value;
+        };
+    </script>
+    <script src="/Scripts/js/vendors.js"></script>
+    <script src="/Scripts/js/theme.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDYY_ECpWhLm56VGe6abMJ8Msj_Nt_8LM" type="text/javascript"></script>
+    <!--   <script src="~/Scripts/js/twitter-override.js"></script>-->
+    <script src="/Scripts/js/fbShare.js"></script>
+    <script src="/Scripts/js/d3.js"></script>
+
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics
+
+        <script src="~/Scripts/js/homepagevisits.js"></script>
+            <script src="~/Scripts/js/datamaps.world.js"></script>
+            <script src="~/Scripts/js/topojson.v1.min.js"></script>
+    <script src="~/Scripts/js/wim-map.js"></script>-->
+
+</body>
+</html>

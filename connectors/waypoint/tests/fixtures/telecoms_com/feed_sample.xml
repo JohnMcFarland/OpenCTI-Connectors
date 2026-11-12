@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.telecoms.com"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:media="http://search.yahoo.com/mrss/"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>telecoms</title>
+        <link>https://www.telecoms.com</link>
+        <description>Public RSS feed</description>
+                <language>en</language>
+        <atom:link href="https://www.telecoms.com/feeds/rss.xml" rel="self" type="application/rss+xml" />
+                 <item>
+            <title><![CDATA[Google MVNO tight-lipped on its 'super network' carriers]]></title>
+            <link><![CDATA[https://www.telecoms.com/5g-6g/google-mvno-tight-lipped-on-its-super-network-carriers]]></link>
+                        <description><![CDATA[Google Fi Wireless has made a big deal of the fact that many of its customers can now switch between two mobile networks, but it is reluctant to disclose the identity of either.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 14:10:15 GMT</pubDate>
+                                                                <dc:creator>Mary Lennighan</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.telecoms.com/5g-6g/google-mvno-tight-lipped-on-its-super-network-carriers]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/blt717748449f291acf/66ec341fa2a6dbb3bc82719e/5G_169_2_.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/blt717748449f291acf/66ec341fa2a6dbb3bc82719e/5G_169_2_.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">5G_169_2_.jpg</media:title>
+                </media:content>
+                                    </item>        <item>
+            <title><![CDATA[Amazon Ring unveils a range of security robots]]></title>
+            <link><![CDATA[https://www.telecoms.com/mobile-devices/amazon-ring-unveils-a-range-of-security-robots]]></link>
+                        <description><![CDATA[Connected doorbell company Ring is diversifying into robotics and the first two products offer a taste of what&#8217;s to come with autonomous devices.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 12:04:07 GMT</pubDate>
+                                                                <dc:creator>Scott Bicheno</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.telecoms.com/mobile-devices/amazon-ring-unveils-a-range-of-security-robots]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/bltee1b4f84f4eff8f4/6af45b557871c63c3bf7bdf9/Amazon_Ring_drone.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/bltee1b4f84f4eff8f4/6af45b557871c63c3bf7bdf9/Amazon_Ring_drone.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">Amazon_Ring_drone.jpg</media:title>
+                </media:content>
+                                    </item>        <item>
+            <title><![CDATA[VodafoneThree eyes new submarine route to Norway]]></title>
+            <link><![CDATA[https://www.telecoms.com/fibre/vodafonethree-eyes-new-submarine-route-to-norway]]></link>
+                        <description><![CDATA[As the UK cosies up to Norway, VodafoneThree is exploring the possibility of adding some much-needed submarine capacity between the two countries.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 11:15:41 GMT</pubDate>
+                                                                <dc:creator>Nick Wood</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.telecoms.com/fibre/vodafonethree-eyes-new-submarine-route-to-norway]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/blt36be431b51973f0e/683d85e0f5b6798209bc67fa/VodafoneThree_169.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt3d4d54955bda84c0/blt36be431b51973f0e/683d85e0f5b6798209bc67fa/VodafoneThree_169.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">VodafoneThree_169.jpg</media:title>
+                </media:content>
+                                    </item>
+</channel>
+</rss>

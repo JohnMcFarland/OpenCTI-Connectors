@@ -1,0 +1,2360 @@
+# Per-source test data, extracted from each generated connector's
+# test_main.py by scripts/extract_profiles.py --fixtures.
+aaro_uap:
+  content_close: </div>
+  content_open: <div class="adetail extra-class">
+  host: www.war.gov
+  link_path: News/Releases/Release/Article/4000000/test-release-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Department of War Publishes Seventh Release of Unidentified Anomalous Phenomena Files on WAR.GOV/UFO
+    - []
+    - true
+    - https://www.war.gov/News/Releases/Release/Article/4632058/department-of-war-publishes-seventh-release-of-unidentified-anomalous-phenomena/
+  - - Department of War Issues Legal Waiver to Authorize Unidentified Anomalous Phenomena (UAP) Disclosures
+      to PURSUE
+    - []
+    - true
+    - https://www.war.gov/News/Releases/Release/Article/4600020/department-of-war-issues-legal-waiver-to-authorize-unidentified-anomalous-pheno/
+  - - Department of War Releases Unidentified Anomalous Phenomena Files in Historic Transparency Effort
+    - []
+    - true
+  - - War Department Announces Realignment of Anomalous Health Incidents Cross-Functional Team to the
+      Office of the Under Secretary of War for Intelligence and Security
+    - []
+    - false
+  - - Advanced Radar Contract Bolsters USCENTCOM Counter-UAS Defense
+    - []
+    - false
+    - https://www.war.gov/News/Releases/Release/Article/4641125/advanced-radar-contract-bolsters-uscentcom-counter-uas-defense/
+  - - Readout of Secretary of War Pete Hegseth's Meeting With Poland's Deputy Prime Minister and Minister
+      of National Defense
+    - []
+    - false
+    - https://www.war.gov/News/Releases/Release/Article/4646284/readout-of-secretary-of-war-pete-hegseths-meeting-with-polands-deputy-prime-min/
+  slug_cases:
+  - - https://www.war.gov/News/Releases/Release/Article/4632058/department-of-war-publishes-seventh-release-of-unidentified-anomalous-phenomena/
+    - department-of-war-publishes-seventh-release-of-unidentified-anomalous-phenomena
+adl:
+  content_close: </article>
+  content_open: <article class="node--view-mode-full extra-class">
+  host: www.adl.org
+  link_path: resources/article/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Mixed Results for Antizionist and Extreme Candidates in 2026 Midterms
+    - []
+    - true
+    - https://www.adl.org/resources/article/mixed-results-antizionist-and-extreme-candidates-2026-midterms
+  - - The Houthis' End Times Antisemitism is Central to Their Escalating Regional Threats
+    - []
+    - true
+    - https://www.adl.org/resources/article/houthis-end-times-antisemitism-central-their-escalating-regional-threats
+  - - ADL Statement on Midterm Elections
+    - []
+    - true
+    - https://www.adl.org/resources/press-release/adl-statement-midterm-elections
+  - - A Reminder Americans Reject Antisemitism Aids Recognition & Reporting
+    - []
+    - true
+    - https://www.adl.org/resources/report/reminder-americans-reject-antisemitism-aids-recognition-reporting
+  - - 5 Things You Should Know About BDS
+    - []
+    - true
+    - https://www.adl.org/resources/article/5-things-you-should-know-about-bds
+  - - Stories That Matter
+    - []
+    - false
+    - https://www.adl.org/resources/tools-and-strategies/stories-that-matter
+  slug_cases:
+  - - https://www.adl.org/resources/article/houthis-end-times-antisemitism-central-their-escalating-regional-threats
+    - houthis-end-times-antisemitism-central-their-escalating-regional-threats
+ahnlab_asec:
+  content_close: </div>
+  content_open: <div class="entry-content extra-class">
+  host: asec.ahnlab.com
+  link_path: en/
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://asec.ahnlab.com/en/96477/
+    - ahnlab_asec-96477
+army_war_college_press:
+  content_close: </div>
+  content_open: <div id="alpha">
+  host: press.armywarcollege.edu
+  link_path: monographs/
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Forecasting China's Posturing for a Global War
+    - - monographs
+    - true
+    - https://press.armywarcollege.edu/monographs/991
+  - - 'CLSC In Translation 2: Influence of Unmanned Warfare on Political Work and Our Responses'
+    - - articles_editorials
+    - true
+    - https://press.armywarcollege.edu/articles_editorials/461
+  - - 'Book Review: "Review Essay on Three Works about the Ukraine War"'
+    - - parameters_bookshelf
+    - true
+    - https://press.armywarcollege.edu/parameters_bookshelf/189
+  - - 'Getting There First: Strategic Competition Requires a Proactive Mindset'
+    - - parameters
+    - true
+    - https://press.armywarcollege.edu/parameters/vol56/iss3/11
+  - - 'Intellectual Interoperability: Lessons from Afghanistan for Security Cooperation'
+    - - parameters
+    - true
+    - https://press.armywarcollege.edu/parameters/vol56/iss3/10
+  - - Contributor Guidelines
+    - - parameters
+    - false
+    - https://press.armywarcollege.edu/parameters/vol56/iss3/13
+  - - Book Reviews
+    - - parameters
+    - false
+    - https://press.armywarcollege.edu/parameters/vol56/iss3/12
+  slug_cases:
+  - - https://press.armywarcollege.edu/monographs/991
+    - army_war_college_press-991
+aspi_strategist:
+  content_close: </article>
+  content_open: <article class="post extra-class">
+  host: www.aspistrategist.org.au
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Fault Lines - China's navy mobilises, Marines in Manila, PNG's LNG
+    - - General
+      - Northeast Asia
+      - Oceania
+      - Philippines
+      - Southeast Asia
+    - true
+    - https://www.aspistrategist.org.au/fault-lines-chinas-navy-mobilises-marines-in-manila-pngs-lng/
+  - - 'Xi''s solution to PLA''s intangible faults: more political indoctrination'
+    - - General
+      - China
+      - PLA
+      - Xi Jinping
+      - corruption
+    - true
+    - https://www.aspistrategist.org.au/xis-solution-to-plas-intangible-faults-more-political-indoctrination/
+  - - Test whether Australians can buy essentials when payment systems fail
+    - - General
+      - critical infrastructure
+      - cybersecurity
+      - economic security
+      - resilience
+    - true
+    - https://www.aspistrategist.org.au/test-whether-australians-can-buy-essentials-when-payment-systems-fail/
+  - - 'Bookshelf: The closing of the Russian mind (doesn''t bode well for the future)'
+    - - General
+    - true
+    - https://www.aspistrategist.org.au/bookshelf-the-closing-of-the-russian-mind-doesnt-bode-well-for-the-future/
+  - - ASPI's Critical Technology Tracker expands to include patent data
+    - - General
+    - true
+    - https://www.aspistrategist.org.au/aspis-critical-technology-tracker-expands-to-include-patent-data/
+  slug_cases:
+  - - https://www.aspistrategist.org.au/new-air-defences-should-be-going-north/
+    - new-air-defences-should-be-going-north
+bankinfosecurity:
+  content_close: </div>
+  content_open: <div id="generic-article">
+  host: www.bankinfosecurity.com
+  link_path: story-a-
+  sample_has_dates: false
+  sample_has_titles: true
+  scope_cases:
+  - - Vanta Buys Pillar to Tie AI Governance to Real-Time Controls
+    - []
+    - true
+    - https://www.bankinfosecurity.com/vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-a-33367
+  - - CISA Orders Patch for Cisco Flaw Tied to AI Agent Attack
+    - []
+    - true
+    - https://www.bankinfosecurity.com/cisa-orders-patch-for-cisco-flaw-tied-to-ai-agent-attack-a-33364
+  - - Maersk Probes Ransomware Claim Tied to Legacy System
+    - []
+    - true
+    - https://www.bankinfosecurity.com/maersk-probes-ransomware-claim-tied-to-legacy-system-a-33362
+  - - How to Avoid Getting Trapped by AI Vendor Contracts
+    - []
+    - true
+    - https://www.bankinfosecurity.com/how-to-avoid-getting-trapped-by-ai-vendor-contracts-a-33347
+  - - Trump Taps Palantir CISO to Lead CISA
+    - []
+    - true
+    - https://www.bankinfosecurity.com/trump-taps-palantir-ciso-to-lead-cisa-a-33349
+  slug_cases:
+  - - https://www.bankinfosecurity.com/vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-a-33367
+    - vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-a-33367
+bleepingcomputer:
+  content_close: </div>
+  content_open: <div class="article_section extra-class">
+  host: www.bleepingcomputer.com
+  link_path: news/security/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.bleepingcomputer.com/news/security/sega-newsletter-data-breach/
+    - sega-newsletter-data-breach
+breaking_defense:
+  content_close: </div>
+  content_open: <div class="post-single__content extra-class">
+  host: breakingdefense.com
+  link_path: 2026/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - DoD pushes out 3 loans totaling $450M to bolster US space companies
+    - - Space
+      - commercial space
+    - true
+    - https://breakingdefense.com/2026/11/dod-pushes-out-3-loans-totally-450m-to-bolster-us-space-companies/
+  - - Why Britain needs a maritime-first defense strategy
+    - - Global
+      - Naval Warfare
+      - Opinion
+    - true
+    - https://breakingdefense.com/2026/11/why-britain-needs-a-maritime-first-defense-strategy/
+  - - Remote mine hunters silently trawl the waters as minesweepers go by the wayside
+    - - Naval Warfare
+      - Spotlight Remote Mine Hunting
+    - true
+    - https://breakingdefense.com/2026/11/remote-mine-hunters-silently-trawl-the-waters-as-minesweepers-go-by-the-wayside/
+  - - When networks are contested, paring down the data may mean better logistics at the edge
+    - - Networks & Digital Warfare
+      - Webinar
+    - true
+    - https://breakingdefense.com/2026/11/when-networks-are-contested-paring-down-the-data-may-mean-better-logistics-at-the-edge/
+  - - Trust the "Super Intelligence" for mission-critical operations
+    - - Networks & Digital Warfare
+      - Sponsored Post
+      - Sponsored Content
+    - false
+    - https://breakingdefense.com/2026/11/trust-the-super-intelligence-for-mission-critical-operations/
+  - - A Pentagon impeachment showdown, plus defense funding in limbo
+    - - Congress
+      - Break Out Video
+      - Video
+    - false
+    - https://breakingdefense.com/2026/11/a-pentagon-impeachment-showdown-plus-defense-funding-in-limbo/
+  - - Missed AUSA 2026? Get the Ground Truth from Breaking Defense's free eBook
+    - - Land Warfare
+      - AUSA 2026 Ground Truth
+    - false
+    - https://breakingdefense.com/2026/11/missed-ausa-2026-get-the-ground-truth-from-breaking-defenses-free-ebook/
+  slug_cases:
+  - - https://breakingdefense.com/2026/11/dod-pushes-out-3-loans-totally-450m-to-bolster-us-space-companies/
+    - dod-pushes-out-3-loans-totally-450m-to-bolster-us-space-companies
+cdc:
+  content_close: </main>
+  content_open: <main>
+  host: tools.cdc.gov
+  link_path: mmwr/volumes/75/wr/mm-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Hantavirus Outbreak Caused by Andes Virus Linked to International Cruise Ship Travel - United States,
+      2026
+    - - MMWR
+      - Morbidity & Mortality Weekly Report
+    - true
+    - https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&c=766795
+  - - 'Notes from the Field: Dengue Outbreak - U.S. Virgin Islands, January 2026'
+    - - MMWR
+      - Morbidity & Mortality Weekly Report
+    - true
+  - - 'QuickStats: Percentage Distribution of Heat-Related Deaths, by Age Group - United States'
+    - - MMWR
+      - Morbidity & Mortality Weekly Report
+    - false
+    - https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&c=766360
+  - - CDC Statement on Increases in Recent Animal Rabies Activity and Associated Human Exposures
+    - - CDC Newsroom
+      - What's New
+    - true
+    - https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&c=766411
+  - - Outbreak linked to alfalfa sprouts; people sickened with E. coli and Salmonella
+    - - CDC Newsroom
+    - true
+  - - Transcript - Update on CDC's Hantavirus Response - 6/24/26
+    - - CDC Newsroom
+      - What's New
+    - true
+    - https://tools.cdc.gov/api/embed/downloader/download.asp?m=132608&c=765898
+  slug_cases:
+  - - https://www.cdc.gov/mmwr/volumes/75/wr/mm7543a1.htm
+    - mm7543a1
+chatham_house:
+  content_close: </main>
+  content_open: <main class="main-layout extra-class">
+  host: www.chathamhouse.org
+  link_path: 2026/11/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - The war is pushing Iran closer to Russia
+    - []
+    - true
+    - https://www.chathamhouse.org/2026/11/war-pushing-iran-closer-russia
+  - - Europe faces faster cyberattacks than ever. But many of the solutions are long known
+    - []
+    - true
+    - https://www.chathamhouse.org/2026/11/europe-faces-faster-cyberattacks-ever-many-solutions-are-long-known
+  - - Consumer interest in Chinese-made solar panels and EVs markedly rises in Europe and Canada, says
+      Chatham House survey
+    - []
+    - true
+    - https://www.chathamhouse.org/2026/11/consumer-interest-chinese-made-solar-panels-and-evs-markedly-rises-europe-and-canada-says
+  - - Lebanon's Shia refugees don't know where to turn
+    - []
+    - true
+    - https://www.chathamhouse.org/publications/the-world-today/2026-09/lebanons-shia-refugees-dont-know-where-turn
+  - - What's next for the EU-UK relationship?
+    - []
+    - false
+    - https://www.chathamhouse.org/events/all/standard-event/whats-next-eu-uk-relationship
+  - - Members' Christmas drinks
+    - []
+    - false
+    - https://www.chathamhouse.org/events/all/members-event/members-christmas-drinks-4
+  - - 'US midterms: The beginning of the end for Trumpism?'
+    - []
+    - false
+    - https://www.chathamhouse.org/2026/11/us-midterms-beginning-end-trumpism-independent-thinking-podcast
+  - - 'Africa Aware: Tigray''s renewed war and risks to the wider Horn of Africa'
+    - []
+    - false
+    - https://www.chathamhouse.org/2026/11/africa-aware-tigrays-renewed-war-and-risks-wider-horn-africa
+  - - Gifts now available celebrating 100 years of the Chatham House Rule in 2027
+    - []
+    - false
+    - https://www.chathamhouse.org/2026/11/gifts-now-available-celebrating-100-years-chatham-house-rule-2027
+  slug_cases:
+  - - https://www.chathamhouse.org/2026/11/war-pushing-iran-closer-russia
+    - war-pushing-iran-closer-russia
+check_point_research:
+  content_close: </div>
+  content_open: <div class="text border-bottom extra-class">
+  host: research.checkpoint.com
+  link_path: 2026/
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://research.checkpoint.com/2026/hacking-on-autopilot-inside-artex-cybercrime-campaigns/
+    - hacking-on-autopilot-inside-artex-cybercrime-campaigns
+cisco_talos:
+  content_close: </div>
+  content_open: <div id="post-content">
+  host: blog.talosintelligence.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://blog.talosintelligence.com/uat-11473-keydrift/
+    - uat-11473-keydrift
+climate_and_security:
+  content_close: </div>
+  content_open: <div class="entry-content extra-class">
+  host: councilonstrategicrisks.org
+  link_path: 2026/11/09/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - A New US Congress Means a New Conversation about Climate and Security
+    - - Center for Climate and Security
+      - CSR Blog
+    - true
+    - https://councilonstrategicrisks.org/2026/11/09/a-new-us-congress-means-a-new-conversation-about-climate-and-security/?utm_source=rss&utm_medium=rss&utm_campaign=a-new-us-congress-means-a-new-conversation-about-climate-and-security
+  - - 'Landscape Assessment: EU Food Security and Climate Resilience'
+    - - Briefer
+      - Center for Climate and Security
+    - true
+    - https://councilonstrategicrisks.org/2026/10/29/landscape-assessment-eu-food-security-and-climate-resilience/?utm_source=rss&utm_medium=rss&utm_campaign=landscape-assessment-eu-food-security-and-climate-resilience
+  - - The Most Threatening Part of AI is its Own Value Proposition
+    - - Converging Risks Lab
+      - CSR Blog
+    - false
+    - https://councilonstrategicrisks.org/2026/11/02/the-most-threatening-part-of-ai-is-its-own-value-proposition/?utm_source=rss&utm_medium=rss&utm_campaign=the-most-threatening-part-of-ai-is-its-own-value-proposition
+  - - 'Event: Charging Forward: Electric Vehicles as Defense Technology'
+    - - Center for Climate and Security
+      - CSR Events
+    - false
+  - - 'Event Recap: CSR at NY Climate Week and UNGA 2026'
+    - - Center for Climate and Security
+      - CSR Blog
+    - false
+  - - 'CSR in the News: September 2026'
+    - - CSR News
+      - The Center for Climate and Security
+    - false
+  slug_cases:
+  - - https://councilonstrategicrisks.org/2026/11/09/a-new-us-congress-means-a-new-conversation-about-climate-and-security/
+    - a-new-us-congress-means-a-new-conversation-about-climate-and-security
+cnas:
+  content_close: </main>
+  content_open: <main id="content">
+  host: www.cnas.org
+  link_path: publications/commentary/story-
+  sample_has_dates: false
+  sample_has_titles: false
+  scope_cases:
+  - - Sovereign Agents
+    - []
+    - true
+    - https://www.cnas.org/publications/reports/sovereign-agents
+  - - A Blue Wave in America? The Midterms and Foreign Policy
+    - []
+    - true
+    - https://www.cnas.org/publications/podcast/a-blue-wave-in-america
+  - - Nvidia Boss Admits to Affair With Suspected Chinese Spy
+    - []
+    - false
+    - https://www.cnas.org/publications/video/nvidia-boss-admits-affair
+  slug_cases:
+  - - https://www.cnas.org/publications/reports/sovereign-agents
+    - sovereign-agents
+cofense:
+  content_close: </div>
+  content_open: <div id="blog_content">
+  host: cofense.com
+  link_path: blog/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://cofense.com/blog/rsvp-to-disaster-how-one-click-installs-a-rat
+    - rsvp-to-disaster-how-one-click-installs-a-rat
+counter_extremism_project:
+  content_close: </div>
+  content_open: <div id="block-mainpagecontent">
+  host: www.counterextremism.com
+  link_path: blog/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - European Jews or Jews in Europe?
+    - []
+    - true
+    - https://www.counterextremism.com/content/european-jews-or-jews-europe
+  - - 'Europe''s Violent Extreme Left - Part 7: The Case of Greece - Clandestine Networks and Criminal
+      Connections'
+    - []
+    - true
+    - https://www.counterextremism.com/blog/europes-violent-extreme-left-part-7-case-greece-clandestine-networks-and-criminal-connections
+  - - 'Reintegration of Foreign Terrorist Fighters in the European Union: Challenges and Ways Forward'
+    - []
+    - true
+    - https://www.counterextremism.com/blog/reintegration-foreign-terrorist-fighters-european-union-challenges-and-ways-forward
+  - - 'Russia and Italian Right Wing Extremists-Part III: Transnational Political and Martial Arts'
+    - []
+    - true
+    - https://www.counterextremism.com/blog/russia-and-italian-right-wing-extremists-part-iii-transnational-political-and-martial-arts
+  - - 'Webinar: From Evidence to Resilience: Memory in an Age of Distortion'
+    - []
+    - false
+    - https://www.counterextremism.com/press/webinar-evidence-resilience-memory-age-distortion
+  - - The Berlin terror attack exposes deep failings in the state
+    - []
+    - false
+    - https://www.counterextremism.com/news/berlin-terror-attack-exposes-deep-failings-state
+  - - 'GB News: Interview with Dr Hans-Jakob Schindler'
+    - []
+    - false
+    - https://www.counterextremism.com/news/gb-news-interview-dr-hans-jakob-schindler
+  - - Deadly Attack at Pride Event Shakes Europe & Trump Roasts the Media
+    - []
+    - false
+    - https://www.counterextremism.com/news/deadly-attack-pride-event-shakes-europe-trump-roasts-media
+  slug_cases:
+  - - https://www.counterextremism.com/press/extremist-content-online-isis-al-naba-editorial-encourages-martyrdom-attacks
+    - extremist-content-online-isis-al-naba-editorial-encourages-martyrdom-attacks
+crisis_group:
+  content_close: </article>
+  content_open: <article class="s-article extra-class">
+  host: www.crisisgroup.org
+  link_path: anb/region/country/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'Central African Republic: Containing the Fallout from Sudan''s War'
+    - []
+    - true
+    - https://www.crisisgroup.org/rpt/africa/central-african-republic-sudan/323-centrafrique-contenir-les-effets-de-la-guerre-au-soudan
+  - - After Serbia's Election, Foreign Policy Takes a Back Seat, and That's OK
+    - []
+    - true
+    - https://www.crisisgroup.org/anb/europe/serbia/after-serbias-election-foreign-policy-takes-back-seat-and-thats-ok
+  - - How the War in Iran Could Escalate
+    - []
+    - true
+    - https://www.crisisgroup.org/opd/middle-east-north-africa/iran/how-war-iran-could-escalate
+  - - October Trends and November Alerts 2026
+    - []
+    - true
+    - https://www.crisisgroup.org/crisiswatch/october-trends-and-november-alerts-2026
+  - - On Our Radar
+    - []
+    - true
+    - https://www.crisisgroup.org/sco/global/our-radar
+  - - The UAE in Sudan
+    - []
+    - false
+    - https://www.crisisgroup.org/pod/africa/sudan/uae-sudan
+  - - 'Centrafrique : contenir les effets de la guerre au Soudan'
+    - []
+    - false
+    - https://www.crisisgroup.org/fr/rpt/africa/central-african-republic-sudan/323-centrafrique-contenir-les-effets-de-la-guerre-au-soudan
+  slug_cases:
+  - - https://www.crisisgroup.org/anb/europe/serbia/after-serbias-election-foreign-policy-takes-back-seat-and-thats-ok
+    - after-serbias-election-foreign-policy-takes-back-seat-and-thats-ok
+critical_threats:
+  content_close: </section>
+  content_open: <section id="main-content">
+  host: www.criticalthreats.org
+  link_path: analysis/
+  sample_has_dates: false
+  sample_has_titles: false
+  scope_cases:
+  - - 'Russia-Africa Summit; Sudan''s Drone War Intensifies: Africa File, November 5, 2026'
+    - []
+    - true
+  - - 'Al Shabaab Ambush In South West State; Algeria Deploys To Niger: Africa File, October 29, 2026'
+    - []
+    - true
+  - - Iran Update, November 11, 2026
+    - []
+    - false
+  - - Russian Offensive Campaign Assessment, November 10, 2026
+    - []
+    - false
+  slug_cases:
+  - - https://www.criticalthreats.org/analysis/russia-rsf-saf-sudan-tplf-eritrea-ethiopia
+    - russia-rsf-saf-sudan-tplf-eritrea-ethiopia
+crowdstrike_blog:
+  content_close: </div>
+  content_open: <div class="container-wp--main-content-blog extra-class">
+  host: www.crowdstrike.com
+  link_path: en-us/blog/
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.crowdstrike.com/en-us/blog/adversaries-turn-vulnerability-ecosystem-against-defenders/
+    - adversaries-turn-vulnerability-ecosystem-against-defenders
+cset:
+  content_close: </main>
+  content_open: <main id="main">
+  host: cset.georgetown.edu
+  link_path: publication/test-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - The PLA's Push for Military Robotics
+    - []
+    - true
+    - https://cset.georgetown.edu/publication/the-plas-push-for-military-robotics/
+  - - Tracking AI Chips
+    - []
+    - true
+    - https://cset.georgetown.edu/publication/tracking-ai-chips/
+  - - Map of Science
+    - - Data
+    - true
+    - https://cset.georgetown.edu/publication/map-of-science/
+  - - How Black-Box Distillation Works
+    - - Uncategorized
+      - Artificial intelligence
+      - China
+      - Cybersecurity
+      - United States
+    - true
+    - https://cset.georgetown.edu/article/how-black-box-distillation-works/
+  - - Espionage, AI, and the Risks of Strategic Overreaction
+    - - Uncategorized
+      - Artificial intelligence
+      - China
+      - Cybersecurity
+      - Export controls
+      - Semiconductors
+      - United States
+    - true
+    - https://cset.georgetown.edu/article/espionage-ai-and-the-risks-of-strategic-overreaction/
+  - - Spy scandal highlights contradictions at heart of Trump's China policy
+    - - Uncategorized
+      - Artificial intelligence
+      - Export controls
+    - true
+    - https://cset.georgetown.edu/article/spy-scandal-highlights-contradictions-at-heart-of-trumps-china-policy/
+  slug_cases:
+  - - https://cset.georgetown.edu/publication/the-plas-push-for-military-robotics/
+    - the-plas-push-for-military-robotics
+cyberscoop:
+  content_close: </div>
+  content_open: <div class="single-article__container extra-class">
+  host: cyberscoop.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://cyberscoop.com/michael-losapio-cisa-director/
+    - michael-losapio-cisa-director
+dark_reading:
+  content_close: </div>
+  content_open: <div class="ArticleBase-BodyContent extra-class">
+  host: www.darkreading.com
+  link_path: threat-intelligence/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Chinese AI Project Scouts Spies in Taiwan Chip Industry
+    - []
+    - true
+    - https://www.darkreading.com/threat-intelligence/chinese-ai-project-scouts-spies-taiwan-chip-industry
+  - - People Are Getting Weird About AI
+    - []
+    - true
+    - https://www.darkreading.com/cyber-risk/people-are-getting-weird-about-ai
+  - - Checkmarx Appoints Kobi Sivilya as Chief Information Security Officer
+    - []
+    - true
+    - https://www.darkreading.com/cybersecurity-careers/checkmarx-appoints-kobi-sivilya-chief-information-security-officer
+  - - Black Hat India 2026 Makes a Landmark Debut in Bengaluru, Bringing the Global Cybersecurity Community
+      Together
+    - []
+    - true
+  - - 'November Patch Tuesday: An Overflowing Cornucopia of CVEs'
+    - []
+    - true
+    - https://www.darkreading.com/vulnerabilities-threats/november-patch-tuesday-cornucopia-cves
+  slug_cases:
+  - - https://www.darkreading.com/threat-intelligence/chinese-ai-project-scouts-spies-taiwan-chip-industry
+    - chinese-ai-project-scouts-spies-taiwan-chip-industry
+dark_web_informer:
+  content_close: </main>
+  content_open: <main id="main">
+  host: darkwebinformer.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://darkwebinformer.com/geofixe-data-leak-claim/
+    - geofixe-data-leak-claim
+ecdc:
+  content_close: </div>
+  content_open: <div id="block-zika-content">
+  host: www.ecdc.europa.eu
+  link_path: en/news-events/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Preparations continue for rollout of new public health surveillance platform in nine pilot countries
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/news-events/preparations-continue-rollout-new-public-health-surveillance-platform-nine-pilot
+  - - ECDC to deploy experts as Ebola cases emerge in Kenya and Nigeria
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/news-events/ecdc-deploy-experts-ebola-cases-emerge-kenya-and-nigeria
+  - - Communicable disease threats report, 10 - 16 October, week 42
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/publications-data/communicable-disease-threats-report-10-16-october-week-42
+  - - Threat assessment brief - Importation of Ebola disease cases caused by Bundibugyo virus to Kenya
+      and Nigeria
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/publications-data/threat-assessment-brief-importation-ebola-disease-cases-caused-bundibugyo-virus
+  - - 'Ebola disease: Multi-country outbreak 2026'
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/ebola-disease-multi-country-outbreak-2026
+  - - Chikungunya virus disease worldwide overview
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/chikungunya-monthly
+  - - Monthly measles and rubella monitoring report - September 2026
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/publications-data/monthly-measles-and-rubella-monitoring-report
+  - - Influenza virus characteristics, week 40 2025 to week 33 2026, EU/EEA
+    - []
+    - true
+    - https://www.ecdc.europa.eu/en/publications-data/influenza-virus-characteristics-week-40-2025-week-33-2026-eueea
+  slug_cases:
+  - - https://www.ecdc.europa.eu/en/publications-data/communicable-disease-threats-report-10-16-october-week-42
+    - communicable-disease-threats-report-10-16-october-week-42
+esa_newsroom:
+  content_close: </main>
+  content_open: <main id="main">
+  host: www.esa.int
+  link_path: articles/news-media/news/test-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - European orbiter detects hints of volcanic activity on Mars
+    - []
+    - true
+    - https://www.esa.int/articles/news-media/news/european-orbiter-detects-hints-of-volcanic-activity-on-mars
+  - - Key outcomes of the 350th ESA Council meeting
+    - []
+    - true
+    - https://www.esa.int/articles/news-media/news/key-outcomes-of-the-350th-esa-council-meeting
+  - - ESA statement on the wildfires near Cebreros
+    - []
+    - true
+    - https://www.esa.int/articles/news-media/news/esa-statement-on-the-wildfires-near-cebreros
+  - - Gearing up European industry for navigation from low Earth orbit
+    - []
+    - true
+    - https://www.esa.int/articles/about-us/directorates/resilience-navigation-and-connectivity/navigation/navisp/gearing-up-european-industry-for-navigation-from-low-earth-orbit
+  - - Win a trip to ESA to witness BepiColombo arrive at Mercury
+    - []
+    - false
+    - https://www.esa.int/articles/about-us/directorates/science/bepicolombo/win-a-trip-to-esa-to-witness-bepicolombo-arrive-at-mercury
+  - - Name our dino - ESA's Hera asteroid mission mascot!
+    - []
+    - false
+    - https://www.esa.int/articles/about-us/directorates/operations/space-safety/hera/name-our-dino-esa-s-hera-asteroid-mission-mascot
+  - - Registration open for 18th annual GNSS summer school
+    - []
+    - false
+    - https://www.esa.int/articles/about-us/directorates/resilience-navigation-and-connectivity/navigation/registration-open-for-18th-annual-gnss-summer-school
+  - - Watch Sophie Adenot's second spacewalk live
+    - []
+    - false
+    - https://www.esa.int/articles/about-us/directorates/human-and-robotic-exploration/watch-sophie-adenot-s-second-spacewalk-live
+  slug_cases:
+  - - https://www.esa.int/articles/news-media/news/european-orbiter-detects-hints-of-volcanic-activity-on-mars
+    - european-orbiter-detects-hints-of-volcanic-activity-on-mars
+eset_welivesecurity:
+  content_close: </div>
+  content_open: <div class="article-body extra-class">
+  host: www.welivesecurity.com
+  link_path: en/eset-research/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.welivesecurity.com/en/eset-research/exchange-for-breakfast-turlas-cereal-tricks-are-not-for-kids/
+    - exchange-for-breakfast-turlas-cereal-tricks-are-not-for-kids
+europol_newsroom:
+  content_close: </div>
+  content_open: <div class="two-column-node extra-class">
+  host: www.europol.europa.eu
+  link_path: media-press/newsroom/news/story-
+  sample_has_dates: false
+  sample_has_titles: true
+  scope_cases:
+  - - 'Investment scams with potential victims in at least 50 countries: over 100 servers seized'
+    - []
+    - true
+    - https://www.europol.europa.eu/media-press/newsroom/news/investment-scams-potential-victims-in-least-50-countries-over-100-servers-seized
+  - - 'Not a game: Europol and partners target terrorist role-playing online'
+    - []
+    - true
+    - https://www.europol.europa.eu/media-press/newsroom/news/not-game-europol-and-partners-target-terrorist-role-playing-online
+  - - Five TEFAF robbery suspects added to EU Most Wanted
+    - []
+    - true
+    - https://www.europol.europa.eu/media-press/newsroom/news/five-tefaf-robbery-suspects-added-to-eu-most-wanted
+  - - 'Keeping pace with e-evidence: New report examines Europe''s digital forensic capabilities'
+    - []
+    - true
+    - https://www.europol.europa.eu/media-press/newsroom/news/keeping-pace-e-evidence-new-report-examines-europes-digital-forensic-capabilities
+  - - 5th EMPACT Hackathon leads to the detection of 51 potential victims
+    - []
+    - true
+    - https://www.europol.europa.eu/media-press/newsroom/news/5th-empact-hackathon-leads-to-detection-of-51-potential-victims
+  slug_cases:
+  - - https://www.europol.europa.eu/media-press/newsroom/news/five-tefaf-robbery-suspects-added-to-eu-most-wanted
+    - five-tefaf-robbery-suspects-added-to-eu-most-wanted
+fierce_network:
+  content_close: </div>
+  content_open: <div id="article-container">
+  host: www.fierce-network.com
+  link_path: broadband/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - After Qualcomm, who else might get a piece of Starlink Mobile's 5G network?
+    - []
+    - true
+    - https://www.fierce-network.com/wireless/after-qualcomm-who-else-might-get-piece-starlink-mobiles-5g-network
+  - - 'Opinion: The data center correction is here. This is what happens next'
+    - []
+    - true
+    - https://www.fierce-network.com/cloud/opinion-data-center-correction-here-what-happens-next
+  - - Cable One warns of bankruptcy risk as Optimum hits a debt wall
+    - []
+    - true
+    - https://www.fierce-network.com/broadband/cable-one-optimum-fight-survival-after-tough-q3
+  - - 'The Five Nine: Fiber without the fiber?'
+    - []
+    - true
+    - https://www.fierce-network.com/wireless/five-nine-fiber-without-fiber
+  - - CableFinder brings T-Mobile for Business to tech advisors through leading TSDs
+    - []
+    - false
+    - https://www.fierce-network.com/newswire/cablefinder-brings-t-mobile-business-tech-advisors-through-leading-tsds
+  - - How 800 VDC Could Power the Next AI Infrastructure
+    - []
+    - false
+    - https://www.fierce-network.com/sponsored/how-800-vdc-could-power-next-ai-infrastructure
+  - - 'OpenAN Takes Aim at the Next Frontier of Autonomous Networks: Getting AI Agents to Work Together'
+    - []
+    - false
+    - https://www.fierce-network.com/sponsored/openan-takes-aim-next-frontier-autonomous-networks-getting-ai-agents-work-together
+  slug_cases:
+  - - https://www.fierce-network.com/broadband/cable-one-optimum-fight-survival-after-tough-q3
+    - cable-one-optimum-fight-survival-after-tough-q3
+gao_reports:
+  content_close: </div>
+  content_open: <div id="block-gao-uswds-content">
+  host: www.gao.gov
+  link_path: products/gao-27-1
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'F-35 Program: DOD Needs to Strengthen Oversight of Tens of Billions of Dollars in Parts'
+    - []
+    - true
+    - https://www.gao.gov/products/gao-27-108713
+  - - 'Housing Construction Innovations: Technologies and Policy Options to Help Increase Supply and Affordability'
+    - []
+    - true
+    - https://www.gao.gov/products/gao-27-108037
+  - - 'National Nuclear Security Administration: Reductions to Federal Workforce'
+    - []
+    - true
+    - https://www.gao.gov/products/gao-27-109127
+  - - 'Immigration Detention: Changes In Inspections of ICE Facilities Raise Questions About Oversight'
+    - []
+    - true
+    - https://www.gao.gov/products/gao-27-109299
+  - - October 28, 2026 letter commenting on the International Auditing and Assurance Standards Board's
+      July 2026 Exposure Draft
+    - []
+    - true
+    - https://www.gao.gov/products/e16078
+  - - Professional Standards Update No. 102
+    - []
+    - false
+    - https://www.gao.gov/products/e16067
+  slug_cases:
+  - - https://www.gao.gov/products/gao-27-108713
+    - gao-27-108713
+global_initiative:
+  content_close: </section>
+  content_open: <section class="post-content extra-class">
+  host: globalinitiative.net
+  link_path: analysis/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Illicit gold and financial flows in Guyana and Suriname
+    - []
+    - true
+    - https://globalinitiative.net/analysis/illicit-gold-guyana-suriname/
+  - - A window for reform? Rethinking the UNTOC review mechanism after COP13
+    - []
+    - true
+    - https://globalinitiative.net/analysis/a-window-for-reform-rethinking-the-untoc-review-mechanism-after-cop13/
+  - - Western Cape gang monitor - Issue 10
+    - []
+    - true
+    - https://globalinitiative.net/analysis/western-cape-gang-monitor-issue-10/
+  - - Syria's Captagon market after the fall of Assad
+    - []
+    - true
+    - https://globalinitiative.net/analysis/captagon-syria-western-asia/
+  - - Global Organized Crime Index 2025 - Eastern Asia and South-Eastern Asia Overview
+    - []
+    - true
+    - https://globalinitiative.net/analysis/global-organized-crime-index-2025-eastern-and-southeastern-asia-overview/
+  - - 24-Hour Global Organized Crime Conference | 2026
+    - []
+    - true
+    - https://globalinitiative.net/analysis/24-hour-global-organized-crime-conference-2026/
+  - - Crimen organizado y respuesta estatal en Guatemala
+    - []
+    - true
+    - https://globalinitiative.net/analysis/crimen-organizado-respuesta-estatal-guatemala/
+  slug_cases:
+  - - https://globalinitiative.net/analysis/illicit-gold-guyana-suriname/
+    - illicit-gold-guyana-suriname
+google_gtig:
+  content_close: </div>
+  content_open: <div class="OYL9D extra-class">
+  host: cloud.google.com
+  link_path: blog/topics/threat-intelligence/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://cloud.google.com/blog/topics/threat-intelligence/shutting-the-door-on-the-xcpe-botnet/
+    - shutting-the-door-on-the-xcpe-botnet
+greynoise:
+  content_close: </div>
+  content_open: <div class="article-body extra-class">
+  host: www.greynoise.io
+  link_path: blog/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'Global Event: SSHole (CVE-2026-123158) Live Activity Report'
+    - []
+    - false
+  - - GreyNoise Welcomes New SVP of Adversary Operations
+    - []
+    - false
+  - - 'Introducing Tactics: See What Adversaries Do After They''re Inside'
+    - []
+    - false
+  - - 'Now Available: Intelligence Dashboard in the GreyNoise Platform'
+    - []
+    - false
+  - - 'GreyNoise + CrowdStrike: Real-Time Edge Intelligence in Falcon Next-Gen SIEM'
+    - []
+    - false
+  - - GreyNoise Intelligence Is Available Across the CrowdStrike Falcon Platform
+    - []
+    - false
+  - - GreyNoise Intel Now Available Through MCP
+    - []
+    - false
+  - - 'Faster Threats, Faster Defense: GreyNoise Launches Real-Time Threat Defense'
+    - []
+    - false
+  - - 4 Ways GreyNoise Improves SOC Outcomes
+    - []
+    - false
+  - - A New Way to Navigate GreyNoise
+    - []
+    - false
+  - - 'skynox7: Proxyjacking Edge Devices Into Residential Proxies'
+    - []
+    - true
+  - - GreyNoise Observes Active Exploitation of Cisco Vulnerabilities Tied to Salt Typhoon Attacks
+    - []
+    - true
+  - - GreyNoise Discovers Stealthy Backdoor Campaign Affecting Thousands of ASUS Routers
+    - []
+    - true
+  - - 'New DDoS Botnet Discovered: Over 30,000 Hacked Devices'
+    - []
+    - true
+  slug_cases:
+  - - https://www.greynoise.io/blog/proxyjacking-edge-devices-residential-proxies
+    - proxyjacking-edge-devices-residential-proxies
+imo_press_briefings:
+  content_close: </article>
+  content_open: <article class="article extra-class">
+  host: www.imo.org
+  link_path: en/MediaCentre/PressBriefings/pages/story-
+  sample_has_dates: false
+  sample_has_titles: true
+  scope_cases:
+  - - IMO Secretary-General calls on States to enforce maritime rules in the Strait of Hormuz
+    - []
+    - true
+  - - IMO Council urges stronger protection of seafarers amid threats to global shipping
+    - []
+    - true
+  - - IMO adopts frameworks to assess marine geoengineering research activities
+    - []
+    - true
+  - - IMO Secretary-General mourns seafarers killed during rescue of hijacked ship
+    - []
+    - true
+  - - Dalian Maritime University's Yu Jiajia to receive 2027 IMO Gender Equality Award
+    - []
+    - true
+  - - 'World Maritime Day 2026: From Policy to Practice - Powering Maritime Excellence'
+    - []
+    - true
+  slug_cases:
+  - - https://www.imo.org/en/MediaCentre/PressBriefings/pages/IMO-adopts-marine-geoengineering-frameworks-for-research-activities.aspx
+    - IMO-adopts-marine-geoengineering-frameworks-for-research-activities.aspx
+intel471:
+  content_close: </main>
+  content_open: <main class="max-w-content extra-class">
+  host: www.intel471.com
+  link_path: blog/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Hand AI the Legwork, You Keep the Judgment
+    - []
+    - true
+    - https://www.intel471.com/blog/hand-ai-the-legwork-you-keep-the-judgment
+  - - Why is Italy a top target for cybercrime?
+    - []
+    - true
+    - https://www.intel471.com/blog/why-is-italy-a-top-target-for-cybercrime
+  - - 'Emerging Threat: QuimaRAT'
+    - []
+    - true
+    - https://www.intel471.com/blog/emerging-threat-quimarat
+  - - 'Threat Hunting Case Study: The Gentlemen'
+    - []
+    - true
+    - https://www.intel471.com/blog/threat-hunting-case-study-the-gentlemen
+  - - 'Introducing MCP471 and Agent471: Bringing Intelligence Into the AI Workflows Analysts Rely On'
+    - []
+    - true
+  slug_cases:
+  - - https://www.intel471.com/blog/threat-hunting-case-study-the-gentlemen
+    - threat-hunting-case-study-the-gentlemen
+isd_global:
+  content_close: </article>
+  content_open: <article>
+  host: www.isdglobal.org
+  link_path: digital-dispatch/test-dispatch-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'Lexical laundering: The mainstreaming of antisemitic neologisms from 4chan and forums'
+    - []
+    - true
+    - https://www.isdglobal.org/digital-dispatch/lexical-laundering/
+  - - 'Investigation | An old dog with no new tricks: Matryoshka targets regional elections in Germany'
+    - []
+    - true
+    - https://www.isdglobal.org/digital-dispatch/investigation-an-old-dog-with-no-new-tricks-matryoshka-targets-regional-elections-in-germany/
+  - - Five lessons from the Islamist extremist attack on Berlin Pride
+    - []
+    - true
+    - https://www.isdglobal.org/digital-dispatch/five-lessons-from-the-islamist-extremist-attack-on-berlin-pride/
+  - - US Election Platform Preparedness 2026
+    - []
+    - true
+    - https://www.isdglobal.org/publication/us-election-platform-preparedness-2026/
+  - - Online Domestic Extremism in Canada Data Briefing - March 2026 to May 2026
+    - []
+    - true
+    - https://www.isdglobal.org/publication/online-domestic-extremism-in-canada-data-briefing-march-2026-to-may-2026/
+  - - Mapping the 'Nudify' Tools Ecosystem
+    - []
+    - true
+    - https://www.isdglobal.org/publication/mapping-the-nudify-tools-ecosystem/
+  slug_cases:
+  - - https://www.isdglobal.org/digital-dispatch/lexical-laundering/
+    - lexical-laundering
+isw:
+  content_close: </div>
+  content_open: <div id="printable-area">
+  host: understandingwar.org
+  link_path: research/russia-ukraine/
+  sample_has_dates: false
+  sample_has_titles: false
+  scope_cases:
+  - - Russian Offensive Campaign Assessment, Nov. 10, 2026
+    - []
+    - true
+    - https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-november-10-2026/
+  - - Iran Update, November 11, 2026
+    - []
+    - true
+    - https://understandingwar.org/research/middle-east/iran-update-november-11-2026/
+  - - Russian Offensive Campaign Assessment | Sep 2026-NOW
+    - []
+    - false
+    - https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-sep-2026-present/
+  slug_cases:
+  - - https://understandingwar.org/research/russia-ukraine/russian-offensive-campaign-assessment-november-10-2026/
+    - russian-offensive-campaign-assessment-november-10-2026
+jerusalem_post:
+  content_close: </section>
+  content_open: <section class="article-body extra-class">
+  host: www.jpost.com
+  link_path: middle-east/article-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'Former IAF chief Norkin: Israel must turn its tech edge into strategic alliances'
+    - - Defense & Tech
+    - true
+    - https://www.jpost.com/defense-and-tech/article-914560
+  - - 'The drone age for all: The real challenge is only beginning - opinion'
+    - - Defense & Tech
+    - true
+    - https://www.jpost.com/defense-and-tech/article-914547
+  - - Iran attacks shipping navigation systems on Oman's Didamar island near Strait of Hormuz
+    - - Middle East
+      - Iran News
+    - true
+    - https://www.jpost.com/middle-east/iran-news/article-914624
+  - - Who killed Ahmed al-Alwani? Beirut murder raises regional questions - analysis
+    - - Middle East
+    - true
+    - https://www.jpost.com/middle-east/article-914584
+  - - 'Between Iran, Iraq and a hard place: Iraq''s prime minister weighs next steps'
+    - - Middle East
+    - true
+  slug_cases:
+  - - https://www.jpost.com/middle-east/article-914584
+    - article-914584
+kaspersky_ics_cert:
+  content_close: </div>
+  content_open: <div class="page__content extra-class">
+  host: ics-cert.kaspersky.com
+  link_path: publications/reports/2026/11/05/report-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://ics-cert.kaspersky.com/publications/reports/2026/11/05/supply-chain-attack-bo-team-in-a-software-developers-infrastructure/
+    - supply-chain-attack-bo-team-in-a-software-developers-infrastructure
+light_reading:
+  content_close: </div>
+  content_open: <div class="ArticleBase-BodyContent extra-class">
+  host: www.lightreading.com
+  link_path: 5g/test-article-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Starlink gets faster ahead of 'V3' launches, but shift to dynamic pricing could backfire
+    - []
+    - true
+    - https://www.lightreading.com/satellite/starlink-gets-faster-ahead-of-v3-launches-but-shift-to-dynamic-pricing-could-backfire
+  - - 'Eurobites: Telefonica Germany expands fiber reach with Deutsche Glasfaser'
+    - []
+    - true
+  - - Heads roll and competition dies in UK telecom's Spaghetti Western
+    - []
+    - true
+    - https://www.lightreading.com/fttx/heads-roll-and-competition-dies-in-uk-telecom-s-spaghetti-western
+  - - 'The Buildout: Surf cuts ribbons in Delaware County, Indiana'
+    - []
+    - true
+    - https://www.lightreading.com/broadband/the-buildout-surf-cuts-ribbons-in-delaware-county-indiana
+  - - Craig Cowden named CEO of TierPoint
+    - []
+    - true
+    - https://www.lightreading.com/data-centers/craig-cowden-named-ceo-of-tierpoint
+  slug_cases:
+  - - https://www.lightreading.com/satellite/starlink-gets-faster-ahead-of-v3-launches-but-shift-to-dynamic-pricing-could-backfire
+    - starlink-gets-faster-ahead-of-v3-launches-but-shift-to-dynamic-pricing-could-backfire
+long_war_journal:
+  content_close: </div>
+  content_open: <div class="wp-block-post-content extra-class">
+  host: www.longwarjournal.org
+  link_path: archives/2026/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Russia's redesigned Geran-5 missile expands threat to Ukrainian skies
+    - - News
+      - Russia
+    - true
+    - https://www.longwarjournal.org/archives/2026/11/russias-redesigned-geran-5-missile-expands-threat-to-ukrainian-skies.php
+  - - Pakistani outreach presents a dilemma for Afghanistan's anti-Taliban resistance
+    - - Analysis
+      - Afghanistan
+    - true
+    - https://www.longwarjournal.org/archives/2026/10/pakistani-outreach-presents-a-dilemma-for-afghanistans-anti-taliban-resistance.php
+  - - 8 Islamic State suspects arrested or indicted across 5 countries since October
+    - - News
+      - Islamic State
+    - true
+    - https://www.longwarjournal.org/archives/2026/11/8-islamic-state-suspects-arrested-or-indicted-across-5-countries-since-october.php
+  - - Arab parties endorse Eisenkot for Israeli PM, IDF reports 52 ceasefire violations Oct. 16-Nov. 5
+    - - News
+      - IDF
+    - true
+    - https://www.longwarjournal.org/archives/2026/11/arab-parties-endorse-eisenkot-for-israeli-pm-idf-reports-52-ceasefire-violations-oct-16-nov-5.php
+  - - 'One war, many fronts: Iran and its proxies'
+    - - Generation Jihad
+      - Iran
+    - false
+    - https://www.longwarjournal.org/archives/2026/10/one-war-many-fronts-iran-and-its-proxies.php
+  - - The Houthis' Red Sea power play
+    - - Generation Jihad
+      - Houthis
+    - false
+    - https://www.longwarjournal.org/archives/2026/10/the-houthis-red-sea-power-play.php
+  slug_cases:
+  - - https://www.longwarjournal.org/archives/2026/11/russias-redesigned-geran-5-missile-expands-threat-to-ukrainian-skies.php
+    - russias-redesigned-geran-5-missile-expands-threat-to-ukrainian-skies.php
+malwarebytes_labs:
+  content_close: </div>
+  content_open: <div class="entry-content extra-class">
+  host: www.malwarebytes.com
+  link_path: blog/news/2026/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Remus malware claims Gmail access even after you change your password
+    - - News
+      - gmail
+      - password reset
+      - Remus
+    - true
+    - https://www.malwarebytes.com/blog/news/2026/11/remus-malware-claims-gmail-access-even-after-you-change-your-password
+  - - 'Phone return scams: where a real delivery and a fake return end up in a bill for you'
+    - - Scams
+      - Threat Intel
+      - phone return
+      - Rogers
+    - true
+    - https://www.malwarebytes.com/blog/threat-intel/2026/11/phone-return-scams-where-a-real-delivery-and-a-fake-return-end-up-in-a-bill-for-you
+  - - Microsoft Patch Tuesday fixes Outlook flaw already under attack
+    - - Bugs
+      - News
+      - CVE-2026-116928
+      - CVE-2026-124194
+    - true
+    - https://www.malwarebytes.com/blog/bugs/2026/11/microsoft-patch-tuesday-fixes-outlook-flaw-already-under-attack
+  - - Before you buy an advent calendar, check these warning signs
+    - - Family and parenting
+      - How to
+    - false
+    - https://www.malwarebytes.com/blog/how-to/2026/11/before-you-buy-an-advent-calendar-check-these-warning-signs
+  - - A week in security (November 2 - November 8)
+    - - News
+      - Applebee's
+      - siupermarkets
+    - false
+    - https://www.malwarebytes.com/blog/news/2026/11/a-week-in-security-november-2-november-8
+  - - Muse sleep band users weren't told their brain data was training AI
+    - - AI
+      - Privacy
+    - true
+    - https://www.malwarebytes.com/blog/ai/2026/11/muse-sleep-band-users-werent-told-their-brain-data-was-training-ai
+  slug_cases:
+  - - https://www.malwarebytes.com/blog/news/2026/11/remus-malware-claims-gmail-access-even-after-you-change-your-password
+    - remus-malware-claims-gmail-access-even-after-you-change-your-password
+netscout_asert:
+  content_close: </article>
+  content_open: <article class="node--type-blog extra-class">
+  host: www.netscout.com
+  link_path: blog/asert/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.netscout.com/blog/asert/winter-games-effect-when-gold-meets-ddos
+    - winter-games-effect-when-gold-meets-ddos
+opensecrets_news:
+  content_close: </div>
+  content_open: <div class="block-post extra-class">
+  host: www.opensecrets.org
+  link_path: news/2026/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Lobbying spending hits Q3 high, remains on pace for another record year
+    - []
+    - true
+    - https://www.opensecrets.org/news/2026/11/lobbying-spending-hits-q3-high-remains-on-pace-for-another-record-year
+  - - 'Chart of the Week: Jim Jordan overcomes leadership PAC gap'
+    - []
+    - true
+    - https://www.opensecrets.org/news/2026/11/chart-of-the-week-jim-jordan-overcomes-leadership-pac-gap
+  - - Elon Musk's $445M spending spree tops 2026 midterm donor rankings
+    - []
+    - true
+    - https://www.opensecrets.org/news/2026/11/elon-musks-445m-spending-spree-tops-2026-midterm-donor-rankings
+  - - OpenSecrets predicts record $12 billion in midterm election spending
+    - []
+    - true
+    - https://www.opensecrets.org/news/2026/10/opensecrets-predicts-record-12-billion-in-midterm-election-spending
+  - - Voters in several states deliver wins for ballot measures fighting money in politics
+    - []
+    - true
+    - https://www.opensecrets.org/news/2026/11/voters-in-several-states-deliver-wins-for-ballot-measures-fighting-money-in-politics
+  slug_cases:
+  - - https://www.opensecrets.org/news/2026/11/lobbying-spending-hits-q3-high-remains-on-pace-for-another-record-year
+    - lobbying-spending-hits-q3-high-remains-on-pace-for-another-record-year
+pew_religion:
+  content_close: </article>
+  content_open: <article>
+  host: www.pewresearch.org
+  link_path: religion/2026/01/01/test-report-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Religion Remains Stable in the U.S., With Mixed Signals for Young Adults
+    - - Religion
+      - Younger Adults
+    - true
+    - https://www.pewresearch.org/religion/2026/10/28/religion-remains-stable-in-the-us-with-mixed-signals-for-young-adults/
+  - - Most Americans' Religious Lives Haven't Changed Much in Recent Years
+    - - Beliefs & Practices
+      - Religious Demographics
+    - true
+    - https://www.pewresearch.org/short-reads/2026/10/28/most-americans-religious-lives-havent-changed-much-in-recent-years/
+  - - Religious Groups Differ Widely in Their 2026 Midterm Preferences
+    - - Religion & Government
+      - Religion & Politics
+      - U.S. Elections & Voters
+    - true
+    - https://www.pewresearch.org/short-reads/2026/10/13/religious-groups-differ-widely-in-their-2026-midterm-preferences/
+  - - Acknowledgments
+    - - Religion
+      - Younger Adults
+    - false
+    - https://www.pewresearch.org/science/2026/10/29/ai-in-healthcare-acknowledgments/
+  - - Methodology
+    - - Religion
+      - Younger Adults
+    - false
+    - https://www.pewresearch.org/science/2026/10/29/ai-in-healthcare-methodology/
+  - - 'Quiz: What Is Your Civic Personality?'
+    - - Beliefs & Practices
+      - News Habits & Media
+      - Political & Civic Engagement
+    - false
+    - https://www.pewresearch.org/journalism/quiz/what-is-your-civic-personality/
+  - - Celebrating Diwali
+    - []
+    - false
+    - https://www.pewresearch.org/newsletter/religion-weekly/religion-weekly-update-nov-4-2026/
+  - - Americans' Views of ICE Grow More Negative
+    - - Federal Government
+      - Immigration & Migration
+    - false
+    - https://www.pewresearch.org/short-reads/2026/10/26/americans-views-of-ice-grow-more-negative/
+  - - 'Expert Brief: Public Opinion on AI in Healthcare'
+    - - Artificial Intelligence
+      - Medicine & Health
+      - Science Issues
+    - false
+    - https://www.pewresearch.org/2026/11/11/expert-brief-public-opinion-on-ai-in-healthcare/
+  slug_cases:
+  - - https://www.pewresearch.org/religion/2026/10/28/religion-remains-stable-in-the-us-with-mixed-signals-for-young-adults/
+    - religion-remains-stable-in-the-us-with-mixed-signals-for-young-adults
+preventionweb:
+  content_close: </div>
+  content_open: <div id="block-pw-content">
+  host: www.preventionweb.net
+  link_path: news/test-news-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Global Status of Multi-Hazard Early Warning Systems 2026
+    - []
+    - true
+    - https://www.preventionweb.net/publication/documents-and-publications/global-status-multi-hazard-early-warning-systems-2026
+  - - Early warning protection expands worldwide as powerful El Nino raises the stakes
+    - []
+    - true
+  - - Case stories on non-economic loss and damage (NELD) from Bangladesh
+    - []
+    - true
+    - https://www.preventionweb.net/resource/case-study/case-stories-non-economic-loss-and-damage-neld-bangladesh
+  - - 'European tourism demand in the face of climate change: asymmetric impacts, demand reallocation,
+      and deseasonalisation strategies'
+    - []
+    - true
+    - https://www.preventionweb.net/publication/documents-and-publications/european-tourism-demand-face-climate-change-asymmetric
+  - - Asia-Pacific Ministerial Conference on Disaster Risk Reduction
+    - []
+    - false
+    - https://www.preventionweb.net/event/asia-pacific-ministerial-conference-disaster-risk-reduction-0
+  - - Resilient Cities Pavilion programme at COP31
+    - []
+    - false
+    - https://www.preventionweb.net/event/resilient-cities-pavilion-programme-cop31
+  - - Instituto Bem Ambiental (IBAM)
+    - []
+    - false
+    - https://www.preventionweb.net/organization/instituto-bem-ambiental-ibam
+  - - Rede Brasileira de Cidades Resilientes
+    - []
+    - false
+    - https://www.preventionweb.net/organization/rede-brasileira-de-cidades-resilientes
+  slug_cases:
+  - - https://www.preventionweb.net/news/early-warning-protection-expands-worldwide-powerful-el-nino-raises-stakes
+    - early-warning-protection-expands-worldwide-powerful-el-nino-raises-stakes
+proofpoint_threat_insight:
+  content_close: </div>
+  content_open: <div class="blog-content__body extra-class">
+  host: www.proofpoint.com
+  link_path: us/blog/threat-insight/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.proofpoint.com/us/blog/threat-insight/BluePhishing-Initial-Access-via-Third-Party-Agent-Blueprint-Consent
+    - BluePhishing-Initial-Access-via-Third-Party-Agent-Blueprint-Consent
+rand_corporation:
+  content_close: </main>
+  content_open: <main id="page-content">
+  host: www.rand.org
+  link_path: pubs/research_reports/RRA
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Trust Unpacked
+    - []
+    - true
+    - https://www.rand.org/pubs/research_reports/RRA5389-1.html
+  - - 'Ready for War 2030: A Scenario'
+    - []
+    - true
+    - https://www.rand.org/pubs/perspectives/PEA5505-1.html
+  - - Inverted Rook
+    - []
+    - true
+    - https://www.rand.org/pubs/research_briefs/RBA2397-1.html
+  - - Three Essays on Artificial Intelligence and Work in the U.S.
+    - []
+    - true
+    - https://www.rand.org/pubs/rgs_dissertations/RGSDA5507-1.html
+  - - Effect of Electronic Behavioral Nudges on Low-Value Preoperative Testing
+    - []
+    - true
+    - https://www.rand.org/pubs/external_publications/EP71445.html
+  - - America's Least Bad Option in Iran
+    - []
+    - true
+    - https://www.rand.org/pubs/commentary/2026/10/americas-least-bad-option-in-iran.html
+  - - Preparedness for the AI Era Requires a Reserve of Critical Workers
+    - []
+    - true
+    - https://www.rand.org/pubs/commentary/2026/11/preparedness-for-the-ai-era-requires-a-reserve-of-critical.html
+  slug_cases:
+  - - https://www.rand.org/pubs/research_reports/RRA5389-1.html
+    - RRA5389-1
+rapid7:
+  content_close: </div>
+  content_open: <div class="blog-content extra-class">
+  host: www.rapid7.com
+  link_path: blog/post/tr-story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'What''s New in Rapid7 Products and Services: Q2 2026 in Review'
+    - - Research
+      - SIEM
+    - false
+  - - Sunsetting the Public AttackerKB Platform
+    - - Research
+    - false
+  - - 'CVE-2026-63520: Microsoft SharePoint Remote Code Execution (FIXED)'
+    - - Emergent Threat Response
+      - Research
+    - true
+  - - 'SMTP is the key: BPFDoor and AVERAT hitting the network edge'
+    - - Research
+    - true
+  slug_cases:
+  - - https://www.rapid7.com/blog/post/tr-smtp-is-the-key-bpfdoor-averat-hitting-the-network-edge
+    - tr-smtp-is-the-key-bpfdoor-averat-hitting-the-network-edge
+recorded_future_insikt:
+  content_close: </main>
+  content_open: <main>
+  host: www.recordedfuture.com
+  link_path: research/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - AI Is Both Target and Tool for Threat Actors
+    - - Research (Insikt)
+    - true
+    - https://www.recordedfuture.com/research/ai-cyber-threat-trends-2026
+  - - TAG-217 Targets South Korean Financial Services with ARTEX
+    - - Blog
+    - true
+    - https://www.recordedfuture.com/blog/tag-217-artex-south-korean-banks
+  - - October 2026 CVE Landscape
+    - - Blog
+    - true
+    - https://www.recordedfuture.com/blog/october-2026-cve-landscape
+  - - CopyCop Targets AI Investment in Armenia
+    - - Blog
+    - true
+    - https://www.recordedfuture.com/blog/copycop-targets-ai-investment
+  - - Recorded Future Launches AI Alert Filtering
+    - - Blog
+    - false
+    - https://www.recordedfuture.com/blog/ai-alert-filtering
+  - - Recorded Future Debuts Autonomous Defense, Built for Machine-Speed Threats
+    - - Blog
+    - false
+    - https://www.recordedfuture.com/blog/autonomous-defense-platform
+  - - Working in Boston at the World's Largest Intelligence Company
+    - - Blog
+    - false
+    - https://www.recordedfuture.com/blog/working-in-boston
+  - - What is Proactive Threat Intelligence? | Recorded Future
+    - - Blog
+    - false
+    - https://www.recordedfuture.com/blog/proactive-threat-intelligence
+  - - 8 Ways AI is Changing Threat Intelligence
+    - - Blog
+    - false
+    - https://www.recordedfuture.com/blog/ai-changing-threat-intelligence
+  slug_cases:
+  - - https://www.recordedfuture.com/research/ai-cyber-threat-trends-2026
+    - ai-cyber-threat-trends-2026
+secure_world_foundation:
+  content_close: </div>
+  content_open: <div class="section-publication-content extra-class">
+  host: www.swfound.org
+  link_path: publications-and-reports/test-
+  sample_has_dates: true
+  sample_has_titles: false
+  scope_cases:
+  - - US has on-orbit space control weapons
+    - []
+    - true
+  - - 2026 Global Counterspace Capabilities Report
+    - []
+    - true
+  - - Open-Ended Working Group (OEWG) on Reducing Space Threats Fact Sheet
+    - []
+    - true
+  - - Lunar Space Cooperation Initiatives
+    - []
+    - true
+  - - August 2026 Newsletter
+    - []
+    - true
+  - - O Manual para Novos Atores no Espaco
+    - []
+    - true
+  slug_cases:
+  - - https://www.swfound.org/publications-and-reports/us-has-on-orbit-space-control-weapons
+    - us-has-on-orbit-space-control-weapons
+securelist:
+  content_close: </div>
+  content_open: <div class="c-article__content extra-class">
+  host: securelist.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://securelist.com/citrus-ransomware/121879/
+    - citrus-ransomware
+security_affairs:
+  content_close: </div>
+  content_open: <div class="article-details-block extra-class">
+  host: securityaffairs.com
+  link_path: 202853/hacking/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://securityaffairs.com/202853/malware/hackers-advertise-a-gmail-tool.html
+    - hackers-advertise-a-gmail-tool
+securityweek:
+  content_close: </div>
+  content_open: <div class="zox-post-body extra-class">
+  host: www.securityweek.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Critical Xen Orchestra Flaws Exploited in Attacks
+    - - Vulnerabilities
+      - exploited
+      - vulnerability
+      - Xen Orchestra
+    - true
+    - https://www.securityweek.com/critical-xen-orchestra-flaws-exploited-in-attacks/
+  - - Bay Raises $50 Million to Control What Enterprise AI Agents Can Do
+    - - Cybersecurity Funding
+    - true
+    - https://www.securityweek.com/bay-raises-50-million-to-control-what-enterprise-ai-agents-can-do/
+  - - 'ICS Patch Tuesday: Siemens Flags High-Severity Flaws, Node2Shell Exposure'
+    - - ICS/OT
+      - Vulnerabilities
+      - ICS
+      - ICS Patch Tuesday
+    - true
+    - https://www.securityweek.com/ics-patch-tuesday-siemens-flags-high-severity-flaws-node2shell-exposure/
+  - - 'Today: CISO Forum Virtual Summit 2026 Day 2 - Join Cybersecurity Leaders'
+    - - CISO Strategy
+      - CISO
+      - Featured
+    - false
+    - https://www.securityweek.com/today-ciso-forum-virtual-summit-2026-join-global-cybersecurity-leaders/
+  - - Threat Actors Exploit Openwave, Cisco BroadWorks Vulnerabilities
+    - - Vulnerabilities
+      - BroadWorks
+      - CISA KEV
+      - Cisco
+    - true
+    - https://www.securityweek.com/threat-actors-exploit-openwave-cisco-broadworks-vulnerabilities/
+  slug_cases:
+  - - https://www.securityweek.com/critical-xen-orchestra-flaws-exploited-in-attacks/
+    - critical-xen-orchestra-flaws-exploited-in-attacks
+sei_blog:
+  content_close: </div>
+  content_open: <div class="blog-post-body extra-class">
+  host: www.sei.cmu.edu
+  link_path: blog/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.sei.cmu.edu/blog/introducing-the-insider-incident-data-exchange-standard-iides/
+    - introducing-the-insider-incident-data-exchange-standard-iides
+sentinellabs:
+  content_close: </div>
+  content_open: <div class="article-entry-main extra-class">
+  host: www.sentinelone.com
+  link_path: labs/
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.sentinelone.com/labs/defrost-and-disrupt-an-assessment-of-europe-s-refrigeration-attacks/
+    - defrost-and-disrupt-an-assessment-of-europe-s-refrigeration-attacks
+sipri:
+  content_close: </div>
+  content_open: <div id="sipri-2016-content">
+  host: www.sipri.org
+  link_path: commentary/essay/2026/test-essay-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Building on progress in China-USA talks on AI
+    - []
+    - true
+    - https://www.sipri.org/commentary/essay/2026/building-progress-china-usa-talks-ai
+  - - 'Climate, Peace and Security Fact Sheet: Somalia (2026)'
+    - []
+    - true
+    - https://www.sipri.org/publications/2026/partner-publications/climate-peace-and-security-fact-sheet-somalia-2026
+  - - Global aid gap widens as major donors prioritize higher military spending, new SIPRI research finds
+    - []
+    - true
+  - - SIPRI hosts discussion on human security and AI
+    - []
+    - true
+    - https://www.sipri.org/news/2026/sipri-hosts-discussion-human-security-and-ai
+  - - Visit our 60th anniversary collection
+    - []
+    - true
+    - https://www.sipri.org/news/2026/visit-our-60th-anniversary-collection
+  - - SIPRI and translation partner mark two anniversaries
+    - []
+    - true
+    - https://www.sipri.org/news/2026/sipri-and-translation-partner-mark-two-anniversaries
+  slug_cases:
+  - - https://www.sipri.org/commentary/essay/2026/building-progress-china-usa-talks-ai
+    - building-progress-china-usa-talks-ai
+soufan_center:
+  content_close: </div>
+  content_open: <div class="container-single-intelbrief extra-class">
+  host: thesoufancenter.org
+  link_path: intelbrief-2026-november-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Is Jordan Back in the Crosshairs of Terrorist Groups?
+    - - INTELBRIEF
+    - true
+    - https://thesoufancenter.org/intelbrief-2026-november-10/
+  - - ISIS Activity After the U.S. Withdrawal from Iraq and Syria
+    - - INTELBRIEF
+    - true
+    - https://thesoufancenter.org/intelbrief-2026-november-5/
+  - - Sudan's Expanding Drone War and the Uncertain Prospects for Peace
+    - - INTELBRIEF
+    - true
+    - https://thesoufancenter.org/intelbrief-2026-november-4/
+  - - 'TSC Insights: Terrorist Misuse of AI:  A Framework for U.S.-PRC Cooperation'
+    - []
+    - true
+  - - '25 Years After 9/11: The Future of The Global Jihadi Movement'
+    - []
+    - true
+    - https://thesoufancenter.org/research/25-years-after-9-11-the-future-of-the-global-jihadi-movement/
+  slug_cases:
+  - - https://thesoufancenter.org/intelbrief-2026-november-10/
+    - intelbrief-2026-november-10
+space_news:
+  content_close: </article>
+  content_open: <article>
+  host: spacenews.com
+  link_path: test-article-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - ESCAPADE on its way to Mars after Earth flybys
+    - - Civil
+      - News
+      - EscaPADE
+      - Mars
+      - NASA
+      - SIMPLEx
+    - true
+    - https://spacenews.com/escapade-on-its-way-to-mars-after-earth-flybys/
+  - - Senate committee takes up nominees for NASA chief financial officer and inspector general
+    - - News
+    - true
+    - https://spacenews.com/senate-committee-takes-up-nominees-for-nasa-chief-financial-officer-and-inspector-general/
+  - - 'Moog Marks 25 Years Since ESPA Design Milestone: Innovating Space Rideshare'
+    - - Press Release
+      - Moog
+    - true
+    - https://spacenews.com/moog-marks-25-years-since-espa-design-milestone-innovating-space-rideshare/
+  - - Kratos and Seagate Space Partner to Advance Mobile Offshore Launch Capabilities for National Security
+      Missions
+    - - Press Release
+      - Kratos
+      - Seagate Space
+    - true
+    - https://spacenews.com/kratos-and-seagate-space-partner-to-advance-mobile-offshore-launch-capabilities-for-national-security-missions/
+  - - How to Expand Reliable, Flexible Access to Space
+    - - Sponsored
+      - Exolaunch
+    - false
+    - https://spacenews.com/how-to-expand-reliable-flexible-access-to-space/
+  - - Building a 'highway to the moon and back' with Winnie Lai
+    - - Video
+      - Space Minds
+      - Space Minds Podcast
+    - false
+    - https://spacenews.com/building-a-highway-to-the-moon-and-back-with-winnie-lai/
+  - - Advice for optimizing the space industry with Laura Crabtree
+    - - Video
+      - Space Minds
+      - Space Minds Podcast
+    - false
+    - https://spacenews.com/advice-for-optimizing-the-space-industry-with-laura-crabtree/
+  slug_cases:
+  - - https://spacenews.com/escapade-on-its-way-to-mars-after-earth-flybys/
+    - escapade-on-its-way-to-mars-after-earth-flybys
+step_security:
+  content_close: </div>
+  content_open: <div class="blog-post-rich-text extra-class">
+  host: www.stepsecurity.io
+  link_path: blog/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'GitHub Package Firewall vs. StepSecurity Secure Registry: Protection beyond npm'
+    - []
+    - false
+  - - StepSecurity Now Inventories AI Agent Plugins in Your GitHub Repositories
+    - []
+    - false
+  - - Dev Machine Guard Now Supports Linux
+    - []
+    - false
+  - - Secure Registry now tells you which machine pulled a compromised package
+    - []
+    - false
+  - - Harden-Runner Block Mode Now Available for macOS and Windows GitHub-Hosted Runners
+    - []
+    - false
+  - - Introducing Secret Exfiltration Protection for GitHub Actions
+    - []
+    - false
+  - - '2026 Mid-Year Update: On Pace for Our Biggest Year Yet'
+    - []
+    - false
+  - - Runtime Security for AWS CodeBuild-Hosted GitHub Actions Runners
+    - []
+    - false
+  - - '@ethersphere/bee-js 13.3.0 Compromised'
+    - []
+    - true
+  - - Nx Console VS Code Extension Compromised
+    - []
+    - true
+  - - 'litellm 1.107.0 Compromised on PyPI and Docker: Credential Stealer and Hourly Remote Code Loader'
+    - []
+    - true
+  - - '10 Layers Deep: How StepSecurity Stops TeamPCP''s Trivy Supply Chain Attack on GitHub Actions'
+    - []
+    - true
+  - - 'Behind the Scenes: How StepSecurity Detected and Helped Remediate the Largest npm Supply Chain
+      Attack'
+    - []
+    - true
+  - - 'Railway''s Security Incident: Why CI/CD Needs Runtime Security'
+    - []
+    - true
+  slug_cases:
+  - - https://www.stepsecurity.io/blog/ethersphere-bee-js-13-3-0-compromise
+    - ethersphere-bee-js-13-3-0-compromise
+stimson_center:
+  content_close: </div>
+  content_open: <div class="elementor-location-single extra-class">
+  host: www.stimson.org
+  link_path: 2026/post-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Don't Rebuild America's Gulf Bases
+    - - Uncategorized
+      - Iran War
+    - true
+    - https://www.stimson.org/2026/dont-rebuild-americas-gulf-bases/
+  - - 'North Africa Regional Outlook: November 4, 2026'
+    - - Uncategorized
+    - true
+    - https://www.stimson.org/2026/north-africa-regional-outlook-november-4-2026/
+  - - 'Experts React: The Midterms and America''s Place in the World'
+    - - Uncategorized
+    - true
+    - https://www.stimson.org/2026/experts-react-the-midterms-and-americas-place-in-the-world/
+  - - 'The 2025 ATT Annual Reports: Examining Trends in Compliance and Transparency'
+    - - Uncategorized
+    - true
+    - https://www.stimson.org/2026/the-2025-att-annual-reports-examining-trends-in-compliance-and-transparency/
+  - - Is Reforming the UNSC Realistic? Article 27(3) of the UN Charter Offers a Starting Point.
+    - - Uncategorized
+      - United Nations
+    - true
+    - https://www.stimson.org/2026/is-reforming-the-unsc-realistic-article-273-of-the-un-charter-offers-a-starting-point/
+  - - Assessing the Trump Administration's Commitment to Taiwan
+    - - Uncategorized
+    - true
+    - https://www.stimson.org/2026/assessing-the-trump-administrations-commitment-to-taiwan/
+  slug_cases:
+  - - https://www.stimson.org/2026/dont-rebuild-americas-gulf-bases/
+    - dont-rebuild-americas-gulf-bases
+stronger_by_science:
+  content_close: </div>
+  content_open: <div class="elementor-widget-theme-post-content extra-class">
+  host: www.strongerbyscience.com
+  link_path: test-article-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Is the Correlation Between Hypertrophy and Strength Gains Stronger Than We Realized?
+    - - Articles
+      - Hypertrophy
+    - true
+    - https://www.strongerbyscience.com/correlation-strength-hypertrophy/
+  - - 'Hold Still: What Does the Evidence Actually Say About Isometric Training for Strength and Hypertrophy?'
+    - - Articles
+      - Hypertrophy
+      - Programming
+    - true
+    - https://www.strongerbyscience.com/isometric-training/
+  - - Are "seed oils" actually unhealthy?
+    - - Newsletter
+    - true
+    - https://www.strongerbyscience.com/seed-oils/
+  - - 'High volume vs high intensity: which builds more muscle?'
+    - - Newsletter
+    - true
+    - https://www.strongerbyscience.com/high-volume-vs-high-intensity/
+  - - SBS Podcast Final Q&A (Episode 144)
+    - - Podcast
+    - false
+  - - How To Train The Back (Episode 135)
+    - - Podcast
+    - false
+  slug_cases:
+  - - https://www.strongerbyscience.com/seed-oils/
+    - seed-oils
+task_and_purpose:
+  content_close: </div>
+  content_open: <div class="entry-content extra-class">
+  host: taskandpurpose.com
+  link_path: news/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - The Army is testing self-driving vehicles at bases in Georgia and Texas
+    - - News
+      - Army
+      - Field Guide
+      - Military Branches
+      - Military Life
+    - true
+    - https://taskandpurpose.com/news/army-test-self-driving-vehicles/
+  - - Could the DC National Guard mission become the Army's standard for quality of life?
+    - - Opinion
+      - Commentary
+    - true
+    - https://taskandpurpose.com/opinion/quality-of-life-army-dc-national-guard-standard/
+  - - How airmen are leading a 'revolution' in aircraft maintenance
+    - - Tech & Tactics
+      - Aircraft
+      - Fighter Aircraft
+      - Video
+    - true
+    - https://taskandpurpose.com/tech-tactics/air-force-predictive-maintenance-amats/
+  - - 'Tracking America''s latest conflict: The Iran war timeline'
+    - - News
+      - Around the World
+      - Iran
+    - true
+    - https://taskandpurpose.com/news/iran-war-timeline/
+  - - Hegseth calls boat strikes 'lawful' and 'successful' after calls for impeachment
+    - - News
+      - Around the World
+      - United States
+    - true
+    - https://taskandpurpose.com/news/hegseth-impeachment-boat-strikes/
+  slug_cases:
+  - - https://taskandpurpose.com/news/army-test-self-driving-vehicles/
+    - army-test-self-driving-vehicles
+techcrunch:
+  content_close: </div>
+  content_open: <div class="seamless-scroll-container extra-class">
+  host: techcrunch.com
+  link_path: 2026/11/10/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://techcrunch.com/2026/11/10/nvidias-crisis-has-corporate-governance/
+    - nvidias-crisis-has-corporate-governance
+telecoms_com:
+  content_close: </div>
+  content_open: <div class="ArticleBase extra-class">
+  host: www.telecoms.com
+  link_path: operator-ecosystem/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Google MVNO tight-lipped on its 'super network' carriers
+    - []
+    - true
+    - https://www.telecoms.com/5g-6g/google-mvno-tight-lipped-on-its-super-network-carriers
+  - - Vodafone raises guidance but swings to loss on Germany impairment
+    - []
+    - true
+    - https://www.telecoms.com/operator-ecosystem/vodafone-raises-guidance-but-swings-to-loss-on-germany-impairment
+  - - AI puts IPv6 Enhanced to work
+    - []
+    - true
+    - https://www.telecoms.com/telecoms-infrastructure/ai-puts-ipv6-enhanced-to-work
+  - - VodafoneThree helps to bust criminal SIM farm network
+    - []
+    - true
+    - https://www.telecoms.com/security/vodafonethree-helps-to-bust-criminal-sim-farm-network
+  - - How Intelligence Is Reshaping the Role of Telecom
+    - []
+    - true
+    - https://www.telecoms.com/ai/how-intelligence-is-reshaping-the-role-of-telecom
+  - - 'The Telecoms.com Podcast: Humara, AI agents and SpaceX'
+    - []
+    - false
+    - https://www.telecoms.com/ai/the-telecoms-com-podcast-humara-ai-agents-and-spacex
+  - - 'The Telecoms.com Podcast: Tampnet, UK government and AI credit crunch'
+    - []
+    - false
+    - https://www.telecoms.com/telecoms-infrastructure/the-telecoms-com-podcast-tampnet-uk-government-and-ai-credit-crunch
+  slug_cases:
+  - - https://www.telecoms.com/5g-6g/google-mvno-tight-lipped-on-its-super-network-carriers
+    - google-mvno-tight-lipped-on-its-super-network-carriers
+the_black_vault:
+  content_close: </div>
+  content_open: <div class="post-content extra-class">
+  host: www.theblackvault.com
+  link_path: documentarchive/test-release-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - FAA Records Reveal Military Prepared to Engage Drone During San Diego Airport Shutdown; ATC Audio
+      References Possible Shootdown
+    - - Mysteries
+    - true
+    - https://www.theblackvault.com/documentarchive/faa-records-reveal-military-prepared-to-engage-drone-during-san-diego-airport-shutdown-atc-audio-references-possible-shootdown/?utm_source=rss&utm_medium=rss&utm_campaign=faa-records-reveal-military-prepared-to-engage-drone-during-san-diego-airport-shutdown-atc-audio-references-possible-shootdown
+  - - 'FBI Files: Civil Rights Era'
+    - - FBI Files / Domestic & Foreign Intelligence
+      - Federal Bureau of Investigation (FBI) Collection
+    - true
+    - https://www.theblackvault.com/documentarchive/fbi-files-civil-rights/?utm_source=rss&utm_medium=rss&utm_campaign=fbi-files-civil-rights
+  - - 'Stargate Collection: Analysis and Assessment of Gateway Process, 9 June 1983'
+    - - Mysteries
+    - true
+    - https://www.theblackvault.com/documentarchive/stargate-collection-analysis-and-assessment-of-gateway-process-9-june-1983/?utm_source=rss&utm_medium=rss&utm_campaign=stargate-collection-analysis-and-assessment-of-gateway-process-9-june-1983
+  - - 'Behind AARO''s Private UAP Workshop: New Records Detail Participants, Foreign Outreach and More'
+    - - UFO Phenomena
+    - true
+  - - 'NSA''s PROMIS: What the Declassified Records Actually Show'
+    - - Intelligence
+      - National Security Agency (NSA) Collection
+    - true
+    - https://www.theblackvault.com/documentarchive/nsas-promis-what-the-declassified-records-actually-show/?utm_source=rss&utm_medium=rss&utm_campaign=nsas-promis-what-the-declassified-records-actually-show
+  - - The 1980 Reagan-Carter "Debategate" Scandal
+    - - Controversies
+      - Government
+    - true
+    - https://www.theblackvault.com/documentarchive/the-1980-reagan-carter-debategate-scandal/?utm_source=rss&utm_medium=rss&utm_campaign=the-1980-reagan-carter-debategate-scandal
+  slug_cases:
+  - - https://www.theblackvault.com/documentarchive/fbi-files-civil-rights/
+    - fbi-files-civil-rights
+the_hacker_news:
+  content_close: </div>
+  content_open: <div class="main-box extra-class">
+  host: thehackernews.com
+  link_path: 2026/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://thehackernews.com/2026/11/microsoft-patches-1259-flaws-including.html
+    - microsoft-patches-1259-flaws-including
+the_intercept:
+  content_close: </div>
+  content_open: <div class="entry-content__content extra-class">
+  host: theintercept.com
+  link_path: 2026/11/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - OpenAI Fooled by Russian Pranksters Into Thinking They Were Speaking to Ukrainian Official
+    - - National Security
+      - Technology
+      - World
+    - true
+    - https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/
+  - - Pentagon, Inc.
+    - - National Security
+      - TomDispatch
+    - true
+    - https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/
+  - - How Democrats Changed Everything
+    - - The Intercept Briefing
+    - true
+    - https://theintercept.com/2026/11/04/midterm-election-results-voters-democrats/
+  - - Republicans Are Desperate to Pretend They Never Supported the War With Iran
+    - - Politics
+      - Voices
+    - true
+    - https://theintercept.com/2026/11/06/jd-vance-midterms-republicans-iran-war/
+  - - Arizona Town's Probe on Sex Abuse Claims Could Block Prison Firm Building New ICE Camp
+    - - Justice
+    - true
+    - https://theintercept.com/2026/11/10/arizona-ice-camp-mtc-sexual-abuse/
+  - - Tons of "Bunker-Buster" Bomb Parts for Israel Go Through JFK Airport
+    - - National Security
+      - World
+    - true
+    - https://theintercept.com/2026/11/09/israel-weapons-bombs-jfk-airport/
+  slug_cases:
+  - - https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/
+    - openai-ukraine-russia-prank-security
+the_record:
+  content_close: </article>
+  content_open: <article class="article extra-class">
+  host: therecord.media
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://therecord.media/us-army-member-arrested-in-uk
+    - us-army-member-arrested-in-uk
+the_register:
+  content_close: </section>
+  content_open: <section id="main">
+  host: www.theregister.com
+  link_path: security/2026/11/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://www.theregister.com/offbeat/2026/11/11/linux-joins-heathrows/5308738
+    - linux-joins-heathrows
+the_space_review:
+  content_close: </td>
+  content_open: <td>
+  host: www.thespacereview.com
+  link_path: article/9
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Landing is only the beginning
+    - []
+    - true
+    - https://www.thespacereview.com/article/5357/1
+  - - 'Argentina''s flattop: The aircraft carrier Veinticinco de Mayo spotted from space'
+    - []
+    - true
+    - https://www.thespacereview.com/article/5356/1
+  - - 'Review: We Chose to Go to the Moon'
+    - []
+    - true
+    - https://www.thespacereview.com/article/5353/1
+  - - Is the south pole the right place for a lunar base?
+    - []
+    - true
+    - https://www.thespacereview.com/article/5352/1
+  - - A long-distance look at SPACEHAB
+    - []
+    - true
+    - https://www.thespacereview.com/article/5349/1
+  slug_cases:
+  - - https://www.thespacereview.com/article/5357/1
+    - the_space_review-5357
+trend_micro_research:
+  content_close: </main>
+  content_open: <main class="main--content extra-class">
+  host: www.trendmicro.com
+  link_path: en_us/research/26/k/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'Inside SHADOW-WATER-063''s Banana RAT: From Build Server to Banking Fraud'
+    - - 'Trend Micro Research : Latest News'
+      - 'Trend Micro Research : Phishing'
+    - true
+  - - Copyright Lures Mask a Multi-Stage PureLog Stealer Attack on Key Industries
+    - - 'Trend Micro Research : Research'
+      - 'Trend Micro Research : Expert Perspective'
+    - true
+  - - Europol, Microsoft, TrendAI and Collaborators Halt Tycoon 2FA Operations
+    - - 'Trend Micro Research : Latest News'
+      - 'Trend Micro Research : Research'
+    - true
+  - - Increase in Lumma Stealer Activity Coincides with Use of Adaptive Browser Fingerprinting Tactic
+    - - 'Trend Micro Research : Malware'
+      - 'Trend Micro Research : Cyber Threats'
+    - true
+  - - AI Agents Can Be Secured. We Can Do It.
+    - - 'Trend Micro Research : Expert Perspective'
+      - 'Trend Micro Research : Artificial Intelligence (AI)'
+    - false
+  - - Governing Claude Enterprise in Environments Where Inline Controls Can't Go
+    - - 'Trend Micro Research : TM Vision One Platform'
+    - false
+  - - 'Pwn2Own Berlin 2026: On the Ground With TrendAI ZDI''s Biggest AI Showdown Yet'
+    - - 'Trend Micro Research : Latest News'
+    - false
+  - - Trend Micro Recognized as a Leader in The Forrester Wave 2025 for NAV
+    - - 'Trend Micro Research : Latest News'
+    - false
+  - - How are you managing cloud risk?
+    - - 'Trend Micro Research : Cloud'
+      - 'Trend Micro Research : Compliance & Risks'
+    - false
+  slug_cases:
+  - - https://www.trendmicro.com/en_us/research/26/i/safely-securing-ai-agents.html
+    - safely-securing-ai-agents
+uk_health_security_agency:
+  content_close: </main>
+  content_open: <main id="content">
+  host: www.gov.uk
+  link_path: government/news/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - UKHSA issues first cold-health alert of winter 2026/27
+    - []
+    - true
+    - https://www.gov.uk/government/news/ukhsa-issues-first-cold-health-alert-of-winter-202627
+  - - Salmonella outbreak update
+    - []
+    - true
+    - https://www.gov.uk/government/news/salmonella-outbreak-update
+  - - Outbreaks under monitoring in 2026
+    - []
+    - true
+    - https://www.gov.uk/government/publications/outbreaks-under-monitoring-in-2026
+  - - Tuberculosis in England, 2026 report
+    - []
+    - true
+    - https://www.gov.uk/government/publications/tuberculosis-in-england-2026-report
+  - - Maternal pertussis vaccination on pneumococcal carriage in infants
+    - []
+    - true
+    - https://www.gov.uk/government/publications/maternal-pertussis-vaccination-on-pneumococcal-carriage-in-infants
+  - - UKHSA appoints Chief Medical Advisor and Chief Scientific Officer
+    - []
+    - true
+    - https://www.gov.uk/government/news/ukhsa-appoints-chief-medical-advisor-and-chief-scientific-officer
+  - - 'GP in-hours: weekly bulletins for 2026'
+    - []
+    - false
+    - https://www.gov.uk/government/publications/gp-in-hours-weekly-bulletins-for-2026
+  - - 'Emergency department: weekly bulletins for 2026'
+    - []
+    - false
+    - https://www.gov.uk/government/publications/emergency-department-weekly-bulletins-for-2026
+  - - 'Syndromic surveillance: weekly summaries for 2026'
+    - []
+    - false
+    - https://www.gov.uk/government/publications/syndromic-surveillance-weekly-summaries-for-2026
+  slug_cases:
+  - - https://www.gov.uk/government/news/salmonella-outbreak-update
+    - salmonella-outbreak-update
+unep:
+  content_close: </div>
+  content_open: <div class="region-content extra-class">
+  host: www.unep.org
+  link_path: en/news-and-stories/story/test-story-
+  sample_has_dates: false
+  sample_has_titles: true
+  scope_cases:
+  - - As world heads for overshoot of 1.5C, adaptation is too slow
+    - - Press release
+    - true
+  - - Is climate change propelling the rise of superbugs?
+    - - Story
+    - true
+  - - 'From ozone protection to sustainable cooling: shaping the next chapter'
+    - - Speech
+    - true
+  - - Why nature-based solutions for cities are the future of urban resilience
+    - - Technical highlight
+    - true
+  - - Climate technology is already changing lives. Why isn't it reaching more people?
+    - - Blog
+    - true
+  slug_cases:
+  - - https://www.unep.org/en/news-and-stories/story/climate-change-propelling-rise-superbugs
+    - climate-change-propelling-rise-superbugs
+unodc:
+  content_close: </div>
+  content_open: <div id="content-container">
+  host: www.unodc.org
+  link_path: unodc/en/frontpage/2026/November/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - 'New UNODC survey: Afghanistan opium production resumes with fivefold year-on-year increase'
+    - []
+    - true
+    - https://www.unodc.org/unodc/en/press/releases/2026/October/new-unodc-survey_-afghanistan-opium-production-resumes-with-fivefold-year-on-year-increase.html
+  - - How AI is shaping cybercrime
+    - []
+    - true
+    - https://www.unodc.org/unodc/en/frontpage/2026/October/how-ai-is-shaping-cybercrime.html
+  - - 'Explainer: What is the Organized Crime Convention?'
+    - []
+    - true
+    - https://www.unodc.org/unodc/en/frontpage/2026/October/explainer_-what-is-the-organized-crime-convention.html
+  - - Stopping suspicious activity at sea in Mozambique
+    - []
+    - true
+    - https://www.unodc.org/unodc/en/frontpage/2026/October/stopping-suspicious-activity-at-sea-in-mozambique.html
+  - - New Director-General of UN Office at Vienna and Executive Director of UN Office on Drugs and Crime
+      takes office
+    - []
+    - true
+    - https://www.unodc.org/unodc/en/press/releases/2026/May/new-director-general-of-un-office-at-vienna-and-executive-director-of-un-office-on-drugs-and-crime-takes-office.html
+  - - 'Ripoti ya Dunia ya Dawa za Kulevya ya UNODC 2026: Masoko ya kimataifa ya dawa ya kulevya'
+    - []
+    - false
+    - https://www.unodc.org/unodc/en/press/releases/2026/June/unodc-world-drug-report-2026_-global-drug-markets-transforming-rapidly-as-technology--novel-drug-types-and-instability-present-traffickers-with-new-opportunities--sw.html
+  slug_cases:
+  - - https://www.unodc.org/unodc/en/frontpage/2026/October/how-ai-is-shaping-cybercrime.html
+    - how-ai-is-shaping-cybercrime
+usni_news:
+  content_close: </div>
+  content_open: <div class="single56__content extra-class">
+  host: news.usni.org
+  link_path: 2026/11/11/story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - VR Goggles Get Dual Use for Suicide Prevention, Counter-drone Training
+    - - News & Analysis
+      - Personnel
+    - true
+    - https://news.usni.org/2026/11/11/vr-goggles-get-dual-use-for-suicide-prevention-counter-drone-training
+  - - Report to Congress on Strategic Stability of the Golden Dome
+    - - Congress
+      - Documents
+    - true
+    - https://news.usni.org/2026/11/11/report-to-congress-on-strategic-stability-of-the-golden-dome
+  - - 'USNI News Fleet and Marine Tracker: Nov. 9, 2026'
+    - - Documents
+      - Fleet Tracker
+    - true
+    - https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026
+  - - 'USNI News Western Pacific Pulse: Nov. 6, 2026'
+    - - China
+      - Foreign Forces
+    - true
+    - https://news.usni.org/2026/11/06/usni-news-western-pacific-pulse-nov-6-2026
+  - - Marines Identify Member Who Died After Fast-rope Training in Japan
+    - - News & Analysis
+      - Personnel
+    - true
+    - https://news.usni.org/2026/11/05/marines-identify-member-who-died-after-fast-rope-training-in-japan
+  slug_cases:
+  - - https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026
+    - usni-news-fleet-and-marine-tracker-nov-9-2026
+watchtowr_labs:
+  content_close: </div>
+  content_open: <div class="gh-content extra-class">
+  host: labs.watchtowr.com
+  link_path: story-
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases: []
+  slug_cases:
+  - - https://labs.watchtowr.com/here-we-go-again-citrix-netscaler-dtls-preauth-memory-overflow-cve-2026-88772/
+    - here-we-go-again-citrix-netscaler-dtls-preauth-memory-overflow-cve-2026-88772
+who_disease_outbreak_news:
+  content_close: </article>
+  content_open: <article class="sf-detail-body-wrapper extra-class">
+  host: www.who.int
+  link_path: emergencies/disease-outbreak-news/item/2026-DON
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - Ebola disease caused by Bundibugyo virus, Democratic Republic of the Congo, Kenya and Nigeria
+    - []
+    - true
+  - - Yellow fever - WHO African Region
+    - []
+    - true
+  - - Shamonda virus in human - France
+    - []
+    - true
+  - - Middle East respiratory syndrome coronavirus - Kingdom of Saudi Arabia
+    - []
+    - true
+  - - Pneumonia of undetermined etiology - the Russian Federation
+    - []
+    - true
+  slug_cases:
+  - - https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON625
+    - 2026-DON625
+wto_news:
+  content_close: </div>
+  content_open: <div id="mainContainer">
+  host: www.wto.org
+  link_path: english/news_e/news26_e/item_
+  sample_has_dates: true
+  sample_has_titles: true
+  scope_cases:
+  - - South Africa notifies launch of safeguard investigation into certain non-wired float glass products
+    - - safeguard measures
+    - true
+    - https://www.wto.org/english/news_e/news26_e/safe_zaf_11nov26_546_e.htm
+  - - Germany contributes EUR 500,000 to strengthen developing economies' trade capacity
+    - - technical assistance
+    - true
+    - https://www.wto.org/english/news_e/news26_e/tech_09nov26_543_e.htm
+  - - 'Director-General: Leverage trade and partnerships to build a resilient ocean economy'
+    - - trade and environment
+      - Fisheries subsidies
+      - Director-General Ngozi Okonjo-Iweala
+    - true
+    - https://www.wto.org/english/news_e/news26_e/envir_05nov26_541_e.htm
+  - - 'Trade Policy Review: Viet Nam'
+    - - trade policy reviews
+      - business, trade and the WTO
+      - Implementation and monitoring
+    - true
+    - https://www.wto.org/english/tratop_e/tpr_e/tpr_vnm_04nov26_e.htm
+  - - Working Party chair visits Uzbekistan as WTO accession negotiations enter critical phase
+    - - accessions
+    - true
+    - https://www.wto.org/english/news_e/news26_e/acc_01nov26_545_e.htm
+  slug_cases:
+  - - https://www.wto.org/english/news_e/news26_e/envir_05nov26_541_e.htm
+    - envir_05nov26_541_e

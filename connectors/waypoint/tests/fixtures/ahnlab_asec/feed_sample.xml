@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>ASEC</title>
+	<atom:link href="https://asec.ahnlab.com/en/feed/" rel="self" type="application/rss+xml" />
+	<link>https://asec.ahnlab.com/en/</link>
+	<description>AhnLab</description>
+	<lastBuildDate>Tue, 10 Nov 2026 15:00:00 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://asec.ahnlab.com/wp-content/uploads/2024/03/cropped-스크린샷-2024-03-06-151555-100x100.png</url>
+	<title>ASEC</title>
+	<link>https://asec.ahnlab.com/en/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">230193226</site>	<item>
+		<title>Ransom &#038; Dark Web Issues Week 2, November 2026</title>
+		<link>https://asec.ahnlab.com/en/96481/</link>
+		
+		<dc:creator><![CDATA[ATCP]]></dc:creator>
+		<pubDate>Tue, 10 Nov 2026 15:00:00 +0000</pubDate>
+				<category><![CDATA[Darkweb]]></category>
+		<category><![CDATA[Public]]></category>
+		<category><![CDATA[Cameroon]]></category>
+		<category><![CDATA[DarkWeb]]></category>
+		<category><![CDATA[DataBreach]]></category>
+		<category><![CDATA[DDW]]></category>
+		<category><![CDATA[DeepWeb]]></category>
+		<category><![CDATA[랜섬웨어]]></category>
+		<category><![CDATA[데이터탈취]]></category>
+		<category><![CDATA[방산]]></category>
+		<category><![CDATA[개인정보탈취]]></category>
+		<category><![CDATA[건설]]></category>
+		<category><![CDATA[공공]]></category>
+		<category><![CDATA[딥웹]]></category>
+		<category><![CDATA[다크웹]]></category>
+		<category><![CDATA[France]]></category>
+		<category><![CDATA[HYFLOCK]]></category>
+		<category><![CDATA[제조]]></category>
+		<category><![CDATA[카메룬]]></category>
+		<category><![CDATA[유통]]></category>
+		<category><![CDATA[프랑스]]></category>
+		<category><![CDATA[한국]]></category>
+		<category><![CDATA[MetaEncryptor]]></category>
+		<category><![CDATA[Ransom]]></category>
+		<category><![CDATA[Ransomware]]></category>
+		<category><![CDATA[SouthKorea]]></category>
+		<guid isPermaLink="false">https://asec.ahnlab.com/96481/</guid>
+
+					<description><![CDATA[ASEC Blog publishes Ransom &#38; Dark Web Issues Week 2, November 2026 &#160; &#160; &#160; &#160; &#160; INC Ransom Claims Data Theft from a South Korean Chemical Manufacturer Metaencryptor Lists Five South Korean Companies as Ransomware Victims&#160;[1] [2] [3] [4] [5] French Government Reports Iran-Linked Activity in Refrigeration Cyberattacks Hyflock Claims Large-Scale Data Theft from [&#8230;]]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">96481</post-id>	</item>
+		<item>
+		<title>Analysis of Wpcdoor Attack Cases Spread via Korea-Based DVR Management Software</title>
+		<link>https://asec.ahnlab.com/en/96477/</link>
+		
+		<dc:creator><![CDATA[ATCP]]></dc:creator>
+		<pubDate>Thu, 05 Nov 2026 15:00:00 +0000</pubDate>
+				<category><![CDATA[Malware]]></category>
+		<category><![CDATA[Public]]></category>
+		<category><![CDATA[backdoor]]></category>
+		<category><![CDATA[CMS]]></category>
+		<category><![CDATA[Downloader]]></category>
+		<category><![CDATA[DVR]]></category>
+		<guid isPermaLink="false">https://asec.ahnlab.com/96477/</guid>
+
+					<description><![CDATA[On October 27, 2026, Huntress disclosed a case of malware distribution that exploited DVR management software. [1] The company targeted in this incident was a Korean firm that develops products such as CCTV and DVR systems, and according to the company’s ASD logs, infection logs were also confirmed in Korea. Given that malware of the [&#8230;]]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">96477</post-id>	</item>
+		<item>
+		<title>Ransom &#038; Dark Web Issues Week 1, November 2026</title>
+		<link>https://asec.ahnlab.com/en/96414/</link>
+		
+		<dc:creator><![CDATA[ATCP]]></dc:creator>
+		<pubDate>Tue, 03 Nov 2026 15:00:00 +0000</pubDate>
+				<category><![CDATA[Darkweb]]></category>
+		<category><![CDATA[Public]]></category>
+		<category><![CDATA[DarkWeb]]></category>
+		<category><![CDATA[DataBreach]]></category>
+		<category><![CDATA[DataLeak]]></category>
+		<category><![CDATA[DDW]]></category>
+		<category><![CDATA[DeepWeb]]></category>
+		<category><![CDATA[ERP]]></category>
+		<category><![CDATA[Europe]]></category>
+		<category><![CDATA[랜섬웨어]]></category>
+		<category><![CDATA[데이터유출]]></category>
+		<category><![CDATA[데이터탈취]]></category>
+		<category><![CDATA[미국]]></category>
+		<category><![CDATA[대한민국]]></category>
+		<category><![CDATA[딥웹]]></category>
+		<category><![CDATA[다크웹]]></category>
+		<category><![CDATA[IT]]></category>
+		<category><![CDATA[인프라]]></category>
+		<category><![CDATA[유럽]]></category>
+		<category><![CDATA[유통]]></category>
+		<category><![CDATA[사우디아라비아]]></category>
+		<category><![CDATA[식품]]></category>
+		<category><![CDATA[Leaked]]></category>
+		<category><![CDATA[OBSOFT]]></category>
+		<category><![CDATA[Ransom]]></category>
+		<category><![CDATA[Ransomware]]></category>
+		<category><![CDATA[SaudiArabia]]></category>
+		<category><![CDATA[SouthKorea]]></category>
+		<category><![CDATA[USA]]></category>
+		<guid isPermaLink="false">https://asec.ahnlab.com/96414/</guid>
+
+					<description><![CDATA[ASEC Blog publishes Ransom &#38; Dark Web Issues Week 1, November 2026 &#160; &#160; &#160; &#160; &#160; FBI Seizes Domain of Bulletproof Hosting Service Virtualine Internal Data of a Saudi ERP and IT Solutions Company Offered for Sale Cyberattacks on Supermarket Refrigeration Systems Spread Across 12 European Countries OBSOFT Claims Data Extortion and Data Destruction [&#8230;]]]></description>
+		
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">96414</post-id>	</item>
+</channel>
+</rss>

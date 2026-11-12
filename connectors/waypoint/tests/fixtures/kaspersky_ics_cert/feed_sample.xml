@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+	<channel>
+		<title>Kaspersky ICS CERT EN (English)</title>
+		<description> (English)</description>
+		<link>https://ics-cert.kaspersky.com/feed/</link>
+		<image>
+			<url>https://ics-cert.kaspersky.com/wp-content/uploads/sites/28/2021/10/kaspersky-ics-cert-logo-2021-facebook.png</url>
+			<title>Kaspersky ICS CERT EN</title>
+			<link>https://ics-cert.kaspersky.com/wp-content/uploads/sites/28/2021/10/kaspersky-ics-cert-logo-2021-facebook.png</link>
+		</image>
+			<item>
+				<title>TrueConf Server (Linux). Incorrect Default Permissions</title>
+				<link>https://ics-cert.kaspersky.com/advisories/2026/11/10/trueconf-server-linux-incorrect-default-permissions/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</link>
+				<guid>https://ics-cert.kaspersky.com/advisories/2026/11/10/trueconf-server-linux-incorrect-default-permissions/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</guid>
+				<description>
+					<![CDATA[
+					<p></p>
+					]]>
+				</description>
+				<pubDate>Tue, 10 Nov 2026 16:04:15 +0000</pubDate>
+				<category><![CDATA[Advisories]]></category>
+			</item>
+			<item>
+				<title>Supply chain attack: BO Team in a software developer's infrastructure</title>
+				<link>https://ics-cert.kaspersky.com/publications/reports/2026/11/05/supply-chain-attack-bo-team-in-a-software-developers-infrastructure/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</link>
+				<guid>https://ics-cert.kaspersky.com/publications/reports/2026/11/05/supply-chain-attack-bo-team-in-a-software-developers-infrastructure/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</guid>
+				<description>
+					<![CDATA[
+					<p>Incident response, that allowed us to learn a great deal about the APT group's tactics and techniques.</p>
+					]]>
+				</description>
+				<pubDate>Thu, 05 Nov 2026 09:00:00 +0000</pubDate>
+				<category><![CDATA[Publications]]></category>
+			</item>
+			<item>
+				<title>Cybersecurity of over-the-air update mechanisms for vehicles</title>
+				<link>https://ics-cert.kaspersky.com/publications/reports/2026/10/15/cybersecurity-of-over-the-air-update-mechanisms-for-vehicles/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</link>
+				<guid>https://ics-cert.kaspersky.com/publications/reports/2026/10/15/cybersecurity-of-over-the-air-update-mechanisms-for-vehicles/?utm_source=ics-cert.kaspersky.com&utm_medium=rss&utm_campaign=main</guid>
+				<description>
+					<![CDATA[
+					<p>How to ensure security across ECU software update campaigns, prevent update package tampering, and minimize potential damage to connected vehicles</p>
+					]]>
+				</description>
+				<pubDate>Thu, 15 Oct 2026 09:00:00 +0000</pubDate>
+				<category><![CDATA[Publications]]></category>
+			</item>
+</channel>
+</rss>

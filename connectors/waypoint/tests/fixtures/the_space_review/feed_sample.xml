@@ -1,0 +1,39 @@
+<?xml version="1.0" ?> 
+<rss version="2.0">
+	<channel>
+		<title>The Space Review</title>
+		<link>http://www.thespacereview.com/</link>
+		<description>Articles, essays, and commentary about all facets of space exploration</description>
+		<language>en-us</language>
+		<copyright>Copyright 2003-2026 Jeff Foust</copyright>
+		<lastBuildDate>Mon, 09 Nov 2026 12:00:00 GMT</lastBuildDate>
+		<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+		<managingEditor>jeff@thespacereview.com</managingEditor> 
+		<webMaster>jeff@thespacereview.com</webMaster>
+
+
+		<item>
+			<title>Landing is only the beginning</title>
+			<link>https://www.thespacereview.com/article/5357/1</link>
+			<description>Much of the focus on NASA's plans to return to the Moon involve being able to safely and routinely land on the lunar surface. Robert Kelso argues that broader engineering and operational issues must also be considered for the effort to be a long-term success.</description>
+			<author>info@thespacereview.com (Robert Kelso)</author>
+			<pubDate>Mon, 09 Nov 2026 12:00:00 GMT</pubDate>
+		</item>
+		
+		<item>
+			<title>Argentina's flattop: The aircraft carrier Veinticinco de Mayo spotted from space</title>
+			<link>https://www.thespacereview.com/article/5356/1</link>
+			<description>A half-century ago Argentina and Brazil had similar navies, including aircraft carriers. Dwayne Day, Harry Stranger, and Mariano Sciaroni discuss how American reconnaissance satellites tracked the Argentine carrier during that country's 1982 war with Britain.</description>
+			<author>zirconic1@cox.net (Dwayne Day et al.)</author>
+			<pubDate>Mon, 09 Nov 2026 11:59:00 GMT</pubDate>
+		</item>
+		
+		<item>
+			<title>Relearning movement beyond Earth: What neurorehabilitation can teach us about human adaptation in space</title>
+			<link>https://www.thespacereview.com/article/5355/1</link>
+			<description>Astronauts on long-duration missions spend months in physical therapy once they return to Earth and normal gravity. Esha Ejaz examines what lessons rehabilitation science can offer to help people recover from spaceflight.</description>
+			<author>info@thespacereview.com (Esha Ejaz)</author>
+			<pubDate>Mon, 09 Nov 2026 11:58:00 GMT</pubDate>
+		</item>
+</channel>
+</rss>

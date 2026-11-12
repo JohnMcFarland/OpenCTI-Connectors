@@ -1,0 +1,15 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+#
+# Source profiles are not configured here: they live in sources.yml (mounted
+# read-only), and the global budgets in AGG_* environment variables.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'Waypoint'
+  scope: 'waypoint'
+  log_level: 'info'

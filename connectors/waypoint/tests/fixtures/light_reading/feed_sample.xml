@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xml:base="https://www.lightreading.com"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:media="http://search.yahoo.com/mrss/"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/">
+    <channel>
+        <title>lightreading</title>
+        <link>https://www.lightreading.com</link>
+        <description>Public RSS feed</description>
+                <language>en</language>
+        <atom:link href="https://www.lightreading.com/feeds/rss.xml" rel="self" type="application/rss+xml" />
+                 <item>
+            <title><![CDATA[Starlink gets faster ahead of 'V3' launches, but shift to dynamic pricing could backfire]]></title>
+            <link><![CDATA[https://www.lightreading.com/satellite/starlink-gets-faster-ahead-of-v3-launches-but-shift-to-dynamic-pricing-could-backfire]]></link>
+                        <description><![CDATA[Ookla says Starlink speeds are climbing as the service attracts more urban subscribers ahead of a wider rollout of high-capacity 'V3' satellites. But Starlink's risky shift to dynamic pricing is already irking customers.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 17:15:24 GMT</pubDate>
+                                                                <dc:creator>Jeff Baumgartner</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.lightreading.com/satellite/starlink-gets-faster-ahead-of-v3-launches-but-shift-to-dynamic-pricing-could-backfire]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/blt0ff04184643edc93/681283395faf70cfa7c1836a/Starlink_internet_dish_receiver_is_displayed_for_sale.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/blt0ff04184643edc93/681283395faf70cfa7c1836a/Starlink_internet_dish_receiver_is_displayed_for_sale.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">Starlink_internet_dish_receiver_is_displayed_for_sale.jpg</media:title>
+                </media:content>
+                                    </item>        <item>
+            <title><![CDATA[T-Mobile goes national with T-Mix and gets real about robots]]></title>
+            <link><![CDATA[https://www.lightreading.com/5g/t-mobile-goes-national-with-t-mix-and-gets-real-about-robots]]></link>
+                        <description><![CDATA[T-Mobile's CMO Allan Samson says T-Mix tackles a subscription problem while giving customers more flexibility in the value they get from their mobile plans. Meanwhile, the company says its network is ready for the rise of the robots.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 15:00:00 GMT</pubDate>
+                                                                <dc:creator>Jeff Baumgartner</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.lightreading.com/5g/t-mobile-goes-national-with-t-mix-and-gets-real-about-robots]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/bltced5cfa8986a8157/6af375b81c871e564c3bb8c4/Samson_at_LA_event.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/bltced5cfa8986a8157/6af375b81c871e564c3bb8c4/Samson_at_LA_event.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">Samson_at_LA_event.jpg</media:title>
+                </media:content>
+                                    </item>        <item>
+            <title><![CDATA[Senate Democrats grill FCC nominee on E-Rate's future]]></title>
+            <link><![CDATA[https://www.lightreading.com/broadband/senate-democrats-grill-fcc-nominee-on-e-rate-s-future]]></link>
+                        <description><![CDATA[Republican nominee for FCC Commissioner, Danielle Thumann Severs, was noncommittal when answering Senate Democrats' questions on what's to come of the E-Rate telecom subsidy program for schools and libraries.]]></description>
+                                                        <pubDate>Wed, 11 Nov 2026 13:00:00 GMT</pubDate>
+                                                                <dc:creator>Nicole Ferraro</dc:creator>
+                                    <guid isPermaLink="false"><![CDATA[https://www.lightreading.com/broadband/senate-democrats-grill-fcc-nominee-on-e-rate-s-future]]></guid>
+                             
+                <media:thumbnail url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/bltb36afe9bc2e8b730/68068c6a90876978496a94f0/Main-Entrance-Wide.jpg?width=720&amp;quality=80&amp;disable=upscale" />
+                <media:content url="https://eu-images.contentstack.com/v3/assets/blt23eb5bbc4124baa6/bltb36afe9bc2e8b730/68068c6a90876978496a94f0/Main-Entrance-Wide.jpg?width=720&amp;quality=80&amp;disable=upscale" medium="image">
+                    <media:title type="html">Main-Entrance-Wide.jpg</media:title>
+                </media:content>
+                                    </item>
+</channel>
+</rss>

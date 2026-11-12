@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>The Record from Recorded Future News</title>
+        <link>https://therecord.media/feed</link>
+        <description>The Record by Recorded Future News gives exclusive, behind-the-scenes access to leaders, policymakers, researchers, and the shadows of the cyber underground.</description>
+        <lastBuildDate>Tue, 10 Nov 2026 21:13:00 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>The Record from Recorded Future News</generator>
+        <language>en</language>
+        <copyright>Copyright © 2026 | The Record from Recorded Future News</copyright>
+        <item>
+            <title><![CDATA[US Army member arrested in UK over allegations of spying for Russia]]></title>
+            <link>https://therecord.media/us-army-member-arrested-in-uk-spying-for-russia</link>
+            <guid>https://therecord.media/us-army-member-arrested-in-uk-spying-for-russia</guid>
+            <pubDate>Tue, 10 Nov 2026 21:13:00 GMT</pubDate>
+            <description><![CDATA[The unnamed soldier was arrested by British counterterrorism police “working closely” with U.S. authorities, including the FBI and the military, the Metropolitan Police said in a statement. ]]></description>
+            <category>Government</category>
+            <category>News</category>
+            <category>News Briefs</category>
+            <enclosure url="http://cms.therecord.media/uploads/police_1_373641f263.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[Microsoft’s Patch Tuesday surpasses 1,000 bugs for second month in a row]]></title>
+            <link>https://therecord.media/patch-tuesday-microsoft-1000-bugs-again</link>
+            <guid>https://therecord.media/patch-tuesday-microsoft-1000-bugs-again</guid>
+            <pubDate>Tue, 10 Nov 2026 20:55:00 GMT</pubDate>
+            <description><![CDATA[An exploited Outlook vulnerability drew most of the attention in Microsoft's latest Patch Tuesday, which listed 1,093 bugs total.]]></description>
+            <category>Technology</category>
+            <category>Industry</category>
+            <category>News</category>
+            <enclosure url="http://cms.therecord.media/uploads/dasharath_sunar_Zgg_U_Qp_H_Ik4_unsplash_8d073f1390.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[AI company Fireworks says hackers stole data, billing info during October breaches]]></title>
+            <link>https://therecord.media/ai-company-fireworks-says-hackers-stole-data-in-oct-attacks</link>
+            <guid>https://therecord.media/ai-company-fireworks-says-hackers-stole-data-in-oct-attacks</guid>
+            <pubDate>Tue, 10 Nov 2026 16:08:00 GMT</pubDate>
+            <description><![CDATA[Fireworks said the incident affected a “limited number of customer accounts” — all of whom were notified of the attack.]]></description>
+            <category>Cybercrime</category>
+            <category>News</category>
+            <category>Technology</category>
+            <enclosure url="http://cms.therecord.media/uploads/fireworks_1_9c80b2da5e.jpg" length="0" type="image/jpg"/>
+        </item>
+</channel>
+</rss>

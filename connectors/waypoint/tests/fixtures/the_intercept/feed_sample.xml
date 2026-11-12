@@ -1,0 +1,721 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+     xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+     xmlns:snf="http://www.smartnews.be/snf"
+     xmlns:media="http://search.yahoo.com/mrss/" >
+
+    <channel>
+        <title>The Intercept</title>
+        <atom:link href="https://theintercept.com/feed/?rss" rel="self" type="application/rss+xml" />
+        <link>https://theintercept.com/</link>
+        <description></description>
+        <lastBuildDate>Thu, 12 Nov 2026 00:17:11 +0000</lastBuildDate>
+        <language>en-US</language>
+                <sy:updatePeriod>hourly</sy:updatePeriod>
+        <sy:updateFrequency>1</sy:updateFrequency>
+        <generator>https://wordpress.org/?v=7.1.4</generator>
+<site xmlns="com-wordpress:feed-additions:1">220955519</site>
+            <item>
+                <title><![CDATA[OpenAI Fooled by Russian Pranksters Into Thinking They Were Speaking to Ukrainian Official]]></title>
+                <link>https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/</link>
+                <comments>https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/#respond</comments>
+                <pubDate>Wed, 11 Nov 2026 23:53:12 +0000</pubDate>
+                                    <dc:creator><![CDATA[Sam Biddle]]></dc:creator>
+                                		<category><![CDATA[National Security]]></category>
+		<category><![CDATA[Technology]]></category>
+		<category><![CDATA[World]]></category>
+
+                <guid isPermaLink="false"></guid>
+                                    <description><![CDATA[<p>&#8220;We want to have as deep a relationship as we possibly can with Ukraine. But it may not be possible to get to where we want to be straight away.&#8221;</p>
+<p>The post <a href="https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/">OpenAI Fooled by Russian Pranksters Into Thinking They Were Speaking to Ukrainian Official</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></description>
+                                        <content:encoded><![CDATA[
+<p class="wp-block-paragraph"><span class="has-underline">A Russian internet</span> comedy duo tricked three of OpenAI&#8217;s highest ranking military and national security staff into a candid conversation about arming Ukraine. The online pranksters posed as officials from Ukraine&#8217;s government, according to a recording of the meeting posted online.</p>
+
+
+
+<p class="wp-block-paragraph">The Russian comedy duo known as Vovan and Lexus have pulled off a long string of prank telephone calls to famous figures since 2011, with victims ranging from Elton John to John McCain. The group, whose pranks have often aligned with Russian foreign policy priorities, have been <a href="https://meduza.io/en/feature/2016/03/31/if-you-re-sliding-into-totalitarianism-you-might-as-well-do-it-glamorously">accused of working in league with its government</a>, a charge they deny.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/10/29/midterms-election-money-ai-super-pac/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: midterms-election-money-ai-super-pac"
+      data-ga-track-label="midterms-election-money-ai-super-pac"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/10/ai_header.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">AI Tried to Buy the Midterms &#8212; Then the Lobby Learned Everyone Hates AI</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">The latest to fall for their routine were Sasha Baker, who runs national security policy at OpenAI; the company&#8217;s lead for strategic initiatives, Caroline Zier; and Ben Crampton, who leads the country&#8217;s forays into European national security matters. All three have extensive government experience, with <a href="https://www.war.gov/About/Biographies/Biography/Article/2938818/sasha-n-baker/">Baker</a> and <a href="https://www.war.gov/About/Biographies/Biography/Article/3894731/caroline-zier/">Zier</a> taking high-level postings in the Department of Defense, and <a href="https://www.linkedin.com/in/ben-crampton-9a4080a7/">Crampton</a> working in the European Union and United Nations.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Weeks ago, we launched a thorough investigation into the call&#8217;s authenticity,&#8221; OpenAI spokesperson Nate Evans said in a statement to The Intercept. &#8220;We acted internally and with the relevant authorities to conclude that it was a prank conducted by individuals with a history of targeting officials and other companies. We took action to prevent similar situations from happening in the future.&#8221; (The Ukrainian Embassy in Washington did not immediately respond to a request for comment.)</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">The Russian prank duo said they arranged a high-level meeting with OpenAI by pretending to be Rustem Umerov, head of Ukraine&#8217;s Foreign Intelligence Service. During their 17-minute video conversation, a recording of which the Russian group <a href="https://rumble.com/v7i6eyg-prank-with-ai-management.html">uploaded to Rumble</a>, the participants discussed OpenAI&#8217;s military support to Ukraine to aid its ongoing defense against Russia, including the possibility of providing offensive capabilities.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;There&#8217;s no question, I think, from our perspective that we want to have as deep a relationship as we possibly can with Ukraine,&#8221; Crampton said when asked about selling such offensive military AI services to the country. &#8220;But it may not be possible to get to where we want to be straight away.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;There&#8217;s a general reluctance on the part of many people who are senior in the company to get too involved in offensive uses of our technology in a military context,&#8221; Crampton continued. &#8220;Part of our job is to explain that offense and defense are not necessarily distinguishable from each other under certain circumstances.&#8221;</p>
+
+
+
+<figure class="wp-block-pullquote"><blockquote><p>&#8220;I&#8217;m afraid we probably can&#8217;t help you with Elon Musk.&#8221;</p></blockquote></figure>
+
+
+
+<p class="wp-block-paragraph">OpenAI&#8217;s <a href="https://theintercept.com/2026/09/08/military-ai-weapons-contracts-openai-anthropic-google/">ongoing $200 million contract with the U.S. Department of War</a> says it provides artificial intelligence applications aimed at &#8220;warfighters&#8221; that will &#8220;improve military advantage, military utility, or enhance military decision making,&#8221; according to contract documents obtained by The Intercept.</p>
+
+
+
+<p class="wp-block-paragraph">In the conversation with the Russian pranksters, Baker added that the company has been in contact with the Pentagon about aiding Ukraine.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/09/08/pentagon-openai-military-contract/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: pentagon-openai-military-contract"
+      data-ga-track-label="pentagon-openai-military-contract"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/09/AP26065716370444-e1788464092412.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">The Pentagon Asked OpenAI for Artificial Intelligence Designed to Rarely Say No</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">OpenAI officials also mentioned ongoing work with the Ukrainian government based around the company&#8217;s Daybreak Blue AI model, a system for fixing computer vulnerabilities, as well as a nascent &#8220;partnership&#8221; with the Ukrainian Ministry of Defense.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;There has been some contact with the Ministry of Defense,&#8221; Crampton said. &#8220;It&#8217;s primarily through a colleague of ours based in Washington as well, who previously had worked with the Delta team in your Ministry of Defense. I think in this field we are interested to partner in as many ways as we can.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">During the video call, both Baker and Zier commented that they had met Umerov previously and were pleased to be speaking to him again. The faux-Umerov appears to have kept his camera turned off for the duration of the meeting.</p>
+
+
+
+<p class="wp-block-paragraph">Vladimir Kuznetsov, the member of the Russian comedy duo known as Vovan, told The Intercept the prank was simple to arrange.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;We initially contacted a senior Ukrainian official in San Francisco, posing as Mr. Umerov,&#8221; Kuznetsov said. &#8220;It turned out that he had been working to establish connections with OpenAI through the Ukrainian diaspora in California. He was already in touch with Sasha Baker, especially since she had maintained close ties with Ukraine during her time at the U.S. Department of Defense. Believing he was speaking with Umerov, the official offered to arrange a meeting with OpenAI.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">The conversation touched on other topics, including whether OpenAI could help protect against the influence of Elon Musk, and President Donald Trump&#8217;s sentiments on the war.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;I&#8217;m afraid we probably can&#8217;t help you with Elon Musk,&#8221; said Baker. &#8220;He&#8217;s not a fan of our CEO either, if it helps you at all. So, we&#8217;re in the same boat.&#8221;</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/03/08/openai-anthropic-military-contract-ethics-surveillance/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: openai-anthropic-military-contract-ethics-surveillance"
+      data-ga-track-label="openai-anthropic-military-contract-ethics-surveillance"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/03/AP25247713514943_60f5c5-e1772826205908.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">OpenAI on Surveillance and Autonomous Killings: You&#8217;re Going to Have to Trust Us</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">Of Trump&#8217;s increasingly icy stance on Ukrainian President Volodymyr Zelenskyy, Baker said, &#8220;It&#8217;s unfortunate. Of course, we&#8217;ve been reading in the news the back and forth and the comments from the U.S. president. But I do want to reassure you that I think the majority of the U.S. government, the U.S. people certainly, and our researchers are very supportive of Ukraine.&#8221;</p>
+<p>The post <a href="https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/">OpenAI Fooled by Russian Pranksters Into Thinking They Were Speaking to Ukrainian Official</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></content:encoded>
+                                <wfw:commentRss>https://theintercept.com/2026/11/11/openai-ukraine-russia-prank-security/feed/</wfw:commentRss>
+                <slash:comments>0</slash:comments>
+                <media:content url='https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2296642092_59a03a-e1794438975182.jpg?fit=5000%2C2500' width='5000' height='2500' /><post-id xmlns="com-wordpress:feed-additions:1">527734</post-id>
+		<media:thumbnail url="https://theintercept.com/wp-content/uploads/2026/10/ai_header.jpg?w=440&#038;h=440&#038;crop=1" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/10/ai_header.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Secretary of War Pete Hegseth attends a Halloween event hosted by first lady Melania Trump at the White House on October 29, 2026 in Washington, DC.</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2304463216-e1794442618624.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">ARLINGTON, VIRGINIA - NOVEMBER 10: U.S. Secretary of War Pete Hegseth takes questions from reporters during a news conference at the Pentagon on November 10, 2026 in Arlington, Virginia. U.S. Rep. Thomas Massie (R-TX) introduced articles of impeachment against Hegseth on Monday, saying he violated the Constitution by waging war in Iran without congressional authorization and other charges. (Photo by Chip Somodevilla/Getty Images)</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/AP26259000177506_bf8b4d-e1793976587344.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Rep. Alexandria Ocasio-Cortez (D-N.Y.) speaks with reporters as she departs a vote at the U.S. Capitol on Sept. 15, 2026. (Francis Chung/POLITICO via AP Images)</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/09/AP26065716370444-e1788464092412.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/03/AP25247713514943_60f5c5-e1772826205908.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+            </item>
+        
+            <item>
+                <title><![CDATA[Pentagon, Inc.]]></title>
+                <link>https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/</link>
+                <comments>https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/#respond</comments>
+                <pubDate>Wed, 11 Nov 2026 22:32:26 +0000</pubDate>
+                                    <dc:creator><![CDATA[Rebecca Gordon]]></dc:creator>
+                                		<category><![CDATA[National Security]]></category>
+		<category><![CDATA[TomDispatch]]></category>
+
+                <guid isPermaLink="false"></guid>
+                                    <description><![CDATA[<p>By buying up stakes in private companies, the Defense Department could become an independent, and vastly wealthy, behemoth.</p>
+<p>The post <a href="https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/">Pentagon, Inc.</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></description>
+                                        <content:encoded><![CDATA[
+<aside class="wp-block-intercept-editors-note">
+  <div class="wp-block-intercept-editors-note__content">
+
+<p class="wp-block-paragraph"><span class="has-underline">Self-styled War Secretary</span> Pete Hegseth narrowly avoided impeachment for &#8220;high crimes and misdemeanors&#8221; on Tuesday. That failed effort sets Hegseth up for a reckoning in the new year. Congressional committees have broad investigative powers, including the authority to subpoena administration officials to testify under oath and compel them to turn over documents.&nbsp;And many Democrats &#8212; fresh off an electoral rout of the GOP &#8212; are spoiling for a fight.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;I want Pete Hegseth not just impeached, I want him prosecuted. They murdered people in the Caribbean. And we killed 163 little girls in Iran,&#8221; Rep.-elect Richard Ojeda, D-N.C., <a href="https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/">told The Intercept</a> on Tuesday. &#8220;Everybody in my class is ready for him to go. We tried it. It didn&#8217;t work. We&#8217;ll do it again.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">A mountain of evidence is poised to fall on Hegseth&#8217;s head. He could be convicted of countless crimes. But just because Congress has a government official dead to rights doesn&#8217;t mean that that official won&#8217;t evade justice.&nbsp;Today, TomDispatch regular Rebecca Gordon takes us back to the 1980s, when a military aide at the National Security Council, Oliver North, was running a project to fund Nicaraguan &#8220;Contras&#8221; with money from congressionally outlawed missile sales to Iran. Convicted on three felony counts, North fought and won a pitched battle to have them dismissed and turned his malfeasance into a long career at Fox News, the same extremist breeding ground that turned Hegseth from a joke into a favorite of President Donald Trump. </p>
+
+
+
+<p class="wp-block-paragraph">Gordon&#8217;s back-to-the-future exploration raises the specter of Hegseth&#8217;s Pentagon transforming from a power unto itself within the government to something that transcends it &#8212; an independent economic behemoth like the militaries of Egypt and Iran. Are we now on the brink of Pentagon, Inc.? Let Gordon be your guide.</p>
+
+
+
+<p class="wp-block-paragraph">&#8211; <em>Nick Turse, editor of TomDispatch</em></p>
+
+
+
+<p class="wp-block-paragraph"><!-- BLOCK(tipline)[0](%7B%22componentName%22%3A%22TIPLINE%22%2C%22entityType%22%3A%22SHORTCODE%22%2C%22optional%22%3Atrue%7D)(%7B%7D) --><!-- CONTENT(tipline)[0] --><p class="tipline-shortcode">If you haven&#8217;t yet, <a href="https://theintercept.com/dispatch/">sign up to receive TomDispatch in your inbox here.</a></p><!-- END-CONTENT(tipline)[0] --><!-- END-BLOCK(tipline)[0] --></p>
+
+</div>
+</aside>
+
+
+
+<h2 id="h-a-sprawling-cia-plot" class="wp-block-heading">A Sprawling CIA Plot</h2>
+
+
+
+<p class="wp-block-paragraph">Forty years ago, on the evening of <a href="https://www.zinnedproject.org/news/tdih/iran-contra-hasenfus/">October 5, 1986</a>, I sat conferring with members of my local Nicaragua solidarity organization. We were trying to understand the implications of the day&#8217;s events in San Carlos, a small town in southern Nicaragua. A young Sandinista soldier had fired a shoulder-launched missile, bringing down a plane in a wreck survived by one Eugene H. Hasenfus. The plane contained U.S.-supplied weapons destined for the Contras, the counter-revolutionary force illegally supported by the CIA to overthrow the Nicaraguan government.</p>
+
+
+
+<p class="wp-block-paragraph">Hasenfus was captured, tried, and convicted of terrorism, and then, in a clever PR move by the Sandinista government, <a href="https://www.nytimes.com/1986/12/18/world/hasenfus-is-freed-by-nicaraguans-and-heads-home.html?mcubz=0">pardoned and released</a> in time to spend Christmas at home with his family in Wisconsin.</p>
+
+
+
+<p class="wp-block-paragraph">Hasenfus&#8217;s capture &#8212; along with his planeload of AK-47s, 50,000 rifle cartridges, some shoulder-mounted missiles, and grenades &#8212; provided concrete evidence of something we&#8217;d known for a while: The Reagan administration was actively defying Congress by illegally funding and supplying the Contras. In those years, the Boland amendments (addenda to laws funding U.S. intelligence agencies) prohibited the CIA from using appropriated monies to support the Contras. Hasenfus&#8217;s capture not only demonstrated that those amendments were being violated, but also eventually led to the unraveling of a much bigger plot, known today as the <a href="https://theintercept.com/2021/04/27/biden-iran-contra-investigations-reagan/">Iran&#8211;Contra affair</a>.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 id="h-oliver-north-iran-and-the-enterprise" class="wp-block-heading"><strong>Oliver North, Iran, and &#8220;The Enterprise&#8221;</strong></h2>
+
+
+
+<p class="wp-block-paragraph">The trail from Hasenfus led to a military aide at the National Security Council, Oliver North, who was running a project to fund the Contras &#8212; with money from congressionally outlawed missile sales to Iran. Iran needed the military hardware for a brutal war of attrition with neighboring Iraq. The Reagan administration wanted to free U.S. hostages held in Iran and by Iran&#8217;s ally Hezbollah in southern Lebanon. So the arms-for-hostages deal was cooked up. Ollie North saw a way to use that one illegal deal to enable a second one. He would funnel unappropriated funds for the Contras by charging Iran a steep markup on the weapons and stashing the difference in Swiss bank accounts, outside U.S. government control.</p>
+
+
+
+<p class="wp-block-paragraph">At the suggestion of CIA Director William Casey, North had recruited Richard V. Secord, a retired Air Force major general, to establish what they called &#8220;the Enterprise.&#8221; North would later <a href="https://www.latimes.com/archives/la-xpm-1987-07-11-mn-436-story.html">describe</a> the Enterprise as an &#8220;off-the-shelf, self-sustaining, stand-alone entity that could perform certain activities,&#8221; i.e., covert overseas operations. The congressional committee that eventually investigated the Iran&#8211;Contra affair <a href="https://www.presidency.ucsb.edu/documents/excerpts-the-report-congressional-committees-investigating-the-iran-contra-affair">reported</a>:</p>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">The Enterprise, functioning largely at North&#8217;s direction, had its own airplanes, pilots, airfield, operatives, ship, secure communications devices, and secret Swiss bank accounts. For 16 months, it served as the secret arm of the N.S.C. staff, carrying out with private and non-appropriated money, and without the accountability or restrictions imposed by law on the CIA, a covert Contra aid program that Congress thought it had prohibited.</p>
+</blockquote>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2018/05/12/oliver-north-nra-iran-contra/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: oliver-north-nra-iran-contra"
+      data-ga-track-label="oliver-north-nra-iran-contra"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2018/05/oliver-north-nra-leadership-feat-1526047104.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">Oliver North Worked With Cocaine Traffickers to Arm Terrorists. Now He&#8217;ll Be President of the NRA.</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">North became something of a comic figure in U.S. history, especially after the escapade in which he choked a government office shredder during a late-night document &#8220;shredding party.&#8221; He and the coterie of implicated officials both above and below him all received <a href="https://theintercept.com/2018/12/07/george-h-w-bush-iran-contra/">pardons from incoming President George H. W. Bush</a>, who&#8217;d served as Reagan&#8217;s vice president.</p>
+
+
+
+<p class="wp-block-paragraph">There is no way of knowing just how large North&#8217;s Enterprise might have grown had Hasenfus&#8217;s plane not been shot down, or what other sorts of dirty money-making businesses it might have spawned. Perhaps today we&#8217;d be living in a country with a largely self-funding, and therefore (even more) unaccountable, national security apparatus.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<h2 id="h-big-dirty-business-in-venezuela" class="wp-block-heading"><strong>Big, &#8220;Dirty&#8221; Business in Venezuela</strong></h2>
+
+
+
+<p class="wp-block-paragraph">I thought about the Iran&#8211;Contra affair and North&#8217;s Enterprise for the first time in years when I <a href="https://www.nytimes.com/2026/08/31/us/politics/pentagon-venezuela-oil.html?unlocked_article_code=1.91A.xjMr.Hj1PxixYTsiY&amp;smid=em-share">read</a> that Pete Hegseth&#8217;s Defense Department is getting into the oil business in Venezuela. Under the new arrangement, the Department of Defense would receive &#8220;penny warrants&#8221; for an ownership stake in at least one company developing Venezuelan oil fields. These warrants, according to the New York Times, &#8220;would give the Pentagon the option to take up to a 35 percent stake in the parent company&#8221; of North American Blue Energy Partners. </p>
+
+
+
+<p class="wp-block-paragraph">The company, which is legally registered in Barbados, is run by <a href="https://www.bbc.com/news/articles/cyvze0n4vy1o">Alejandro Betancourt L&#243;pez</a>, a Nicol&#225;s Maduro crony, around whom <a href="https://www.aljazeera.com/news/2026/9/1/who-is-alejandro-betancourt-ex-chavez-ally-now-trumps-venezuela-oil-man">corruption rumors</a> have swirled for at least a decade. The deal would also provide the Defense Department with the right to purchase up to 20 percent of the company&#8217;s oil output &#8220;at production cost&#8221; and first refusal on the remaining 80 percent, presumably at market rates.</p>
+
+
+
+<p class="wp-block-paragraph">There are a number of issues to consider here: The U.S. invasion&#8217;s <a href="https://theintercept.com/2026/01/04/trump-maduro-venezuela-war-media/">legality</a>, the logistical difficulties of extracting and using Venezuela&#8217;s &#8220;dirty&#8221; crude, and, of course, the human folly of pouring even more oil on the climate fire. But what especially caught my attention in the Times story is that the Pentagon taking an equity stake in a private oil company looks a lot like a new edition of North&#8217;s off-the-shelf operation from the 1980s.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/08/23/trump-china-ai-chips-rare-earth/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: trump-china-ai-chips-rare-earth"
+      data-ga-track-label="trump-china-ai-chips-rare-earth"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/08/AP26161473881439.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">The Dawn of a New Cold War</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">The Pentagon isn&#8217;t alone among federal agencies acquiring ownership stakes in a variety of companies. Perhaps most notable is the Commerce Department&#8217;s purchase of an almost 10 percent interest in the chip manufacturer Intel for $8.9 billion, a stake that&#8217;s now reportedly <a href="https://fortune.com/2026/07/26/the-u-s-government-invested-27-billion-in-corporate-stakes-good-luck-finding-them/">worth</a> $42 billion. As the Center for Strategic and International Studies <a href="https://www.csis.org/analysis/understanding-federal-equity-investments-strategic-companies">reported</a> in February, &#8220;the Trump administration is acquiring a strategic portfolio of investments in companies directly related to national security, spanning minerals, nuclear energy, and semiconductors, among other sectors.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">The CSIS report lists several smaller &#8212; though still enormous &#8212; Defense Department equity investments, among them:</p>
+
+
+
+<ul class="wp-block-list">
+<li>Vulcan Elements, a manufacturer of rare earth magnets: warrants to purchase equity at an undisclosed fixed price; $620 million loan against a $50 million equity stake</li>
+
+
+
+<li>MP Materials, a rare earth magnet manufacturer: 15 percent stake for $400 million</li>
+
+
+
+<li>Korea Zinc, a joint venture with Commerce and private investors in a Tennessee smelting installation; Defense Department to take 40 percent ownership, total cost $1.9 billion</li>
+
+
+
+<li>ReElement Technologies, a rare earth magnet recycler: warrants for future stock purchase; $80 million from Defense &#8220;matched by private capital&#8221;</li>
+
+
+
+<li>Trilogy Metals, a Canada-based company <a href="https://theintercept.com/2025/10/08/trump-ai-alaska-national-park-ambler-road/">with Alaskan mining rights</a>: 10 percent stake purchased for $35.6 million, with warrants to purchase another 7.5 percent</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">Since that report was published, DoD has continued to expand its portfolio with other equity purchases, which seem to be aimed at least in part on restocking American weapons reserves depleted by the Iran war:</p>
+
+
+
+<figure class="wp-block-ft-photo is-style-default alignright">
+      <div class="photo__container">
+    <img decoding="async"
+    src="https://theintercept.com/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-2.16.56-PM.png?fit=592%2C896"
+    srcset="https://theintercept.com/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-2.16.56-PM.png?w=592 592w, https://theintercept.com/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-2.16.56-PM.png?w=198 198w, https://theintercept.com/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-2.16.56-PM.png?w=540 540w"
+    sizes="auto, (min-width: 1300px) 650px, (min-width: 800px) 64vw, (min-width: 500px) calc(100vw - 5rem), calc(100vw - 3rem)"
+    alt=""
+    width="592"
+    height="896"
+        loading="lazy"
+  />
+      <figcaption class="photo__figcaption">
+      <span class="photo__caption">&#8220;American Nuremberg,&#8221; by Rebecca Gordon. Available on <a href="https://bookshop.org/p/books/american-nuremberg-the-u-s-officials-who-should-stand-trial-for-post-9-11-war-crimes-rebecca-gordon/70f4736f57640d99?ean=9781510703339&amp;bkshp-astro=t">Bookshop.org</a>.</span>    </figcaption>
+        </div>
+  </figure>
+
+
+
+<ul class="wp-block-list">
+<li>L3Harris Missile Solutions: <a href="https://federalnewsnetwork.com/congress/2026/03/lawmakers-question-dods-growing-use-of-equity-investments-to-strengthen-dib/">$1 billion direct equity investment</a> for solid rocket motor and missile production</li>
+
+
+
+<li>The Elmet Group: <a href="https://insidedefense.com/insider/dod-makes-450m-investment-secure-domestic-tungsten-supply-chain">$450 million preferred equity investment</a> in the only U.S.-based tungsten producer. Tungsten is crucial in the production of Patriot missiles, an essential defense against incoming missiles and drones, and a <a href="https://theintercept.com/2026/10/06/iran-war-uk-fairford-overseas-bases/">much-depleted armament</a> in U.S. stores <a href="https://theintercept.com/2026/10/28/yemen-saudi-arabia-iran/">because of the Iran war</a>.</li>
+
+
+
+<li>Hertha Metals: an apparent $65 million investment &#8212; for an undisclosed number of shares &#8212; in a steel manufacturer. The libertarian Cato Institute, which generally opposes federal ownership stakes in corporations, called the investment with Hertha an &#8220;<a href="https://www.cato.org/blog/trump-administrations-equity-portfolio-reaches-34-deals">apparent</a>&#8221; deal, as only the company, not the DoD, has announced it publicly.</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">Beyond taking direct ownership shares in corporations, DoD continues to diversify its loan portfolio beyond traditional military materials. For example, President Donald Trump recently <a href="https://bsky.app/profile/atrupar.com/post/3my3rxka4mv2n">promised</a> a $100 million Pentagon investment to rebuild a pharmaceutical factory in Winchester, Kentucky &#8212; but only if Republicans won the midterms in that state.</p>
+
+
+
+<h2 id="h-how-does-government-ownership-of-corporations-work" class="wp-block-heading"><strong>How Does Government Ownership of Corporations Work?</strong></h2>
+
+
+
+<p class="wp-block-paragraph">The federal government has taken temporary partial ownership of U.S. corporations before Trump&#8217;s current string of acquisitions. What makes this round of purchases different is that it seems the Pentagon intends to make them permanent. In the past, when the federal government acquired warrants or corporate shares, the move was part of a program to shore up failing institutions in the midst of a more general financial disaster.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2022/05/05/cia-venture-capital-inqtel-spac/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: cia-venture-capital-inqtel-spac"
+      data-ga-track-label="cia-venture-capital-inqtel-spac"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2022/05/in-q-tel-cia-spacs-theintercept.gif?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">As the SEC Cracks Down on Shady SPACs, CIA Officials Get In on the Action</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">This was the case with the Troubled Assets Relief Program, which formed part of the Obama administration&#8217;s response to the 2008 fiscal crisis, and more recently when airlines faced bankruptcy during the 2020-21 Covid pandemic. In neither case did the government retain permanent ownership of the entities it bailed out.</p>
+
+
+
+<p class="wp-block-paragraph">The evidence is that this time around, the Trump administration envisions permanent ownership stakes in companies it deems essential to military preparedness and national security. In the case of the Pentagon, two related offices are responsible for overseeing DoD&#8217;s equity investments.</p>
+
+
+
+<p class="wp-block-paragraph">The Office of Strategic Capital was established in 2022 during Joe Biden&#8217;s administration and funded under the National Defense Authorization Act for fiscal year 2024. The OSC&#8217;s initial purpose was to facilitate Pentagon loans to industries <a href="https://theintercept.com/2023/04/03/silicon-valley-bank-bailout-pentagon/">it deems crucial to national security</a>. Other parts of DoD use grants or purchases to get money to defense industries. Only OSC can <em>lend</em> those corporations money. Still, neither the NDAA for 2024 nor subsequent NDAAs permits the OSC to <em>buy</em> shares in companies.</p>
+
+
+
+<p class="wp-block-paragraph">The OSC received a huge funding boost under Trump&#8217;s 2025 One Big Beautiful Bill Act. While simultaneously meting out <a href="https://ocasio-cortez.house.gov/legislation/how-trumps-one-big-beautiful-bill-act-will-impact-you">drastic cuts</a> to programs that support Americans&#8217; actual everyday security &#8212; such as Medicaid, nutritional assistance, housing, and student loans &#8212; the One Big Beautiful Bill Act awarded OSC $1.5 billion in additional funds.</p>
+
+
+
+<p class="wp-block-paragraph">The other entity tasked with overseeing Defense equity investments is the Economic Defense Unit. Established this year through an internal DoD memo, the EDU offers a hint that the Pentagon isn&#8217;t ready to give up on capital. Like the Office of Strategic Capital, the EDU is overseen by Defense Department Undersecretary <a href="https://theintercept.com/2021/06/24/khashoggi-trump-donor-saudi-arabia-tier-1/">Stephen Feinberg</a>, a billionaire, <a href="https://theintercept.com/2016/10/25/pension-trump-pence/">major Trump donor</a>, and co-founder of the private equity firm <a href="https://theintercept.com/2026/10/26/philippines-military-base-cerberus-private-capital/">Cerberus Capital Management</a>.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/10/26/philippines-military-base-cerberus-private-capital/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: philippines-military-base-cerberus-private-capital"
+      data-ga-track-label="philippines-military-base-cerberus-private-capital"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/10/GettyImages-2201935046.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">Bankrolling American Empire in the Philippines</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">EDU&#8217;s ostensible purpose is to coordinate U.S. economic competition with adversaries such as China, Iran, Russia, and North Korea. But reporting suggests another reason Feinberg <a href="https://defensescoop.com/2026/04/10/dod-economic-defense-unit-edu-steve-feinberg-pentagon/">established</a> the unit. Quoting a knowledgeable inside source, <a href="https://prospect.org/2026/10/22/as-lawmakers-scrutinize-pentagon-equity-deals-pentagon-keeps-making-them/">The American Prospect says</a> that the EDU &#8220;operates as a &#8216;venture capital firm-type entity that looks at deals, what the government&#8217;s going to do and evaluates them,&#8217;&#8221; determining what the government&#8217;s ownership stake should be.</p>
+
+
+
+<p class="wp-block-paragraph">The Cato Institute <a href="https://www.cato.org/blog/pentagon-sovereign-wealth-fund">says of the EDU</a>:</p>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">Available information points to an investment apparatus being created within the Pentagon, staffed by financiers connected to the same private-equity world that stands to benefit from it.&nbsp;</p>
+
+
+
+<p class="wp-block-paragraph">It sounds like another attempt by the administration to construct a <a href="https://www.cato.org/commentary/uncle-sam-shareholder">pseudo-sovereign wealth fund</a> controlled by the executive branch.</p>
+</blockquote>
+
+
+
+<p class="wp-block-paragraph">In other words, the Economic Defense Unit looks like the beginning of a Defense Department investment bank.</p>
+
+
+
+<p class="wp-block-paragraph">As of today, no law explicitly permits the Pentagon to own pieces of corporations or to develop its own pseudo-investment bank, but the 2027 NDAA may change that.</p>
+
+
+
+<p class="wp-block-paragraph">In the meantime, what happens to any revenue derived from DoD&#8217;s investments? Such income could include interest on loans, share dividends, or proceeds from the sale of equities. Legally, any such income should be deposited to the U.S. Treasury within three days, according to the U.S. legal code section <a href="https://www.law.cornell.edu/uscode/text/31/3302">&#167; 3302(b)</a>, perhaps in the Pentagon&#8217;s <a href="https://www.law.cornell.edu/uscode/text/10/4817">Industrial Base Fund</a> at Treasury.</p>
+
+
+
+<p class="wp-block-paragraph">History tells us North sent the Iran&#8211;Contra money to Swiss banks, not the U.S. Treasury. Can we trust Hegseth &#8212; who just this week <a href="https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/">survived an impeachment vote</a> &#8212; and his boss not to do something similar with the Pentagon&#8217;s earnings today? How would we even know if that trust were violated?</p>
+
+
+<aside class="promote-banner">
+    <a class="promote-banner__link" href="/tomdispatch">
+              <span class="promote-banner__image">
+          <img loading="lazy" decoding="async" width="300" height="150" src="https://theintercept.com/wp-content/uploads/2026/07/TomDispatch_logo-promo-banner.jpg?fit=300%2C150" class="attachment-medium size-medium" alt="" srcset="https://theintercept.com/wp-content/uploads/2026/07/TomDispatch_logo-promo-banner.jpg?w=500 500w, https://theintercept.com/wp-content/uploads/2026/07/TomDispatch_logo-promo-banner.jpg?w=300 300w" sizes="auto, (max-width: 300px) 100vw, 300px" />        </span>
+            <div class="promote-banner__text">
+                  <p class="promote-banner__eyebrow">
+            Read Our Complete Coverage          </p>
+        
+        <h2 class="promote-banner__title">TomDispatch</h2>
+      </div>
+    </a>
+  </aside>
+
+
+<h2 id="h-just-like-egypt-and-iran" class="wp-block-heading"><strong>Just Like Egypt and Iran?</strong></h2>
+
+
+
+<p class="wp-block-paragraph">The prospect of a metastasizing U.S. Defense Department may seem far-fetched, but it&#8217;s already happened in a number of other countries. In Egypt, popular demonstrations brought down President Hosni Mubarak, the country&#8217;s effective dictator, during the 2011 Arab Spring. After a brief period under an increasingly unpopular elected president, the Egyptian military staged a coup and has ruled the country directly ever since.</p>
+
+
+
+<p class="wp-block-paragraph">But Egypt&#8217;s army is more than a military force. It&#8217;s the most powerful economic entity in the country as well. As the Carnegie Middle East Center <a href="https://carnegieendowment.org/middle-east/research/2019/12/owners-of-the-republic-an-anatomy-of-egypts-military-economy">describes the situation</a>, the Egyptian military has its tentacles in every aspect of Egypt&#8217;s economy. Members of the military:</p>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">&#8230; deliver massive infrastructure projects, produce consumer goods ranging from food to household appliances, manufacture industrial chemicals and transport equipment, and import basic commodities for civilian markets. They have expanded into new sectors as diverse as steel production, pharmaceuticals, gold prospecting, and managing religious endowments and pilgrimage.</p>
+</blockquote>
+
+
+
+<p class="wp-block-paragraph">At the same time, &#8220;thousands of retired senior officers have benefited from the powerful political influence of the military to occupy senior positions throughout the state&#8217;s civilian apparatus and public sector companies, securing extra postretirement incomes for themselves while complementing the formal military economy in return.&#8221;</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2022/09/28/cia-extinction-woolly-mammoth-dna/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: cia-extinction-woolly-mammoth-dna"
+      data-ga-track-label="cia-extinction-woolly-mammoth-dna"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2022/09/AP19282739915058-woolly-mammoth-DNA-CIA.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">The CIA Just Invested in Woolly Mammoth Resurrection Technology</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">(This sounds a lot like the egregious post-service opportunities promised to the investment bankers being recruited to work in the Pentagon&#8217;s EDU. After serving on the Pentagon&#8217;s new 30-person investment team, where they would have &#8220;unmatched access to top-level government officials and privileged information flow,&#8221; the recruitment pitch goes, &#8220;if you ever want to raise your own fund, you will gain access to fund-raising channels that include royal families and foreign sovereign contacts,&#8221; <a href="https://www.nytimes.com/2026/03/13/us/politics/wall-street-access-pentagon.html">according</a> to the New York Times.)</p>
+
+
+
+<p class="wp-block-paragraph">The Islamic Revolutionary Guard Corps, which has emerged as Iran&#8217;s most powerful economic force, plays a similar role, according to CSIS:</p>
+
+
+
+<blockquote class="wp-block-quote is-layout-flow wp-block-quote-is-layout-flow">
+<p class="wp-block-paragraph">The IRGC now owns businesses in the oil and gas sectors, as well as land, marine, and air transportation. The IRGC-owned company, Khatam al-Anbiya, established as the IRGC&#8217;s arm in the construction sector, currently controls 812 officially registered Iranian companies which have a total of some 1,700 governmental contracts. Another IRGC-owned company has also recently bought a 51 percent stake in the Iranian Telecommunications company that was privatized at a value of $5 billion.</p>
+</blockquote>
+
+
+
+<h2 id="h-can-it-happen-here" class="wp-block-heading"><strong>Can It Happen Here?</strong></h2>
+
+
+
+<p class="wp-block-paragraph">Could the Pentagon really emerge as an economic power in its own right, one that operates in tandem with, but parallel to, the federal government? Not tomorrow, certainly, but now is the time to step on the brakes to prevent that scenario.</p>
+
+
+
+<p class="wp-block-paragraph">The prospect of an economically independent U.S. military would be frightening under any circumstances. But it becomes both more frightening and more likely with a Pentagon that Hegseth is reshaping in his own white <a href="https://theintercept.com/2026/09/17/hegseth-christianity-jesus-iran-war/">Christian nationalist</a> and <a href="https://theintercept.com/2026/07/25/pete-hegseth-testosterone-military-masculinity/">misogynist</a> image. He&#8217;s already removed many of the potential human guardrails by purging long-serving top military leadership. As long as DoD doesn&#8217;t threaten any of the enterprises of the Trump family and friends &#8212; including those of <a href="https://1789capital.vc/don-trump-jr">Don Jr.</a> and <a href="https://www.trump.com/leadership/eric-trump-biography">Eric Trump</a>, <a href="https://www.vanityfair.com/story/jared-kushner-hacked-phone-secret-negotiations?srsltid=AYCX9vJbkab8XOpofBwqolE8I0y7i5qpcHzzzqbiBE31FqkjqRFZzXjm">Jared Kushner</a>, and <a href="https://www.nytimes.com/2025/09/26/insider/steve-witkoff-financial-empire-middle-east.html">Steve Witkoff</a> &#8212; we can expect little resistance from the demented relic in the White House.</p>
+
+
+
+<p class="wp-block-paragraph">Fortunately, Hegseth is not the sharpest bayonet in the armory. As with many aspects of this nightmare administration, we may yet be saved from a metastasizing Pentagon by the ineptitude of its leader. Let us work to make it so.</p>
+<p>The post <a href="https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/">Pentagon, Inc.</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></content:encoded>
+                                <wfw:commentRss>https://theintercept.com/2026/11/11/hegseth-pentagon-investment-bank/feed/</wfw:commentRss>
+                <slash:comments>0</slash:comments>
+                <media:content url='https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2303603593.jpg?fit=4203%2C2802' width='4203' height='2802' /><post-id xmlns="com-wordpress:feed-additions:1">527653</post-id>
+		<media:thumbnail url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Secretary of War Pete Hegseth attends a Halloween event hosted by first lady Melania Trump at the White House on October 29, 2026 in Washington, DC.</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2304463216-e1794442618624.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">ARLINGTON, VIRGINIA - NOVEMBER 10: U.S. Secretary of War Pete Hegseth takes questions from reporters during a news conference at the Pentagon on November 10, 2026 in Arlington, Virginia. U.S. Rep. Thomas Massie (R-TX) introduced articles of impeachment against Hegseth on Monday, saying he violated the Constitution by waging war in Iran without congressional authorization and other charges. (Photo by Chip Somodevilla/Getty Images)</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/AP26259000177506_bf8b4d-e1793976587344.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Rep. Alexandria Ocasio-Cortez (D-N.Y.) speaks with reporters as she departs a vote at the U.S. Capitol on Sept. 15, 2026. (Francis Chung/POLITICO via AP Images)</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2018/05/oliver-north-nra-leadership-feat-1526047104.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/08/AP26161473881439.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/Screenshot-2026-11-11-at-2.16.56-PM.png?fit=592%2C896" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2022/05/in-q-tel-cia-spacs-theintercept.gif?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/10/GettyImages-2201935046.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/07/TomDispatch_logo-promo-banner.jpg?fit=300%2C150" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2022/09/AP19282739915058-woolly-mammoth-DNA-CIA.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+            </item>
+        
+            <item>
+                <title><![CDATA[Hegseth Survives Impeachment Attempt]]></title>
+                <link>https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/</link>
+                <comments>https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/#respond</comments>
+                <pubDate>Wed, 11 Nov 2026 00:23:03 +0000</pubDate>
+                                    <dc:creator><![CDATA[Matt Sledge]]></dc:creator>
+                                    <dc:creator><![CDATA[Nick Turse]]></dc:creator>
+                                		<category><![CDATA[National Security]]></category>
+		<category><![CDATA[Politics]]></category>
+
+                <guid isPermaLink="false"></guid>
+                                    <description><![CDATA[<p>House Republicans voted together to sideline an attempt by Rep. Thomas Massie, R-Ky., to impeach War Secretary Pete Hegseth.</p>
+<p>The post <a href="https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/">Hegseth Survives Impeachment Attempt</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></description>
+                                        <content:encoded><![CDATA[
+<p class="wp-block-paragraph"><span class="has-underline">Self-styled Secretary</span> of War Pete Hegseth narrowly avoided impeachment Tuesday night, as solidarity from House Republicans blocked a bill introduced by Rep. Thomas Massie, R-Ky., charging Hegseth with &#8220;high crimes and misdemeanors.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">Though Democrats overwhelmingly joined Massie&#8217;s effort following their midterm election landslide, the House voted 211 to 204 to refer the charges to a committee, allowing Republicans to slow the process.&nbsp;With 11 Democrats absent, they lacked the numbers. Massie, however, dismissed the impact of Democratic absences to The Intercept. &#8220;No, there were enough Republicans to rally to get here,&#8221; he said.</p>
+
+
+
+  <div class="promote-related-post">
+    <a      class="promo-related-post__link"
+            href="https://theintercept.com/2026/11/06/pentagon-hegseth-replacement-desantis-waltz/"
+      data-ga-track="in_article-body"
+      data-ga-track-action="related post embed: pentagon-hegseth-replacement-desantis-waltz"
+      data-ga-track-label="pentagon-hegseth-replacement-desantis-waltz"
+          >
+              <img decoding="async" width="440" height="440" src="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&amp;h=440&amp;crop=1" class="attachment-thumbnail size-thumbnail" alt="" loading="lazy" />            <span class="promo-related-post__text">
+      <h2 class="promote-related-post__eyebrow">
+        Related      </h2>
+      <h3 class="promote-related-post__title">Pentagon Officials Float Names of Hegseth&#8217;s Replacement</h3>
+    </span>
+    </a>
+  </div>
+
+
+
+<p class="wp-block-paragraph">The procedural vote spared Republicans a more difficult vote on whether to impeach Hegseth on Massie&#8217;s eight charges, including waging wars without congressional authorization and undercutting measures to prevent civilian casualties. It followed a week of increasingly <a href="https://theintercept.com/2026/11/05/midterms-hegseth-impeach-pressure-massie-military/">desperate efforts by the Pentagon chief</a> to shore up congressional and White House support, including a campaign-style video intended to influence Trump, a <a href="https://theintercept.com/2026/11/06/pentagon-hegseth-replacement-desantis-waltz/">social media campaign by underlings</a>, and a rare appearance by Hegseth himself before the Pentagon press corps.</p>
+
+
+
+<p class="wp-block-paragraph">For half an hour on Tuesday morning&#8217;s news conference, Hegseth <a href="https://theintercept.com/2026/11/10/hegseth-impeachment-press-conference-lies/">wove a web of lies</a> designed to refute or obfuscate Massie&#8217;s eight charges. He claimed that the effort to impeach him was a stunt by just &#8220;one disgruntled congressman.&#8221; That, too, turned out to be false as 203 members of Congress voted with Massie.</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">On Tuesday, a coalition of more than 40 civil society organizations &#8212; including Oxfam America, Citizens for Responsibility and Ethics in Washington (CREW), Common Defense,&nbsp;Demand Progress, MoveOn, and the Quincy Institute for Responsible Statecraft &#8212; <a href="https://us.list-manage.com/FdhQKAXAxrt?e=56f1eeb64f&amp;c2id=8064f1a057b9e3ea7915dba150b0eae2" target="_blank" rel="noopener">sent a letter</a> calling on all House members to vote for every article of impeachment filed against Hegseth.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;Pete Hegseth&#8217;s time at the Pentagon has done grievous harm to the nation and to the Constitution,&#8221; said Demand Progress senior policy adviser Cavan Kharrazian. &#8220;This is a man who ignored the will of Congress to execute an illegal war in Iran, kidnapped a foreign leader for oil, restarted war on Yemen, sent missiles to kill suspected drug traffickers and weaponized the Pentagon against a political enemy.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">The House has only impeached two Cabinet secretaries: William Belknap, the secretary of war, in 1876; and Alejandro Mayorkas, the secretary of homeland security, in 2024. In neither case did the Senate vote to convict.</p>
+
+
+
+<figure class="wp-block-pullquote"><blockquote><p>&#8220;They diagnosed why they lost the election. But tonight they were paralyzed to do anything about it.&#8221;</p></blockquote></figure>
+
+
+
+<p class="wp-block-paragraph">After the vote, Massie called out the display of inaction from his Republican colleagues.</p>
+
+
+
+<p class="wp-block-paragraph">&#8220;They diagnosed why they lost the election,&#8221; Massie said of fellow Republicans, following the vote on Tuesday night. &#8220;But tonight they were paralyzed to do anything about it. And that&#8217;s the story of Congress.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">Absent from the vote were Democratic Reps. Julia Brownley, Lou Correa and Nancy Pelosi, of California; Laura Gillen of New York; Steven Horsford of Nevada; Jonathan Jackson of Illinois; Brittany Pettersen of Colorado; Melanie Stansbury of New Mexico; Haley Stevens of Michigan; Marilyn Strickland of Washington; and Frederica Wilson of Florida. The absent Republicans were Reps. Monica De La Cruz of Texas; Neal Dunn of Florida; Russell Fry of South Carolina; Julia Letlow of Louisiana; Tom Tiffany and Derrick Van Orden of Wisconsin; and Rudy Yakym of Indiana.</p>
+
+
+
+<p class="wp-block-paragraph">A senior congressional staffer predicted that Hegseth would face a very rough road if he survived impeachment. &#8220;Oversight is going to come crashing down on his head,&#8221; that staffer said. &#8220;Will Hegseth continue to obstruct? Yes. But wait until the subpoenas start.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph"></p>
+
+
+
+<p class="wp-block-paragraph">Congressional committees have broad investigative powers, including the authority to subpoena administration officials to testify under oath and compel them to turn over documents. Rep. Adam Smith, D-Wash.,&nbsp;who will head the House Armed Services Committee in the next Congress, said Hegseth and Deputy Secretary of Defense <a href="https://theintercept.com/2021/06/24/khashoggi-trump-donor-saudi-arabia-tier-1/">Steve Feinberg</a> would be first on the list to testify.</p>
+
+
+
+<p class="wp-block-paragraph">Rep. Yassamin Ansari, D-Ariz., one of the leading voices for Hegseth&#8217;s impeachment, told The Intercept there were &#8220;many ways&#8221; for Democrats to hold him accountable in the next session, specifically compelling him to testify before the American people. &#8220;I would be surprised to see him last the next two years in this administration,&#8221; she <a href="https://theintercept.com/2026/11/09/impeachment-vote-looms-hegseth/">told The Intercept</a>. &#8220;I think that he is not only one of the most incompetent members of the administration, but also the most unpopular &#8212; and it&#8217;s on a bipartisan basis. So the pressure will continue to grow for there to be some change at the Pentagon.&#8221;</p>
+
+
+
+<figure class="wp-block-pullquote has-text-align-right"><blockquote><p>&#8220;I want Pete Hegseth not just impeached, I want him prosecuted.&#8221;</p></blockquote></figure>
+
+
+
+<p class="wp-block-paragraph">Rep.-elect <a href="https://thehill.com/people/richard-ojeda/">Richard Ojeda</a>, D-N.C., told The Intercept that the incoming Democrats have Hegseth in their sights. &#8220;I want Pete Hegseth not just impeached, I want him prosecuted. They murdered people in the Caribbean. And we killed 163 little girls in Iran,&#8221; he said. &#8220;Everybody in my class is ready for him to go. We tried it. It didn&#8217;t work. We&#8217;ll do it again.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">In a Truth Social post, President Donald Trump celebrated the outcome while expressing confusion over the vote. Trump called it the &#8220;Democrats&#8217; attempt to impeach&#8221; Hegseth, despite the fact the effort was introduced by Massie, a Republican, who he called &#8220;a major LOSER.&#8221; He claimed it was an &#8220;EXONERATION&#8221; of Hegseth and added: &#8220;The Democrats continue to weaponize and abuse the United States of America. They must be stopped!&#8221;  </p>
+<p>The post <a href="https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/">Hegseth Survives Impeachment Attempt</a> appeared first on <a href="https://theintercept.com">The Intercept</a>.</p>
+]]></content:encoded>
+                                <wfw:commentRss>https://theintercept.com/2026/11/10/hegseth-no-impeachment-house-vote/feed/</wfw:commentRss>
+                <slash:comments>0</slash:comments>
+                <media:content url='https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2304463216-e1794442618624.jpg?fit=5220%2C2610' width='5220' height='2610' /><post-id xmlns="com-wordpress:feed-additions:1">527615</post-id>
+		<media:thumbnail url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" medium="image" />
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302591104-e1793992488120.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Secretary of War Pete Hegseth attends a Halloween event hosted by first lady Melania Trump at the White House on October 29, 2026 in Washington, DC.</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/AP26259000177506_bf8b4d-e1793976587344.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">Rep. Alexandria Ocasio-Cortez (D-N.Y.) speaks with reporters as she departs a vote at the U.S. Capitol on Sept. 15, 2026. (Francis Chung/POLITICO via AP Images)</media:title>
+		</media:content>
+		<media:content url="https://theintercept.com/wp-content/uploads/2026/11/GettyImages-2302060216-e1793995801319.jpg?w=440&#038;h=440&#038;crop=1" medium="image">
+			<media:title type="html">WEATHERFORD, TEXAS - OCTOBER 29: US Vice President JD Vance delivers remarks during a midterm campaign rally at JRJ Construction on October 29, 2026 in Weatherford, Texas. Vance is in Texas to campaign for Republican candidates ahead of the midterm elections. (Photo by Evan Vucci-Pool/Getty Images)</media:title>
+		</media:content>
+            </item>
+</channel>
+</rss>

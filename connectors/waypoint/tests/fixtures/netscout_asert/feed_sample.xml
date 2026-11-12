@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" version="2.0" xml:base="https://www.netscout.com/">
+  <channel>
+    <title>NETSCOUT</title>
+    <link>https://www.netscout.com/</link>
+    <description><![CDATA[]]></description>
+    <language>en</language>
+        <atom:link rel="self" href="https://www.netscout.com/asert.xml"/>
+<lastBuildDate>Wed, 11 Nov 2026 12:23:20 -0500</lastBuildDate>
+<pubDate>Tue, 07 Apr 2026 13:50:42 -0400</pubDate>
+<item>
+  <title>The Winter Games Effect: When Gold Meets DDoS</title>
+  <link>https://www.netscout.com/blog/asert/winter-games-effect-when-gold-meets-ddos</link>
+  <description>  Executive Summary Major international events attract not just global audiences but also distributed denial-of-service (DDoS) attacks. The Milano Cortina 2026 Winter Games proved no exception: DDoS attack volume against Italian infrastructure in the country surged 181 percent over 2025 levels, which were themselves...
+
+</description>
+  <enclosure url="https://www.netscout.com/sites/default/files/styles/thumbnail/public/animation/2026-04-07/images/olympics-effect-when-gold-meets-ddos-blog-header-1600x900-ee992f0.png?itok=V3XcvMSw" type="image/png" length="20808"/><guid isPermaLink="true">https://www.netscout.com/blog/asert/winter-games-effect-when-gold-meets-ddos</guid>
+          <pubDate>Tue, 07 Apr 2026 13:50:42 -0400
+</pubDate>
+          <source url="https://www.netscout.com/asert.xml">NETSCOUT</source>
+          </item>
+<item>
+  <title>DDoS-for-Hire and the Evolving Use of AI</title>
+  <link>https://www.netscout.com/blog/asert/ddos-hire-and-evolving-use-ai</link>
+  <description>  Executive Summary Since our seven-part analysis of the DDoS-for-hire landscape in December 2024, the integration of artificial intelligence (AI) into the booter/stresser ecosystem has accelerated significantly. What was then an emerging trend has now become an operational reality across multiple stages of the attack...
+
+</description>
+  <enclosure url="https://www.netscout.com/sites/default/files/styles/thumbnail/public/2025-12/18/images/ddos-for-hire-evolving-use-ai-blog-header-1600x900.jpg?itok=SesVzxe2" type="image/jpeg" length="49279"/><guid isPermaLink="true">https://www.netscout.com/blog/asert/ddos-hire-and-evolving-use-ai</guid>
+          <pubDate>Fri, 19 Dec 2025 09:00:00 -0500
+</pubDate>
+          <source url="https://www.netscout.com/asert.xml">NETSCOUT</source>
+          <dc:creator>Chris Conrad</dc:creator>
+          </item>
+<item>
+  <title>DNS Root Server Attacks</title>
+  <link>https://www.netscout.com/blog/asert/dns-root-server-attacks</link>
+  <description>  Executive Summary The internet is a system of systems. There is no central organizing committee that governs how it is constructed and operated. There are norms and best practices, as well as agreed-upon standards of operation such as what an Internet Protocol (IP) datagram looks like and how it should be interpreted...
+
+</description>
+  <enclosure url="https://www.netscout.com/sites/default/files/styles/thumbnail/public/2025-12/16/images/BlogHeader-2-1600x900.png?itok=y6OhxUwH" type="image/png" length="13569"/><guid isPermaLink="true">https://www.netscout.com/blog/asert/dns-root-server-attacks</guid>
+          <pubDate>Wed, 17 Dec 2025 09:00:00 -0500
+</pubDate>
+          <source url="https://www.netscout.com/asert.xml">NETSCOUT</source>
+          <dc:creator>Sherrie Taylor</dc:creator>
+          </item>
+</channel>
+</rss>

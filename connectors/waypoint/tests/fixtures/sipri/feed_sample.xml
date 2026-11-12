@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.sipri.org/">
+  <channel>
+    <title>RSS</title>
+    <link>https://www.sipri.org/</link>
+    <description>Combined RSS feed from SIPRI</description>
+    <language>en</language>
+    
+    <item>
+  <title>SIPRI hosts discussion on human security and AI</title>
+  <link>https://www.sipri.org/news/2026/sipri-hosts-discussion-human-security-and-ai</link>
+  <description>On 20 October 2026, SIPRI convened an online event exploring how artificial intelligence (AI) can advance peacebuilding. The event was part of the Community of Practice on Human Security, a joint initiative by SIPRI and the United Nations Trust Fund for Human Security (UNTFHS).
+</description>
+  <pubDate>10 Nov 2026 16:38:39 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-hosts-discussion-human-security-and-ai</guid>
+    </item>
+<item>
+  <title>Visit our 60th anniversary collection</title>
+  <link>https://www.sipri.org/news/2026/visit-our-60th-anniversary-collection</link>
+  <description>A new collection of video interviews and written messages from alumni and friends reflecting on 60 years of SIPRI.
+</description>
+  <pubDate>10 Nov 2026 11:12:28 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/visit-our-60th-anniversary-collection</guid>
+    </item>
+<item>
+  <title>SIPRI co-hosts side events at UN First Committee</title>
+  <link>https://www.sipri.org/news/2026/sipri-co-hosts-side-events-un-first-committee</link>
+  <description>SIPRI experts co-organized three side events during the 81st session of the United Nations General Assembly First Committee in New York in October.
+</description>
+  <pubDate>10 Nov 2026 10:53:30 CET</pubDate>
+    <dc:creator>SIPRI</dc:creator>
+    <guid isPermaLink="true">https://www.sipri.org/news/2026/sipri-co-hosts-side-events-un-first-committee</guid>
+    </item>
+</channel>
+</rss>

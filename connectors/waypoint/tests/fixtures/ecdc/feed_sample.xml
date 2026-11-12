@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.ecdc.europa.eu/en">
+  <channel>
+    <title>News content</title>
+    <link>https://www.ecdc.europa.eu/en</link>
+    <description/>
+    <language>en</language>
+    
+    <item>
+  <title>Preparations continue for rollout of new public health surveillance platform in nine pilot countries</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/preparations-continue-rollout-new-public-health-surveillance-platform-nine-pilot</link>
+  <description>&lt;p&gt;Next year&#8217;s rollout of Epi+, a multilingual event-based surveillance platform designed to help countries detect and assess emerging public health threats, is coming closer as ECDC and Italy&#8217;s Istituto Superiore di Sanit&#224; (ISS) hold training this week for 40 national epidemiologists and technical experts in Rome.&lt;/p&gt;
+</description>
+  <pubDate>Wed, 11 Nov 2026 13:47:27 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/preparations-continue-rollout-new-public-health-surveillance-platform-nine-pilot</guid>
+    </item>
+<item>
+  <title>From preparedness to response: EU Reference Laboratories for Public Health in action</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/preparedness-response-eu-reference-laboratories-public-health-action</link>
+  <description>&lt;p&gt;Strong laboratory capacity is the backbone of Europe&#8217;s preparedness in the face of increasing communicable disease threats, said ECDC on the occasion of today&#8217;s European Laboratory Day, celebrated every year on 5 November to recognise the essential contribution of laboratory professionals across Europe.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 05 Nov 2026 08:51:55 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/preparedness-response-eu-reference-laboratories-public-health-action</guid>
+    </item>
+<item>
+  <title>First public health emergency preparedness assessments across Europe show both commitment and recurring challenges</title>
+  <link>https://www.ecdc.europa.eu/en/news-events/first-public-health-emergency-preparedness-assessments-across-europe-show-both</link>
+  <description>&lt;p&gt;The first cycle of Public Health Emergency Preparedness Assessments (PHEPAs) coordinated by the European Centre for Disease Prevention and Control (ECDC) has shown a strong commitment to emergency preparedness across Europe, with a number of common challenges remaining.&lt;/p&gt;
+</description>
+  <pubDate>Thu, 29 Oct 2026 09:57:39 +0100</pubDate>
+    <dc:creator>ECDC</dc:creator>
+    <guid isPermaLink="true">https://www.ecdc.europa.eu/en/news-events/first-public-health-emergency-preparedness-assessments-across-europe-show-both</guid>
+    </item>
+</channel>
+</rss>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cf="http://www.microsoft.com/schemas/rss/core/2005">
+  <channel>
+    <title>
+News Releases - U.S. Dept. of War
+</title>
+    <link>
+https://www.war.gov/News/Releases/
+</link>
+    <description>
+Stay up to date on the latest Department of War statements and announcements.
+</description>
+    <language>en-us</language>
+    <pubDate>Tue, 10 Nov 2026 19:50:00 GMT</pubDate>
+    <lastBuildDate>Thu, 12 Nov 2026 00:54:00 GMT</lastBuildDate>
+    <atom:link href="www.war.gov?ContentType=9&amp;Site=945&amp;isdashboardselected=0&amp;max=100" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Readout of Secretary of War Pete Hegseth's Meeting With Poland's Deputy Prime Minister and Minister of National Defense W&#322;adys&#322;aw Kosiniak-Kamysz</title>
+      <link>https://www.war.gov/News/Releases/Release/Article/4646284/readout-of-secretary-of-war-pete-hegseths-meeting-with-polands-deputy-prime-min/</link>
+      <description>Secretary of War Pete Hegseth met with Poland's Deputy Prime Minister and Minister of National Defense W&#322;adys&#322;aw Kosiniak-Kamysz at the Pentagon.
+</description>
+      <pubDate>Tue, 10 Nov 2026 19:50:00 GMT</pubDate>
+      <dc:creator>Press Operations</dc:creator>
+      <guid isPermaLink="false">https://www.war.gov/News/Releases/Release/Article/4646284/readout-of-secretary-of-war-pete-hegseths-meeting-with-polands-deputy-prime-min/</guid>
+    </item>
+    <item>
+      <title>The Department of War's Office of Strategic Capital Signs $150 Million Conditional Loan Commitment With Rocket Lab</title>
+      <link>https://www.war.gov/News/Releases/Release/Article/4644766/the-department-of-wars-office-of-strategic-capital-signs-150-million-conditiona/</link>
+      <description>The War Department's Office of Strategic Capital announced a $150 million conditional loan commitment with Rocket Lab USA Inc. to support Rocket Lab's efforts to increase the flight rate of its reusable Neutron rocket beyond first launch to meet growing commercial and national security demand for access to space.
+</description>
+      <pubDate>Mon, 09 Nov 2026 21:15:12 GMT</pubDate>
+      <dc:creator>Press Operations</dc:creator>
+      <guid isPermaLink="false">https://www.war.gov/News/Releases/Release/Article/4644766/the-department-of-wars-office-of-strategic-capital-signs-150-million-conditiona/</guid>
+    </item>
+    <item>
+      <title>Secretary of War Pete Hegseth Orders Sweeping Overhaul of Military Education to Refocus on Combat Lethality</title>
+      <link>https://www.war.gov/News/Releases/Release/Article/4644710/secretary-of-war-pete-hegseth-orders-sweeping-overhaul-of-military-education-to/</link>
+      <description>In a major move to restore a culture of accountability and warfighting excellence, Secretary of War Pete Hegseth directed the comprehensive overhaul of the Department's Professional Military Education system.
+</description>
+      <pubDate>Mon, 09 Nov 2026 16:43:30 GMT</pubDate>
+      <dc:creator>Press Operations</dc:creator>
+      <guid isPermaLink="false">https://www.war.gov/News/Releases/Release/Article/4644710/secretary-of-war-pete-hegseth-orders-sweeping-overhaul-of-military-education-to/</guid>
+    </item>
+</channel>
+</rss>

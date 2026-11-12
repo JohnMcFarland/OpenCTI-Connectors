@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss version="2.0">
+<channel>
+<title>BankInfoSecurity.com Articles RSS Syndication</title>
+<link>https://www.bankinfosecurity.com/rssFeeds.php?type=articles</link>
+<description>BankInfoSecurity.com.com RSS News Feeds on bank information security articles</description>
+<pubDate>Wed, 11 Nov 2026 20:23:58 -0500</pubDate>
+			<item>
+			<title>Vanta Buys Pillar to Tie AI Governance to Real-Time Controls</title>
+			<link>https://www.bankinfosecurity.com/vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-a-33367</link>
+			<guid>https://www.bankinfosecurity.com/vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-a-33367</guid>
+			<description>&lt;img src=&quot;https://ismg-cdn.nyc3.cdn.digitaloceanspaces.com/articles/vanta-buys-pillar-to-tie-ai-governance-to-real-time-controls-image_small-2-a-33367.jpg&quot; align=right hspace=4&gt;&lt;b&gt;Deal Would Combine Compliance Evidence With Real-Time AI Agent Monitoring, Blocking&lt;/b&gt;&lt;br&gt;Vanta plans to acquire Israel-based Pillar Security to connect AI governance and compliance evidence with real-time agent discovery, monitoring and enforcement, allowing enterprises to block unauthorized AI actions and verify policy compliance as events occur.</description>
+			</item>
+			<item>
+			<title>Health Groups Warn HHS on Potential HIPAA Privacy Changes</title>
+			<link>https://www.bankinfosecurity.com/health-groups-warn-hhs-on-potential-hipaa-privacy-changes-a-33365</link>
+			<guid>https://www.bankinfosecurity.com/health-groups-warn-hhs-on-potential-hipaa-privacy-changes-a-33365</guid>
+			<description>&lt;img src=&quot;https://ismg-cdn.nyc3.cdn.digitaloceanspaces.com/articles/health-groups-warn-hhs-on-potential-hipaa-privacy-changes-image_small-5-a-33365.jpg&quot; align=right hspace=4&gt;&lt;b&gt;CHIME Sounds Alarm on Restricting Patient Authorization Checks for Third-Party Apps&lt;/b&gt;&lt;br&gt;CHIME and 17 healthcare organizations warn that potential HIPAA Privacy Rule changes could restrict providers' ability to verify patient authorization for third-party apps, increasing risks of unauthorized disclosures, fraud, regulatory violations and civil litigation.</description>
+			</item>
+			<item>
+			<title>CISA Orders Patch for Cisco Flaw Tied to AI Agent Attack</title>
+			<link>https://www.bankinfosecurity.com/cisa-orders-patch-for-cisco-flaw-tied-to-ai-agent-attack-a-33364</link>
+			<guid>https://www.bankinfosecurity.com/cisa-orders-patch-for-cisco-flaw-tied-to-ai-agent-attack-a-33364</guid>
+			<description>&lt;img src=&quot;https://ismg-cdn.nyc3.cdn.digitaloceanspaces.com/articles/cisa-orders-patch-for-cisco-flaw-tied-to-ai-agent-attack-image_small-10-a-33364.jpg&quot; align=right hspace=4&gt;&lt;b&gt;Federal Deadline Follows Report of DeepSeek-Powered Breach at European Telecom&lt;/b&gt;&lt;br&gt;The U.S. cyber defense agency is ordering federal agencies to patch a Cisco vulnerability within two weeks after researchers discovered Chinese-speaking hackers exploiting the flaw through an artificial intelligence model to break into a European telecom.</description>
+			</item>
+</channel>
+</rss>

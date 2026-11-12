@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:podcast="https://podcastindex.org/namespace/1.0"
+xmlns:rawvoice="https://blubrry.com/developer/rawvoice-rss/"
+>
+
+<channel>
+	<title>The Council on Strategic Risks</title>
+	<atom:link href="https://councilonstrategicrisks.org/feed/" rel="self" type="application/rss+xml" />
+	<link>https://councilonstrategicrisks.org</link>
+	<description>Anticipating, Analyzing, and Addressing Systemic Risks</description>
+	<lastBuildDate>Mon, 09 Nov 2026 16:58:18 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+
+<image>
+	<url>https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2023/03/image-5.png?fit=32%2C32&#038;ssl=1</url>
+	<title>The Council on Strategic Risks</title>
+	<link>https://councilonstrategicrisks.org</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+	<atom:link rel="hub" href="https://pubsubhubbub.appspot.com/" />
+	<itunes:author>The Council on Strategic Risks</itunes:author>
+	<itunes:explicit>false</itunes:explicit>
+	<itunes:image href="https://councilonstrategicrisks.org/wp-content/uploads/2021/01/Podcast-Art-for-web-1.jpg" />
+	<itunes:type>episodic</itunes:type>
+	<itunes:owner>
+		<itunes:name>The Council on Strategic Risks</itunes:name>
+		<itunes:email> nbajema@csrisks.org</itunes:email>
+	</itunes:owner>
+	<copyright>&#xA9; 2021 Council on Strategic Risks</copyright>
+	<podcast:license>&#xA9; 2021 Council on Strategic Risks</podcast:license>
+	<podcast:medium>podcast</podcast:medium>
+	<itunes:category text="Government" />
+	<itunes:category text="Science" />
+	<itunes:category text="News" />
+	<rawvoice:rating>TV-G</rawvoice:rating>
+	<podcast:podping usesPodping="true" />
+	<rawvoice:subscribe feed="https://councilonstrategicrisks.org/feed/" html="https://councilonstrategicrisks.org/subscribe-to-podcast/" itunes="https://podcasts.apple.com/us/podcast/on-the-verge/id1556919643" spotify="https://open.spotify.com/show/63Kq0hxdneBzMll76cKBV2"></rawvoice:subscribe>
+<site xmlns="com-wordpress:feed-additions:1">130910444</site>	<item>
+		<title>A New US Congress Means a New Conversation about Climate and Security</title>
+		<link>https://councilonstrategicrisks.org/2026/11/09/a-new-us-congress-means-a-new-conversation-about-climate-and-security/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=a-new-us-congress-means-a-new-conversation-about-climate-and-security</link>
+		
+		<dc:creator><![CDATA[John Conger]]></dc:creator>
+		<pubDate>Mon, 09 Nov 2026 16:58:13 +0000</pubDate>
+				<category><![CDATA[Center for Climate and Security]]></category>
+		<category><![CDATA[CSR Blog]]></category>
+		<category><![CDATA[climate change]]></category>
+		<category><![CDATA[Climate Security]]></category>
+		<category><![CDATA[Congress]]></category>
+		<category><![CDATA[US]]></category>
+		<guid isPermaLink="false">https://councilonstrategicrisks.org/?p=28851</guid>
+
+					<description><![CDATA[<p>A new Congress can strengthen climate security through oversight, international partnerships, resilient defense infrastructure, and preparation for increasingly disruptive weather risks.</p>
+<p>The post <a href="https://councilonstrategicrisks.org/2026/11/09/a-new-us-congress-means-a-new-conversation-about-climate-and-security/">A New US Congress Means a New Conversation about Climate and Security</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p class="wp-block-paragraph">Elections have consequences, and this one is no exception. With the new leadership in both the House and the Senate, there is an opportunity to reopen a conversation about climate and national security that has been constrained over the past two years.</p>
+
+
+
+<p class="wp-block-paragraph">That conversation has three consequential elements: 1) The questions that Congress will now ask&#8212;and the oversight it will conduct&#8212;to explore the risks that have been accepted by deprioritizing climate threats; 2) Opportunities for Congress to re-engage with partners at home and abroad on climate-related topics that received less attention over the last two years; and 3) A renewed effort to ensure the American people understand how evolving climate conditions impact both our national security and their individual security.</p>
+
+
+
+<h3 class="wp-block-heading">Damage Assessment &#8211; Opportunities for Oversight</h3>
+
+
+
+<p class="wp-block-paragraph">The first opportunity is to understand what changed, what was lost, and what risks the Department of Defense and the country may now be accepting as a result. Over the past two years, climate-related programs and activities have been curtailed, canceled, or deprioritized. But the full scope of those decisions and their implications for military readiness and national security is not yet clear.</p>
+
+
+
+<p class="wp-block-paragraph">Congress has an important role in establishing that record, a role it did not fully embrace over the last two years. Key questions might include, but are not limited to:</p>
+
+
+
+<ul class="wp-block-list">
+<li>What contracts and research efforts were canceled because they were associated with climate change?</li>
+
+
+
+<li>Were renewable energy and battery projects terminated, and what capabilities or resilience benefits were lost?</li>
+
+
+
+<li>Were construction standards or procurement requirements changed in ways that increase exposure to extreme weather?</li>
+
+
+
+<li>What meteorological capabilities were reduced, and what are the implications for operational forces?</li>
+
+
+
+<li>Were operational capabilities involving electric or hybrid-electric systems cut, and what implications do those decisions have for the forces that rely on them?</li>
+</ul>
+
+
+
+<p class="wp-block-paragraph">These are not questions that require Congress to begin with a predetermined conclusion. They require the Department of Defense and other federal agencies to provide a clear accounting of their decisions, the rationale behind them, and the consequences. They require more than press releases and hand-waving. Some decisions may have had little practical effect. Others may have created vulnerabilities, eliminated useful capabilities, or disrupted work that took years to develop. Congress should establish the facts and follow the evidence.</p>
+
+
+
+<p class="wp-block-paragraph">The inquiry should also look beyond individual programs. The US government&#8217;s ability to identify and address emerging risks depends on institutional knowledge, technical expertise, planning processes, and the willingness of people throughout the organization to raise concerns. If those capabilities have been diminished, the damage may extend well beyond the programs that were directly canceled. Understanding that institutional impact is just as important as accounting for individual decisions.</p>
+
+
+
+<h3 class="wp-block-heading">Working Together &#8211; Opportunities for Partnership</h3>
+
+
+
+<p class="wp-block-paragraph">With a Congress more attuned to the security risks of climate change, allies and partners now have more room to work with the United States on topics like climate adaptation, resilience, and the energy transition. Voters sent a clear message this month about the cost of living, and the war with Iran has made that worse. Disruption in the Strait of Hormuz pushed up fuel and electricity prices for American families, and the same shock hit households and governments around the world. Many US allies are responding by accelerating investment in clean energy, which they now treat as a way to protect themselves from price swings and from adversaries who can choke off supply. A Congress that is focused on affordability will be asking the same questions, which creates an opening for closer collaboration with partners on grid resilience, supply chains, and energy security. That conversation starts this month at COP31 in Antalya, where a delegation of US members of Congress will meet with counterparts on these topics.</p>
+
+
+
+<h3 class="wp-block-heading">Highlighting Risks &#8211; Opportunities to Prepare</h3>
+
+
+
+<p class="wp-block-paragraph">Congress will be able to point out that the threats posed by climate and changing weather conditions have not gone away.&nbsp; In particular, the El Ni&#241;o we are experiencing and will continue to experience through next year is a reminder of why the Department of Defense and the nation need to anticipate and prepare for these risks.&nbsp; The challenge is not only to respond when a storm hits an installation, but also to build the resilience we need to reduce the impact of future events.</p>
+
+
+
+<p class="wp-block-paragraph">The Pentagon&#8217;s new FORTRESS (Federal Operations for Resilience, Troop Resources, Energy, Supply, and Survivability) America initiative offers an opportunity to put that principle into practice. Its focus on energy independence, installation hardening, supply chain resilience, and survivability is fundamentally about making installations more secure. But those investments need to account for all threats they will have to withstand. Energy infrastructure must be designed for the weather it will face in the future. Installations need to be hardened against the hazards most likely to affect them. A more resilient military requires an understanding of the full range of threats to its infrastructure, including those associated with a changing climate.</p>
+
+
+
+<p class="wp-block-paragraph">There is also a near-term reason to pay attention. El Ni&#241;o is expected to influence weather patterns across the United States through the coming winter and into 2027. NOAA&#8217;s current outlook points to warmer-than-average conditions across much of the northern United States and increased chances of wetter-than-average conditions across much of the South and East. These are seasonal probabilities, not predictions of specific storms or disasters. But they are exactly the kind of information that should inform preparation: reviewing installation plans, assessing vulnerabilities, coordinating with local emergency managers, and ensuring that military operations can continue when severe weather disrupts normal activity.</p>
+
+
+
+<p class="wp-block-paragraph">Finally, the security of military installations is inseparable from the security of the communities around them. A base may have its own backup power, water supply, and emergency response capabilities, but it still depends on roads, bridges, electric grids, communications networks, hospitals, housing, and a functioning local workforce. A storm that floods a neighboring community, closes the roads leading to an installation, or knocks out power across a region can affect military readiness even if the base itself escapes significant damage. The resilience of defense communities is therefore part of the resilience of the force.</p>
+
+
+
+<p class="wp-block-paragraph">These are practical national security concerns. The goal is not to make every weather event a climate debate. It is to ensure that the Defense Department, Congress, state and local governments, and the American people fully understand the risks they face&#8212;including those from a changing climate&#8212;and take all reasonable steps to prepare. A new Congress has an opportunity to help make that preparation a priority.</p><p>The post <a href="https://councilonstrategicrisks.org/2026/11/09/a-new-us-congress-means-a-new-conversation-about-climate-and-security/">A New US Congress Means a New Conversation about Climate and Security</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">28851</post-id>	</item>
+		<item>
+		<title>Announcing the 2026 AI &#038; National Security Convergence Fellows</title>
+		<link>https://councilonstrategicrisks.org/2026/11/04/announcing-the-2026-ai-national-security-convergence-fellows/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=announcing-the-2026-ai-national-security-convergence-fellows</link>
+		
+		<dc:creator><![CDATA[Council on Strategic Risks]]></dc:creator>
+		<pubDate>Wed, 04 Nov 2026 17:14:11 +0000</pubDate>
+				<category><![CDATA[Converging Risks Lab]]></category>
+		<category><![CDATA[Fellowship News]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[converging risks]]></category>
+		<guid isPermaLink="false">https://councilonstrategicrisks.org/?p=28771</guid>
+
+					<description><![CDATA[<p>The Converging Risks Lab (CRL) is proud to announce the second cohort of the AI &#038; National Security Convergence Fellowship.</p>
+<p>The post <a href="https://councilonstrategicrisks.org/2026/11/04/announcing-the-2026-ai-national-security-convergence-fellows/">Announcing the 2026 AI & National Security Convergence Fellows</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></description>
+										<content:encoded><![CDATA[<p class="wp-block-paragraph"><a href="https://councilonstrategicrisks.org/crl/" target="_blank" rel="noopener"><strong>The Converging Risks Lab</strong></a> (CRL) at the Council on Strategic Risks and the <a href="https://futureoflife.org/" target="_blank" rel="noopener">Future of Life Institute</a> are proud to announce the second cohort of the <strong>AI &amp; National Security Convergence Fellowship</strong>. This is the first Fellowship of its kind to focus on the intersection of AI&#8217;s rapid evolution and the demands on the US national security workforce to keep pace in order to take maximum advantage of this technology. This cohort of Fellows comprises extraordinarily talented and experienced leaders from across the federal government, world-class research institutions, and cutting-edge industry. Their diverse backgrounds reflect the Fellowship&#8217;s commitment to innovation, service, and collaboration across sectors. Please join us in congratulating these exceptional public servants.</p>
+
+
+
+<p class="wp-block-paragraph">In addition to monthly discussion sessions and scenario exercises buttressed by a rigorous curriculum, Fellows will have the opportunity to engage directly with numerous subject matter experts, including seven <strong>Senior Advisors</strong> to this Fellowship. These Senior Advisors are: <a href="https://www.cnas.org/people/lt-gen-jack-shanahan-usaf-ret" target="_blank" rel="noopener">Lt Gen Jack Shanahan</a> (USAF, Ret.), former Director of the Joint Artificial Intelligence Center; <a href="https://www.cfr.org/experts/jessica-brandt" target="_blank" rel="noopener">Jessica Brandt</a>, Senior Fellow for Technology and National Security, Council on Foreign Relations; <a href="https://www.governance.ai/team/rebecca-hersman" target="_blank" rel="noopener">Rebecca Hersman</a>, Senior Research Scholar, GovAI; <a href="https://frontiersecurityinstitute.org/team#isaac-ike-harris" target="_blank" rel="noopener">Ike Harris</a>, Executive Director, Frontier Safety Institute; <a href="https://auix.org/ledx-praxeum/dr-mehmed-ali/" target="_blank" rel="noopener">Dr. Mehmed Ali</a>, Chief Learning Officer and Provost, Delta XIII, U.S. Space Force; <a href="https://www.linkedin.com/in/kaleb-redden-8995971/" target="_blank" rel="noopener">Kaleb Redden</a>, Deputy CDAO (Strategy, Governance, &amp; Partnerships) &#8211; participating in his personal capacity; <a href="https://www.cmu.edu/cmist/about-us/people/faculty/mieke-eoyang.html" target="_blank" rel="noopener">Mieke Eoyang</a>, Visiting Professor, Carnegie Mellon Institute for Strategy &amp; Technology. </p>
+
+
+
+<figure class="wp-block-image size-full"><img data-recalc-dims="1" fetchpriority="high" decoding="async" width="3333" height="1875" data-attachment-id="28824" data-permalink="https://councilonstrategicrisks.org/2026/11/04/announcing-the-2026-ai-national-security-convergence-fellows/crl-fellows-2026-3/" data-orig-file="https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?fit=3333%2C1875&amp;ssl=1" data-orig-size="3333,1875" data-comments-opened="0" data-image-title="CRL Fellows 2026-3" data-image-description="" data-image-caption="" data-large-file="https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?fit=1024%2C576&amp;ssl=1" src="https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=3333%2C1875&#038;ssl=1" alt="" class="wp-image-28824" srcset="https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?w=3333&amp;ssl=1 3333w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=300%2C169&amp;ssl=1 300w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=1024%2C576&amp;ssl=1 1024w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=768%2C432&amp;ssl=1 768w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=1536%2C864&amp;ssl=1 1536w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?resize=2048%2C1152&amp;ssl=1 2048w, https://i0.wp.com/councilonstrategicrisks.org/wp-content/uploads/2026/11/CRL-Fellows-2026-3.jpg?w=3000&amp;ssl=1 3000w" sizes="(max-width: 1000px) 100vw, 1000px" /></figure>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Del Schlangen</strong> is an emerging-technology risk analyst and strategic foresight practitioner with Google, where he has worked since 2019, and a Non-Resident Fellow in Cybersecurity at the Orion Policy Institute. His work focuses on how AI and other emerging technologies reshape national-security risk and decision-making. A former U.S. Army all-source intelligence analyst and cyber threat analyst supporting U.S. Cyber Command and U.S. Special Operations Command, he holds a J.D. from the University of Denver Sturm College of Law, an M.P.P. from American Military University, and a B.S. in Public Administration from George Mason University.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Melissa Hopkins</strong> is Head of Policy and Growth at Tinycode, an AI evaluation startup. She also serves as Emerging Tech Advisor at the Johns Hopkins Center for Health Security, where she previously served as Senior Policy Advisor leading several policy initiatives in the convergence of AI and biotechnology (AIxBio) and serving as primary investigator on the center&#8217;s AIxBio project team. Melissa also serves as a Non-Resident Affiliate at the CSIS AI Wadhwani Center and Multi-Agent Risks Advisor at the Institute for Security &amp; Technology. Melissa brings years of experience working in D.C. on AI, tech, and national security policy, including as a legislative tech fellow specializing in AI and biotech for a senior member of the House Energy and Commerce Committee, conducting investigations for the House Oversight Committee, and serving as legal and policy counsel on national security issues in the executive branch and for a technology trade association. She is an alum of UC Berkeley&#8217;s Goldman School of Public Policy Tech Policy Fellowship and Johns Hopkins Center for Health Security&#8217;s Emerging Leaders in Biosecurity Initiative (ELBI) fellowship. Melissa graduated from the George Washington University Law School, where she specialized in administrative law and legislation with a national security focus. Before that, she was a Davies Jackson scholar at the University of Cambridge and graduated summa cum laude from Bucknell University. In her spare time, Melissa organizes several monthly emerging technology and national security events, including a monthly biosecurity meetup and several AI policy meetups in Washington, D.C., including serving as Co-lead for the Women in AI Safety &amp; Ethics (WISE) DC Chapter.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Michael Frank</strong> is Head of Mission Integration at Red Cell Partners, where he develops product and mission priorities across the firm&#8217;s national security portfolio. He brings over a decade of experience at the intersection of national security, cybersecurity, and technology innovation, having previously served as the Deputy Chief Technology Officer for the Department of the Navy and a Principal at Boston Consulting Group. He is also a Reserve Marine Officer currently serving as a planner on the AI Task Force on the Joint Staff in the J39 and previously served as the cyber portfolio lead for the Marine Innovation Unit. Michael holds a Master&#8217;s in Information Security from Carnegie Mellon University, an MBA from the University of Virginia&#8217;s Darden School of Business, and a BA from Washington &amp; Jefferson College.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Corey Broschak</strong> is Executive Director and Co-Founder of the Human-AI Agency &amp; Trust Lab (HAATlab), an independent nonprofit working to future-proof human judgment and decision-making in the AI era. Its HAAT Index is designed to build the evidence base, best practices, and industry standards for determining whether AI makes operators, experts, and leaders more capable or simply more dependent. Previously, he served in the U.S. Department of Defense, where he managed climate and energy security cooperation programs, and was a founding member of the Brookings Institution&#8217;s AI and Emerging Technology Initiative.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>April Jenkins</strong> is a Lieutenant Colonel in the U.S. Army with extensive experience leading enterprise technology modernization and mission-critical operations supporting U.S. national security. She has held key leadership positions at the White House Communications Agency, NORAD and U.S. Northern Command, and U.S. Southern Command, directing multinational teams and multimillion-dollar technology portfolios. Her experience includes modernizing communications infrastructure supporting the President of the United States and leading complex technology initiatives across global operational environments. At NORAD and U.S. Northern Command, she collaborated with government, industry, and academic partners to explore emerging technologies, including machine learning, to address homeland security challenges. April holds an MBA from the George Washington University, an M.A. in Defense and Strategic Studies from the U.S. Naval War College, and a bachelor&#8217;s degree from the U.S. Military Academy at West Point. As she transitions from military service, she is focused on AI governance, strategic risk, and responsible AI integration into national security decision-making, emphasizing meaningful human oversight and accountability.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Dr. Rebecca Law</strong> is a national security strategist, researcher, and defense innovation leader whose career bridges public policy, academic research, military operations, and emerging technology. Her expertise encompasses strategic competition, information operations, modeling and simulation, emerging defense technologies, and the ways institutions adapt and make decisions under uncertainty.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)">Rebecca serves as a Director of Operations at Research Innovations, Inc., where she leads organizational initiatives and advances strategic opportunities in uncrewed and autonomous systems. Previously, she served as a Faculty Research Associate at the Naval Postgraduate School&#8217;s MOVES Institute, specializing in serious game design and collaborative strategic problem-solving through the Massive Multiplayer Online Wargame Leveraging the Internet (MMOWGLI) platform. Throughout her career, she has supported senior military and civilian decision-makers across the Department of War, including U.S. Pacific Command, U.S. Central Command, the Joint Staff, and multiple geographic combatant commands. Her interdisciplinary work connects rigorous analysis, operational realities, and technological innovation to inform complex national security decisions.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)">Rebecca holds a Ph.D. in International Studies from Old Dominion University, where her research examined state antifragility, a Master of Public Policy from the Panetta Institute at California State University, Monterey Bay, and a Bachelor of Science from the University of Georgia. She also serves as an adjunct faculty member at New England College, bringing together scholarly inquiry, public policy, and practical national security experience.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Algirde Pipikaite</strong> is Head of Governance, Risk and Compliance at CrowdStrike. She also sits on the Board of Directors of CSP-AB and is a Strategic Advisor to American University. Algirde was previously Head, Governance, Risk &amp; Compliance at Silicon Valley Bank. Before that, she was a leader for Strategic Initiatives at the World Economic Forum&#8217;s Centre for Cybersecurity in Geneva, Switzerland, where she launched the group&#8217;s inaugural Global Cyber Outlook report in 2022. Prior to joining the WEF, she was part of the executive team building a startup in the cybersecurity orchestration and automation space that Fortinet acquired. Algirde holds an MPA degree from Harvard University and an LLM degree from University of Lausanne.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Mark Paes</strong> is a researcher in the space of Trustworthy Artificial Intelligence, whose work investigates the safety, security, and governance of AI Systems in the public sector. His most recent role was as a research fellow at the NIST Center for AI Standards and Innovation, working on evaluations and standards for Frontier models. His prior work has been at Federally Funded Research Centers, including Agentic Security research at University of Maryland&#8217;s Applied Research Laboratory for Intelligence and Security, Cyber Risk research at Carnegie Mellon&#8217;s Software Engineering Institute, and assessing AI Security and Data Privacy at the MITRE Corporation. His work has been published in venues from organizations such as IEEE, ACM, and USENIX.&nbsp; He has taught applied machine learning, security, and technology policy as adjunct faculty at George Mason University and Purdue. He holds a B.S. in Business &amp; Information Technology an M.Eng. in Computer Science from Virginia Tech, and is a PhD Candidate in Computer &amp; Information Technology at Purdue University.<br><br><strong>Cori Fleser</strong> is a senior advisor with Forge Group LLC and national security strategist with over fourteen years of experience in military planning, policy development, and program management across the Department of War. She has advised foreign militaries, U.S. combatant commands, the Joint Staff, and the Office of the Undersecretary of War for Policy on integrating information from the civilian environment into military plans, programs, and operations.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)">Cori&#8217;s research interests center on the safe and responsible use of AI to mitigate civilian harm from military operations, including the benchmarks used to evaluate AI-enabled decision support and whether they hold up under operational conditions.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)">Cori is a nonresident senior fellow with the Transatlantic Security Initiative at the Atlantic Council&#8217;s Scowcroft Center for Strategy and Security. She was a NATO 2030 Young Leader and has held fellowships with the Center for a New American Security, the German Marshall Fund, Atlantik-Br&#252;cke, and the National Endowment for Democracy.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Logan O&#8217;Shaughnessy</strong> serves as Chief Privacy Officer and Counsel for the U.S. Senate Sergeant at Arms. Previously, he served as an attorney at the Privacy and Civil Liberties Oversight Board, as well as in roles at the Office of Management and Budget and in multiple federal agencies focused on data privacy and policy.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Thomas Vestal</strong> is a senior national security and cybersecurity leader with nearly two decades of experience spanning the Central Intelligence Agency (CIA) and Department of Defense. He currently serves as a senior analytic manager at the CIA, specializing in cyber threat intelligence and nation-state threats. He has also served as a Presidential Daily Brief briefer, delivering intelligence assessments to the President and senior U.S. government officials. Thomas has led global intelligence teams, advised senior government leaders, and managed multimillion-dollar programs supporting national security operations and advanced technology research and development. He holds bachelor&#8217;s and master&#8217;s degrees in Computer Engineering from Syracuse University and is a Certified Information Systems Security Professional (CISSP). As an AI and National Security Fellow, Thomas is interested in how AI can enhance national security while preserving meaningful human control and the technical expertise needed to critically evaluate AI-generated outputs.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Kyle Parks</strong> is a career diplomat currently serving as the British Liaison Officer to the US Department of War&#8217;s Chief Digital and AI Office in Washington DC. Previously, he led implementation of the UK&#8217;s International Technology Strategy and managed the UN negotiations on digital and emerging technologies. Outside government, Kyle was the Lord Browne Scholar at the University of Oxford&#8217;s Blavatnik School of Government, an advisor at Chatham House, and an International Strategy Fellow &#8211; a fellowship awarded by Eric Schmidt, former CEO of Google. He holds an MA in Public Policy from the University of Oxford and a BA in Politics, Philosophy and Economics from Queen&#8217;s University Belfast.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>David Harary</strong> is a Deployment Strategist with U.S. Central Command at Palantir Technologies and AI and National Security Fellow at the Council on Strategic Risks. His work sits at the intersection of emerging technology, strategic decision-making, and national security, with a focus on enhancing targeting, operational readiness, and intelligence fusion. He has served at the National Reconnaissance Office, held roles at the Pentagon within the Air Force Office of the Deputy Chief of Staff for Operations (AF/A3) and the Office of the Assistant Secretary of the Air Force for Space Acquisition and Integration (SAF/SQ), and contributed to mission support at the National Oceanic and Atmospheric Administration. His expertise spans multi-INT integration, geospatial analytics, and data systems design to address complex security challenges. Harary has published in Slate, The Bulletin of the Atomic Scientists, The National Interest, The Jerusalem Post, and the Cornell International Affairs Review. He is the founder of the Center for Development and Strategy, a nonprofit think tank focused on sustainability, development, and global security. Harary has briefed senior leaders across the Intelligence Community, Department of Defense, Department of Commerce, and the Executive Office of the President. He has deployed in support of real-world combined joint operations across the Middle East. Harary holds an M.Sc. in Sustainability Management from the University of Toronto&#8217;s Institute for Management and Innovation and a B.A. in Economics, Geography, and International Trade from the State University of New York at Buffalo. He resides in Washington, D.C., with his wife, Micaela, their son, and their dog, Whiskey.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Daniel Tuchler</strong> is a seasoned national security professional at the U.S. Department of Defense with extensive experience leading large, multidisciplinary teams and coordinating strategic initiatives across the federal government. He currently serves as a Cyber &amp; Artificial Intelligence Policy Advisor in the Office of the Assistant Secretary of War for Cyber Policy. His work has spanned cyber, counterterrorism, and emerging technology. In these areas, he has shaped policy options for senior decision-makers and driven whole-of-government operational campaigns. Daniel has played key roles in strengthening U.S. resilience against foreign threats and building enduring partnerships with domestic and international stakeholders. He is a distinguished graduate of the National War College at the National Defense University, where he earned an M.S. in National Security Strategy. He also holds two B.A. degrees from the University of California, Berkeley.</p>
+
+
+
+<p class="has-poppins-font-family has-small-font-size has-custom-font wp-block-paragraph" style="font-family:var(--wp--preset--font-family--poppins, poppins)"><strong>Douglas Cantwell</strong> is a Lieutenant Commander in the U.S. Navy Judge Advocate General&#8217;s (JAG) Corps. He currently serves as a cybersecurity attorney within the Department of Defense, advising on cyber threat mitigation efforts to harden U.S. Government and defense industrial base networks. His previous Navy JAG assignments include serving as the legal advisor to a Navy special operations unit, where he deployed as part of a special operations task force, along with various assignments ashore and aboard a nuclear-powered aircraft carrier. He earned his juris doctorate from Columbia Law School, where he served as a research assistant for the Columbia Human Rights Institute. He earned his undergraduate degree from Stanford University and holds Master&#8217;s degrees from the Geneva Graduate Institute and the Naval War College. He previously served as the inaugural Detlev F. Vagts transnational law fellow at the American Society of International Law. As a Fellow, Doug is interested in exploring legal aspects of A.I. governance and the integration of A.I. into military operations.</p><p>The post <a href="https://councilonstrategicrisks.org/2026/11/04/announcing-the-2026-ai-national-security-convergence-fellows/">Announcing the 2026 AI & National Security Convergence Fellows</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">28771</post-id>	</item>
+		<item>
+		<title>The Most Threatening Part of AI is its Own Value Proposition</title>
+		<link>https://councilonstrategicrisks.org/2026/11/02/the-most-threatening-part-of-ai-is-its-own-value-proposition/?utm_source=rss&#038;utm_medium=rss&#038;utm_campaign=the-most-threatening-part-of-ai-is-its-own-value-proposition</link>
+		
+		<dc:creator><![CDATA[Caroline Baxter]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 18:00:05 +0000</pubDate>
+				<category><![CDATA[Converging Risks Lab]]></category>
+		<category><![CDATA[CSR Blog]]></category>
+		<category><![CDATA[AI]]></category>
+		<guid isPermaLink="false">https://councilonstrategicrisks.org/?p=28754</guid>
+
+					<description><![CDATA[<p>AI has been aggressively packaged and promoted as an endlessly useful tool to solve your specific problems quickly, no messy human interaction required. The cost of that convenience adds up quickly.</p>
+<p>The post <a href="https://councilonstrategicrisks.org/2026/11/02/the-most-threatening-part-of-ai-is-its-own-value-proposition/">The Most Threatening Part of AI is its Own Value Proposition</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></description>
+										<content:encoded><![CDATA[<h2 class="wp-block-heading">Introduction</h2>
+
+
+
+<p class="wp-block-paragraph">What is the root cause of progress? Is it the individual whose genius allows them to <a href="https://www.forbes.com/sites/gregsatell/2014/06/01/how-a-genius-thinks/">hit a target</a> no one else could see, or the collective who, now seeing that target, forms the mass required for change at scale? In a democracy, both are equally vital&#8212;but from its earliest origin, democracy has had to hold a tension in balance: the rights and role of the individual against those of the collective to which that individual belongs. The practice of <a href="https://www.ascsa.edu.gr/uploads/media/hesperia/147043.pdf">ostracism</a> in fifth century Athens began as a way to cast out individuals without a trial whose dominance threatened societal health. James Madison, in the <a href="https://www.ascsa.edu.gr/uploads/media/hesperia/147043.pdf">Federalist Papers</a>, championed representative over direct democracy to protect the individuals from majority rule.</p>
+
+
+
+<p class="wp-block-paragraph">AI, most especially chatbots powered by large language models, contains uniquely corrosive attributes that threaten to throw this balance out of whack. Its fundamental value proposition of hyper-personalized empowerment hews to the <a href="https://sourcebooks.web.fordham.edu/mod/1840Carlyle-greatman.asp">Great Man Theory</a> of history that foregrounds the individual over the collective as the decisive factor for global change. However, the dismissal of the role of the collective comes at the precise moment when we need the collective to see challenges heretofore hidden and, after taking arms together, oppose them.</p>
+
+
+
+<h2 class="wp-block-heading">Fitter, Lonelier, More Productive</h2>
+
+
+
+<p class="wp-block-paragraph">A few years after launching ChatGPT via a six-sentence blog <a href="https://openai.com/index/chatgpt/">post</a> in November 2022, OpenAI co-founder Sam Altman <a href="https://mitsloan.mit.edu/ideas-made-to-matter/sam-altman-believes-ai-will-change-world-and-everything-else">argued</a> that AI was &#8220;the biggest, the best, and the most important&#8221; of all technological revolutions and that &#8220;if we could see what each of us can do 10 or 20 years in the future, it would astonish us today.&#8221; Anthropic co-founder Dario Amodei similarly <a href="https://darioamodei.com/essay/the-adolescence-of-technology">believes</a> that AI will drive &#8220;enormous advances in biology, neuroscience, economic development, global peace, and work and meaning.&#8221; And indeed, AI has already <a href="https://www.nationalacademies.org/news/how-ai-is-shaping-scientific-discovery">generated</a> some incredible breakthroughs, such as in <a href="https://www.nature.com/articles/s41586-021-03819-2">protein folding</a>. But there are major weaknesses in the argument that AI will generate mass benefits.</p>
+
+
+
+<p class="wp-block-paragraph">The first weakness is that the <a href="https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026-chatbots-smart-devices-and-views-on-impact/">millions of us</a> that use AI are mostly turning to chatbots&#8212;and then, for &#8220;<a href="https://hbr.org/2026/06/how-people-are-really-using-ai-in-2026">Therapy/companionship</a>.&#8221; Per the American Psychological Association, people largely use AI to &#8220;<a href="https://www.apa.org/monitor/2026/01-02/trends-digital-ai-relationships-emotional-connection">fill the void</a>&#8221; of human connection; chatbot users <a href="https://www.brookings.edu/articles/what-happens-when-ai-chatbots-replace-real-human-connection/">interact</a> with other human beings <a href="https://www.wsj.com/tech/ai/ai-friends-socialization-chatbot-acb4dbf5">less</a> and degrade their social skills in the process, and some even <a href="https://www.theatlantic.com/ideas/2026/01/chatbot-marriage-ai-relationships-romance/685459/">marry</a> AI companions. <a href="https://hbr.org/2026/06/how-people-are-really-using-ai-in-2026">Half</a> of polled users said they use AI for &#8220;personal and professional support.&#8221; Under &#8220;creativity and recreation,&#8221; people use AI for &#8220;fun and nonsense&#8221; and &#8220;fan fiction and storytelling.&#8221;&nbsp; None of the top ten use-cases relate to learning, education, or scientific discovery.</p>
+
+
+
+<p class="wp-block-paragraph">While one could reasonably respond that breakthroughs will come not from the general public but from specific communities, like the biosciences, this leads us to the second weakness. AI has been developed largely for personal, not community, use. Compared to the internet&#8217;s value proposition of connection &#8211; there are myriad <a href="https://polymathprojects.org/">examples</a> of strangers collaborating online to find solutions to wicked problems &#8211; AI is pitched as a hyper-personalized tool for individual benefit. Meta CEO Mark Zuckerberg <a href="https://www.meta.com/thefutureisforeveryone/?srsltid=AfmBOoqGCcL8TfREUAkYQa4xnGRszd00R4wyPk4SEyNPhsqWeSUmAR0U">asserts that</a> AI will usher in &#8220;a new era of personal empowerment&#8221; to &#8220;improve their lives and the world more than ever before.&#8221; Altman and OpenAI&#8217;s chief scientist Jakub Pachocki <a href="https://openai.com/index/built-to-benefit-everyone-our-plan/">believe</a> that AI could help people achieve a myriad of personal goals, like &#8220;learn a new skill.&#8221; (Improving their fan fiction, perhaps.) This is technoutopianism seen through rose-colored <a href="https://www.law.cornell.edu/uscode/text/47/230">Section 230 glasses</a>: we build the platform, what you do with it is not our business, but you will almost assuredly benefit.</p>
+
+
+
+<p class="wp-block-paragraph">And moreover, even if AI were built for specific communities, AI still tends to foster the same isolation within them. Take the sciences. AI adoption in the sciences <a href="https://pubmed.ncbi.nlm.nih.gov/41535462/">has shrunk</a> &#8220;the collective volume of scientific topics studied&#8221; by about 5% because it pushes scientists towards areas of research &#8220;richest in data,&#8221; not necessarily richest in importance. (Mathematicians have made similar observations and warnings about their fields, stating in the <a href="https://leidendeclaration.ai/">Leiden Declaration</a>, &#8220;The increasing involvement of technology companies in mathematical research raises the risk that research questions may come to be prioritized because of their amenability to automated mathematics, rather than expert judgment of their deeper significance. Indeed, broader understanding of the field may be permanently lost in the process of automation.&#8221;) Meanwhile, AI is reducing the frequency with which scientists even talk to each other by a staggering 22%. This research suggests a paradox: &#8220;an expansion of individual scientists&#8217; impact&#8221; seems to come at the cost of &#8220;a contraction in collective science&#8217;s reach.&#8221; The impact bleeds into the qualitative fields, like the <a href="https://opcd.wfu.edu/2025/10/ai-and-the-humanities-existential-threat-or-a-new-life/">humanities</a>, as well, that fears how the atomization of experience combined with AI&#8217;s capacity to generate and analyze text will divorce scholars from scholarship.</p>
+
+
+
+<h2 class="wp-block-heading">Islands of Great Men</h2>
+
+
+
+<p class="wp-block-paragraph">AI has been aggressively packaged and promoted as an endlessly useful tool to solve your specific problems quickly, no messy human interaction required. The cost of that convenience adds up quickly. Today&#8217;s scientists stand to lose the habit shared by <a href="https://www.nature.com/nature-index/news/win-nobel-prize-publish-more-joint-papers-collaboration-early-career-researcher-science">Nobel Prize winners</a> who have made the greatest leaps forward on our collective behalf: early and frequent collaboration with their peers. Said one of the study&#8217;s authors, &#8220;In contrast to the iconic image of lone geniuses making guiding contributions, we find the giants in science in fact show a greater propensity toward teamwork.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">We&#8217;re losing that same habit in the average workplace, too&#8212;even <a href="https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic">Anthropic employees</a> report they aren&#8217;t working with their colleagues as much, nor are they getting mentorship. Said one, &#8220;I like working with people and it&#8217;s sad that I &#8216;need&#8217; them less now&#8230; More junior people don&#8217;t come to me with questions as often.&#8221; (Perhaps it&#8217;s because <a href="https://www.upwork.com/research/navigating-human-ai-relationships">64% of workers</a> report having better relationships with AI than with their colleagues, and 67% trust their chatbot more.) In the classroom, hyper-personalized learning meets students where they are but costs them <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11830699/#sec6">their ability</a> to navigate the real world of complicated human interactions.</p>
+
+
+
+<p class="wp-block-paragraph">At scale, across all sectors of the economy and strata of society, we are losing the millions of conversations that form the relationships and the foundation of a cohesive body politic. <a href="https://www.nytimes.com/2026/07/04/us/politics/voters-ai-chatbots-elections.html">Asking AI</a> who to vote for rather than a friend or a neighbor aborts an opportunity for the <a href="https://covenantfn.org/articles/civil-discourse/">civil discourse</a> that powers a functioning democracy. Even stripping out the additional perils of <a href="https://cset.georgetown.edu/publication/ai-safety-and-automation-bias/">automation bias</a>, <a href="https://lib.guides.umd.edu/AI/what-AI-gets-wrong">false information</a>, and tendency to <a href="https://hbr.org/2026/01/when-ai-amplifies-the-biases-of-its-users">reinforce biases</a>, leaning on AI for assistance with the act of citizenship itself has the potential to create, as one historian calls it, an &#8220;<a href="https://current.fas.harvard.edu/stories/jill-lepore-history-dangers-artificial-state">artificial state</a>.&#8221;</p>
+
+
+
+<p class="wp-block-paragraph">If today&#8217;s adults who were raised in a pre-AI world are becoming more isolated, will today&#8217;s high school students&#8212;the first AI generation, and the one who will have to deal with fixing the problems we can&#8217;t solve ourselves&#8212;fare any better? How do we ensure they grow up to be community-minded citizens, able to recognize shared problems, and handle the friction that comes with tackling them together? And what do we risk, from addressing the climate crisis to curing cancer, if they can&#8217;t?</p>
+
+
+
+<h2 class="wp-block-heading">Recommendations</h2>
+
+
+
+<p class="wp-block-paragraph">The upstream issues that create downstream isolation in classrooms, labs, and offices are both technical and normative. From a technical perspective, the next round of AI development needs to design AI into a more naturally communal tool if it&#8217;s going to spark the next great breakthrough without fractionating us into collections of individual realities.</p>
+
+
+
+<p class="wp-block-paragraph">For academics and scientists, chatbots could have an &#8220;Ask a Human&#8221; function that not only pushes you to speak to a person about what you&#8217;re working on but provides a list of relevant scholars with publicly available email addresses. For general users, that same function could pop up an opportunity to learn from a person in real life&#8212;an advertisement of an upcoming baking class in your city, for example, or simply a reminder that your local public library exists. It could also go so far as to ask whether you might need a break after a certain amount of engagement, like <a href="https://help.netflix.com/en/node/114059">streaming</a> video services are wont to do. Another technical mitigation would be for chatbots to be programmed to do regular gap analyses on the questions their users ask them and suggest areas of inquiry that have not been raised, taking advantage of the immense memory of these chatbots.</p>
+
+
+
+<p class="wp-block-paragraph">On the more normative side, frontier AI labs need to retool their marketing pitch away from individual empowerment and towards community empowerment. To manifest this shift and make it stick, institutions of all kinds that adopt AI must disseminate guidelines that govern the use of the technology in a way that prioritizes human ownership of the work from start to finish. The technical fixes mentioned above will help, but technical adjustments don&#8217;t automatically adjust workplace culture. Employers need to reframe AI use as a <a href="https://www.upwork.com/research/navigating-human-ai-relationships">collaborative tool</a>, not a solo productivity booster. Not only will this help reduce rising levels of <a href="https://hbr.org/2026/02/ai-doesnt-reduce-work-it-intensifies-it">burnout</a>, but it will also help prevent <a href="https://cset.georgetown.edu/publication/ai-safety-and-automation-bias/">automation bias</a> that leads to over-relying on AI-generated ideas and the generation of more <a href="https://ai.wharton.upenn.edu/updates/how-ai-shapes-creativity-expanding-potential-or-narrowing-possibilities/">homogenous</a> outputs.</p>
+
+
+
+<p class="wp-block-paragraph">Finally, on the regulatory side, federal regulators can learn from the <a href="https://www.nytimes.com/2026/08/26/technology/meta-settlement-social-media-addiction-lawsuit.html">recent court case</a> against Meta that Section 230 does not apply in all instances. Prioritizing engagement over safety can and should be punished&#8212;and the definition of safety needs to include the health of civil society as a whole. Regulators should demand frontier AI labs spend as much time studying and managing the side-effects of these tools as they do sharpening their potential. One possibility would be for the frontier AI labs to host and sponsor quarterly conferences, perhaps organized around geographic regions, where people can share the work they have used AI to help them execute. Sharing everything from prompts to problems could facilitate mass &#8220;<a href="https://www.sap.com/blogs/replacing-water-cooler-moments">watercooler moments</a>&#8221; that only come from human interaction but don&#8217;t discount the AI help that got them there in the first place.</p>
+
+
+
+<h2 class="wp-block-heading">Conclusion</h2>
+
+
+
+<p class="wp-block-paragraph">In a way, we were all sitting ducks for the atomizing effects of chatbots. Humans are social animals who <a href="https://omnia.sas.upenn.edu/story/science-being-social">need</a> connection&#8212;but we learn in our earliest years that connection comes with friction. As children we want a parent&#8217;s closeness and throw tantrums when we&#8217;re told no; as teenagers we get homesick at sleepaway camp and groan at group projects; as adults we love the holidays and dread talking to that one aunt at Thanksgiving dinner. 21st century technology enables our dual tendency to attach and to avoid; for the past 20 years, we&#8217;ve been used to <a href="https://gizmodo.com/a-new-study-from-facebook-reveals-just-how-much-it-filt-1702900877">social media</a> companies and the <a href="https://www.ebsco.com/research-starters/social-sciences-and-humanities/filter-bubble">&#8220;filter bubble&#8221;</a> using our usage history to provide information that reinforces our biases and our desire to engage primarily with people we agree with, which is to say, to have connection without friction. But AI takes that one step further: we are now even less likely to engage with our most aligned friends. Chatbots are accelerating the societal atomization that social media started.</p>
+
+
+
+<p class="wp-block-paragraph">Tuesday&#8217;s midterm Congressional elections may be the starting gun for a new slate of regulation around how the general public interacts with AI and how AI companies develop these tools; given Americans <a href="https://www.ipsos.com/en-us/most-americans-agree-government-should-regulate-ai-party-splits-emerge-how">want the government</a> to regulate AI, the labs are wise to <a href="https://www.axios.com/2026/11/01/scoop-openai-post-midterm-policy">begin</a> bracing for impact. How this regulation takes shape will be critical to watch, considering <a href="https://www.meta.com/thefutureisforeveryone/?srsltid=AfmBOopP0y3vm9xD9wLaxbKSO4vrWzdMNwEVxW6fOs7ALXJB1aJQsEAd">tech leaders</a> describe a prosperous society as one in which people in <a href="https://about.fb.com/news/2024/09/introducing-orion-our-first-true-augmented-reality-glasses/">individual reality</a> glasses have their own 24/7 AI helpmeet. It is hard to see how such a society would reliably produce the next <a href="https://www.cmu.edu/math/news-events/articles/2025/1010_nash-equilibrium.html">John Nash</a> when ChatGPT convinced an <a href="https://www.ctvnews.ca/canada/article/ontario-man-alleges-chatgpt-caused-delusions-sues-parent-company-openai/">average man</a> in Ontario he had invented a whole new kind of mathematics. The combustible mix of automation bias, sycophancy, and AI psychosis could make us all the leading experts in worlds only we inhabit, solving problems only we have. But in reality, there is only one world, and we&#8217;re all on it together. And if that world takes a turn, we&#8217;ll all be in trouble together, too&#8212;whether we notice or not.</p>
+
+
+
+<p class="is-style-info has-background has-poppins-font-family has-custom-font wp-block-paragraph" style="background-color:#e6e0bc;font-family:var(--wp--preset--font-family--poppins, poppins)"><a href="https://councilonstrategicrisks.org/tag/ai/" target="_blank" rel="noopener">Read more on AI from the Converging Risks Lab &#187;</a> </p>
+
+
+
+<p class="wp-block-paragraph"></p><p>The post <a href="https://councilonstrategicrisks.org/2026/11/02/the-most-threatening-part-of-ai-is-its-own-value-proposition/">The Most Threatening Part of AI is its Own Value Proposition</a> first appeared on <a href="https://councilonstrategicrisks.org">The Council on Strategic Risks</a>.</p>]]></content:encoded>
+					
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">28754</post-id>	</item>
+</channel>
+</rss>

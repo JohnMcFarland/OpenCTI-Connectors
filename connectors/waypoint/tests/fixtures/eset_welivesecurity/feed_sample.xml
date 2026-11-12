@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>WeLiveSecurity</title>
+    <link>https://www.welivesecurity.com</link>
+    <language>en</language>
+    <description>WeLiveSecurity</description>
+    <item>
+      <link>https://www.welivesecurity.com/en/eset-research/exchange-for-breakfast-turlas-cereal-tricks-are-not-for-kids/</link>
+      <guid>https://www.welivesecurity.com/en/eset-research/exchange-for-breakfast-turlas-cereal-tricks-are-not-for-kids/</guid>
+      <title>Exchange for breakfast: Turla’s Cereal tricks are not for kids</title>
+      <description>ESET Research describes Turla’s Cereal toolset, featuring a novel Exchange email collection module, a unique C&amp;C mechanism, and sophisticated .NET execution tricks</description>
+      <pubDate>Tue, 10 Nov 2026 09:57:00 +0000</pubDate>
+      <image>https://web-assets.esetstatic.com/wls/2026/11-26/turla-cereal/exchange-turla-cereal-tricks.jpg</image>
+      <category>ESET research</category>
+    </item>
+    <item>
+      <link>https://www.welivesecurity.com/en/eset-research/slippynunchucks-hijacks-sogou-input-methods-brand-promotion-mechanism-to-distribute-malware/</link>
+      <guid>https://www.welivesecurity.com/en/eset-research/slippynunchucks-hijacks-sogou-input-methods-brand-promotion-mechanism-to-distribute-malware/</guid>
+      <title>SlippyNunchucks hijacks Sogou Input Method’s brand promotion mechanism to distribute malware</title>
+      <description>ESET Research analyzes a DNS hijacking operation abusing insecure HTTP communications in Windows versions of Sogou Input Method</description>
+      <pubDate>Wed, 04 Nov 2026 09:55:00 +0000</pubDate>
+      <image>https://web-assets.esetstatic.com/wls/2026/11-26/slippynunchucks/slippynunchucks-malware.jpg</image>
+      <category>ESET research</category>
+    </item>
+    <item>
+      <link>https://www.welivesecurity.com/en/eset-research/gorbag-orcs-border-harvesting-intelligence-ukraine/</link>
+      <guid>https://www.welivesecurity.com/en/eset-research/gorbag-orcs-border-harvesting-intelligence-ukraine/</guid>
+      <title>Gorbag: Orcs at the border harvesting intelligence from Ukraine</title>
+      <description>ESET researchers uncover Gorbag, a Russia-aligned group using simple infostealers to harvest data from Ukrainian organizations near the front line</description>
+      <pubDate>Tue, 03 Nov 2026 09:50:00 +0000</pubDate>
+      <image>https://web-assets.esetstatic.com/wls/2026/10-26/gorbag-phishing.jpg</image>
+      <category>ESET research</category>
+    </item>
+</channel>
+</rss>

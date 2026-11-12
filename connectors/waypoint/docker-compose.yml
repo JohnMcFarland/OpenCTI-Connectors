@@ -1,0 +1,50 @@
+# Waypoint OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  waypoint:
+    build: .
+    container_name: opencti-connector-waypoint
+    volumes:
+      # Source profiles, read-only. Edit and restart; no rebuild.
+      - ./sources.yml:/app/sources.yml:ro
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+      # Per-source health: /data/status.json.
+      - waypoint-data:/data
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity (one registration, one service account) ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Waypoint
+      - CONNECTOR_SCOPE=waypoint
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets its profile's report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Global load controls (defaults shown; see README) ---
+      - AGG_SOURCE_WORKERS=4             # sources polled at once (discovery, dedup)
+      - AGG_RENDER_CONCURRENCY=2         # renders in flight, all sources
+      - AGG_REPORTS_PER_CYCLE=120        # Reports per 30-minute cycle, all sources
+      - AGG_MAX_REPORTS_PER_SOURCE_POLL=10
+      - AGG_CLASSIFY_CONCURRENCY=2       # Collector calls in flight
+      - AGG_CYCLE_SECONDS=1800
+      - AGG_RENDERER_PAUSE_SECONDS=300   # all rendering pauses after an outage
+      - AGG_STALE_AFTER_DAYS=7           # WARNING when a source writes nothing this long
+      # --- Shadow run: discover, filter, dedup, log; write nothing ---
+      - AGG_DRY_RUN=false
+    mem_limit: 1g
+    restart: always
+
+volumes:
+  waypoint-data:

