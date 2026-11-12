@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:trendmicro="https://www.trendmicro.com" version="2.0">
+  <channel>
+    <title>Trend Micro Research, News, Perspectives</title>
+    <description></description>
+    <link>https://www.trendmicro.com/en_us/research.html</link>
+    <xhtml:meta content="noindex" name="robots" xmlns:xhtml="http://www.w3.org/1999/xhtml"/><item>
+      <title>AI Agents Can Be Secured. We Can Do It.</title>
+      <description>Learn of the benefits of safely securing AI agents.</description>
+      <link>https://www.trendmicro.com/en_us/research/26/i/safely-securing-ai-agents.html</link>
+      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
+      <trendmicro:authors>
+        <trendmicro:author>
+          <name>Eva Chen</name>
+          <title>Chief Executive Officer</title>
+        </trendmicro:author>
+      </trendmicro:authors>
+      <dc:creator>Eva Chen</dc:creator>
+      <trendmicro:primaryTag>Artificial Intelligence (AI)</trendmicro:primaryTag>
+      <category>Trend Micro Research : Expert Perspective</category>
+      <category>Trend Micro Research : Artificial Intelligence (AI)</category>
+      <enclosure length="0" type="image/jpeg" url="https://trendmicro.scene7.com/is/image/trendmicro/blog-sep-img:Large?qlt=80"/>
+    </item>
+    <item>
+      <title>Why the Open Secure AI Alliance Matters: Open Frontier Models, Open Deployment Flexibility</title>
+      <description>TrendAI joins Nvidia as an inaugural partner in the Open Secure AI Alliance, advancing open models, harnesses, and research to strengthen cyber defense.</description>
+      <link>https://www.trendmicro.com/en_us/research/26/g/open-secure-ai-alliance.html</link>
+      <pubDate>Thu, 30 Jul 2026 00:00:00 +0000</pubDate>
+      <trendmicro:authors>
+        <trendmicro:author>
+          <name>Rachel Jin</name>
+          <title>Chief Platform and Business Officer</title>
+        </trendmicro:author>
+      </trendmicro:authors>
+      <dc:creator>Rachel Jin</dc:creator>
+      <trendmicro:primaryTag>Artificial Intelligence (AI)</trendmicro:primaryTag>
+      <category>Trend Micro Research : Articles, News, Reports</category>
+      <category>Trend Micro Research : Environments</category>
+      <category>Trend Micro Research : Artificial Intelligence (AI)</category>
+      <enclosure length="0" type="image/jpeg" url="https://www.trendmicro.com/content/dam/trendmicro/global/en/research/thumbnails/laptop-hands.jpg"/>
+    </item>
+    <item>
+      <title>Tracking Over 35,000 Fake Sites in the 2026 World Cup Scam Wave</title>
+      <description>Between January and June 2026, TrendAI™ tracked more than 35,000 fake sites exploiting the 2026 FIFA World Cup, spanning counterfeit merchandise shops, cloned ticket pages, and bogus free-streaming sites, which together drew roughly 1.48 million visits from Japan.</description>
+      <link>https://www.trendmicro.com/en_us/research/26/g/tracking-fake-sites-in-the-2026-world-cup-scam-wave.html</link>
+      <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
+      <trendmicro:authors>
+        <trendmicro:author>
+          <name>Kenichiro Motono</name>
+          <title>Chief Fraud Prevention Analyst</title>
+        </trendmicro:author>
+      </trendmicro:authors>
+      <dc:creator>Kenichiro Motono</dc:creator>
+      <trendmicro:primaryTag>Cyber Threats</trendmicro:primaryTag>
+      <category>Trend Micro Research : Research</category>
+      <category>Trend Micro Research : Phishing</category>
+      <category>Trend Micro Research : Articles, News, Reports</category>
+      <category>Trend Micro Research : Cyber Threats</category>
+      <enclosure length="0" type="image/jpeg" url="https://trendmicro.scene7.com/is/image/trendmicro/image-976x533_1_WC:Large?qlt=80"/>
+    </item>
+</channel>
+</rss>

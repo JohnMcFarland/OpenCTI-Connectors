@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xml:base="https://www.proofpoint.com/us/blog">
+  <channel>
+    <title>Proofpoint Threat Insight</title>
+        <link>https://www.proofpoint.com/us/blog</link>
+            <description>
+
+
+Browse Threat Insight information, resources, news, and blog posts. Gain the insights you need to prevent cybersecurity threats and protect your organization.
+</description>
+            <language>en</language>
+        <atom:link href="https://www.proofpoint.com/us/threat-insight-blog.xml" rel="self" type="application/rss+xml"/>
+    <item>
+  <title>BluePhishing: Initial Access via Third-Party Agent Blueprint Consent</title>
+  <link>https://www.proofpoint.com/us/blog/threat-insight/BluePhishing-Initial-Access-via-Third-Party-Agent-Blueprint-Consent</link>
+    <description>Key TakeawaysMicrosoft Entra Agent Identity extends Entra to AI agents and closely mirrors the traditional application model, inheriting many of the same opportunities for abuse.Proofpoint researchers present “BluePhishing” as the next evolution of OAuth consent abuse, enabling attackers to leverage agent identities for initial access.Attackers can configure the blueprint with inheritable permissions and requiredResourceAccess (RRA), using consent links to gain initial access to a victim tenant.Consent to a malicious blueprint allows an attacker to establish agent identities and operate with granted privileges, using discoverable identifiers (e.g., tenant ID and user/sponsor object ID).The challenges of governance around agent identities and consent flows increase the risk of scalable and automated post-exploitation.This blog presents a research-based proof of concept. Proofpoint has not as of yet identified any in-the-wild activity, and emerging techniques should be carefully tracked as technology advances and policies surrounding new identity frameworks evolve.IntroAs organizations rapidly adopt AI, Microsoft Entra’s agent identity model introduces new capabilities, while exposing a largely uncharted attack surface.This blog introduces BluePhishing, an evolution of classic OAuth consent abuse, in which attackers socially engineer victims into granting consent to a malicious agent blueprint for initial access.Analogous to app consent phishing where attackers use client credentials to gain initial access to a tenant, BluePhishing extends this technique to the agent ecosystem.By exploiting gaps in visibility and governance around emerging AI agent adoption, attackers can abuse one-time consent links to create agent identities in target tenants, obtain access tokens, and operate with the privileges assigned to those agents.Agent Identity BackgroundMicrosoft Entra Agent ID is an identity and security framework that extends Entra to AI agents and shares several similarities with the existing application model. An agent blueprint (analogous to an app registration) defines the template for an agent, including its configuration and credentials. The blueprint principal (analogous to a service principal) represents this blueprint within a tenant.An agent identity is a specific instance created from a blueprint.&amp;nbsp;There can be up to&amp;nbsp;250 agent identities associated with a blueprint. This allows for multiple agent identities with delegated permissions scoped to a specific user context rather than the entire tenant.Figure&amp;nbsp;1: Relation between agent blueprint, blueprint principal and agent identities displayed using https://agent-permission-checker.pages.dev/&amp;nbsp;Microsoft 365 Message Center announcement&amp;nbsp;MC1506733 details that default Microsoft Entra users will be able to create agent blueprints by default from November 2026, increasing organizational exposure to agent identity abuse and malicious consent scenarios.&amp;nbsp;BluePhishing AttackThe BluePhishing attack vector relies on socially engineering a victim into consent to a malicious agent blueprint. This consent can be used to provide an attacker a foothold to establish initial access in a tenant. The agent blueprint operates similarly to a multi-tenant application hosted in the attacker’s tenant where a client credential can be added.When a victim grants consent to the agent blueprint (for example, via a consent link), a blueprint principal (analogous to a service principal) is created in the victim’s tenant.The blueprint principal is automatically assigned the AgentIdentity.CreateAsManager application permission. This permission&amp;nbsp;cannot be revoked from the principal and allows the attacker to obtain an app-only Graph token in the victim tenant to create tenant-local agent identities. The created agent identities can inherit the permissions assigned from the blueprint.The attacker can then use the configured client credential to acquire tokens for those agent identities, enabling persistent access and further exploitation.Figure&amp;nbsp;2: BluePhishing attack diagramWhat information is needed by an attacker to conduct BluePhishing?To conduct BluePhishing, the attacker provides values generated within their own tenant:Blueprint application IDClient secretAdditionally, the attacker must know the victim’sTenant IDSponsor (a user in the victim tenant required to create the agent identity).Notably, these values are not considered sensitive&amp;nbsp;and many methods are publicly documented for unauthenticated information disclosure of user accounts or the tenant id. For example, users can be enumerated with&amp;nbsp;GetCredentialType (redfoxsec) endpoint and requests to the&amp;nbsp;OpenID Connect endpoint&amp;nbsp;https://login.microsoftonline.com/{tenant_name}/.well-known/openid-configuration&amp;nbsp;will return the tenant id.&amp;nbsp;Detailed Attack Walkthrough&amp;nbsp;Note: We have notified Microsoft about this attack prior to publishing the attack details.&amp;nbsp;Configure agent blueprintThe attacker configures an agent blueprint in a tenant they control (Tenant A).Figure&amp;nbsp;3: Agent blueprint configured in attacker-controlled tenant&amp;nbsp;&amp;nbsp;The following properties should be configured on blueprint:Sign-in audienceClient secretApplication and delegated permissionsRequired resource access (RRA) +&amp;nbsp;Inheritable permissionsApplication and delegated permissionsAs with traditional OAuth applications, delegated permissions (scopes) and application permissions (roles) can be assigned to the agent blueprint, blueprint principal, and the derived agent identities.Delegated permissions (exposed as the scp claim) represent actions performed on behalf of a signed-in user and can be redeemed via the&amp;nbsp;on-behalf-of (OBO) flow. In contrast, application permissions (exposed as the roles claim) represent app-only access without user context and can be obtained via the&amp;nbsp;autonomous app OAuth flow.SignInAudienceTo enable external consent to an agent blueprint (“third-party blueprint”), the&amp;nbsp;signInAudience must be set to&amp;nbsp;AzureADMultipleOrgs. This setting is not exposed in the Entra portal but can be configured via Microsoft Graph,&amp;nbsp;PowerShell, or by directly updating the blueprint manifest.Figure&amp;nbsp;4: Sign in audience was set to "Multiple Entra ID tenants" via PowerShell, and cannot be modified through the Entra portalRRA and inheritable permissionsRRA defines a static set of permissions upfront, while inheritable permissions&amp;nbsp;ensure that permissions can be inherited by agent identities created from that blueprint.While designed to simplify agent deployment, RRA and inheritable permissions can be used by an adversary to bundle broad permissions into a single one-time consent link, and ensure the consented permissions are automatically inherited across all agent identities.According to Microsoft documentation, inherited permissions are not visible in the Entra portal or via Microsoft Graph, and only observable in the token contents at runtime. This lack of visibility could limit a defender’s ability to audit agent identities such as those operating with risky permissions.&amp;nbsp;Consent flowThe consent experience for agents mirrors that of OAuth applications, with the key difference being the use of an agent-specific identifier instead of a client_id.For example, an admin consent link can be constructed as:https://login.microsoftonline.com/{tenant}/v2.0/adminconsent?client_id={blueprint_id}&amp;amp;scope=https://graph.microsoft.com/.default&amp;nbsp;&amp;amp;redirect_uri={redirect_uri}&amp;nbsp;.default, which grants all permissions pre-configured in requiredResourceAccess on the blueprint.&amp;nbsp;A web redirect URI can be configured (on the corresponding client application), however the consent link requires response_type=none as&amp;nbsp;interactive token acquisitionis prevented.During consent, users are presented with key information before granting permissions to trust the agent, such as name, publisher details and whether it is built by Microsoft.Figure&amp;nbsp;5: Agent blueprint consent (step 1) showing publish statusFigure&amp;nbsp;6: Agent blueprint consent dialogue (step 2) showing the inheritance to agents&amp;nbsp;Admin vs user consentThere are two types of consent: user consent and admin consent.Application permissions require admin consent.&amp;nbsp;This type of consent is more powerful for an attacker, as the permissions can be granted across the entire tenant with a single consent link. However, the phished user must have the privilege to grant admin consent.A user consent link allows a user to grant delegated permissions which operate in the context of that user. Where the user does not have permission to consent, such as due to user consent policies, the request can be forwarded for admin approval.&amp;nbsp;Whilst user consent targets a broader range of lower privileged users, the limitation with delegated permissions is that they cannot be redeemed via autonomous flow. Alternative authentication flows, such as the OBO flow, require an additional stage of user consent to redeem these delegated permissions.During testing, silent inheritance of permissions from the blueprint principal to the agent identity was only observed for delegated permissions granted by a user consent link, whereas permissions granted via admin consent links had the grant source “inherited from parent”.Create Blueprint PrincipalsOnce the victim accepts the consent link, a blueprint principal is created in the victim’s tenant.Figure&amp;nbsp;7: Blueprint principal in victim tenant with admin consent permissionsBy default, blueprint principals were observed to have an implicit admin-consent permission, AgentIdentity.CreateAsManager, to allow the blueprint to create agent identities linked to itself.Figure&amp;nbsp;8: AgentIdentity.CreateAsManager implicit permissionCreate Agent IdentitiesThe attacker can use the blueprint principal in the victim tenant to create agent identities by authenticating with the blueprint credentials from its home tenant.Step 1 - Authenticate against victim tenant as the blueprintThe attacker requests a client credentials token against the victim tenant’s token endpoint.&amp;nbsp;&amp;nbsp;POST&amp;nbsp;https://login.microsoftonline.com/{tenant_victim_id}/oauth2/v2.0/tokenContent-Type: application/x-www-form-urlencodedclient_id={blueprint_id}&amp;amp;client_secret={blueprint_secret}&amp;amp;scope=https://graph.microsoft.com/.default&amp;amp;grant_type=client_credentialsThe response is an access token (roles include AgentIdentity.CreateAsManager) which can be used to create a local agent identities.&amp;nbsp;A snippet of JWT properties:{&amp;nbsp;"app_displayname": "BluePhish",&amp;nbsp; "appid": "{blueprint_app_id}",&amp;nbsp; "appidacr": "1",&amp;nbsp; "idp": "https://sts.windows.net/{victim_tenant_id}/“,&amp;nbsp; "idtyp": "app",&amp;nbsp; "roles": [&amp;nbsp; &amp;nbsp;"AgentIdentity.CreateAsManager"&amp;nbsp; "wids": [&amp;nbsp; &amp;nbsp;&amp;nbsp;"0997a1d0-0d1d-4acb-b408-d5ca73121e90"}Step 2 - Use token to create a new agent identityThis token is presented as the bearer token to&amp;nbsp;create an agent identity in the victim’s tenant, derived from the agent blueprint.POST&amp;nbsp;https://graph.microsoft.com/v1.0/servicePrincipals/Microsoft.Graph.AgentIdentityAuthorization: Bearer {access_token_from_step_1}OData-Version: 4.0Content-Type: application/json{&amp;nbsp;"displayName": "{agent_identity_name}",&amp;nbsp;"agentIdentityBlueprintId": "{blueprint_id}",&amp;nbsp;"sponsors@odata.bind": [&amp;nbsp; &amp;nbsp;"https://graph.microsoft.com/v1.0/users/{sponsor_victim_user}"&amp;nbsp;]}A sponsor ID is the object ID of a user from the victim tenant, is required in order to create an agent identity. The&amp;nbsp;sponsor is a governance requirement&amp;nbsp;intended for a person to be accountable for an agent identity, however can be removed once the identity has been provisioned.Token Acquisition &amp;amp; ProfitOnce an agent identity is established in the victim tenant and permissions granted, the attacker has everything required.Figure&amp;nbsp;9: Agent identity in victim tenant with inherited permissionsUsing the client credentials defined on the blueprint (in the attacker's tenant), the attacker can obtain a token for the agent identity in the victim’s tenant using the autonomous agent app flow:Step 1: The agent identity blueprint presents the credentials and fmi_path (client ID of the target agent identity) and receives an exchange token.Step 2: Exchange the resulting token for a Microsoft Graph access tokenThis yields a valid token for the agent identity, allowing the attacker to act with its assigned permissions in the victim tenant.Figure&amp;nbsp;10: “Bluephish” agent identity token imported into GraphRunnerAs seen in Figure 9, the agent identity has the application permissions for User.Read.All and Group.Read.All. These can be used with a post-access tool such as GraphRunner, to run arbitrary graph requests.Figure&amp;nbsp;11: Example of arbitrary graph requests with agent identity tokenImpact and MitigationsHow does BluePhishing expand traditional app consent phishing?Lower user awarenessUsers may be more likely to consent to AI agents than traditional apps due to lack of user awareness around the attack vector.Less governance than appsAgent consent controls are less mature and deployed less widely compared to app consent controls.Increased blast radiusAn app registration maps to a single service principal per tenant, whereas&amp;nbsp;250 agent identities can be derived from a single blueprint.Inherited scopes not visibleAccording to Microsoft’s documentation,&amp;nbsp;inherited permissions are not visible in the Entra portal or via Microsoft Graph, limiting the ability to audit agent identities permissions. During testing, silent inheritance of permissions from the blueprint principal to the agent identity was only observed for delegated permissions (i.e., those granted through user consent), limiting the ability to audit permissions of agent identities.Activity blends in with legitimate agent usageWhere apps with offline access may arouse suspicion, agents are expected to act autonomously, and many environments already contain large numbers of agent identities.Mitigations&amp;nbsp;Organizations should raise user awareness of the risks associated with agent consent, particularly when granting permissions to ‘third-party’ agents from untrusted sources. Much like&amp;nbsp;user consent settings&amp;nbsp;limit users from granting consent to third-party apps, these settings also extend to agent&amp;nbsp;blueprints and their agent identities.Figure&amp;nbsp;12:&amp;nbsp;User consent settings&amp;nbsp;within Enterprise app &amp;gt; Consent and permissionsFor more granular control, ‘Permission classifications’ define which permissions users can approve, with Microsoft already&amp;nbsp;blocking high‑risk Graph permissions such as User.ReadWrite.All for agents.Detection and ResponseThe agent blueprint ID is consistent across all tenants that consent to it, providing a common indicator to detect or remove known malicious agents.Applying the principle of least privilege will limit the impact of an agent compromise, utilizing controls such as&amp;nbsp;Conditional Access policies for agents and&amp;nbsp;Entra ID protection for agents. For monitoring, agent and blueprint events are&amp;nbsp;surfaced in the audit log, in a similar way to app consent operations.For exampleCreate an agent identity blueprint → Add applicationCreate an agent identity → Add service principalConclusionBluePhishing can be considered the next iteration of app consent phishing, inheriting many of its advantages.&amp;nbsp;Like app consent phishing, it leverages legitimate, user-consented identities, allowing attackers to operate within trusted contexts. However, the agent identity framework provides distinct advantages.Awareness of this emerging attack vector remains low, and users may be more willing to authorize AI agents without fully considering the security implications. While requests for broad application permissions can raise suspicion, autonomous behavior is a defining characteristic of agents and is therefore more readily accepted, particularly with environments already containing large numbers of agent identities.Finally, the potential impact of compromise can be greater: a single blueprint can create up to 250 agent identities enabling compromise at scale. This dedicated agent identity framework also establishes a new paradigm for AI-driven post-exploitation, extending attacker capabilities beyond those enabled by traditional app consent phishing.&amp;nbsp;</description>
+    <pubDate>Mon, 09 Nov 2026 09:39:42 -0800</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="false">node/149099</guid>
+    </item>
+<item>
+  <title>Disruption Targets Major Chinese-Language Phishing Kits with Japanese Focus</title>
+  <link>https://www.proofpoint.com/us/blog/threat-insight/disruption-targets-major-chinese-language-phishing-kits-japanese-focus</link>
+    <description>Key findings
+
+
+	A disruption action targeting prominent players across the Chinese-speaking phishing and fraud ecosystem struck a blow to the most high-volume threats in Proofpoint data.
+	Proofpoint supported Microsoft and other private and public partners in the civil lawsuit and takedown action.
+	The highest-volume direct email threats in Proofpoint campaign data come from three phishing kits our researchers named CoGUI, CoAceV, and CoFish_Ws, which all actively target Japanese organizations. These are part of the targeted actions.
+	Campaigns linked to these phishing kits impersonate well-known companies, mainly consumer and finance brands, and distribute hundreds of millions of messages.
+	Proofpoint assesses with high confidence that all these phishing kits have common roots and are used by overlapping affiliates.
+	The disruption that includes broader ecosystem enablers YAM Store and Iron Man is likely to impact the efficacy and success of these phishing kits, potentially causing operational, reputational, and financial damage to the threat actors.
+
+
+Overview
+
+A recent disruption targeted a group of Chinese-speaking cybercrime threat actors and the infrastructure supporting their credential phishing activities.
+
+CoGUI and related infrastructure was disrupted in collaboration with private and public partners including Proofpoint, Microsoft, Japan Cybercrime Control Center (JC3), Resecurity, Cloudflare, Oracle, and TRM Labs. Microsoft and co-plaintiff Health-ISAC also filed a lawsuit against the YAM Store threat actors and individuals linked to the phishing operations. Microsoft and Health-ISAC seized and redirected domains enabling YAM Store, CoGUI and Iron Man fraud.
+
+The disruption and associated civil filing in the U.S. District Court for the Southern District of Florida is likely to have a significant impact on CoGUI operations and overall threat activity.
+
+Proofpoint supported&amp;nbsp;&amp;nbsp;Microsoft's action&amp;nbsp;with threat data from our visibility, including malicious domains and information related to CoGUI, CoAceV and CoFish_ws campaigns, and provided a declaration for the suit.
+
+In addition to the disruption, the following splash page was displayed on the seized domains:
+
+
+
+Figure 1: Splash page shown to visitors of malicious sites.
+
+The takedown targeting threat actors responsible for hundreds of millions of malicious messages attempting financial fraud will likely have a measurable impact on the Chinese phishing ecosystem and cause significant operational friction among multiple threat groups.
+
+Background
+
+Towards the end of 2024, Proofpoint researchers identified an emerging cluster of phishing activity consistently targeting Japan with very high volumes of email campaigns. We then released public details on a phishing kit that Proofpoint researchers referred to as “CoGUI”, highlighting how the phishing kit impersonated well-known Japanese or international companies in order to steal usernames, passwords, and payment data such as credit card information.
+
+In the days following our publication, the phishing kit developer introduced what appeared to be a joke in the kit as a response to our report, as we saw a new pattern “coguicogui” appear in the network communications.
+
+Since then, this highly evasive kit has made Japan one of the most targeted countries in Proofpoint data based on campaign volumes. We detect and block over 100 million email messages per month targeting organizations using the CoGUI phishing kit to steal usernames, passwords, and payment data.
+
+More than one year later, the CoGUI phishing kit is still regularly used by cybercriminals, according to Proofpoint data. Yet two other phishing kits have also appeared, closely related to CoGUI, expanding the ecosystem of Chinese-language phishing kits. We named those kits CoAceV and CoFish_Ws and assess with high confidence these three kits are all related.
+
+They are part of the broader ecosystem. According to Microsoft’s data, YAM Store, CoGUI and Iron Man have enabled more than one billion malicious messages targeting over 75,000 organizations worldwide, since January 2026.
+
+Campaign Details
+
+In total, Proofpoint has observed 66 different brands being impersonated by those phishing kits, most of these brands being Japanese. Examples of impersonated brands include Amazon, PayPay, MyJCB, Apple, Orico, Rakuten, SMBC, Saison Card, Aeon Card, UC Card, Matsui Securities, DHL, Yamato Transport.
+
+
+	
+		
+			
+			Phishing kit Name
+			
+			
+			Number of campaigns
+			
+			
+			Number of unique domains used
+			
+		
+		
+			
+			CoGUI
+			
+			
+			1081
+			
+			
+			13586
+			
+		
+		
+			
+			CoAceV
+			
+			
+			242
+			
+			
+			2812
+			
+		
+		
+			
+			CoFish_Ws
+			
+			
+			19
+			
+			
+			191
+			
+		
+	
+
+
+Table 1: Phishing kits statistics
+
+Overall, we have observed around 17,000 unique domains used by these three phishing kits since we began tracking their use. The groups create and rotate domains frequently; between 01 July and 17 September 2026, for example, we observed 3,788 unique fully qualified domain names (FQDNs) being used by the three phishing kits. This indicates a dynamic operation that has the capabilities and resources to purchase and manage phishing infrastructure at scale.
+
+Email lures vary and can relate to financial and banking information, credit card or payment account details, consumer retail information, or shipping and transportation, among other themes. Messages contain URLs that lead, after a variety of filtering including CAPTCHA, to landing pages that masquerade as login or payment portals for the impersonated companies.
+
+
+
+Figure 2: Anonymized CoFish_ws e-mail impersonating JACCS.
+
+
+
+Figure 3: CAPTCHA used in a CoFish_ws campaign.
+
+
+
+Figure 4: CoFish_ws phishing page impersonating JACCS and requesting credentials.
+
+
+
+Figure 5: CoFish_ws phishing page impersonating JACCS and requesting credit card information.
+
+Phishing kit overlaps
+
+Over time we have found overlaps between the different phishing kits, including characteristics of targeting, decoy landing pages, URL structure, and more.
+
+For example, in February 2026, we saw a new decoy method on the CoGUI phishing kit. When browsing conditions were not met, the phishing kit would decoy the browser to www.a.com, or www.b.com, or www.c.com. (A decoy is used by the threat actor to direct traffic to a different website than the phishing kit to avoid detection by automated sandboxing.) A few days after CoGUI began using this method, we observed the CoAceV phishing kit employ the exact same decoy method in campaigns.
+
+As an example, two Apple phishing campaigns, one using CoGUI, one using CoAceV, appeared during the same period of time from 13 to 17 April 2026 using the same decoy page.
+
+Additionally, we have also observed overlap in URL patterns and paths. In these cases, the unique domains are operated by one phishing kit, but both share the same or similar URL paths.
+
+CoGUI: hxxps://kenandy[.]shop/paidy/ubmisionsjp/
+CoAceV: hxxps://paidy[.]farradae.com/paidy/ubmissionsjp
+
+CoGUI: /MoldWnfEpQOjMnhOpLnumth/help
+CoAceV: /SmbdWnfEp7OjMnhEVdyubtCl/help
+
+One URL pattern has been used by the three kits:
+
+CoGUI: hxxps://lygyaou[.]com/9AioLNhtdi.kumamoto-city[.]jp
+CoAceV: hxxps://ylhgkj[.]com/BCuXkTPfKZ.kumamoto-city[.]jp
+CoFish_ws: hxxps://new-app-haixing[.]com/1DWSd1DeDf.kumamoto-city[.]jp
+
+Impact
+
+The vast majority of tracked CoGUI/CoAceV/CoFish_Ws campaigns impact Japan, with a few impacting the United States of America, Australia, and Italy. According to our email threat data, the most frequently impacted business sectors are Financial Services and Healthcare, with Government, Education, and Manufacturing rounding out the top five impacted sectors.
+
+The threat actors seem particularly interested in gaining access to financial services. In 2025, Japanese authorities published details about an increase in phishing activity targeting financial organizations. The goal of the threat actors was reportedly to gain access to victims' accounts for financial gain, and in most cases, using illicit gains to buy Chinese stocks. Based on the observed activity and third-party reporting, it is possible this activity was linked to CoGUI credential phishing threat actors. This aligns with the group’s financial theft objective and fraud campaigns.
+
+Disruption
+
+Successful account takeovers can cause significant harm to compromised organizations including financial and reputational damage. CoGUI and related kits are high volume, and consistently some of the most active threats in Proofpoint data. With this disruption that targeted the broader ecosystem including YAM Store and Iron Man, we hope this changes.
+
+Proofpoint’s mission is to provide the best human-centric protection for our customers against advanced threats. Whenever it is possible and appropriate to do so, and as is the case with the CoGUI disruption, Proofpoint uses its team’s knowledge and skills to help protect a wider audience against widespread malware and phishing threats. Proofpoint was proud to assist in the investigations into CoGUI, CoAceV, and CoFish_ws activity.
+
+Through its unique vantage point, Proofpoint is able to identify the largest and most consequential email threat distribution campaigns, providing the authorities with much-needed insight into the biggest threats to society, affecting the greatest number of people around the world.
+</description>
+    <pubDate>Wed, 14 Oct 2026 13:24:16 -0700</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="false">node/148639</guid>
+    </item>
+<item>
+  <title>Hallucinating Credibility: China-Aligned TA419 Impersonates its Way into US AI Policy Circles</title>
+  <link>https://www.proofpoint.com/us/blog/threat-insight/hallucinating-credibility-china-aligned-ta419-impersonates-its-way-us-ai-policy</link>
+    <description>Key Findings
+
+
+	In July 2026, a China-aligned threat actor Proofpoint tracks as TA419 conducted multiple credential phishing campaigns impersonating prominent economists and artificial intelligence (AI) policymakers to target AI experts working for US think tanks, universities, and legal sector organizations.
+	TA419 also previously impersonated a prominent Anthropic employee to target an AI policy expert at a US think tank in February 2026.
+	This activity likely supports wider Chinese intelligence objectives to better understand ongoing developments within the US AI policy and regulatory landscape and occurs amid intense strategic competition, accusations of model distillation, and export controls involving the US and China.
+
+
+Overview
+
+In July 2026, TA419 impersonated multiple individuals, including a former member of the White House Office of Science and Technology Policy leadership team, in credential phishing campaigns targeting AI policy experts in the US. The group first sent benign conversation starter emails, which included calls to action themed around AI policy such as joining an “AI Policy Advisory Committee”, to build rapport and solicit a response from the target. Once the target replied, TA419 followed up with a multi-stage URL redirection chain that led to an Adversary-in-the-Middle (AitM) credential phish that employed a customized version of the open-source Browser-in-the-Browser (BitB) phishing tool Frameless BitB.
+
+TA419 is a China-aligned and espionage-motivated threat actor that Proofpoint has observed conducting regular targeted credential phishing campaigns against individuals working for US- and Japan-based think tanks, defense contractors, universities, and law firms since at least April 2025. The group’s activity has not been previously reported publicly.
+
+TA419 Activity Targeting AI Policy Analysts
+
+Beginning on 8 July 2026, TA419 impersonated Lynne Edwards Parker, the former Principal Deputy Director of the White House Office of Science and Technology Policy, and then Heidi Crebo-Rediker, a prominent economist and foreign policy expert, in campaigns targeting AI policy experts at US think tanks, universities, and law firms.
+
+
+
+Figure 1. TA419 campaign spoofing former White House Office of Science and Technology Policy employee.
+
+In both cases, the group opened with benign outreach, inviting targets to join a fictitious "AI Policy Advisory Committee" or to contribute to a Senate Committee on Foreign Relations report on AI export controls and supply chains.
+
+
+
+Figure 2. TA419 campaign inviting users to contribute to AI supply chain report.
+
+If the target replied, TA419 followed up with a shortened URL that purported to share additional information. The link ultimately led to a fake OneDrive AitM credential phishing page designed to gain access to the target’s cloud account.
+
+In February 2026, the group impersonated a senior employee of the AI company Anthropic to target an AI policy analyst at a US think tank. The email used the subject line "Request for Feedback on Military Integration of Claude," referencing the debate over US military use of Anthropic's Claude models. This campaign led to a similar AitM credential phishing chain.
+
+Infection Chain
+
+TA419 uses URL shortener services to redirect targets to a series of actor-controlled domains. The first actor-controlled domain serves as an initial filter; it conducts a Cloudflare Turnstile check behind a fake OneDrive loading screen before redirecting the target to an AitM credential phishing page hosted on a second TA419-controlled domain. Both July 2026 campaigns targeting US AI policy experts used the same first-stage domain (driftshare[.]co) and second-stage domain (globalfileshareplatform[.]com).
+
+
+
+Figure 3. Example TA419 AitM and BitB phishing page observed in July 2026.
+
+The AitM phishing chain used by TA419 targets Microsoft 365 / Entra ID through the first-party OfficeHome application (client_id=4765445b-32c6-49b0-83e6-1d93765276ca). It is built on Frameless BitB, an open-source Browser-in-the-Browser kit, which contains the BitB overlay alongside an Evilginx phishlet for Microsoft 365 and server-side substitution rules that inject the kit into proxied pages.
+
+TA419 has extended this kit with a custom telemetry and automation module that tracks and drives the target's progress through the Microsoft sign-in flow, including multi-factor authentication (MFA). The page the target lands on is the genuine Microsoft /common/oauth2/v2.0/authorize response, relayed in real time, into which the proxy injects two malicious scripts: /secondary/script.js and /secondary/observe.js. Behind a BitB overlay, the proxy relays the sign-in to genuine Microsoft infrastructure, so the target's password, MFA code, and conditional access checks all succeed while the attacker captures the resulting session cookies. The primary client-side scripts used function as follows:
+
+
+	/secondary/script.js is the Frameless BitB driver, an adapted copy of the open-source file. It attaches a Shadow DOM to a container element and fills it with a OneDrive folder listing containing lure documents. The real documents are hosted in an attacker-controlled OneDrive account and reached through a proxy path that turns a 1drv.ms share link into an embeddable same-origin page. /secondary/script.js also loads another script (/primary/script.js) into the same Shadow DOM.
+	/primary/script.js is likewise adapted from Frameless BitB, but its body has been replaced. TA419's version intercepts the target's interaction with the listing. It registers clicks and touch handlers and watches for OneDrive's own permission-denied banner, so that either a click on the document or Microsoft's own prompt for authentication raises the fake Chrome browser BitB overlay.
+	/secondary/observe.js is a custom script which handles telemetry and automation against the relayed sign-in page, reporting the victim's position in the login flow back to the attacker and giving a live view of each session. The same script auto-accepts "Keep me signed in" to extend the stolen session and auto-submits one-time codes as soon as they validate.
+
+
+Infrastructure
+
+TA419 consistently uses Cloudflare’s content delivery network (CDN) to obscure the backend hosting IP address for its domains, which are typically registered via NameSilo. The group’s credential phishing domains are typically themed around file sharing sites and cloud services.
+
+
+
+Figure 4. Timeline of TA419 domain registrations.
+
+TA419 also occasionally registers domains impersonating specific organizations and uses these to conduct phishing campaigns.
+
+
+	
+		
+		
+	
+	
+		
+			
+			Impersonated Entity
+			
+			
+			TA419 Domain
+			
+		
+		
+			
+			Japan-Taiwan Exchange Association
+			
+			
+			tw-koryu[.]org
+			
+		
+		
+			
+			The Heritage Foundation
+			
+			
+			heritiages[.]org
+
+			heritiage[.]org
+			
+		
+		
+			
+			Shinjirō Koizumi’s Official Website
+
+			(current Japanese Minister of Defense)
+			
+			
+			shinjirou[.]info
+			
+		
+	
+
+
+Table 1. Entities spoofed by TA419 during 2026.
+
+On multiple occasions in 2026, the first hop Received headers in TA419 phishing emails exposed likely actor-controlled virtual private servers (VPS) used to send the email. All of the observed servers shared a self-signed TLS certificate present on a high ephemeral port, which featured the subject and issuer distinguished name (DN) C=US, ST=Kansas, L=Millsstad,O=Castro Inc, CN=CI. This certificate is likely associated with a covert network that serves as anonymization infrastructure for TA419’s operations. In other cases, the group was observed sending emails via residential proxy services.
+
+
+
+Figure 5. Example TA419 email headers showing actor-controlled VPS 108.61.163[.]187.
+
+Conclusion
+
+TA419 has consistently shown an interest in defense, national security, energy, international relations, and foreign policy targets, predominantly with a nexus to the US and Japan. The targeting of AI policy experts represents an extension of that remit rather than a departure from it. More widely, Proofpoint has previously reported on another China-aligned threat actor, UNK_SweetSpecter, conducting AI-related phishing activity, and regularly observes China-aligned actors targeting other industries, such as semiconductors and rare earths, vital to the supply chain of AI and other strategic technologies.
+
+Proofpoint assesses that TA419 will likely continue targeting think tanks and policy experts working on technologies, and in geographies, of particular interest to the Chinese government. These campaigns will likely also continue spoofing the identities of real subject-matter experts.
+
+Recommendations
+
+Organizations in the scope of TA419 activity should consider phishing-resistant, origin-bound authentication such as passkeys. Individual targets in scope of TA419 activity should treat unsolicited subject-matter outreach as a plausible pretext stage and seek to verify the legitimacy of such unexpected communications via another independent medium.
+
+Indicators
+
+
+	
+		
+		
+		
+		
+	
+	
+		
+			
+			Indicator
+			
+			
+			Type
+			
+			
+			Description
+			
+			
+			First Seen
+			
+		
+		
+			
+			leparker@mail[.]com
+			
+			
+			Email address
+			
+			
+			Attacker-controlled email address
+			
+			
+			July 2026
+			
+		
+		
+			
+			hcrediker@mail[.]com
+			
+			
+			Email address
+			
+			
+			Attacker-controlled email address
+			
+			
+			July 2026
+			
+		
+		
+			
+			hcrediker@outlook[.]com
+			
+			
+			Email address
+			
+			
+			Attacker-controlled email address
+			
+			
+			July 2026
+			
+		
+		
+			
+			driftshare[.]co
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			July 2026
+			
+		
+		
+			
+			globalfileshareplatform[.]com
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			July 2026
+			
+		
+		
+			
+			quickfly[.]online
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			May 2026
+			
+		
+		
+			
+			smartsyncbox[.]com
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			May 2026
+			
+		
+		
+			
+			cirrushare[.]co
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			April 2026
+			
+		
+		
+			
+			mypublicshare[.]com
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			goshshare[.]online
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			synchvault[.]co
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			cloudsyncpulse[.]com
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			onecloudfilesync[.]com
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			February 2026
+			
+		
+		
+			
+			msfile[.]online
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			February 2026
+			
+		
+		
+			
+			winsync[.]cloud
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			February 2026
+			
+		
+		
+			
+			publicsharefile[.]cloud
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			February 2026
+			
+		
+		
+			
+			fileswiftonline[.]cloud
+			
+			
+			Domain
+			
+			
+			Second stage AitM phishing domain
+			
+			
+			December 2025
+			
+		
+		
+			
+			sharehub[.]space
+			
+			
+			Domain
+			
+			
+			First stage redirect domain
+			
+			
+			December 2025
+			
+		
+		
+			
+			tw-koryu[.]org
+			
+			
+			Domain
+			
+			
+			Sender domain
+			
+			
+			May 2026
+			
+		
+		
+			
+			heritiages[.]org
+			
+			
+			Domain
+			
+			
+			Sender domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			heritiage[.]org
+			
+			
+			Domain
+			
+			
+			Sender domain
+			
+			
+			March 2026
+			
+		
+		
+			
+			shinjirou[.]info
+			
+			
+			Domain
+			
+			
+			Sender domain
+			
+			
+			February 2026
+			
+		
+		
+			
+			b314a1499cd728ca3e54b7150661fd0c7d2279065fe3f570f0f66c395d744460
+			
+			
+			TLS certificate
+			
+			
+			O=Castro Inc Certificate SHA256 Fingerprint
+			
+			
+			February 2026
+			
+		
+	
+
+</description>
+    <pubDate>Thu, 01 Oct 2026 02:00:00 -0700</pubDate>
+    <dc:creator/>
+    <guid isPermaLink="false">node/148467</guid>
+    </item>
+</channel>
+</rss>

@@ -1,0 +1,43 @@
+# NETSCOUT ASERT OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  netscout-asert:
+    build: .
+    container_name: opencti-connector-netscout-asert
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=NETSCOUT ASERT
+      - CONNECTOR_SCOPE=netscout_asert
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - NETSCOUT_ASERT_FEED_URL=https://www.netscout.com/asert.xml
+      - NETSCOUT_ASERT_POLL_INTERVAL=3600
+      - NETSCOUT_ASERT_REQUEST_DELAY=3
+      - NETSCOUT_ASERT_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - NETSCOUT_ASERT_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - NETSCOUT_ASERT_RENDER_RETRIES=3
+      - NETSCOUT_ASERT_PDF_RENDER_TIMEOUT=120
+      - NETSCOUT_ASERT_CONFIDENCE=50
+      - NETSCOUT_ASERT_REPORT_TYPE=open-source-reporting
+      - NETSCOUT_ASERT_TLP=TLP:CLEAR
+      - NETSCOUT_ASERT_AUTHOR_NAME=NETSCOUT ASERT
+    restart: always
