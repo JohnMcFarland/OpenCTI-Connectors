@@ -17,10 +17,17 @@ Replaces Security Affairs coverage from the deprecated Feedly connector.
 | Graph objects | Report + External Reference + attached PDF only. No Labels, entities, Observables or Relationships. |
 
 WordPress site; the feed holds the latest 10 posts (about 2 days). The feed
-carries full text in content:encoded, but the connector still renders the page
-for the established PDF + HTML attachments and keeps only the short summary on
-the Report. The theme animates blocks in with wow.js on scroll; the render
+carries full text in content:encoded (used only for classification); the live
+page is still rendered for the PDF, and only the short summary is kept on the
+Report. The theme animates blocks in with wow.js on scroll; the render
 service's auto-scroll triggers them.
+
+## Scope
+
+Checked before dedup, so out-of-scope items cost no graph queries or renders.
+
+- No category or title filters: every feed item is in scope.
+- No age limit (`max_age_days` = 0); the feed itself only holds recent posts. Set `SECURITY_AFFAIRS_MAX_AGE_DAYS` to add one.
 
 ## Data model
 
@@ -59,8 +66,11 @@ stored on the Report.
 - One `report.create` per new article with the PDF attached inline (the file
   marked TLP:CLEAR via `filesMarkings`) and `update=False`, so there are no
   follow-up file uploads or upsert rewrites.
-- Report descriptions are plain text, capped at 2,000 characters. Full text
-  stays in the attached PDF. PDFs over 25 MB are not attached.
+- Report descriptions are plain text, capped at 2,000 characters: the feed
+  summary (minus any WordPress "The post ... appeared first on ..." line), or,
+  when the feed has none, the article page's own meta description from one
+  plain GET (the same GET the classifier text uses). Full text stays in the
+  attached PDF. PDFs over 25 MB are not attached.
 
 ## Deduplication
 

@@ -21,6 +21,7 @@ from main import (
     _canonical_link,
     _html_to_text,
     _parse_feed,
+    _parse_date,
     _parse_rfc2822,
     _report_id,
     _slug_from_url,
@@ -107,7 +108,8 @@ def connector(render_mock):
     with patch.object(TheHackerNewsConnector, "__init__", lambda self: None):
         c = TheHackerNewsConnector()
     c.render_mock = render_mock
-    c.feed_url = "https://feeds.feedburner.com/TheHackersNews"
+    c.feed_urls = ["https://feeds.feedburner.com/TheHackersNews"]
+    c.fetch_complete = True
     c.session = MagicMock()
     c.session.get.return_value = MagicMock(content=b"", text="", status_code=200)
     c.request_delay = 0
@@ -117,6 +119,7 @@ def connector(render_mock):
     c.report_type = "open-source-reporting"
     c.tlp_name = "TLP:CLEAR"
     c.max_reports = 0
+    c.max_age_days = 0
     c.author_id = "author-id"
     c.author_name = "The Hacker News"
     c.marking_id = "marking-id"
@@ -135,10 +138,30 @@ def connector(render_mock):
     return c
 
 
+# The site's real scope filters and switches, captured before the neutral
+# fixture below resets them for the generic tests.
+SITE_SCOPE = {
+    "CATEGORY_KEEP": main.CATEGORY_KEEP,
+    "CATEGORY_ALLOW": main.CATEGORY_ALLOW, "CATEGORY_DENY": main.CATEGORY_DENY,
+    "EXCLUDE_URL_RE": main.EXCLUDE_URL_RE, "EXCLUDE_TITLE_RE": main.EXCLUDE_TITLE_RE,
+    "BYLINE_AUTHOR": main.BYLINE_AUTHOR,
+    "NO_CONTENT_IS_TRANSIENT": main.NO_CONTENT_IS_TRANSIENT,
+}
+
+
 @pytest.fixture(autouse=True)
 def no_sleep_or_classifier(monkeypatch):
     # Standalone by default; tests that need the Collector set it themselves.
     monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
+    # Generic tests run with neutral site switches; TestSiteScope checks the
+    # real ones.
+    monkeypatch.setattr(main, "CATEGORY_KEEP", set())
+    monkeypatch.setattr(main, "CATEGORY_ALLOW", set())
+    monkeypatch.setattr(main, "CATEGORY_DENY", set())
+    monkeypatch.setattr(main, "EXCLUDE_URL_RE", None)
+    monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", None)
+    monkeypatch.setattr(main, "BYLINE_AUTHOR", True)
+    monkeypatch.setattr(main, "NO_CONTENT_IS_TRANSIENT", False)
     with patch.object(main.time, "sleep"), \
          patch.object(main, "classify_report", side_effect=lambda **kw: kw["default_types"]):
         yield
@@ -153,9 +176,271 @@ def _down(*a, **k):
     raise RendererUnavailable("HTTP 503: renderer busy")
 
 
+def _site_down(*a, **k):
+    raise ContentUnavailable('HTTP 422: {"detail":"HTTP 503 from https://site/"}')
+
+
 # --------------------------------------------------------------------------- #
 # Pure helpers
 # --------------------------------------------------------------------------- #
+
+ATOM = """<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>t</title>
+  <entry>
+    <title>Atom &amp; story</title>
+    <link rel="self" href="https://elsewhere.example/self"/>
+    <link rel="alternate" href="{link}"/>
+    <published>2026-11-09T17:09:33Z</published>
+    <updated>2026-11-10T00:00:00Z</updated>
+    <author><name>Jane Doe</name></author>
+    <summary type="html">&lt;p&gt;Short summary&lt;/p&gt;</summary>
+    <content type="html">&lt;p&gt;Full atom body&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>No published</title>
+    <link href="{link2}"/>
+    <updated>2026-11-08T10:00:00+02:00</updated>
+  </entry>
+  <entry>
+    <title>Off-site</title>
+    <link href="https://evil.example/x"/>
+    <updated>2026-11-08T10:00:00Z</updated>
+  </entry>
+</feed>"""
+
+
+class TestFeedFormats:
+    def test_atom_xhtml_content(self):
+        xml = (f"<feed xmlns='http://www.w3.org/2005/Atom'><entry><title>x</title>"
+               f"<link href='{_link(1)}'/><updated>2026-11-09T00:00:00Z</updated>"
+               f"<content type='xhtml'><div xmlns='http://www.w3.org/1999/xhtml'>"
+               f"<p>Inline <b>xhtml</b> body &amp; more</p></div></content></entry></feed>").encode()
+        item = _parse_feed(xml)[0]
+        assert item["full_text"] == "Inline xhtml body & more"
+        assert item["description"] == "Inline xhtml body & more"
+
+    def test_atom_entries_parsed(self):
+        xml = ATOM.format(link=_link(1), link2=_link(2)).encode()
+        items = _parse_feed(xml)
+        assert [i["link"] for i in items] == [_link(1), _link(2)]
+        first, second = items
+        assert first["title"] == "Atom & story"
+        assert first["description"] == "Short summary"
+        assert first["full_text"] == "Full atom body"
+        assert first["creator"] == "Jane Doe"
+        assert _parse_date(first["pub_date"]) == "2026-11-09T17:09:33+00:00"
+        # updated is the fallback date when there is no published
+        assert _parse_date(second["pub_date"]) == "2026-11-08T08:00:00+00:00"
+        assert second["creator"] == "" and second["full_text"] == ""
+
+    @pytest.mark.parametrize("raw,expected", [
+        ("Mon, 09 Nov 2026 17:09:33 -0500", "2026-11-09T22:09:33+00:00"),
+        ("2026-11-09T17:09:33Z", "2026-11-09T17:09:33+00:00"),
+        ("2026-11-09T17:09:33.123+01:00", "2026-11-09T16:09:33+00:00"),
+        ("2026-11-09", "2026-11-09T00:00:00+00:00"),
+        ("1970-01-01T00:00:00Z", None),
+        ("not a date", None),
+        ("", None),
+    ])
+    def test_parse_date(self, raw, expected):
+        assert _parse_date(raw) == expected
+
+    def test_several_feeds_merged_and_deduplicated(self, connector):
+        connector.feed_urls = ["https://a.example/feed", "https://b.example/feed"]
+        feeds = {
+            "https://a.example/feed": _feed([_link(1), _link(2)]),
+            "https://b.example/feed": ATOM.format(link=_link(2), link2=_link(3)).encode(),
+        }
+        connector.session.get.side_effect = lambda url, **k: MagicMock(
+            content=feeds[url], status_code=200, raise_for_status=lambda: None)
+        items = connector._fetch_feed()
+        assert [i["link"] for i in items] == [_link(1), _link(2), _link(3)]
+        assert connector.fetch_complete is True
+
+    def test_one_failed_feed_keeps_the_others_and_bookkeeping(self, connector):
+        connector.feed_urls = ["https://a.example/feed", "https://b.example/feed"]
+        connector.transient_failures = {_link(9): 2}
+        connector._precheck = lambda item: None   # site prechecks tested separately
+
+        def get(url, **k):
+            if url.startswith("https://b."):
+                raise requests.ConnectionError("down")
+            return MagicMock(content=_feed([_link(1)]), status_code=200,
+                             raise_for_status=lambda: None)
+
+        connector.session.get.side_effect = get
+        connector._process()
+        assert connector.fetch_complete is False
+        assert connector.graph.created() == {_report_id(_link(1))}
+        # _link(9) may live in the failed feed: its retry count is kept.
+        assert connector.transient_failures == {_link(9): 2}
+
+    def test_all_feeds_failed_writes_nothing(self, connector):
+        connector.feed_urls = ["https://a.example/feed", "https://b.example/feed"]
+        connector.session.get.side_effect = requests.ConnectionError("down")
+        assert connector._fetch_feed() is None
+        connector._process()
+        connector.helper.api.work.initiate_work.assert_not_called()
+
+
+class TestScope:
+    def test_utm_parameters_stripped(self):
+        url = _link(1) + "?utm_source=rss&utm_medium=rss&id=7#frag"
+        assert _canonical_link(url) == _link(1) + "?id=7"
+        assert _canonical_link(_link(1) + "?utm_campaign=x") == _link(1)
+
+    @pytest.mark.parametrize("query", ["?s=a%20b&x", "?a&b", "?p=1;q=2", "?q=%7Ehome+page"])
+    def test_other_query_strings_kept_byte_for_byte(self, query):
+        assert _canonical_link(_link(1) + query) == _link(1) + query
+        assert _canonical_link(_link(1) + query + "&utm_medium=rss") == _link(1) + query
+
+    def test_cdata_link_survives_xml_repair(self):
+        xml = (f"<rss><channel><item><title>Bad & title</title>"
+               f"<link><![CDATA[{_link(1)}?id=5&utm_source=x&utm_medium=rss]]></link>"
+               f"<pubDate>Mon, 09 Nov 2026 12:00:00 GMT</pubDate></item>"
+               f"</channel></rss>").encode()
+        items = _parse_feed(xml)
+        assert items[0]["link"] == _link(1) + "?id=5"
+        assert items[0]["title"] == "Bad & title"
+
+    def test_html_named_entities_repaired(self):
+        xml = (f"<rss><channel><item><title>A&nbsp;B &rsquo;C&rsquo; &bogus; D</title>"
+               f"<link>{_link(1)}</link></item></channel></rss>").encode()
+        assert _parse_feed(xml)[0]["title"] == "A\u00a0B \u2019C\u2019 &bogus; D"
+
+    def test_bare_ampersand_feed_still_parses(self):
+        xml = (f"<rss><channel><item><title>A & B</title>"
+               f"<link>{_link(1)}?utm_source=rss&utm_medium=rss</link>"
+               f"<pubDate>Mon, 09 Nov 2026 12:00:00 GMT</pubDate></item>"
+               f"</channel></rss>").encode()
+        items = _parse_feed(xml)
+        assert items[0]["link"] == _link(1) and items[0]["title"] == "A & B"
+
+    def test_really_broken_xml_still_raises(self):
+        with pytest.raises(main.ElementTree.ParseError):
+            _parse_feed(b"<rss><channel><item>")
+
+    def test_categories_parsed(self):
+        xml = (f"<rss><channel><item><title>a</title><link>{_link(1)}</link>"
+               f"<category>Threat Intel</category><category>Malware &amp; Co</category>"
+               f"</item></channel></rss>").encode()
+        assert _parse_feed(xml)[0]["categories"] == ["Threat Intel", "Malware & Co"]
+
+    def test_category_allow(self, monkeypatch):
+        monkeypatch.setattr(main, "CATEGORY_ALLOW", {"Threat Intel"})
+        item = {"link": _link(1), "title": "t", "categories": ["threat intel"]}
+        assert main._out_of_scope(item, 0) is None
+        assert main._out_of_scope(dict(item, categories=["Product"]), 0)
+        assert main._out_of_scope(dict(item, categories=[]), 0)
+
+    def test_category_deny(self, monkeypatch):
+        monkeypatch.setattr(main, "CATEGORY_DENY", {"Threat Source newsletter"})
+        item = {"link": _link(1), "title": "t", "categories": ["threat source newsletter"]}
+        assert main._out_of_scope(item, 0) == "category excluded"
+        assert main._out_of_scope(dict(item, categories=["Threats"]), 0) is None
+        assert main._out_of_scope(dict(item, categories=[]), 0) is None
+
+    def test_category_keep_overrides_deny_and_title(self, monkeypatch):
+        monkeypatch.setattr(main, "CATEGORY_KEEP", {"Research"})
+        monkeypatch.setattr(main, "CATEGORY_DENY", {"Expert Perspective"})
+        monkeypatch.setattr(main, "CATEGORY_ALLOW", {"Threat Intel"})
+        monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", main.re.compile(r"Vendor"))
+        item = {"link": _link(1), "title": "Vendor RAT analysis",
+                "categories": ["Expert Perspective", "research"]}
+        assert main._out_of_scope(item, 0) is None
+        assert main._out_of_scope(dict(item, categories=["Expert Perspective"]), 0)
+        assert main._out_of_scope(dict(item, categories=[], title="RAT"), 0)
+        assert main._out_of_scope(dict(item, categories=["Threat Intel"], title="RAT"), 0) is None
+        # Kept items still age out.
+        old = dict(item, pub_date="Mon, 02 Nov 2026 00:00:00 GMT")
+        now = main.datetime(2026, 11, 11, tzinfo=main.timezone.utc)
+        assert main._out_of_scope(old, 7, now) == "older than max_age_days"
+
+    def test_control_characters_removed(self):
+        xml = (f"<rss><channel><item><title>A\x0bB</title><link>{_link(1)}</link>"
+               f"</item></channel></rss>").encode()
+        assert _parse_feed(xml)[0]["title"] == "AB"
+
+    def test_url_and_title_exclusions(self, monkeypatch):
+        monkeypatch.setattr(main, "EXCLUDE_URL_RE", main.re.compile(r"/events/"))
+        monkeypatch.setattr(main, "EXCLUDE_TITLE_RE", main.re.compile(r"^Webinar"))
+        assert main._out_of_scope({"link": f"https://{HOST}/events/x", "title": "t"}, 0)
+        assert main._out_of_scope({"link": _link(1), "title": "Webinar: x"}, 0)
+        assert main._out_of_scope({"link": _link(1), "title": "Real research"}, 0) is None
+
+    def test_max_age(self):
+        now = main.datetime(2026, 11, 11, tzinfo=main.timezone.utc)
+        old = {"link": _link(1), "title": "t", "pub_date": "Mon, 02 Nov 2026 00:00:00 GMT"}
+        new = dict(old, pub_date="Tue, 10 Nov 2026 00:00:00 GMT")
+        undated = dict(old, pub_date="")
+        assert main._out_of_scope(old, 7, now) == "older than max_age_days"
+        assert main._out_of_scope(new, 7, now) is None
+        assert main._out_of_scope(old, 0, now) is None
+        # Undated items stay in scope and are skipped later, with a reason.
+        assert main._out_of_scope(undated, 7, now) is None
+
+    def test_out_of_scope_items_never_reach_dedup(self, connector):
+        connector.max_age_days = 30
+        _serve(connector, _feed([_link(1), _link(2)], pub="Mon, 01 Jan 2001 00:00:00 GMT"))
+        connector._process()
+        connector.helper.api.external_reference.list.assert_not_called()
+        connector.render_mock.assert_not_called()
+        connector.helper.api.work.initiate_work.assert_not_called()
+
+
+class TestSiteScope:
+    """The site's real scope filters, applied to its real feed sample."""
+
+    def test_configured_switches(self):
+        assert SITE_SCOPE == {
+            "CATEGORY_KEEP": set(),
+            "CATEGORY_ALLOW": set(),
+            "CATEGORY_DENY": set(),
+            "EXCLUDE_URL_RE": None,
+            "EXCLUDE_TITLE_RE": None,
+            "BYLINE_AUTHOR": True,
+            "NO_CONTENT_IS_TRANSIENT": False,
+        }
+
+    # Real titles seen in the live feed: (title, categories, in scope?).
+    SCOPE_CASES = []
+
+    def test_real_titles(self, monkeypatch):
+        for name, value in SITE_SCOPE.items():
+            monkeypatch.setattr(main, name, value)
+        for title, cats, keep in self.SCOPE_CASES:
+            item = {"link": _link(1), "title": title, "categories": cats}
+            assert (main._out_of_scope(item, 0) is None) == keep, title
+
+    def test_real_feed_sample_scoped_without_error(self, monkeypatch):
+        for name, value in SITE_SCOPE.items():
+            monkeypatch.setattr(main, name, value)
+        for item in _parse_feed(FIXTURE.read_bytes()):
+            main._out_of_scope(item, 0)
+
+
+class TestSiteFlags:
+    def test_slug_from_id(self, monkeypatch):
+        monkeypatch.setattr(main, "SLUG_FROM_ID", True)
+        assert _slug_from_url(f"https://{HOST}/en/96477/") == f"{main.FILE_PREFIX}-96477"
+        # No numeric segment: falls back to the descriptive slug.
+        assert _slug_from_url(f"https://{HOST}/blog/some-post/") == "some-post"
+
+    def test_byline_author_switch(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "BYLINE_AUTHOR", False)
+        connector._render_with_retry(dict(_item(), creator="login@example.com"),
+                                     "2026-11-09T00:00:00+00:00")
+        assert "author" not in connector.render_mock.call_args.kwargs["byline"]
+
+    def test_no_content_transient_switch(self, connector, monkeypatch):
+        monkeypatch.setattr(main, "NO_CONTENT_IS_TRANSIENT", True)
+        connector.render_mock.side_effect = ContentUnavailable("HTTP 422: no body")
+        assert connector._ingest_item(_item()) == "failed"
+        connector.helper.api.report.create.assert_not_called()
+        # Not retried within the poll (a challenge will not clear in seconds).
+        assert connector.render_mock.call_count == 1
+
 
 class TestPureHelpers:
     def test_report_id_deterministic_and_distinct(self):
@@ -212,7 +497,7 @@ class TestLiveFeedSample:
         for item in items:
             assert item["link"].startswith(f"https://{HOST}/")
             assert item["title"]
-            assert _parse_rfc2822(item["pub_date"]) is not None
+            assert _parse_date(item["pub_date"]) is not None
             assert "<" not in item["description"]
             assert len(item["description"]) <= MAX_DESCRIPTION_CHARS
 
@@ -336,6 +621,52 @@ def _item(n=1, title="Story", pub="Mon, 09 Nov 2026 17:09:33 -0500"):
     return {"title": title, "link": _link(n), "description": "Summary.", "pub_date": pub}
 
 
+class TestDescription:
+    def test_wordpress_trailer_stripped(self):
+        text = main._html_to_text(
+            "<p>Real summary.</p><p>The post <a href='x'>A Story: Part 2</a> appeared "
+            "first on <a href='y'>Some Site</a>.</p>")
+        assert text == "Real summary."
+        assert main._html_to_text("The post office reopened.") == "The post office reopened."
+
+    def test_meta_description_any_attribute_order(self):
+        page = (b"<html><head><meta content='Named &amp; summary' name='description'>"
+                b"<meta property='og:description' content='OG summary'></head></html>")
+        assert main._meta_description(page) == "OG summary"
+        assert main._meta_description(page.replace(b"og:description", b"og:title")) == (
+            "Named & summary")
+        assert main._meta_description(b"<html><meta name='description' content=' '></html>") == ""
+        assert main._meta_description(
+            b"<meta property='og:description' content=' '><meta name='description' content='Real'>"
+        ) == "Real"
+        assert main._meta_description(b"") == ""
+
+    def test_meta_description_used_when_feed_has_none(self, connector, monkeypatch):
+        monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
+        connector._precheck = lambda item: None
+        connector.session.get.return_value = MagicMock(
+            content=b"<meta name='description' content='Page summary.'>", status_code=200)
+        assert connector._ingest_item(dict(_item(), description="")) == "created"
+        assert connector.session.get.call_args.args[0] == _link(1)
+        assert connector.helper.api.report.create.call_args.kwargs["description"] == (
+            "Page summary.")
+
+    def test_no_page_fetch_when_feed_has_summary(self, connector, monkeypatch):
+        monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
+        connector._precheck = lambda item: None
+        assert connector._ingest_item(_item()) == "created"
+        connector.session.get.assert_not_called()
+        assert connector.helper.api.report.create.call_args.kwargs["description"] == "Summary."
+
+    def test_page_fetch_failure_still_creates_report(self, connector, monkeypatch):
+        monkeypatch.delenv("CRUCIBLE_COLLECTOR_URL", raising=False)
+        connector._precheck = lambda item: None
+        connector.session.get.side_effect = requests.ConnectionError("down")
+        assert connector._ingest_item(dict(_item(), description="")) == "created"
+        assert connector.helper.api.report.create.call_args.kwargs["description"] == ""
+        connector.helper.log_warning.assert_called()
+
+
 class TestIngestItem:
     def test_single_create_mutation_with_inline_pdf(self, connector):
         assert connector._ingest_item(_item()) == "created"
@@ -363,6 +694,11 @@ class TestIngestItem:
         assert kw["filesMarkings"] == [["marking-id"]]
         connector.helper.api.stix_domain_object.add_file.assert_not_called()
 
+    def test_atom_iso_date_item_ingested(self, connector):
+        assert connector._ingest_item(_item(pub="2026-11-09T17:09:33Z")) == "created"
+        kw = connector.helper.api.report.create.call_args.kwargs
+        assert kw["published"] == "2026-11-09T17:09:33+00:00"
+
     def test_undated_item_is_skipped_never_stamped_now(self, connector):
         assert connector._ingest_item(_item(pub="garbage")) == "skipped-permanent"
         connector.render_mock.assert_not_called()
@@ -371,10 +707,28 @@ class TestIngestItem:
 
     def test_renderer_down_creates_nothing(self, connector):
         connector.render_mock.side_effect = _down
-        assert connector._ingest_item(_item()) == "failed"
+        assert connector._ingest_item(_item()) == "renderer-down"
         connector.helper.api.report.create.assert_not_called()
         connector.helper.api.external_reference.create.assert_not_called()
         assert _link(1) not in connector.permanent_skips
+
+    @pytest.mark.parametrize("detail", [
+        'HTTP 422: {"detail":"navigation failed: net::ERR_NAME_NOT_RESOLVED"}',
+        'HTTP 422: {"detail":"HTTP 503 from https://site/x"}',
+        'HTTP 422: {"detail":"HTTP 429 from https://site/x"}',
+        'HTTP 422: {"detail":"bot challenge interstitial detected"}',
+    ])
+    def test_site_failure_is_transient_not_a_pdfless_report(self, connector, detail):
+        connector.render_mock.side_effect = ContentUnavailable(detail)
+        assert connector._ingest_item(_item()) == "failed"
+        connector.helper.api.report.create.assert_not_called()
+        assert connector.render_mock.call_count == 1
+
+    def test_request_validation_error_is_a_renderer_problem(self, connector):
+        connector.render_mock.side_effect = ContentUnavailable(
+            'HTTP 422: {"detail":[{"type":"missing","loc":["body","title"]}]}')
+        assert connector._ingest_item(_item()) == "renderer-down"
+        connector.helper.api.report.create.assert_not_called()
 
     def test_content_unavailable_creates_report_without_pdf(self, connector):
         connector.render_mock.side_effect = ContentUnavailable("HTTP 422: no article")
@@ -485,6 +839,14 @@ class TestClassification:
         kw = self._content_sent(connector, _item(), None)
         assert kw["content"] == "Summary."
 
+    def test_one_page_fetch_serves_description_and_classifier(self, connector, monkeypatch):
+        page = ("<html><head><meta property='og:description' content='Page summary.'>"
+                "</head><body>" + '<div class="main-box extra-class"><h1>Title</h1><p>Article body text</p><script>tracker()</script></div>' + "</body></html>").encode()
+        kw = self._content_sent(connector, dict(_item(), description=""), page, monkeypatch)
+        assert connector.session.get.call_count == 1
+        assert "Article body text" in kw["content"]
+        assert kw["description"] == "Page summary."
+
     def test_article_text_never_stored_on_report(self, connector):
         item = dict(_item(), full_text="SECRET-LONG-BODY " * 50)
         self._content_sent(connector, item, None)
@@ -493,6 +855,8 @@ class TestClassification:
 
     def test_article_text_skips_hidden_chrome(self):
         hidden = [s for s in main.HIDE_SELECTORS if not any(ch in s for ch in "~[ >")]
+        if not hidden:
+            pytest.skip("site has no simple hide selectors")
         tag, ident, classes = main._selector_parts(hidden[0])
         attrs = (f' id="{ident}"' if ident else "") + (
             f' class="{" ".join(sorted(classes))}"' if classes else "")
@@ -578,8 +942,8 @@ class TestProcess:
 
         def flaky(*a, **k):
             calls["n"] += 1
-            if calls["n"] <= connector.render_retries:
-                raise RendererUnavailable("render down")
+            if calls["n"] == 1:
+                _site_down()
             return PDF
 
         _serve(connector, _feed([_link(1), _link(2)]), render=flaky)
@@ -589,13 +953,40 @@ class TestProcess:
         assert connector.transient_failures == {_link(1): 1}
 
     def test_transient_failure_gives_up_after_cap(self, connector):
-        _serve(connector, _feed([_link(1)]), render=_down)
+        _serve(connector, _feed([_link(1)]), render=_site_down)
         for _ in range(MAX_TRANSIENT_ATTEMPTS):
             connector._process()
         assert _link(1) in connector.permanent_skips
         renders = connector.render_mock.call_count
         connector._process()
         assert connector.render_mock.call_count == renders  # no more renders
+
+    def test_renderer_outage_never_gives_up_on_items(self, connector):
+        """A long pdf-renderer outage stops polls early but does not count
+        against items, so they are all ingested once it recovers."""
+        _serve(connector, _feed([_link(1), _link(2)]), render=_down)
+        connector._process()
+        # The poll stops at the first item: the second is not even tried.
+        assert connector.render_mock.call_count == connector.render_retries
+        for _ in range(MAX_TRANSIENT_ATTEMPTS * 2):
+            connector._process()
+        assert connector.permanent_skips == {} and connector.transient_failures == {}
+        assert connector.helper.api.work.to_processed.call_args.kwargs["in_error"] is True
+        connector.render_mock.side_effect = None
+        connector._process()
+        assert connector.graph.created() == {_report_id(_link(1)), _report_id(_link(2))}
+
+    def test_no_gap_warning_when_feed_reaches_past_max_age(self, connector):
+        """A quiet site: one new post, everything else older than max_age."""
+        connector.max_age_days = 30
+        connector.poll_count = 5
+        recent = main.datetime.now(main.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+        xml = _feed([_link(1)], pub=recent)[:-len(b"</channel></rss>")] + _feed(
+            [_link(2)], pub="Mon, 01 Jan 2001 00:00:00 GMT")[len(b"<rss><channel>"):]
+        _serve(connector, xml)
+        connector._process()
+        assert not any("scrolled off" in str(c) for c in connector.helper.log_warning.call_args_list)
+        assert connector.graph.created() == {_report_id(_link(1))}
 
     def test_no_gap_warning_after_all_failed_poll(self, connector):
         """An outage poll leaves nothing ingested; the next poll must not

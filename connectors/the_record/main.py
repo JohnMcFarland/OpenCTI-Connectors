@@ -10,7 +10,8 @@ ingested through the (now deprecated) Feedly connector.
 
 Collection model
 ----------------
-Feed only, new posts only. The connector polls https://therecord.media/feed/ and never
+Feed only, new posts only. The connector polls https://therecord.media/feed/
+(RSS 2.0 or Atom; several feeds may be given, comma-separated) and never
 backfills older articles; history before cut-over stays with the
 Feedly-ingested Reports.
 
@@ -57,10 +58,14 @@ site-specific CONTENT_SELECTORS, strips HIDE_SELECTORS plus its own default
 chrome list, defangs links, and adds the feed title and a byline (author,
 publisher, date). Failure policy:
 - RendererUnavailable (service down, busy, timed out, 5xx): retried
-  render_retries times with backoff, then the item is a transient failure and
-  no Report is written (retried on a later poll);
-- ContentUnavailable (page reached but no usable article, or URL blocked):
-  the Report is created without a PDF and a WARNING is logged.
+  render_retries times with backoff; if it persists the poll stops and the
+  remaining items wait for the next poll. A renderer outage is not counted
+  against items, so no article is given up because the service was down;
+- the site itself failing (the renderer reports a navigation failure, an
+  HTTP 429/5xx from the site, or a bot challenge): transient for that item,
+  retried on later polls up to MAX_TRANSIENT_ATTEMPTS;
+- ContentUnavailable otherwise (page reached but no usable article, or URL
+  blocked): the Report is created without a PDF and a WARNING is logged.
 
 Report type (Crucible Collector)
 --------------------------------
@@ -97,7 +102,7 @@ import re
 import sys
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from urllib.parse import urlparse, urlunparse
 from xml.etree import ElementTree
@@ -149,6 +154,33 @@ CONTENT_SELECTOR = "article.article"
 # Fallbacks cover article layouts seen live that lack the primary container.
 CONTENT_SELECTORS = [CONTENT_SELECTOR]
 
+# Scope filters (checked before dedup, so out-of-scope items cost nothing).
+# CATEGORY_KEEP: items carrying any of these categories are always in scope
+# (the deny and title rules below do not apply to them; MAX_AGE_DAYS still
+# does). CATEGORY_ALLOW: if non-empty, keep only items with one of these feed
+# categories (case-insensitive). CATEGORY_DENY: drop items carrying any of
+# these categories (digests, teasers, events). EXCLUDE_URL_RE / EXCLUDE_TITLE_RE: drop items
+# whose link / title matches. MAX_AGE_DAYS: drop items published longer ago
+# than this (0 = no limit); configurable as max_age_days.
+CATEGORY_KEEP = set()
+CATEGORY_ALLOW = set()
+CATEGORY_DENY = set()
+EXCLUDE_URL_RE = None
+EXCLUDE_TITLE_RE = None
+MAX_AGE_DAYS = 0
+
+# Per-site behaviour switches.
+# SLUG_FROM_ID: name the PDF after the URL's numeric post id (for sites whose
+#   article URLs end in an id after a non-descriptive segment).
+# BYLINE_AUTHOR: print the feed's author on the PDF byline (off when the feed
+#   author is a login, email or team account rather than a person).
+# NO_CONTENT_IS_TRANSIENT: treat "no usable article" from the renderer as a
+#   transient failure (retried) instead of creating the Report without a PDF;
+#   for sites whose bot challenge looks like an empty page.
+SLUG_FROM_ID = False
+BYLINE_AUTHOR = True
+NO_CONTENT_IS_TRANSIENT = False
+
 # Chrome inside (or around) the container that is not part of the story.
 HIDE_SELECTORS = [
     ".social-share-icons",               # share buttons
@@ -168,6 +200,21 @@ MIN_VALID_YEAR = 1990
 
 RSS_CONTENT_NS = "{http://purl.org/rss/1.0/modules/content/}encoded"
 DC_CREATOR_NS = "{http://purl.org/dc/elements/1.1/}creator"
+ATOM_NS = "{http://www.w3.org/2005/Atom}"
+
+
+# The renderer reports some SITE problems as "no usable article" (HTTP 422):
+# the page failed to load, the site answered 429/5xx, or a bot challenge.
+# Those are transient for the item. A 422 whose detail is a validation-error
+# list means the request itself was rejected (client/service mismatch), which
+# is a renderer problem, not a content one.
+_SITE_FAILURE_RE = re.compile(
+    r"navigation failed|HTTP (?:408|425|429|5\d\d) from|bot challenge", re.IGNORECASE)
+_VALIDATION_ERROR_RE = re.compile(r'"detail"\s*:\s*\[')
+
+
+class _SiteUnavailable(Exception):
+    """The article's site failed for this poll; retry the item later."""
 
 
 # --------------------------------------------------------------------------- #
@@ -182,12 +229,32 @@ def _report_id(link):
 def _slug_from_url(url):
     """Return a filesystem-safe slug from the URL path ('report' for root)."""
     segments = [s for s in urlparse(url).path.split("/") if s]
+    if SLUG_FROM_ID:
+        for seg in reversed(segments):
+            if seg.isdigit():
+                return f"{FILE_PREFIX}-{seg}"
     # Prefer the last non-numeric segment (some sites end with a numeric id).
     for seg in reversed(segments):
         if not seg.isdigit():
             seg = re.sub(r"\.html?$", "", seg)
             return re.sub(r"[^A-Za-z0-9._-]", "_", seg)[:120] or "report"
     return segments[-1] if segments else "report"
+
+
+def _parse_date(date_str):
+    """Parse a feed date (RFC 2822 or ISO 8601) to an ISO-8601 UTC string."""
+    parsed = _parse_rfc2822(date_str)
+    if parsed or not date_str:
+        return parsed
+    try:
+        dt = datetime.fromisoformat(date_str.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.year < MIN_VALID_YEAR:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
 
 
 def _parse_rfc2822(date_str):
@@ -214,6 +281,9 @@ _NON_TEXT_RE = re.compile(r"<(script|style|noscript)\b.*?</\1\s*>", re.IGNORECAS
 # source stays ASCII-only.
 _ELLIPSIS = "\u2026"
 _TRUNCATION_MARKERS = ("[...]", "[" + _ELLIPSIS + "]", _ELLIPSIS)
+# WordPress feeds end each summary with "The post <title> appeared first on
+# <site>." That boilerplate is not part of the article.
+_WP_TRAILER_RE = re.compile(r"\s*The post .{1,500}? appeared first on .{1,150}?\s*\.?\s*$")
 
 
 def _html_to_text(value, limit=MAX_DESCRIPTION_CHARS):
@@ -228,6 +298,7 @@ def _html_to_text(value, limit=MAX_DESCRIPTION_CHARS):
     text = _TAG_RE.sub(" ", text)
     text = html.unescape(text)
     text = _WS_RE.sub(" ", text).strip()
+    text = _WP_TRAILER_RE.sub("", text)
     # Remove a trailing "read more" truncation marker.
     for marker in _TRUNCATION_MARKERS:
         if text.endswith(marker):
@@ -276,6 +347,40 @@ def _hide_parts():
         if p[1] or p[2]:
             parts.append(p)
     return parts
+
+
+_META_KEYS = ("og:description", "description", "twitter:description")
+
+
+class _MetaDescriptionParser(HTMLParser):
+    """Collect the page's description <meta> tags (any attribute order)."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.found = {}
+
+    def handle_starttag(self, tag, attrs):
+        if tag != "meta":
+            return
+        attrs = dict(attrs)
+        key = (attrs.get("property") or attrs.get("name") or "").strip().lower()
+        if key in _META_KEYS and (attrs.get("content") or "").strip():
+            self.found.setdefault(key, attrs["content"])
+
+
+def _meta_description(html_bytes):
+    """The page's own summary (og:description, then description), or ""."""
+    if not html_bytes:
+        return ""
+    parser = _MetaDescriptionParser()
+    try:
+        parser.feed(html_bytes.decode("utf-8", errors="replace"))
+    except Exception:  # malformed markup: use whatever was collected
+        pass
+    for key in _META_KEYS:
+        if parser.found.get(key):
+            return _html_to_text(html.escape(parser.found[key]))
+    return ""
 
 
 class _ArticleTextParser(HTMLParser):
@@ -342,22 +447,135 @@ def _article_text(html_bytes, limit=None):
 
 
 def _canonical_link(link):
-    """Return the https link without fragment, or None if not allowed."""
+    """Return the https link without fragment or utm_* tracking parameters,
+    or None if the host is not allowed."""
     try:
         parsed = urlparse((link or "").strip())
     except ValueError:
         return None
     if parsed.scheme != "https" or (parsed.hostname or "") not in ALLOWED_HOSTS:
         return None
-    return urlunparse(parsed._replace(fragment=""))
+    # Drop utm_* pairs from the raw query; every other byte is kept as-is so
+    # the URL still matches References stored by earlier runs or Feedly.
+    query = "&".join(p for p in parsed.query.split("&")
+                     if p and not p.split("=", 1)[0].lower().startswith("utm_"))
+    return urlunparse(parsed._replace(fragment="", query=query))
+
+
+# Some feeds are invalid XML: a bare "&" in a link, an HTML named entity
+# (&nbsp;) XML does not define, or a raw control character.
+_CDATA_RE = re.compile(rb"(<!\[CDATA\[.*?\]\]>)", re.DOTALL)
+_AMP_RE = re.compile(rb"&(#\d+;|#x[0-9A-Fa-f]+;|[A-Za-z][A-Za-z0-9]*;)?")
+_XML_CTRL_RE = re.compile(rb"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+_XML_ENTITIES = {b"amp;", b"lt;", b"gt;", b"quot;", b"apos;"}
+
+
+def _fix_amp(match):
+    """Keep valid XML references and escape every other ampersand.
+
+    An HTML named entity such as &nbsp; becomes literal "&amp;nbsp;", which
+    the text clean-up (html.unescape) decodes later.
+    """
+    ref = match.group(1)
+    if ref is not None and (ref.startswith(b"#") or ref in _XML_ENTITIES):
+        return b"&" + ref
+    return b"&amp;" + (ref or b"")
+
+
+def _repair_xml(xml_bytes):
+    """Repair ampersands outside CDATA sections and drop control characters.
+
+    CDATA content is left untouched: an "&" there is already literal text.
+    """
+    parts = _CDATA_RE.split(_XML_CTRL_RE.sub(b"", xml_bytes))
+    return b"".join(part if part.startswith(b"<![CDATA[") else _AMP_RE.sub(_fix_amp, part)
+                    for part in parts)
+
+
+def _parse_xml(xml_bytes):
+    """Parse feed XML, retrying once after _repair_xml.
+
+    Raises ElementTree.ParseError when the feed is still malformed.
+    """
+    try:
+        return ElementTree.fromstring(xml_bytes)
+    except ElementTree.ParseError:
+        return ElementTree.fromstring(_repair_xml(xml_bytes))
+
+
+def _out_of_scope(item, max_age_days=MAX_AGE_DAYS, now=None):
+    """Return why an item is outside this connector's scope, or None."""
+    cats = {c.strip().lower() for c in item.get("categories", [])}
+    kept = bool(CATEGORY_KEEP and cats & {c.lower() for c in CATEGORY_KEEP})
+    if kept:
+        pass  # always in scope; only the age limit below applies
+    elif CATEGORY_ALLOW and not cats & {c.lower() for c in CATEGORY_ALLOW}:
+        return "category not in scope"
+    elif CATEGORY_DENY and cats & {c.lower() for c in CATEGORY_DENY}:
+        return "category excluded"
+    elif EXCLUDE_URL_RE is not None and EXCLUDE_URL_RE.search(item["link"]):
+        return "url excluded"
+    elif EXCLUDE_TITLE_RE is not None and EXCLUDE_TITLE_RE.search(item["title"]):
+        return "title excluded"
+    if max_age_days:
+        published = _parse_date(item.get("pub_date"))
+        now = now or datetime.now(timezone.utc)
+        if published and datetime.fromisoformat(published) < now - timedelta(days=max_age_days):
+            return "older than max_age_days"
+    return None
+
+
+def _atom_link(entry):
+    """Return the entry's alternate (article) link href, or None."""
+    for link_el in entry.findall(ATOM_NS + "link"):
+        if link_el.get("rel", "alternate") == "alternate" and link_el.get("href"):
+            return link_el.get("href")
+    return None
+
+
+def _atom_text(el):
+    """Text of an Atom text construct (text, html or inline xhtml)."""
+    if el is None:
+        return None
+    if el.get("type") == "xhtml":
+        return html.escape("".join(el.itertext()))
+    return el.text
+
+
+def _parse_atom(root):
+    """Parse Atom <entry> elements into the same item dicts as RSS."""
+    items = []
+    seen = set()
+    for entry in root.iter(ATOM_NS + "entry"):
+        link = _canonical_link(_atom_link(entry))
+        if not link or link in seen:
+            continue
+        seen.add(link)
+        summary = _atom_text(entry.find(ATOM_NS + "summary"))
+        content = _atom_text(entry.find(ATOM_NS + "content"))
+        items.append({
+            "title": html.unescape((entry.findtext(ATOM_NS + "title") or "").strip()),
+            "link": link,
+            "description": _html_to_text(summary or content),
+            # Published date; updated only when the feed has no published.
+            "pub_date": (entry.findtext(ATOM_NS + "published")
+                         or entry.findtext(ATOM_NS + "updated") or "").strip(),
+            "full_text": _html_to_text(content, None),
+            "creator": html.unescape(
+                (entry.findtext(f"{ATOM_NS}author/{ATOM_NS}name") or "").strip()),
+            "categories": [c.get("term", "") for c in entry.findall(ATOM_NS + "category")],
+        })
+    return items
 
 
 def _parse_feed(xml_bytes):
-    """Parse RSS bytes into item dicts (deduplicated, allowed hosts only).
+    """Parse RSS 2.0 or Atom bytes into item dicts (deduplicated, allowed hosts only).
 
     Raises ElementTree.ParseError on malformed XML.
     """
-    root = ElementTree.fromstring(xml_bytes)
+    root = _parse_xml(xml_bytes)
+    if root.tag == ATOM_NS + "feed":
+        return _parse_atom(root)
     items = []
     seen = set()
     for item_el in root.iter("item"):
@@ -372,6 +590,7 @@ def _parse_feed(xml_bytes):
             "pub_date": (item_el.findtext("pubDate") or "").strip(),
             # Byline author for the PDF header (dc:creator, when present).
             "creator": html.unescape((item_el.findtext(DC_CREATOR_NS) or "").strip()),
+            "categories": [html.unescape(c.text or "") for c in item_el.findall("category")],
             # Full text when the feed carries it; used only for classification.
             "full_text": _html_to_text(item_el.findtext(RSS_CONTENT_NS), None),
         })
@@ -406,10 +625,13 @@ class TheRecordConnector:
                 value = default
             return int(value) if number else value
 
-        self.feed_url = setting("feed_url", "https://therecord.media/feed/")
+        # One or more feed URLs, comma-separated.
+        self.feed_urls = [u.strip() for u in str(setting("feed_url", "https://therecord.media/feed/")).split(",")
+                          if u.strip()]
         self.poll_interval = setting("poll_interval", 900, number=True)
         self.request_delay = setting("request_delay", 3, number=True)
         self.max_reports = setting("max_reports", 0, number=True)
+        self.max_age_days = setting("max_age_days", MAX_AGE_DAYS, number=True)
         self.render_retries = setting("render_retries", 3, number=True)
         self.confidence = setting("confidence", 50, number=True)
         self.report_type = setting("report_type", "open-source-reporting")
@@ -478,18 +700,36 @@ class TheRecordConnector:
     # ------------------------------------------------------------------ #
 
     def _fetch_feed(self):
-        """Fetch and parse the feed. Returns a list of items, or None on error."""
-        try:
-            resp = self.session.get(self.feed_url, timeout=60)
-            resp.raise_for_status()
-        except Exception as exc:
-            self.helper.log_error(f"Failed to fetch feed: {exc}")
+        """Fetch and parse every configured feed.
+
+        Returns the merged items (feed order, deduplicated by link), or None
+        when every feed failed. Sets self.fetch_complete to False when any
+        feed failed, so per-link bookkeeping is not pruned for its items.
+        """
+        items = []
+        seen = set()
+        failures = 0
+        for feed_url in self.feed_urls:
+            try:
+                resp = self.session.get(feed_url, timeout=60)
+                resp.raise_for_status()
+                parsed = _parse_feed(resp.content)
+            except ElementTree.ParseError as exc:
+                self.helper.log_error(f"Failed to parse feed XML from {feed_url}: {exc}")
+                failures += 1
+                continue
+            except Exception as exc:
+                self.helper.log_error(f"Failed to fetch feed {feed_url}: {exc}")
+                failures += 1
+                continue
+            for item in parsed:
+                if item["link"] not in seen:
+                    seen.add(item["link"])
+                    items.append(item)
+        self.fetch_complete = failures == 0
+        if failures == len(self.feed_urls):
             return None
-        try:
-            return _parse_feed(resp.content)
-        except ElementTree.ParseError as exc:
-            self.helper.log_error(f"Failed to parse feed XML: {exc}")
-            return None
+        return items
 
     def _ingested_links(self, items):
         """Return the item links already ingested, by External Reference URL.
@@ -564,7 +804,7 @@ class TheRecordConnector:
         Raises RendererUnavailable or ContentUnavailable (see module docstring).
         """
         byline = {"publisher": self.author_name, "published": published[:10]}
-        if item.get("creator"):
+        if BYLINE_AUTHOR and item.get("creator"):
             byline["author"] = item["creator"]
         return render_live_pdf(
             item["link"],
@@ -592,6 +832,12 @@ class TheRecordConnector:
                 if not pdf_bytes.startswith(b"%PDF"):
                     raise RendererUnavailable("pdf-renderer returned a non-PDF payload")
             except ContentUnavailable as exc:
+                detail = str(exc)
+                if _VALIDATION_ERROR_RE.search(detail):
+                    raise RendererUnavailable(f"renderer rejected the request: {detail}")
+                if NO_CONTENT_IS_TRANSIENT or _SITE_FAILURE_RE.search(detail):
+                    # The site (or its bot challenge) failed: retry on a later poll.
+                    raise _SiteUnavailable(detail)
                 self.helper.log_warning(f"No PDF for {url}: {exc}")
                 return None
             except RendererUnavailable as exc:
@@ -613,21 +859,15 @@ class TheRecordConnector:
             return pdf_bytes
         raise RendererUnavailable("render_retries is 0")
 
-    def _page_text(self, url):
-        """Article text for the classifier when the feed has no full text.
-
-        One plain GET of the article page, made only when the Collector is
-        configured. Any failure returns "" (the summary is used instead).
-        """
-        if not os.environ.get("CRUCIBLE_COLLECTOR_URL"):
-            return ""
+    def _fetch_page(self, url):
+        """One plain GET of the article page; b"" on any failure."""
         try:
             resp = self.session.get(url, timeout=60)
             resp.raise_for_status()
-            return _article_text(resp.content)
+            return resp.content or b""
         except Exception as exc:
-            self.helper.log_warning(f"Article text fetch failed for {url}: {exc}")
-            return ""
+            self.helper.log_warning(f"Article page fetch failed for {url}: {exc}")
+            return b""
 
     # ------------------------------------------------------------------ #
     # Report creation
@@ -643,6 +883,19 @@ class TheRecordConnector:
         name = item["title"] or url
         description = item["description"]
 
+        # At most one plain GET of the article page, made only when it is
+        # needed: the feed has no summary (the page's own meta description
+        # is used), or the Collector is configured and the feed has no full
+        # text (the page's article text is classified). Any failure is
+        # logged and the Report is still created.
+        classify = (classify_report is not None
+                    and bool(os.environ.get("CRUCIBLE_COLLECTOR_URL")))
+        page = b""
+        if not description or (classify and not item.get("full_text")):
+            page = self._fetch_page(url)
+        if not description:
+            description = _meta_description(page)
+
         external_reference = self.helper.api.external_reference.create(
             source_name=self.author_name,
             url=url,
@@ -655,7 +908,8 @@ class TheRecordConnector:
         # timeout, and makes no call when CRUCIBLE_COLLECTOR_URL is unset.
         report_types = [self.report_type]
         if classify_report is not None:
-            article_text = (item.get("full_text") or self._page_text(url)
+            article_text = (item.get("full_text")
+                            or (_article_text(page) if classify else "")
                             or description)
             report_types = classify_report(
                 title=name, description=description, content=article_text,
@@ -705,12 +959,13 @@ class TheRecordConnector:
     def _ingest_item(self, item):
         """Ingest one new feed item.
 
-        Returns 'created', 'skipped-permanent' or 'failed' (transient).
+        Returns 'created', 'skipped-permanent', 'failed' (transient for this
+        item) or 'renderer-down' (the pdf-renderer service is unavailable).
         """
         url = item["link"]
 
         # Cheap validation before any network or render work.
-        published = _parse_rfc2822(item["pub_date"])
+        published = _parse_date(item["pub_date"])
         if not published:
             return self._skip_permanently(url, "no usable publication date")
 
@@ -720,8 +975,11 @@ class TheRecordConnector:
 
         try:
             pdf_bytes = self._render_with_retry(item, published)
+        except _SiteUnavailable as exc:
+            self.helper.log_warning(f"Site unavailable for {url}: {exc}")
+            return "failed"
         except RendererUnavailable:
-            return "failed"   # house policy: renderer down -> skip, retry later
+            return "renderer-down"   # house policy: renderer down -> skip, retry later
 
         self._create_report(item, published, pdf_bytes)
         return "created"
@@ -749,6 +1007,15 @@ class TheRecordConnector:
         items = self._fetch_feed()
         if items is None:
             return
+        # Scope filters first: out-of-scope items never reach dedup or render.
+        reasons = [_out_of_scope(i, self.max_age_days) for i in items]
+        # When the feed reaches back past max_age_days, nothing can have
+        # scrolled off it unseen (used by the gap warning below).
+        reaches_back = "older than max_age_days" in reasons
+        in_scope = [i for i, why in zip(items, reasons) if not why]
+        if len(in_scope) != len(items):
+            self.helper.log_debug(f"{len(items) - len(in_scope)} feed items out of scope.")
+        items = in_scope
 
         # Graph-driven dedup by External Reference URL. If the lookup fails,
         # skip this poll entirely rather than risk duplicates.
@@ -760,10 +1027,13 @@ class TheRecordConnector:
             return
         new_items = [i for i in candidates if i["link"] not in existing]
 
-        # Prune in-memory bookkeeping to links still in the feed.
-        live = {i["link"] for i in items}
-        self.permanent_skips = {k: v for k, v in self.permanent_skips.items() if k in live}
-        self.transient_failures = {k: v for k, v in self.transient_failures.items() if k in live}
+        # Prune in-memory bookkeeping to links still in the feed(s); skipped
+        # when a feed failed, since its items are missing from this poll.
+        if self.fetch_complete:
+            live = {i["link"] for i in items}
+            self.permanent_skips = {k: v for k, v in self.permanent_skips.items() if k in live}
+            self.transient_failures = {
+                k: v for k, v in self.transient_failures.items() if k in live}
 
         if not new_items:
             self.prev_poll_clean = True
@@ -772,7 +1042,8 @@ class TheRecordConnector:
 
         # A previous poll whose items all failed leaves no ingested overlap, so
         # only warn when the previous poll actually ingested what it saw.
-        if candidates and not existing and self.poll_count > 1 and self.prev_poll_clean:
+        if (candidates and not existing and not reaches_back
+                and self.poll_count > 1 and self.prev_poll_clean):
             self.helper.log_warning(
                 f"None of the {len(candidates)} feed items were already ingested; "
                 f"posts may have scrolled off the feed between polls. Consider "
@@ -784,6 +1055,7 @@ class TheRecordConnector:
             self.helper.connect_id, f"{SOURCE_NAME} feed poll"
         )
         created = permanent = failed = 0
+        renderer_down = False
         for item in new_items:
             if self.max_reports and created >= self.max_reports:
                 self.helper.log_info(f"Reached max_reports={self.max_reports}; stopping run.")
@@ -794,6 +1066,14 @@ class TheRecordConnector:
                 self.helper.log_error(f"Failed to ingest {item['link']}: {exc}")
                 outcome = "failed"
 
+            if outcome == "renderer-down":
+                # Not the item's fault: stop here, retry everything next poll,
+                # and do not count it towards giving up on the item.
+                renderer_down = True
+                self.helper.log_warning(
+                    "pdf-renderer unavailable; stopping this poll. Remaining items "
+                    "are retried next poll.")
+                break
             if outcome == "created":
                 created += 1
                 self.transient_failures.pop(item["link"], None)
@@ -806,10 +1086,12 @@ class TheRecordConnector:
 
         message = (
             f"Feed returned {len(items)} items, {len(new_items)} new: {created} "
-            f"created, {permanent} skipped permanently, {failed} failed (will retry)."
+            f"created, {permanent} skipped permanently, {failed} failed (will retry)"
+            + ("; pdf-renderer unavailable, poll stopped early." if renderer_down else ".")
         )
-        self.prev_poll_clean = failed == 0
-        self.helper.api.work.to_processed(work_id, message, in_error=failed > 0)
+        self.prev_poll_clean = failed == 0 and not renderer_down
+        self.helper.api.work.to_processed(
+            work_id, message, in_error=failed > 0 or renderer_down)
         self.helper.log_info(message)
 
     def run(self):

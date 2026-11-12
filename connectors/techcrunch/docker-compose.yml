@@ -33,6 +33,7 @@ services:
       - TECHCRUNCH_POLL_INTERVAL=900
       - TECHCRUNCH_REQUEST_DELAY=3
       - TECHCRUNCH_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - TECHCRUNCH_MAX_AGE_DAYS=0            # skip items older than this (0 = no limit)
       - TECHCRUNCH_RENDER_RETRIES=3
       - TECHCRUNCH_PDF_RENDER_TIMEOUT=120
       - TECHCRUNCH_CONFIDENCE=50

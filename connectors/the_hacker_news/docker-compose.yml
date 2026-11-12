@@ -33,6 +33,7 @@ services:
       - THE_HACKER_NEWS_POLL_INTERVAL=1800
       - THE_HACKER_NEWS_REQUEST_DELAY=3
       - THE_HACKER_NEWS_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - THE_HACKER_NEWS_MAX_AGE_DAYS=0            # skip items older than this (0 = no limit)
       - THE_HACKER_NEWS_RENDER_RETRIES=3
       - THE_HACKER_NEWS_PDF_RENDER_TIMEOUT=120
       - THE_HACKER_NEWS_CONFIDENCE=50
