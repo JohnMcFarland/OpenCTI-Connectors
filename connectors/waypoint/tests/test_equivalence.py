@@ -163,13 +163,20 @@ def test_author_description(pair):
     assert kw["name"] == p.author_name and kw["description"] == p.author_description
 
 
+HAND_ADDED_RENDER_UA = {"ahnlab_asec", "bankinfosecurity", "breaking_defense",
+                        "climate_and_security", "space_news"}
+
+
 def test_render_headers(pair):
     slug, m, p = pair
     c = _instance(slug, m)
     item = {"link": "https://x.example/a", "title": "t", "creator": ""}
     with patch.object(m, "render_live_pdf", return_value=b"%PDF") as rl:
         c._render_live(item, "2026-11-09T00:00:00+00:00")
-    assert rl.call_args.kwargs.get("headers", {}) == p.render_headers
+    sent = rl.call_args.kwargs.get("headers", {})
+    # Hand-added render User-Agents (WAYPOINT-SOURCES-HAND-V1): the generated
+    # connector sent none; the profile may add one, never change one.
+    assert sent == p.render_headers or (not sent and slug in HAND_ADDED_RENDER_UA)
 
 
 def test_precheck_matches_skip_if(pair):

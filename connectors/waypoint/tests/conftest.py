@@ -28,7 +28,11 @@ FIXTURES = HERE / "fixtures"
 PROFILES, PROFILE_ERRORS = load_sources(SOURCES)
 CASES = yaml.safe_load((FIXTURES / "cases.yml").read_text(encoding="utf-8"))
 SLUGS = sorted(PROFILES)
-LIVE = sorted(s for s, p in PROFILES.items() if p.enabled)
+# The eight Phase 1 sources the invariant and dry-run tests exercise. Fixed,
+# not derived from enabled flags: those are operational since
+# WAYPOINT-SOURCES-HAND-V1 (sources.yml hand-maintained).
+LIVE = sorted(["bleepingcomputer", "cyberscoop", "dark_web_informer", "security_affairs",
+               "techcrunch", "the_hacker_news", "the_record", "the_register"])
 PDF = b"%PDF-1.7 body"
 
 

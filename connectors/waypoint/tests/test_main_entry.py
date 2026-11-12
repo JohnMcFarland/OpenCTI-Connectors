@@ -32,7 +32,11 @@ def test_startup_logs_mode_and_marker(monkeypatch, tmp_path):
             main.main()
     logged = " ".join(str(c) for c in helper.log_info.call_args_list)
     assert "standalone mode" in logged
-    assert "WAYPOINT-V1 started: 8 sources running" in logged
+    # Count of enabled entries, read from the registry (hand-maintained since
+    # WAYPOINT-SOURCES-HAND-V1, so not a fixed number).
+    enabled = sum(1 for e in yaml.safe_load(SOURCES.read_text(encoding="utf-8")).values()
+                  if e.get("enabled"))
+    assert f"WAYPOINT-V1 started: {enabled} sources running" in logged
     helper.log_error.assert_not_called()
 
 

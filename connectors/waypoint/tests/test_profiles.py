@@ -19,8 +19,10 @@ def test_all_78_profiles_load_without_errors():
     assert len(PROFILES) == 78
 
 
-def test_only_the_eight_live_sources_are_enabled():
-    assert {s for s, p in PROFILES.items() if p.enabled} == LIVE
+def test_the_eight_phase_1_sources_are_enabled():
+    """Enabled flags are operational (sources.yml is hand-maintained since
+    WAYPOINT-SOURCES-HAND-V1); the eight Phase 1 sources stay on."""
+    assert LIVE <= {s for s, p in PROFILES.items() if p.enabled}
 
 
 def test_long_war_journal_name_quoted_correctly():
@@ -36,16 +38,34 @@ def test_the_two_forks_are_profile_options():
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
                       "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"}
     assert PROFILES["dark_web_informer"].skip_if == "members_only_paywall"
-    others = [p for s, p in PROFILES.items() if s not in ("bleepingcomputer", "dark_web_informer")]
-    assert all(not p.render_headers and p.skip_if is None for p in others)
+    others = [p for s, p in PROFILES.items() if s != "dark_web_informer"]
+    assert all(p.skip_if is None for p in others)
+
+
+# Sources whose renders send the Chrome 130 User-Agent. BleepingComputer's came
+# from its generated connector; the rest were added by hand on 2026-11-12 after
+# pdf-renderer's default UA got HTTP 403 (WAYPOINT-SOURCES-HAND-V1).
+CHROME_130_UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                               "(KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"}
+RENDER_UA_SOURCES = {"bleepingcomputer", "ahnlab_asec", "bankinfosecurity",
+                     "breaking_defense", "climate_and_security", "space_news"}
+
+
+def test_render_headers_only_where_needed():
+    with_headers = {s for s, p in PROFILES.items() if p.render_headers}
+    assert with_headers == RENDER_UA_SOURCES
+    assert all(PROFILES[s].render_headers == CHROME_130_UA for s in RENDER_UA_SOURCES)
 
 
 def test_sources_yml_is_ascii():
     assert all(b < 128 for b in SOURCES.read_bytes())
 
 
+@pytest.mark.skip(reason="sources.yml is hand-maintained since 2026-11-12 "
+                         "(WAYPOINT-SOURCES-HAND-V1); test_equivalence still checks "
+                         "every site constant against the generated connectors")
 def test_registry_matches_the_extractor():
-    """sources.yml is exactly what scripts/extract_profiles.py writes now."""
+    """sources.yml was exactly what scripts/extract_profiles.py writes."""
     generated = ROOT.parent / "bleepingcomputer" / "main.py"
     if not generated.is_file():
         pytest.skip("generated connectors retired")
