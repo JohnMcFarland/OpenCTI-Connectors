@@ -315,7 +315,7 @@ def _post_render(path, payload, timeout):
 
 
 def render_live_pdf(url, title, connector, byline=None, selectors="generic",
-                    strip=None, timeout=120):
+                    strip=None, timeout=120, headers=None):
     """Render the live article at url to PDF bytes via pdf-renderer.
 
     Input:
@@ -326,6 +326,8 @@ def render_live_pdf(url, title, connector, byline=None, selectors="generic",
         selectors: "generic" (readability) or a site-specific CSS list.
         strip: extra site-specific CSS selectors to remove.
         timeout: render timeout in seconds, enforced by the service.
+        headers: optional request headers for the page load (for example
+            {"User-Agent": ...}); None keeps the service default.
 
     Output: PDF bytes.
     Raises: RendererUnavailable, ContentUnavailable.
@@ -338,6 +340,8 @@ def render_live_pdf(url, title, connector, byline=None, selectors="generic",
         "selectors": selectors,
         "strip": list(strip or []),
         "timeout": int(timeout),
+        # PDF-RENDERER-HEADERS-V1: optional per-request headers (e.g. User-Agent)
+        "headers": dict(headers or {}),
     }
     return _post_render("/render/url", payload, int(timeout))
 

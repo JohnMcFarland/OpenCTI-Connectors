@@ -1238,6 +1238,9 @@ class BleepingComputerConnector:
             selectors=CONTENT_SELECTORS,
             strip=HIDE_SELECTORS,
             timeout=self.render_timeout,
+            # BLEEPING-RENDER-UA-V1: Cloudflare challenges the renderer's default
+            # UA; send the connector's own browser UA (as its page GETs do).
+            headers={"User-Agent": BROWSER_UA},
         )
 
     def _render_with_retry(self, item, published):
