@@ -1,0 +1,43 @@
+# CSET (Georgetown) OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  cset:
+    build: .
+    container_name: opencti-connector-cset
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=CSET (Georgetown)
+      - CONNECTOR_SCOPE=cset
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - CSET_FEED_URL=https://cset.georgetown.edu/publications/feed/,https://cset.georgetown.edu/feed/
+      - CSET_POLL_INTERVAL=3600
+      - CSET_REQUEST_DELAY=3
+      - CSET_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - CSET_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - CSET_RENDER_RETRIES=3
+      - CSET_PDF_RENDER_TIMEOUT=120
+      - CSET_CONFIDENCE=50
+      - CSET_REPORT_TYPE=open-source-reporting
+      - CSET_TLP=TLP:CLEAR
+      - CSET_AUTHOR_NAME=Center for Security and Emerging Technology
+    restart: always

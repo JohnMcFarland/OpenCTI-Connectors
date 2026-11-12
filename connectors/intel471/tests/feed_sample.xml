@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Intel 471 Blog</title>
+    <link>https://www.intel471.com/blog</link>
+    <description>The latest threat intelligence insights and security research from Intel 471</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 11 Nov 2026 22:27:52 GMT</lastBuildDate>
+    <atom:link href="https://www.intel471.com/blog/feed" rel="self" type="application/rss+xml"/>
+    
+    <item>
+      <title>Hand AI the Legwork, You Keep the Judgment</title>
+      <link>https://www.intel471.com/blog/hand-ai-the-legwork-you-keep-the-judgment</link>
+      <guid isPermaLink="true">https://www.intel471.com/blog/hand-ai-the-legwork-you-keep-the-judgment</guid>
+      <pubDate>Wed, 04 Nov 2026 17:30:28 GMT</pubDate>
+      <description>CTI teams can use AI agents to streamline intelligence workflows, reduce manual research and deliver faster insights. With the right guardrails, agents can provide source-backed assessments, flag intelligence gaps and show their reasoning, while keeping analysts in control of critical decisions.</description>
+    </item>
+    <item>
+      <title>Why is Italy a top target for cybercrime?</title>
+      <link>https://www.intel471.com/blog/why-is-italy-a-top-target-for-cybercrime</link>
+      <guid isPermaLink="true">https://www.intel471.com/blog/why-is-italy-a-top-target-for-cybercrime</guid>
+      <pubDate>Wed, 04 Nov 2026 17:11:31 GMT</pubDate>
+      <description>Italy ranks second worldwide for initial access offers. Our new blog looks at what that means for organizations everywhere.</description>
+    </item>
+    <item>
+      <title>Testing a PHP2Shell exploit in the era of AI-hallucinated PoCs</title>
+      <link>https://www.intel471.com/blog/testing-a-php2shell-exploit-in-the-era-of-ai-hallucinated-pocs</link>
+      <guid isPermaLink="true">https://www.intel471.com/blog/testing-a-php2shell-exploit-in-the-era-of-ai-hallucinated-pocs</guid>
+      <pubDate>Fri, 30 Oct 2026 19:12:43 GMT</pubDate>
+      <description>Intel 471 tested a public exploit for the AI-discovered PHP flaws. We found exploitation is hard, but you should still patch now.</description>
+    </item>
+</channel>
+</rss>

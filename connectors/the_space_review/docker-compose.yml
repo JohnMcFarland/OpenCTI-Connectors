@@ -1,0 +1,43 @@
+# The Space Review OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  the-space-review:
+    build: .
+    container_name: opencti-connector-the-space-review
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=The Space Review
+      - CONNECTOR_SCOPE=the_space_review
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - THE_SPACE_REVIEW_FEED_URL=https://www.thespacereview.com/articles.xml
+      - THE_SPACE_REVIEW_POLL_INTERVAL=3600
+      - THE_SPACE_REVIEW_REQUEST_DELAY=3
+      - THE_SPACE_REVIEW_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - THE_SPACE_REVIEW_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - THE_SPACE_REVIEW_RENDER_RETRIES=3
+      - THE_SPACE_REVIEW_PDF_RENDER_TIMEOUT=120
+      - THE_SPACE_REVIEW_CONFIDENCE=50
+      - THE_SPACE_REVIEW_REPORT_TYPE=open-source-reporting
+      - THE_SPACE_REVIEW_TLP=TLP:CLEAR
+      - THE_SPACE_REVIEW_AUTHOR_NAME=The Space Review
+    restart: always

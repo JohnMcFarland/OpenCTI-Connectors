@@ -1,0 +1,43 @@
+# ESA Newsroom OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  esa-newsroom:
+    build: .
+    container_name: opencti-connector-esa-newsroom
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=ESA Newsroom
+      - CONNECTOR_SCOPE=esa_newsroom
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - ESA_NEWSROOM_FEED_URL=https://www.esa.int/rss/news.rss,https://www.esa.int/rss/science.rss,https://www.esa.int/rss/operations.rss,https://www.esa.int/rss/earth-observation-programmes.rss,https://www.esa.int/rss/human-and-robotic-exploration.rss,https://www.esa.int/rss/space-transportation.rss,https://www.esa.int/rss/resilience-navigation-and-connectivity.rss,https://www.esa.int/rss/commercialisation-and-industry-partnership.rss
+      - ESA_NEWSROOM_POLL_INTERVAL=1800
+      - ESA_NEWSROOM_REQUEST_DELAY=3
+      - ESA_NEWSROOM_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - ESA_NEWSROOM_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - ESA_NEWSROOM_RENDER_RETRIES=3
+      - ESA_NEWSROOM_PDF_RENDER_TIMEOUT=120
+      - ESA_NEWSROOM_CONFIDENCE=50
+      - ESA_NEWSROOM_REPORT_TYPE=open-source-reporting
+      - ESA_NEWSROOM_TLP=TLP:CLEAR
+      - ESA_NEWSROOM_AUTHOR_NAME=European Space Agency
+    restart: always

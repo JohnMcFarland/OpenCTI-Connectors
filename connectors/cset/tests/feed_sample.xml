@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Publications | Center for Security and Emerging Technology</title>
+	<atom:link href="https://cset.georgetown.edu/publications/feed/" rel="self" type="application/rss+xml" />
+	<link>https://cset.georgetown.edu/publications/</link>
+	<description>The place to find CSET&#039;s publications, reports, and people</description>
+	<lastBuildDate>Wed, 11 Nov 2026 05:02:07 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.4</generator>
+	<item>
+		<title>The PLA&#8217;s Push for Military Robotics</title>
+		<link>https://cset.georgetown.edu/publication/the-plas-push-for-military-robotics/</link>
+		
+		<dc:creator><![CDATA[Shelton Fitch]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 05:02:05 +0000</pubDate>
+				<guid isPermaLink="false">https://cset.georgetown.edu/?post_type=document&#038;p=25754</guid>
+
+					<description><![CDATA[<p>Drawing on over 2,000 open-source procurement documents published between October 2022 and December 2025, this report examines how the People&#8217;s Liberation Army is pursuing robotics across the ground, maritime, and space domains. These include quadruped renaissance robots and ordnance disposal systems, as well as undersea platforms and satellite manipulation devices. The data reveals a military experimenting with still maturing, mostly human-controlled systems. Sensors, navigation, and software will likely matter as much as hardware for Beijing&#8217;s military robotics ambitions.</p>
+<p>The post <a href="https://cset.georgetown.edu/publication/the-plas-push-for-military-robotics/">The PLA&#8217;s Push for Military Robotics</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<h3 class="wp-block-heading">Executive Summary</h3>
+
+
+
+<p class="wp-block-paragraph">This report analyzes over 2,000 open-source, robotics-related requests for proposal (RFPs) published by the People&#8217;s Liberation Army (PLA) between October 2022 and December 2025. The data indicates that the Chinese military is experimenting broadly with robotics systems, aiming to acquire them for use in the ground, maritime, and space domains. Many of the requests in the dataset are for somewhat mundane applications, such as for robots for welding or surgery. There are, however, several eye-catching solicitations, including for robots capable of using lasers for ordnance disposal, attaching explosives to undersea targets, and capturing satellites on orbit. The dataset also features many requests for sensors, navigation technologies, and control software that power robotics systems. The majority of the contracts are for relatively small values, suggesting that they are aimed at research and development rather than mass fielding. Given the experimental nature of the systems, it appears that the PLA is interested in learning how to use and integrate nascent robotics platforms rather than waiting for them to mature.</p>
+
+
+
+<p class="wp-block-paragraph">A striking finding from this work is the sheer breadth of application areas these various robotics contracts cover. There are requests for ground robots for reconnaissance, patrols, communications, minesweeping, personnel capture, and ordnance disposal. In the maritime domain, the PLA is seeking to acquire robots for search and rescue, seabed surveying, and targeting. The PLA is also interested in acquiring small space-based robots, as well as those that could be used for orbital warfare applications. Additionally, there is a cluster of requests for robotic systems capable of operating in nuclear- and chemical-contaminated environments, including those designed for reconnaissance in irradiated conditions, facility inspection, and &#8220;life detection.&#8221; At least two contracts specify bioaerosol and radiation detection capabilities. Finally, there were a few RFPs for cross- and multi-domain robotics systems that showcased the PLA&#8217;s goal of developing innovative applications for future wars.</p>
+
+
+
+<p class="wp-block-paragraph">While there has been much buzz around China&#8217;s development of humanoid robots, there were far more requests in the dataset for quadruped robots, including those from companies such as Unitree and DEEP Robotics. There was, however, an uptick in humanoid-related RFPs in 2025, as well as an increase in solicitations for exoskeleton systems. There were also several requests for spherical robots, throwable reconnaissance platforms, wall-climbing robots, and wheeled patrol systems.</p>
+
+
+
+<p class="wp-block-paragraph">Many of the RFPs included specific requests for the speed, range, power, and carrying capacity of the desired platforms. Many observers might assume robot dogs would be capable of running fast, but the majority of documents requested platforms that could travel between 2 and 5 meters per second, topping out at just over 11 miles per hour. Most of the requests for quadrupeds specified that they be light (12 to 15 kg), though a couple requested larger platforms weighing between 55 and 60 kg. There were several requests for endurance between two and four hours, a recurring emphasis on removable and rechargeable batteries, and one request for wireless self-charging capabilities. These requirements, as well as other details in the RFPs, suggest that the PLA is seeking to employ these platforms primarily for surveillance and reconnaissance missions. The undersea systems range from &#8220;micro&#8221; robots under 7 kg to larger platforms that can move objects weighing over 100 kg and operate at depths of at least 100 meters.</p>
+
+
+
+<p class="wp-block-paragraph">In addition to describing the required physical characteristics sought by the PLA, many documents provide details on the sensors and navigation equipment the Chinese military is seeking to acquire. Several requests for ground robots, for example, included lidar, 360-degree cameras, thermal imaging, and infrared night vision. Some RFPs solicited capabilities related to imaging sonars and synthetic aperture sonar, as well as depth-measuring tools and altimeters, for use by maritime platforms. A few documents outlined requirements for space robot sensors capable of fusing visual and tactile information to enable systems to recognize and handle objects.</p>
+
+
+
+<p class="wp-block-paragraph">Despite the hype surrounding autonomous robots&#8212;and the slick Chinese propaganda videos highlighting novel robotics applications&#8212;the majority of RFPs requested human-controlled systems. That said, there were many requests for robots with varying degrees of autonomous capability, including simultaneous localization and mapping, autonomous path planning, obstacle avoidance, and inertial-measurement-unit-enabled navigation. This is a clear signal of the PLA&#8217;s intent to develop increasingly autonomous military systems, with the hope of creating robotics platforms that can operate across domains in the absence of GPS and make decisions in increasingly complex operational environments.</p>
+
+
+
+<p class="wp-block-paragraph">Among the more interesting details are those concerning what the robots carry, in terms of both hardware and software. Requests include laser systems for ordnance destruction, explosion-proof minesweeping robotic arms, manipulator modules on undersea robots, and tear gas canister launchers. In terms of software, there were solicitations for swarm simulations, manned-unmanned teaming systems, voice interaction and gesture imitation systems, large-language-model-powered robots, and brain-computer interfaces to control robots.</p>
+
+
+
+<p class="wp-block-paragraph">The PLA is buying a large number of small, seemingly imperfect systems in order to learn where robots are most useful. While some of the hardware appears impressive, and China already boasts the world&#8217;s most advanced robotics supply chains, progress in sensors, navigation systems, and software will likely determine the success of the PLA&#8217;s robotics program going forward.</p>
+
+
+
+<p class="wp-block-paragraph">Finally, the PLA is sourcing robotics platforms and components from a range of Chinese commercial companies. For example, Unitree primarily markets its robots for civilian uses, but the PLA is interested in acquiring a number of the company&#8217;s systems. This makes robotics a prime area of ongoing military-civil fusion (&#20891;&#27665;&#34701;&#21512;). Observers should therefore track advances in China&#8217;s commercial robotics space for indications of future PLA robotics capabilities.</p>
+
+
+
+ 
+<div class="download" id="download-">
+      <h6>Download Full Report</h6>
+          <a href="https://cset.georgetown.edu/wp-content/uploads/CSET-The-PLAs-Push-for-Military-Robotics.pdf" target="_blank">The PLA&#8217;s Push for Military Robotics</a>
+  </div>
+
+
+<p class="wp-block-paragraph"></p>
+<p>The post <a href="https://cset.georgetown.edu/publication/the-plas-push-for-military-robotics/">The PLA&#8217;s Push for Military Robotics</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Map of Science</title>
+		<link>https://cset.georgetown.edu/publication/map-of-science/</link>
+		
+		<dc:creator><![CDATA[Jason Ly]]></dc:creator>
+		<pubDate>Fri, 06 Nov 2026 22:00:00 +0000</pubDate>
+				<category><![CDATA[Data]]></category>
+		<guid isPermaLink="false">https://cset.georgetown.edu/?post_type=document&#038;p=25744</guid>
+
+					<description><![CDATA[<p>The increasing pace of scientific production makes tracking worldwide research trends and emerging fields a nearly Sisyphean task. To tackle this challenge, we develop the Map of Science, a visualization tool for analyzing clusters of global research to support identification of emerging scientific and technological areas.</p>
+<p>The post <a href="https://cset.georgetown.edu/publication/map-of-science/">Map of Science</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">The increasing pace of scientific production makes tracking worldwide research trends and emerging fields a nearly Sisyphean task. To tackle this challenge, we develop the Map of Science, a visualization tool for analyzing clusters of global research to support identification of emerging scientific and technological areas. To build our tool, we group more than 144 million scholarly articles from 197 countries into over 91,000 research clusters using citations and text embeddings. Along with regularly updating research clusters as new scientific articles are published, we add LLM-enabled summarization, filtering capabilities, and extreme growth predictions. </p>
+
+
+
+<p class="wp-block-paragraph">We visualize the resulting clusters in the interactive, publicly available Map of Science tool, available at <a href="https://sciencemap.eto.tech/" target="_blank" rel="noreferrer noopener">https://sciencemap.eto.tech/</a>. The tool demonstrates usability and monthly usage increases, with improved modularity, topic separation, entity resolution, and searching and sorting capabilities. The Map of Science and our clustering code are available for public use, and a short video demonstration is available <a href="https://www.youtube.com/watch?v=EbTIqLgC3sY" target="_blank" rel="noreferrer noopener">https://www.youtube.com/watch?v=EbTIqLgC3sY</a>.</p>
+
+
+
+<p class="wp-block-paragraph">To read the full report, visit the <em><a href="https://dl.acm.org/doi/epdf/10.1145/3799682.3840244" data-type="link" data-id="https://dl.acm.org/doi/10.1145/3799682.3840244" target="_blank" rel="noreferrer noopener">ACM Digital Library</a></em>.</p>
+<p>The post <a href="https://cset.georgetown.edu/publication/map-of-science/">Map of Science</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+		<item>
+		<title>Violet Teaming in Practice</title>
+		<link>https://cset.georgetown.edu/publication/violet-teaming-in-practice/</link>
+		
+		<dc:creator><![CDATA[Jason Ly]]></dc:creator>
+		<pubDate>Mon, 02 Nov 2026 16:47:23 +0000</pubDate>
+				<category><![CDATA[Artificial intelligence]]></category>
+		<category><![CDATA[Biotechnology]]></category>
+		<guid isPermaLink="false">https://cset.georgetown.edu/?post_type=document&#038;p=25740</guid>
+
+					<description><![CDATA[<p>Violet teaming has been proposed as a method to integrate technical, policy, and societal considerations into the evaluation of emerging technologies.</p>
+<p>The post <a href="https://cset.georgetown.edu/publication/violet-teaming-in-practice/">Violet Teaming in Practice</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[
+<p class="wp-block-paragraph">Violet teaming has been proposed as a method to integrate technical, policy, and societal considerations into the evaluation of emerging technologies. Here, we document a pilot expert workshop used to explore violet teaming as a governance methodology for biodefense-relevant AI capabilities and describe observations from the exercise. The workshop used a hypothetical technology scenario across three sequential stages &#8211; capability development, misuse potential, and implementation &#8211; while incorporating technical, security, operational, and policy perspectives. The sequential format provided an integrated way to examine potential benefits, misuse risks, and real-world implementation challenges, rather than considering these issues in isolation. The exercise surfaced non-obvious misuse pathways, expanded potential interventions beyond purely technical safeguards, and highlighted operational and policy constraints that could affect implementation. This report summarizes the workshop design, outputs, and lessons learned for applying violet teaming to the evaluation of complex, dual-use technologies.</p>
+
+
+
+<p class="wp-block-paragraph">To read the full report visit, <a href="https://arxiv.org/abs/2610.41018" data-type="link" data-id="https://arxiv.org/abs/2610.41018" target="_blank" rel="noreferrer noopener">Arxiv</a>.</p>
+<p>The post <a href="https://cset.georgetown.edu/publication/violet-teaming-in-practice/">Violet Teaming in Practice</a> appeared first on <a href="https://cset.georgetown.edu">Center for Security and Emerging Technology</a>.</p>
+]]></content:encoded>
+					
+		
+		
+			</item>
+</channel>
+</rss>

@@ -1,0 +1,43 @@
+# WHO Disease Outbreak News OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  who-disease-outbreak-news:
+    build: .
+    container_name: opencti-connector-who-disease-outbreak-news
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=WHO Disease Outbreak News
+      - CONNECTOR_SCOPE=who_disease_outbreak_news
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - WHO_DISEASE_OUTBREAK_NEWS_FEED_URL=https://www.who.int/api/news/diseaseoutbreaknews?$orderby=PublicationDateAndTime%20desc&$top=20&$select=Id%2CDonId%2CTitle%2CUrlName%2CPublicationDateAndTime%2CSummary
+      - WHO_DISEASE_OUTBREAK_NEWS_POLL_INTERVAL=3600
+      - WHO_DISEASE_OUTBREAK_NEWS_REQUEST_DELAY=2
+      - WHO_DISEASE_OUTBREAK_NEWS_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - WHO_DISEASE_OUTBREAK_NEWS_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - WHO_DISEASE_OUTBREAK_NEWS_RENDER_RETRIES=3
+      - WHO_DISEASE_OUTBREAK_NEWS_PDF_RENDER_TIMEOUT=120
+      - WHO_DISEASE_OUTBREAK_NEWS_CONFIDENCE=50
+      - WHO_DISEASE_OUTBREAK_NEWS_REPORT_TYPE=open-source-reporting
+      - WHO_DISEASE_OUTBREAK_NEWS_TLP=TLP:CLEAR
+      - WHO_DISEASE_OUTBREAK_NEWS_AUTHOR_NAME=World Health Organization
+    restart: always

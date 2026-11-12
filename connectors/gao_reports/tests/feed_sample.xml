@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/scripts/rss.xsl" ?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+      <atom:link href="https://www.gao.gov/rss/reports.xml" rel="self" type="application/rss+xml"/>
+      <title>Reports News from the GAO</title>
+      <description>Reports News from the GAO.</description>
+      <link>https://www.gao.gov/rss/reports.xml</link>
+      <lastBuildDate>Wed, 11 Nov 2026 04:33:40 -0500</lastBuildDate>
+      <generator>GAO</generator>
+      <image>
+          <url>https://www.gao.gov/themes/custom/gao_uswds/img/gao-logo-rss.gif</url>
+          <title>Reports News from the GAO</title>
+          <link>https://www.gao.gov/rss/reports.xml</link>
+          <description>Feed provided by GAO.</description> 
+      </image>
+
+            <item>
+                <title>IRS Taxpayer Services: Challenges in Measuring the Benefits of Customer Service Investments</title>
+                <link>https://www.gao.gov/products/gao-27-108701</link>
+                <description>
+What GAO Found
+
+The Internal Revenue Service (IRS) invests in services to help taxpayers meet their tax obligations, such as in preparing and filing tax returns. IRS provides services through its website, telephone assistance, correspondence, and in-person assistance centers. Taxpayer services offer potential benefits, such as increasing tax compliance and reducing taxpayer burden that, if measured, could help inform investment decisions (see figure). Measuring benefits is difficult because of challenges with having sufficient skilled staff and funds to develop data and methodologies for long-term measurement, among others.
+
+Potential Benefits to Consider in Making Taxpayer Services Investment Decisions
+
+
+
+In 2024, IRS called for a reexamination of how its actions&#8212;including taxpayer services&#8212;affect revenue. IRS has since started a research effort designed to inform investment decisions on services based on their costs and revenues. IRS officials said they have no plans for that research effort to analyze data on other benefits, such as taxpayer satisfaction or burden, although they could do so in the future. In 2007 and 2008, IRS reports had similarly called for more analysis of compliance and revenue benefits to support services investment decisions. Although IRS did not provide documented results from these calls for analysis, GAO identified five IRS studies of how services affected compliance or taxpayer satisfaction. For example, a 2013 study found that lack of satisfaction with services may contribute to noncompliance.
+
+GAO identified 12 studies that measured the benefits of taxpayer services in the national tax administrations of other countries. All these studies cited some positive association between taxpayer services and benefits. For example, two studies in Belgium and in Germany found that customer-oriented service approaches were associated with lower costs to comply for business taxpayers. In addition, some of these and other studies highlighted challenges with measuring benefits similar to those GAO identified.
+
+Why GAO Did This Study
+
+Provisions in what is commonly known as the Inflation Reduction Act of 2022 (IRA) provided funding for IRS to improve various tax administration operations, including the ways it provides services to taxpayers to help them comply with tax requirements. Improving taxpayer services could yield financial and other types of measurable benefits. However, in prior work, GAO found that data to analyze such benefits generally are not readily available.
+
+The IRA includes a provision for GAO to oversee distribution and use of IRA funds. This report describes (1) the challenges that tax administrations face in measuring the benefits of taxpayer service investments; (2) ongoing and planned efforts and past research by IRS to measure the benefits of taxpayer services to inform investment decisions; and (3) the work done in tax administrations in states and other countries to measure the benefits of taxpayer services to inform investment decisions.
+
+GAO summarized studies from a literature search of relevant research and reviewed information that the Federation of Tax Administrators collected by surveying its members on measuring taxpayer service benefits. GAO also interviewed IRS officials and stakeholders such as officials from the Taxpayer Advocate Service, Urban-Brookings Tax Policy Center, and organizations that coordinate with U.S. state and international tax administrations.
+
+For more information, contact Jessica Lucas-Judy at lucasjudyj@gao.gov.
+</description>
+                <pubDate>Tue, 10 Nov 2026 07:12:56 -0500</pubDate>
+                <guid isPermaLink="false">/products/gao-27-108701</guid>
+            </item>
+            <item>
+                <title>401(k) Plan Investments: DOL Can Take Steps to Prepare for Expected Private Equity Growth</title>
+                <link>https://www.gao.gov/products/gao-27-106779</link>
+                <description>
+What GAO Found
+
+Private equity is one type of investment within a broad, undefined category called alternative assets. It differs from publicly traded equity in who can invest in it, how it is valued, and what disclosures are required, among other things. GAO&#8217;s review of selected research papers that analyzed private equity investment fund performance found no consensus on the performance of private equity relative to publicly traded equity, which is an important consideration when making investment decisions. GAO found a range of performance findings among research papers we reviewed, as well as ranges in data analyzed, benchmarks for performance comparisons, and methodologies. For example, one group of papers found that private equity funds outperformed publicly traded equity for the sample of funds they analyzed during the specific time-periods studied. The size of the overperformance varied widely. In one paper the benchmarks did not include a risk premium, the excess return that some experts believe a private equity investment should provide to justify higher investment risks. Another group of papers found that private equity funds underperformed publicly traded equity during the time-period studied, accounting for the underlying risk or fees, which can be higher for private equity than for publicly traded equity products. Our review of these papers also found that there is no consensus on how to effectively benchmark private equity performance. Financial regulations require open-end management investment companies (e.g., mutual funds) reporting investment performance data to include a benchmark that is the average annual total returns of an appropriate broad-based securities market index. Our review found a range of benchmarks for private equity fund returns, including several publicly traded equity indexes and custom indexes.
+
+Given the complexity of private equity and its recent use in 401(k) plans, plan sponsor and industry association representatives GAO interviewed said that plan sponsors need education on key aspects of private equity, such as how its valuation differs from traditional investments, like mutual funds. Consumer organization representatives also told us that participants should understand certain aspects about private equity, such as its illiquidity. Under law, the Department of Labor (DOL) is authorized to provide not only regulations, but also other guidance, as needed, to promote retirement security. However, GAO found that DOL has not yet issued specific guidance to help sponsors and participants better understand basic aspects of private equity. For example, the agency has not issued guidance to plan sponsors to help these fiduciaries to better understand how private equity&#8217;s liquidity and valuation differ from traditional investments, and how it is regulated, among other things. In addition, the agency has not issued guidance to participants, such as a fact sheet, to help them understand how private equity differs from traditional investments. By providing guidance to both plan sponsors and to participants, DOL can help them understand this asset type, which is expected to grow among 401(k) plan investment options.
+
+Why GAO Did This Study
+
+Private equity is historically reserved for certain investors, including wealthy individuals or institutional investors, like pension plans. Recent industry developments and federal actions suggest that more products offered to 401(k) plans may soon have more significant allocations to this asset class. However, little is known about the extent to which private equity is used in 401(k) plans and how its use might be communicated to plan sponsors and to participants, who rely on their 401(k) investments to safeguard retirement.
+
+GAO was asked to review 401(k) plan investments&#8217; use of private equity.
+
+GAO examined research on private equity investment performance against publicly traded equity benchmarks and how private equity investment information is communicated to 401(k) plan sponsors and participants, among other objectives.
+
+To answer these questions, GAO analyzed available federal and private data sources, conducted a literature review of selected research papers, assessed a selection of disclosures, including Securities and Exchange Commission and other fund documents, and interviewed industry representatives, consumer advocates, and officials from the U.S. and four countries.
+
+
+</description>
+                <pubDate>Tue, 10 Nov 2026 12:54:05 -0500</pubDate>
+                <guid isPermaLink="false">/products/gao-27-106779</guid>
+            </item>
+            <item>
+                <title>Veteran Lending: Early Planning Is Critical to Assessing VA&#8217;s New Foreclosure Avoidance Program</title>
+                <link>https://www.gao.gov/products/gao-27-108908</link>
+                <description>
+What GAO Found
+
+The Department of Veterans Affairs&#8217; (VA) Partial Claim Program is intended to help borrowers with VA-guaranteed loans avoid foreclosure. Under this new program, VA reimburses the loan servicer for a borrower&#8217;s missed payments and certain fees, allowing the borrower to become current on the loan. The borrower repays that amount&#8212;the partial claim&#8212;without interest when they sell or refinance the home, when they pay off the loan, or when the loan reaches maturity. The servicer collects the payment and sends it to VA.
+
+How the VA Partial Claim Program Works
+
+
+
+VA previously offered a temporary partial claim program to help borrowers affected by the COVID-19 pandemic and drew on that experience in implementing the new program. According to VA, under that program VA and servicers encountered documentation problems and difficulty tracking partial claim amounts. To address these issues, VA changed the program model and revised its application and payment processes. VA expects these changes to reduce administrative costs.
+
+VA has taken steps to implement the Partial Claim Program. These include developing policies and processes, soliciting stakeholder feedback, hosting training, developing oversight policies, and modifying its data system. The program became effective on June 15, 2026, although servicers have until November 28, 2026, to finish implementing the program. VA officials said they intend to begin analyzing program trends and outcomes in December 2027.
+
+VA has planned a high-level approach to assessing program effectiveness but has not developed a comprehensive plan to do so. For example, VA&#8217;s planned approach does not isolate the program&#8217;s effects on borrowers or consider program design questions. Without a comprehensive plan, VA and Congress will not have timely and credible evaluation results needed to make decisions about the program and identify changes that could improve outcomes for veteran borrowers, help prevent foreclosure, and reduce costs to taxpayers. Early planning is critical because the program is authorized for 5 years, ending July 30, 2030, and requires congressional reauthorization to continue. Early planning is also important to ensure VA collects the data needed for any evaluations.
+
+Why GAO Did This Study
+
+VA guarantees millions of home loans and bears financial risk when borrowers default and homes are foreclosed upon. In July 2025, the VA Home Loan Program Reform Act authorized VA to plan and administer the VA Partial Claim Program for 5 years.
+
+The Continuing Appropriations Agriculture, Legislative Branch, Military Construction, and Veterans Affairs, and Extensions Act, 2026, requires GAO to report on the VA Partial Claim Program annually. This first report examines (1) how VA used lessons learned from previous loss mitigation programs to develop the Partial Claim Program and the steps VA has taken to implement it and (2) the extent to which VA followed key program evaluation practices.
+
+GAO reviewed VA policies, processes, and plans related to the VA Partial Claim Program and assessed VA&#8217;s efforts against Office of Management and Budget program evaluation standards. GAO interviewed VA officials and representatives of 10 organizations, including lenders and servicers, trade associations, consumer advocacy organizations, and veteran advocacy organizations, selected because of their high loan volume or subject-matter expertise. GAO also analyzed VA data from January 2022 through June 2026 and Home Mortgage Disclosure Act data from 2022 through 2025 (the latest data available).
+
+
+</description>
+                <pubDate>Tue, 10 Nov 2026 07:06:50 -0500</pubDate>
+                <guid isPermaLink="false">/products/gao-27-108908</guid>
+            </item>
+</channel>
+</rss>

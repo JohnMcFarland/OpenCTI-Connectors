@@ -1,0 +1,24 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'ESA Newsroom'
+  scope: 'esa_newsroom'
+  log_level: 'info'
+esa_newsroom:
+  feed_url: 'https://www.esa.int/rss/news.rss,https://www.esa.int/rss/science.rss,https://www.esa.int/rss/operations.rss,https://www.esa.int/rss/earth-observation-programmes.rss,https://www.esa.int/rss/human-and-robotic-exploration.rss,https://www.esa.int/rss/space-transportation.rss,https://www.esa.int/rss/resilience-navigation-and-connectivity.rss,https://www.esa.int/rss/commercialisation-and-industry-partnership.rss'
+  poll_interval: 1800         # seconds between feed polls
+  request_delay: 3           # seconds between articles (and retry backoff base)
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  max_age_days: 30             # skip feed items older than this (0 = no limit)
+  render_retries: 3
+  pdf_render_timeout: 120     # seconds, enforced by pdf-renderer
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'European Space Agency'

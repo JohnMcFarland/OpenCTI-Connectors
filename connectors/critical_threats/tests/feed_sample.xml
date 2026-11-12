@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+<title>Analysis | Critical Threats</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="sXHcBDYfj61PykbVrV4UXIRRH8mgavdZqL89zNHn+H14DU5R54+J6f8lYYqL4922jQOwtRn8Wz32EQrCmcJMIQ==" />
+
+<meta name="google-site-verification" content="sK6K9CgpRCXrPjmshyHtu77__8FzbA4Fu4vMKJTVlps" />
+
+<meta property="og:url" content="https://www.criticalthreats.org/analysis"/>
+<meta property="og:site_name" content="Critical Threats"/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@criticalthreats">
+<meta name="twitter:creator" content="@criticalthreats">
+
+
+
+<meta property="og:title" content="Critical Threats"/>
+<meta name="twitter:title" content="Critical Threats">
+
+<script>
+//<![CDATA[
+window.ajax_url = 'https://www.criticalthreats.org'
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.api_url = 'https://api.criticalthreats.org/v1'
+//]]>
+</script>
+<script>
+//<![CDATA[
+window._token = 'hgHGLWg3skIZ6/YuAGQZEft/Q+pZkVuUnbvaYKN+IdxPfVR4uae0BqkE0XEm2dD78i3sluAH9/DDFe1u61uVgA=='
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+window.signed_in_name = ''
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.signed_in = false
+//]]>
+</script>
+<script>
+//<![CDATA[
+window.google_api = 'AIzaSyBhkXAN6iJYV2b99-3PqPeTQwH8FVQ9doY'
+//]]>
+</script>
+
+<script src="//use.typekit.net/qvb2wjj.js"></script>
+<script>try{Typekit.load({ async: true });}catch(e){}</script>
+
+<style media="screen">
+.wf-loading {
+	visibility: hidden;
+}
+
+.wf-active {
+	visibility: visible;
+}
+
+.wf-inactive {
+/* styles to use when web fonts are inactive */
+}
+</style>
+
+<link rel="shortcut icon" href="/assets/favicon-2495c78b0f2e2313807ff32949366c31088aa37a486f5bf2d1fc40376be96f70.ico">
+
+<link rel="stylesheet" media="print" href="/assets/print-79871ea3afb99353343313cc631f524c4d2367e31e3f910491465fde6f06525f.css" />
+
+		<link rel="stylesheet" media="screen" href="/assets/analysis-bdb060f8a65a4fbb407a69cc87baa1ec5ad51e328448ddff4751381d9eab71fa.css" />
+		<script src="/assets/analysis-head-d480ea1f1aa22789244b1fe64a61ac23c09d1d07012119ec74cfead156b09b78.js"></script>
+	</head>
+	<body ng-app="MainApp" ng-controller="BaseController">
+		<div ng-class="{'aside-open': mobileHeaderDelegate.isOpen()}" class="view-wrapper" id="body-wrapper">
+			<script>
+	window.TOPIC_HASH = [{"id":"org_576a8ccd8043a","title":"Basij","slug":"basij","label":"ORGANIZATION"},{"id":"org_576a8ccd8052d","title":"Hamas","slug":"hamas","label":"ORGANIZATION"},{"id":"org_576a8ccd8061f","title":"Hezbollah","slug":"hezbollah","label":"ORGANIZATION"},{"id":"org_576a8ccd806ad","title":"IRGC","slug":"irgc","label":"ORGANIZATION"},{"id":"org_576a8ccd80755","title":"Quds Force","slug":"quds-force","label":"ORGANIZATION"},{"id":"org_577f2ba1e660f","title":"Jabhat al Nusra (JN)","slug":"jabhat-al-nusra-jn","label":"ORGANIZATION"},{"id":"org_577f4afb9d780","title":"al Qaeda","slug":"al-qaeda","label":"ORGANIZATION"},{"id":"org_577faa5f772de","title":"Tehrik-e-Taliban Pakistan (TTP)","slug":"tehrik-e-taliban-pakistan-ttp","label":"ORGANIZATION"},{"id":"org_577fbc6f6faa5","title":"Ansar al Din","slug":"ansar-al-din","label":"ORGANIZATION"},{"id":"org_577fc1e683dfd","title":"Gulf Cooperation Council","slug":"gulf-cooperation-council","label":"ORGANIZATION"},{"id":"org_577fc50156f71","title":"AQAP","slug":"al-qaeda-in-the-arabian-peninsula","label":"ORGANIZATION"},{"id":"org_578020e172170","title":"Hizb al Islam","slug":"hizb-al-islam","label":"ORGANIZATION"},{"id":"org_57811e94b027b","title":"Khorasan Group","slug":"khorasan-group","label":"ORGANIZATION"},{"id":"org_578122f18442e","title":"Libyan National Army","slug":"libyan-national-army","label":"ORGANIZATION"},{"id":"org_5781230faf0c9","title":"Afghan National Security Forces","slug":"afghan-national-security-forces","label":"ORGANIZATION"},{"id":"org_578126c25afa0","title":"Houthi Movement","slug":"al-houthi-movement","label":"ORGANIZATION"},{"id":"org_57813d24c927d","title":"General People’s Congress","slug":"general-peoples-congress-yemen","label":"ORGANIZATION"},{"id":"org_57813d343dfdd","title":"Ansar al Sharia Tunisia","slug":"ansar-al-sharia-tunisia","label":"ORGANIZATION"},{"id":"org_57814e181267f","title":"Afghan Taliban","slug":"afghan-taliban","label":"ORGANIZATION"},{"id":"org_57815416bde98","title":"Ansaru","slug":"ansaru","label":"ORGANIZATION"},{"id":"org_57827b9d938d8","title":"National Front for the Liberation of Azawad","slug":"national-front-for-the-liberation-of-azawad","label":"ORGANIZATION"},{"id":"org_5782b32f96788","title":"The Islamic State","slug":"islamic-state-of-iraq-and-al-sham-isis","label":"ORGANIZATION"},{"id":"org_5782dd7e14f96","title":"Jaish-e-Mohammad","slug":"jaish-e-mohammad","label":"ORGANIZATION"},{"id":"org_5783939019641","title":"Libya Dawn","slug":"libya-dawn","label":"ORGANIZATION"},{"id":"org_578399aa29aa6","title":"MINUSMA","slug":"minusma","label":"ORGANIZATION"},{"id":"org_57839a9e56a60","title":"Al Shabaab","slug":"al-shabaab","label":"ORGANIZATION"},{"id":"org_5783b3c836a3e","title":"Ansar al Sharia Libya","slug":"ansar-al-sharia-libya","label":"ORGANIZATION"},{"id":"org_5783df1e27bfe","title":"al Qaeda in the Indian Subcontinent","slug":"al-qaeda-in-the-indian-subcontinent","label":"ORGANIZATION"},{"id":"org_5783f7052d258","title":"Arab Movement of Azawad (Rebel)","slug":"arab-movement-of-azawad-rebel","label":"ORGANIZATION"},{"id":"org_5784040ce97ad","title":"ATMIS","slug":"ATMIS","label":"ORGANIZATION"},{"id":"org_57840c282c478","title":"Coordination of the Movement of Azawad (CMA)","slug":"coordination-of-the-movement-of-azawad-cma","label":"ORGANIZATION"},{"id":"org_57840d09689ec","title":"Southern Movement","slug":"southern-movement","label":"ORGANIZATION"},{"id":"org_57840d4da99a6","title":"Boko Haram (ISIS Wilayat Gharb Ifriqiyya)","slug":"boko-haram-isis-wilayat-gharb-ifriqiyya","label":"ORGANIZATION"},{"id":"org_57852125073ee","title":"AQIM","slug":"al-qaeda-in-the-islamic-maghreb","label":"ORGANIZATION"},{"id":"org_57853cf378004","title":"Ahlu Sunna wa al Jama’a (Somalia)","slug":"ahlu-sunna-wa-al-jamaa","label":"ORGANIZATION"},{"id":"org_588f6fc5da95b","title":"al Qaeda in Iraq","slug":"al-qaeda-in-iraq-5b1ff4c8bfef5","label":"ORGANIZATION"},{"id":"org_58b9dd95e0901","title":"ISIS in Libya","slug":"isis-in-libya","label":"ORGANIZATION"},{"id":"org_58b9df3064f36","title":"Petroleum Facilities Guard","slug":"petroleum-facilities-guard","label":"ORGANIZATION"},{"id":"org_58c7e729b4f33","title":"ISIS in Yemen","slug":"isis-in-yemen","label":"ORGANIZATION"},{"id":"org_67b6599478dd6","title":"M23","slug":"m23","label":"ORGANIZATION"},{"id":"org_59f0bb66449f2","title":"Setad","slug":"setad","label":"ORGANIZATION"},{"id":"org_67d2fe009ae95","title":"Democratic Forces for the Liberation of Rwanda (FDLR) ","slug":"democratic-forces-for-the-liberation-of-rwanda-fdlr","label":"ORGANIZATION"},{"id":"org_5a04bbc37a666","title":"Kurdistan Regional Government","slug":"kurdistan-regional-government","label":"ORGANIZATION"},{"id":"org_5a2071b70cf85","title":"Jubilee Party","slug":"jubilee-party","label":"ORGANIZATION"},{"id":"org_5a2078cf9e12c","title":"National Super Alliance","slug":"national-super-alliance","label":"ORGANIZATION"},{"id":"org_5a207ae351bf3","title":"Jama’at Nusrat al Islam w'al Muslimeen","slug":"jamaa-nusrat-al-islam-wal-muslimeen","label":"ORGANIZATION"},{"id":"org_5fce6efb0d54e","title":"Iranian Artesh","slug":"iranian-artesh","label":"ORGANIZATION"},{"id":"org_5fdd1c0762916","title":"IRGC Ground Forces","slug":"irgc-ground-forces-5fdd1c0762955","label":"ORGANIZATION"},{"id":"org_67eebe4bcfd66","title":"ADF/ISCAP","slug":"adf-iscap","label":"ORGANIZATION"},{"id":"org_67e2c8d490b49","title":"Hayat Tahrir al-Sham (HTS) ","slug":"hayat-tahrir-al-sham-hts","label":"ORGANIZATION"},{"id":"org_61857cd54a2d8","title":"Southern Transitional Council","slug":"southern-transitional-council","label":"ORGANIZATION"},{"id":"org_67d2fe7b9469e","title":"Armed Forces of the Democratic Republic of the Congo (FARDC) ","slug":"armed-forces-of-the-democratic-republic-of-the-congo-fardc","label":"ORGANIZATION"},{"id":"org_67eebfda82f9e","title":"CODECO","slug":"codeco","label":"ORGANIZATION"},{"id":"org_650b0d01c93ab","title":"Wagner Group","slug":"wagner-group","label":"ORGANIZATION"},{"id":"org_67d30228ef919","title":"East African Community (EAC) and South African Development Community (SADC) ","slug":"east-african-community-eac-and-south-african-development-community-sadc","label":"ORGANIZATION"},{"id":"per_577d540c950bb","title":"Abdu Rabbu Mansour Hadi","slug":"abdu-rabbu-mansour-hadi","label":"PERSON"},{"id":"per_577f305d70f3e","title":"Ali Mohamed H Rage \"Ali Dheere\"","slug":"ali-mohamed-h-rage-ali-dheere","label":"PERSON"},{"id":"per_577f5a4f7e94a","title":"Ali Khamenei","slug":"ali-khamenei","label":"PERSON"},{"id":"per_577f60fa39e05","title":"Hassan Nasrallah","slug":"hassan-nasrallah","label":"PERSON"},{"id":"per_577f7f0d042e6","title":"Khaled Bahah","slug":"khaled-bahah","label":"PERSON"},{"id":"per_577f7fed01046","title":"Ibrahim Haji Jama Mead \"Al Afghani\"","slug":"ibrahim-haji-jama-mead-al-afghani","label":"PERSON"},{"id":"per_577fa5239e7b7","title":"Ali Abdullah Saleh","slug":"ali-abdullah-saleh","label":"PERSON"},{"id":"per_577fa92d4edf0","title":"Mohammad Ali Jafari","slug":"mohammad-ali-jafari","label":"PERSON"},{"id":"per_577fb65a92f9f","title":"Ali Akbar Velayati","slug":"ali-akbar-velayati","label":"PERSON"},{"id":"per_577ff95d0f813","title":"Ahmad Umar","slug":"ahmad-umar","label":"PERSON"},{"id":"per_577ffc6c53890","title":"Fuad Muhammad Khalaf Shongole","slug":"fuad-muhammad-khalaf-shongole","label":"PERSON"},{"id":"per_5780013453c92","title":"Massoud Barzani","slug":"massoud-barzani","label":"PERSON"},{"id":"per_578001ce89891","title":"Saif al Islam Qaddafi","slug":"saif-al-islam-qaddafi","label":"PERSON"},{"id":"per_57800314659f9","title":"Osama bin Laden","slug":"osama-bin-laden","label":"PERSON"},{"id":"per_578023096f5f2","title":"Hassan Rouhani","slug":"hassan-rouhani","label":"PERSON"},{"id":"per_57811caf33cf2","title":"Qasim al Raymi","slug":"qasim-al-raymi","label":"PERSON"},{"id":"per_5781337b1456f","title":"Ahmed Abdi Aw Mohamed \"Godane\"","slug":"ahmed-abdi-aw-mohamed-godane","label":"PERSON"},{"id":"per_57813ebf9cfc6","title":"Raila Odinga","slug":"raila-odinga","label":"PERSON"},{"id":"per_578159700b3ac","title":"Mullah Fazlullah","slug":"mullah-fazlullah","label":"PERSON"},{"id":"per_57827044b6870","title":"Hassan Dahir Aweys","slug":"hassan-dahir-aweys","label":"PERSON"},{"id":"per_578273406572e","title":"Khaled Batarfi","slug":"khaled-batarfi","label":"PERSON"},{"id":"per_57829a22ed0af","title":"Abdul Malik al Houthi","slug":"abdul-malik-al-houthi","label":"PERSON"},{"id":"per_5782af59a740c","title":"Mohamed Abdullahi Mohamed \"Farmaajo\"","slug":"mohamed-abdullahi-mohamed-farmajo","label":"PERSON"},{"id":"per_5782d23630100","title":"Anwar al Awlaki","slug":"anwar-al-awlaki","label":"PERSON"},{"id":"per_5782edf2739f6","title":"Naim Qassem","slug":"naim-qassem","label":"PERSON"},{"id":"per_5782ee207fedf","title":"Ayman al Zawahiri","slug":"ayman-al-zawahiri","label":"PERSON"},{"id":"per_578392ed3b762","title":"Hamza bin Laden","slug":"hamza-bin-laden","label":"PERSON"},{"id":"per_5783aad80438b","title":"Yahya al-Sinwar","slug":"yahya-al-sinwar","label":"PERSON"},{"id":"per_5783cc03ab02e","title":"Mukhtar Robow","slug":"mukhtar-robow","label":"PERSON"},{"id":"per_5783d363efbc6","title":"Nasser al Wahayshi","slug":"nasser-al-wahayshi","label":"PERSON"},{"id":"per_57843847b7a7f","title":"Abu Bakr al Baghdadi","slug":"abu-bakr-al-baghdadi","label":"PERSON"},{"id":"per_57843fd721754","title":"Qassem Soleimani","slug":"qassem-soleimani","label":"PERSON"},{"id":"per_57853f5556fee","title":"Massoud Pezeshkian","slug":"massoud-pezeshkian","label":"PERSON"},{"id":"per_67e2c88c20500","title":"Akram Abbas al-Ka’abi","slug":"akram-abbas-al-kaabi","label":"PERSON"},{"id":"per_67e2c44bd7ad1","title":"Abu Mohammad al-Jolani Ahmed al Shara ","slug":"abu-mohammad-al-jolani-ahmed-al-shara","label":"PERSON"},{"id":"per_59f0b87ce60e3","title":"Khalifa Haftar","slug":"khalifa-haftar","label":"PERSON"},{"id":"per_67b62d8e91672","title":"Félix Tshisekedi","slug":"felix-tshisekedi","label":"PERSON"},{"id":"per_67aa76e5991ae","title":"Behrouz Esbati ","slug":"behrouz-esbati-67aa76e5991f1","label":"PERSON"},{"id":"per_5cc1cf04037a6","title":"Ebrahim Raisi","slug":"ebrahim-raisi","label":"PERSON"},{"id":"per_6834c2ece5d31","title":"Nidal Morrison","slug":"nidal-morrison","label":"PERSON"},{"id":"per_67e2c4a1242e0","title":"Mahmoud al Mashhadani ","slug":"mahmoud-al-mashhadani","label":"PERSON"},{"id":"per_67e2c4bed99ee","title":"Abdullah Ocalan","slug":"abdullah-ocalan-67e2c4bed9a2e","label":"PERSON"},{"id":"per_67e2c4c520a43","title":"Abdullah Ocalan","slug":"abdullah-ocalan-67e2c4c520a83","label":"PERSON"},{"id":"per_67e2c4d07cbed","title":"Masoud Pezeshkian","slug":"masoud-pezeshkian","label":"PERSON"},{"id":"per_67e2c89b85085","title":"Abdul Latif al Rashid","slug":"abdul-latif-al-rashid","label":"PERSON"},{"id":"per_67e2c8ab59202","title":"Mohammed Shia al-Sudani ","slug":"mohammed-shia-al-sudani","label":"PERSON"},{"id":"per_67e2c8b8d993c","title":"Grand Ayatollah Ali al-Sistani ","slug":"grand-ayatollah-ali-al-sistani","label":"PERSON"},{"id":"per_67225869b9bb5","title":"Mohammad al Houthi","slug":"mohammad-al-houthi","label":"PERSON"},{"id":"per_61857ca4504eb","title":"Mohammed Hussein Roble","slug":"mohammed-hussein-roble","label":"PERSON"},{"id":"per_67d300bfd1f95","title":"Paul Kagame","slug":"paul-kagame","label":"PERSON"},{"id":"per_67d3011410214","title":"Corneille Nangaa","slug":"corneille-nangaa","label":"PERSON"},{"id":"loc_576a8c62a1ebc","title":"Afghanistan","slug":"afghanistan","label":"LOCATION"},{"id":"loc_576a8c62a224d","title":"Algeria","slug":"algeria","label":"LOCATION"},{"id":"loc_576a8c62a319f","title":"Bahrain","slug":"bahrain","label":"LOCATION"},{"id":"loc_576a8c62a326e","title":"Bangladesh","slug":"bangladesh","label":"LOCATION"},{"id":"loc_576a8c62a33c7","title":"Belarus","slug":"belarus","label":"LOCATION"},{"id":"loc_576a8c62a3abc","title":"Burkina Faso","slug":"burkina-faso","label":"LOCATION"},{"id":"loc_576a8c62a3c06","title":"Burundi","slug":"burundi","label":"LOCATION"},{"id":"loc_576a8c62a3dca","title":"Cameroon","slug":"cameroon","label":"LOCATION"},{"id":"loc_576a8c62a4bf4","title":"Djibouti","slug":"djibouti","label":"LOCATION"},{"id":"loc_576a8c62a4ec3","title":"Egypt","slug":"egypt","label":"LOCATION"},{"id":"loc_576a8c62a509d","title":"Eritrea","slug":"eritrea","label":"LOCATION"},{"id":"loc_576a8c62a51d4","title":"Ethiopia","slug":"ethiopia","label":"LOCATION"},{"id":"loc_576a8c62a53a6","title":"France","slug":"france","label":"LOCATION"},{"id":"loc_576a8c62a5742","title":"Germany","slug":"germany","label":"LOCATION"},{"id":"loc_576a8c62a6135","title":"India","slug":"india","label":"LOCATION"},{"id":"loc_576a8c804a483","title":"Iran","slug":"iran","label":"LOCATION"},{"id":"loc_576a8c804abe3","title":"Iraq","slug":"iraq","label":"LOCATION"},{"id":"loc_576a8c62a6452","title":"Israel","slug":"israel","label":"LOCATION"},{"id":"loc_576a8c62a677f","title":"Kazakhstan","slug":"kazakhstan","label":"LOCATION"},{"id":"loc_576a8c62a681f","title":"Kenya","slug":"kenya","label":"LOCATION"},{"id":"loc_576a8c62a69d5","title":"Kuwait","slug":"kuwait","label":"LOCATION"},{"id":"loc_576a8c804acd7","title":"Lebanon","slug":"lebanon","label":"LOCATION"},{"id":"loc_576a8c62a6df3","title":"Libya","slug":"libya","label":"LOCATION"},{"id":"loc_576a8c62a74f4","title":"Mali","slug":"mali","label":"LOCATION"},{"id":"loc_576a8c62a759c","title":"Malta","slug":"malta","label":"LOCATION"},{"id":"loc_576a8c62a7712","title":"Mauritania","slug":"mauritania","label":"LOCATION"},{"id":"loc_576a8c62a8361","title":"Morocco","slug":"morocco","label":"LOCATION"},{"id":"loc_576a8c62a8976","title":"Niger","slug":"niger","label":"LOCATION"},{"id":"loc_576a8c62a8a30","title":"Nigeria","slug":"nigeria","label":"LOCATION"},{"id":"loc_576a8c62a8c9f","title":"Oman","slug":"oman","label":"LOCATION"},{"id":"loc_576a8c62a8d5c","title":"Pakistan","slug":"pakistan","label":"LOCATION"},{"id":"loc_576a8c62a8ec1","title":"Palestinian Territories","slug":"palestinian-territories","label":"LOCATION"},{"id":"loc_576a8c62a9468","title":"Qatar","slug":"qatar","label":"LOCATION"},{"id":"loc_576a8c62a97e9","title":"Russia","slug":"russia","label":"LOCATION"},{"id":"loc_576a8c62aa318","title":"Saudi Arabia","slug":"saudi-arabia","label":"LOCATION"},{"id":"loc_576a8c62aa3f2","title":"Senegal","slug":"senegal","label":"LOCATION"},{"id":"loc_576a8c62aa8c5","title":"Somalia","slug":"somalia","label":"LOCATION"},{"id":"loc_576a8c62aac4c","title":"Sudan","slug":"sudan","label":"LOCATION"},{"id":"loc_576a8c62ab013","title":"Syria","slug":"syria","label":"LOCATION"},{"id":"loc_576a8c62ab715","title":"Tunisia","slug":"tunisia","label":"LOCATION"},{"id":"loc_576a8c62ab806","title":"Turkey","slug":"turkey","label":"LOCATION"},{"id":"loc_576a8c62aba18","title":"Uganda","slug":"uganda","label":"LOCATION"},{"id":"loc_576a8c62ababe","title":"United Arab Emirates","slug":"united-arab-emirates","label":"LOCATION"},{"id":"loc_576a8c62abb76","title":"United Kingdom","slug":"united-kingdom","label":"LOCATION"},{"id":"loc_576a8c62ac086","title":"Yemen","slug":"yemen","label":"LOCATION"},{"id":"loc_577f69d55214e","title":"Jordan","slug":"jordan","label":"LOCATION"},{"id":"loc_5780076d1c330","title":"Ukraine","slug":"ukraine","label":"LOCATION"},{"id":"loc_578145209a5d0","title":"Myanmar","slug":"myanmar","label":"LOCATION"},{"id":"loc_67b658cb9a5d1","title":"Rwanda","slug":"rwanda-67b658cb9a60f","label":"LOCATION"},{"id":"loc_6081dee738c02","title":"Tanzania","slug":"tanzania-6081dee738c41","label":"LOCATION"},{"id":"loc_6081df1a1065b","title":"Democratic Republic of the Congo","slug":"democratic-republic-of-the-congo-6081df1a1069c","label":"LOCATION"},{"id":"loc_607de3a889e68","title":"Mozambique","slug":"mozambique-607de3a889ea7","label":"LOCATION"},{"id":"loc_6081deb89a4cf","title":"Chad","slug":"chad-6081deb89a510","label":"LOCATION"},{"id":"loc_6081e23db4c5c","title":"Benin","slug":"benin-6081e23db4c9c","label":"LOCATION"},{"id":"loc_6448138ca29f7","title":"China","slug":"china-6448138ca2a37","label":"LOCATION"},{"id":"loc_644813950213b","title":"Taiwan","slug":"taiwan-644813efebac3","label":"LOCATION"}];
+</script>
+
+<header id="site-header"  ng-controller="HeaderController">
+	<div class="container">
+		<span id="search">
+			<form id="frm-search" method="GET" action="/search">
+				<input type="text" name="s" autocomplete="off" placeholder="Search Here" ng-model="query_string" ng-focus="set_focused_field($event)" ng-blur="remove_focused_field($event)" />
+				<suggestiondrawer type="mini" q="query_string" field="active_search_field"></suggestiondrawer>
+			</form>
+		</span>
+		<nav id="mobile-header-menu">
+			<a href="#" ng-click="mobileHeaderDelegate.toggle()"><div class="mhm-hamburger"></div></a>
+			<a href="/"><div class="mhm-logo"></div></a>
+			<a href="/search"><div class="mhm-search"></div></a>
+		</nav>
+		<nav id="user-menu">
+			<ul>
+				<li class="donate"><a href="/donate">Donate</a></li>
+				<li class="the-project"><a href="/the-project">The Project</a></li>
+				<li class="user" ng-show="signed_in" ng-cloak>
+					<a href="/webusers/edit">
+						Hi, {{signed_in_name}}
+</a>				</li>
+				<li class="login" ng-hide="signed_in" ng-cloak><a href="/webusers/sign_in">Login</a></li>
+				<li>
+					<a href="javascript:void(0);" id="hamburger-link-top-menu" ng-class="showMenuHamburger ? 'on' : ''" ng-click="toggleMenuHamburger()"></a>
+					<ul id="user-menu-hamburger-drop" ng-class="showMenuHamburger ? 'open' : ''">
+						<li><a href="/the-project">The Project</a></li>
+						<li><a href="/team">Our Team</a></li>
+						<li><a href="/contributors">Contributors</a></li>
+						<li><a href="/tech-partners">Tech Partners</a></li>
+						<li><a href="/join">Join Us</a></li>
+						<li><a ng-click="contact()">Contact</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/bookmarks">Bookmarks</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/subscriptions">Subscriptions</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/webusers/edit">Profile</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/webusers/sign_out">Sign Out</a></li>
+						<li ng-hide="signed_in" ng-cloak><a href="/webusers/sign_up">Sign Up</a></li>
+						<li ng-hide="signed_in" ng-cloak><a href="/webusers/sign_in">Sign In</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+		<nav id="main-menu">
+			<ul>
+				<li class="search">
+					<a id="search-link-main-menu" href="/search"></a>
+				</li>
+				<li ng-class="showRegionsMegaMenu ? 'regions active' : 'regions'"><a ng-click="showMegaMenu('regions')">Countries<span class="arrow"></span></a></li>
+				<li ng-class="showActorsMegaMenu ? 'actors active' : 'actors'"><a ng-click="showMegaMenu('actors')">Key Players<span class="arrow"></span></a></li>
+				<li id="main-brand"><a href="/"></a></li>
+				<li ng-class="showMaproomMegaMenu ? 'map-room active' : 'map-room'"><a href="/subscribe">Subscribe<span class="arrow"></span></a></li>
+				<li ng-class="showBriefingsMegaMenu ? 'briefings active' : 'briefings'"><a ng-click="showMegaMenu('briefings')">Briefings<span class="arrow"></span></a></li>
+				<li class="hamburger">
+					<a id="hamburger-link-main-menu" ng-class="showMenuHamburger ? 'on' : ''" ng-click="toggleMenuHamburger()"></a>
+					<ul id="main-hamburger-drop" ng-class="showMenuHamburger ? 'open' : ''">
+						<li><a href="/the-project">The Project</a></li>
+						<li><a href="/team">Our Team</a></li>
+						<li><a href="/contributors">Contributors</a></li>
+						<li><a href="/tech-partners">Tech Partners</a></li>
+						<li><a href="/join">Join Us</a></li>
+						<li><a ng-click="contact()">Contact</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/bookmarks">Bookmarks</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/subscriptions">Subscriptions</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/webusers/edit">Profile</a></li>
+						<li ng-show="signed_in" ng-cloak><a href="/webusers/sign_out">Sign Out</a></li>
+						<li ng-hide="signed_in" ng-cloak><a href="/webusers/sign_up">Sign Up</a></li>
+						<li ng-hide="signed_in" ng-cloak><a href="/webusers/sign_in">Sign In</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+
+	</div>
+
+	<section id="mobile-aside-menu">
+		<div id="aside-menu-container">
+			<div class="aside-menu-item">
+				<div class="ami-listing" ng-click="expandTab($event)">
+					<div class="aside-menu-item-icon location"></div>
+					<span class="aside-menu-item-label">Countries</span>
+					<div class="aside-menu-item-icon arrow"></div>
+				</div>
+				<div class="ami-drawer">
+					<a href="/locations/{{region.slug}}" ng-repeat="(i,region) in trending_regions"><div class="ami-drawer-item">{{region.title}}</div></a>
+					<a href="/locations"><div class="ami-drawer-item">Others <span class="text-red">(A FULL LIST)</span></div></a>
+				</div>
+			</div>
+			<div class="aside-menu-item">
+				<div class="ami-listing" ng-click="expandTab($event)">
+					<div class="aside-menu-item-icon actors"></div>
+					<span class="aside-menu-item-label">People</span>
+					<div class="aside-menu-item-icon arrow"></div>
+				</div>
+				<div class="ami-drawer">
+					<a href="/people/{{person.slug}}" ng-repeat="(i,person) in trending_people"><div class="ami-drawer-item">{{person.title}}</div></a>
+					<a href="/people"><div class="ami-drawer-item">Others <span class="text-red">(A FULL LIST)</span></div></a>
+				</div>
+			</div>
+			<div class="aside-menu-item">
+				<div class="ami-listing" ng-click="expandTab($event)">
+					<div class="aside-menu-item-icon groups"></div>
+					<span class="aside-menu-item-label">Groups</span>
+					<div class="aside-menu-item-icon arrow"></div>
+				</div>
+				<div class="ami-drawer">
+					<a href="/organizations/{{organization.slug}}" ng-repeat="(i,organization) in trending_organizations"><div class="ami-drawer-item">{{organization.title}}</div></a>
+					<a href="/organizations"><div class="ami-drawer-item">Others <span class="text-red">(A FULL LIST)</span></div></a>
+				</div>
+			</div>
+			<div class="aside-menu-item">
+				<div class="ami-listing" ng-click="expandTab($event)">
+					<div class="aside-menu-item-icon maps"></div>
+					<span class="aside-menu-item-label">Map Room</span>
+					<div class="aside-menu-item-icon arrow"></div>
+				</div>
+				<div class="ami-drawer">
+					<a href="#"><div class="ami-drawer-item">Coming Soon</div></a>
+				</div>
+			</div>
+			<div class="aside-menu-item">
+				<div class="ami-listing" ng-click="expandTab($event)">
+					<div class="aside-menu-item-icon briefings"></div>
+					<span class="aside-menu-item-label">Briefings</span>
+					<div class="aside-menu-item-icon arrow"></div>
+				</div>
+				<div class="ami-drawer">
+					<a href="/briefs/{{series.slug}}" ng-repeat="(i,series) in trending_briefs"><div class="ami-drawer-item">{{series.title}}</div></a>
+					<a href="/briefs"><div class="ami-drawer-item">Others <span class="text-red">(A FULL LIST)</span></div></a>
+				</div>
+			</div>
+			<div class="ami-divider"></div>
+			<a href="/the-project">
+				<div class="aside-menu-item">
+					<div class="ami-listing grey">
+						<div class="aside-menu-item-icon theproject"></div>
+						<span class="aside-menu-item-label">The Project</span>
+						<div class="aside-menu-item-icon arrow"></div>
+					</div>
+				</div>
+			</a>
+				<a href="/webusers/sign_in">
+				<div class="aside-menu-item">
+					<div class="ami-listing">
+						<div class="aside-menu-item-icon signin"></div>
+						<span class="aside-menu-item-label">Sign In</span>
+						<div class="aside-menu-item-icon arrow"></div>
+					</div>
+				</div>
+</a>
+			<a href="/donate">
+				<div class="aside-menu-item">
+					<div class="ami-listing red">
+						<div class="aside-menu-item-icon donate"></div>
+						<span class="aside-menu-item-label">Donate</span>
+						<div class="aside-menu-item-icon arrow"></div>
+					</div>
+				</div>
+			</a>
+
+			<!-- <div class="aside-menu-footer">
+				<div class="left-pane">
+						<a href="/webusers/sign_in">
+							<div class="sign-in-listing">
+								<div class="icon"></div>
+								<div class="label">Sign In</div>
+							</div>
+</a>				</div>
+				<div class="right-pane">
+				</div>
+			</div> -->
+		</div>
+	</section>
+
+	<section id="regions-mega-menu" ng-class="showRegionsMegaMenu ? 'mega-menu on' : 'mega-menu'" ng-cloak>
+		<h2 class="temporary" ng-show="mmLoading">Loading...</h2>
+		<div class="mega-container" ng-hide="mmLoading">
+			<div class="mega-map-area">
+				<div class="mega-map-images">
+					<img ng-repeat="(i,region) in trending_regions" ng-src="{{region.menu_image_url}}" ng-class="activeRegion == i ? 'on' : ''" style="cursor: default;"/>
+					<img src="https://www.criticalthreats.org/assets/menu-map-blank-172808a4d3da893b35da2da2ee268bb51cc8cee13795c0e0abb6277479b120b4.png" ng-class="activeRegion == trending_regions.length ? 'on' : ''" style="cursor: default;"/>
+				</div>
+			</div>
+			<div class="mega-content-area">
+				<ul class="mega-content-large-list" ng-class="showRegionDetail ? 'off' : ''">
+					<li ng-repeat="(i,region) in trending_regions"><a ng-click="loadRegionDetail(region.id)" ng-mouseover="activateRegion(i)" ng-class="activeRegion == i ? 'active' : ''">{{region.title}}</a></li>
+					<li><a href="/locations" ng-mouseover="activateRegion(trending_regions.length)" ng-class="activeRegion == trending_regions.length ? 'active' : ''">Others <small>(a full list)</small></a></li>
+				</ul>
+				<div class="mega-content-area-detail" ng-class="showRegionDetail ? 'on' : ''">
+					<div class="mega-content-area-detail-blurb">
+						<h2>
+							<a href="/locations/{{region_detail.slug}}">{{region_detail.title}}</a>
+							<a class="mega-content-area-detail-close" ng-click="closeRegionDetail()" ng-show="regionDetailLoaded">back</a>
+						</h2>
+						<p>{{region_detail.text}}</p>
+						<a ng-href="/locations/{{region_detail.slug}}" ng-show="regionDetailLoaded">SEE STORYSTREAM</a>
+					</div>
+					<div class="mega-content-area-detail-related">
+						<ul>
+							<li ng-repeat="(i,item) in region_detail.related_content | limitTo:2">
+								<small>{{item.label}}</small>
+								<a ng-href="{{item.link}}"><h5 ng-bind-html="item.title"></h5></a>
+								<time>{{item.date}}</time>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<a class="mega-menu-close" ng-click="closeMegaMenu()">&times;</a>
+	</section>
+
+	<section id="actors-mega-menu" ng-class="showActorsMegaMenu ? 'mega-menu on' : 'mega-menu'" ng-cloak>
+		<h2 class="temporary" ng-show="mmLoading">Loading...</h2>
+		<div class="mega-container" ng-hide="mmLoading">
+			<div class="mega-map-area">
+				<div class="mega-map-images">
+					<img ng-repeat="(i,person) in trending_people" ng-src="{{person.menu_image_url}}" ng-class="activePerson == i ? 'on' : ''" style="cursor: default;"/>
+					<img src="https://www.criticalthreats.org/assets/menu-map-blank-172808a4d3da893b35da2da2ee268bb51cc8cee13795c0e0abb6277479b120b4.png"  ng-class="activePerson == trending_people.length ? 'on' : ''" style="cursor: default;"/>
+					<img ng-repeat="(i,organization) in trending_organizations" ng-src="{{organization.menu_image_url}}" ng-class="activeOrganization == i ? 'on' : ''" style="cursor: default;"/>
+					<img src="https://www.criticalthreats.org/assets/menu-map-blank-172808a4d3da893b35da2da2ee268bb51cc8cee13795c0e0abb6277479b120b4.png" ng-class="activeOrganization == trending_organizations.length ? 'on' : ''" style="cursor: default;"/>
+				</div>
+			</div>
+			<div class="mega-content-area">
+				<div class="mega-content-normal-list" ng-class="showPersonDetail || showOrganizationDetail ? 'off' : ''">
+					<h2>People</h2>
+					<ul>
+						<li ng-repeat="(i,person) in trending_people"><a ng-click="loadPersonDetail(person.id)" ng-mouseover="activatePerson(i)" ng-class="activePerson == i ? 'active' : ''">{{person.title}}</a></li>
+						<li><a href="/people" ng-mouseover="activatePerson(trending_people.length)" ng-class="activePerson == trending_people.length ? 'active' : ''">Others <small>(a full list)</small></a></li>
+					</ul>
+				</div>
+				<div class="mega-content-normal-list" ng-class="showPersonDetail || showOrganizationDetail ? 'off' : ''">
+					<h2>Groups</h2>
+					<ul>
+						<li ng-repeat="(i,organization) in trending_organizations"><a ng-click="loadOrganizationDetail(organization.id)" ng-mouseover="activateOrganization(i)" ng-class="activeOrganization == i ? 'active' : ''">{{organization.title}}</a></li>
+						<li><a href="/organizations" ng-mouseover="activateOrganization(trending_organizations.length)" ng-class="activeOrganization == trending_organizations.length ? 'active' : ''">Others <small>(a full list)</small></a></li>
+					</ul>
+				</div>
+				<div class="mega-content-area-detail" ng-class="showPersonDetail ? 'on' : ''">
+					<div class="mega-content-area-detail-blurb">
+						<h2>
+							<a href="/people/{{region_detail.slug}}">{{person_detail.title}}</a>
+							<a class="mega-content-area-detail-close" ng-click="closePersonDetail()" ng-show="personDetailLoaded">back</a>
+						</h2>
+						<p>{{person_detail.text}}</p>
+						<a ng-href="/people/{{person_detail.slug}}" ng-show="personDetailLoaded">SEE STORYSTREAM</a>
+					</div>
+					<div class="mega-content-area-detail-related">
+						<ul>
+							<li ng-repeat="(i,item) in person_detail.related_content | limitTo:2">
+								<small>{{item.label}}</small>
+								<a ng-href="{{item.link}}"><h5 ng-bind-html="item.title"></h5></a>
+								<time>{{item.date}}</time>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="mega-content-area-detail" ng-class="showOrganizationDetail ? 'on' : ''">
+					<div class="mega-content-area-detail-blurb">
+						<h2>
+							<a href="/organizations/{{organization_detail.slug}}">{{organization_detail.title}}</a>
+							<a class="mega-content-area-detail-close" ng-click="closeOrganizationDetail()" ng-show="organizationDetailLoaded">back</a>
+						</h2>
+						<p>{{organization_detail.text}}</p>
+						<a ng-href="/organizations/{{organization_detail.slug}}" ng-show="organizationDetailLoaded">SEE STORYSTREAM</a>
+					</div>
+					<div class="mega-content-area-detail-related">
+						<ul>
+							<li ng-repeat="(i,item) in organization_detail.related_content | limitTo:2">
+								<small>{{item.label}}</small>
+								<a ng-href="{{item.link}}"><h5 ng-bind-html="item.title"></h5></a>
+								<time>{{item.date}}</time>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<a class="mega-menu-close" ng-click="closeMegaMenu()">&times;</a>
+	</section>
+
+	<section id="maproom-mega-menu" ng-class="showMaproomMegaMenu ? 'mega-menu on' : 'mega-menu'" ng-cloak>
+		<h2 class="temporary">coming soon</h2>
+		<a class="mega-menu-close" ng-click="closeMegaMenu()">&times;</a>
+	</section>
+
+	<section id="briefings-mega-menu" ng-class="showBriefingsMegaMenu ? 'mega-menu on' : 'mega-menu'" ng-cloak>
+		<h2 class="temporary" ng-show="mmLoading">Loading...</h2>
+		<div class="mega-container" ng-hide="mmLoading">
+			<div class="mega-map-area">
+				<div class="mega-map-images">
+					<img ng-repeat="(i,series) in trending_briefs" ng-click="goToBriefSeries(series.slug)" ng-src="{{series.menu_image_url}}" ng-class="activeBrief == i ? 'on' : ''"/>
+				</div>
+			</div>
+			<div class="mega-content-area">
+				<div class="mega-content-normal-list">
+					<h2>Briefs</h2>
+					<ul>
+						<li ng-repeat="(i,series) in trending_briefs">
+							<a href="/briefs/{{series.slug}}" ng-mouseover="activateBrief(i)" ng-class="activeBrief == i ? 'active' : ''">{{series.title}}</a>
+						</li>
+						<li>
+							<a href="/briefs"><div class="ami-drawer-item">Full List</div></a>
+						</li>
+					</ul>
+
+				</div>
+				<div class="mega-content-area-detail on">
+					<div ng-repeat="(i,series) in trending_briefs" ng-class="activeBrief == i ? 'mega-content-area-detail-blurb-large on' : 'mega-content-area-detail-blurb-large'">
+						<!-- -->
+						<h2><a href="/briefs/{{series.slug}}">{{series.title}}</a></h2>
+						<!-- <small>(Updated Daily)</small> -->
+						<p>{{series.description | limitTo:140}}</p>
+						<a href="/briefs/{{series.slug}}/{{series.fb_slug}}" class="mega-content-area-detail-latest-link">{{series.fb_title}}</a>
+						<input class="button" type="button" value="Get The Review" ng-click="addSubscription($event,{ heading:'Get The Review', label:'BRIEFSERIES', id:series.id, slug:series.slug, title:series.title })" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<a class="mega-menu-close" ng-click="closeMegaMenu()">&times;</a>
+	</section>
+</header>
+
+
+			<main>
+				
+<script>
+	var INI_LIST = [];
+</script>
+
+<div class="container page-container">
+	<section id="main-content">
+
+		<div id="main-page-title">
+			<h1 class="barred-heading">Analysis</h1>
+		</div>
+
+		<div class="article-sort">
+
+	<span class="article-display-type">
+		<i class="list-view" ng-class="view_mode=='list'?'active':''" ng-click="switchView('list')"></i>
+		<i class="grid-view" ng-class="view_mode=='grid'?'active':''" ng-click="switchView('grid')"></i>
+		<div style="clear:both;"></div>
+	</span>
+
+
+<div class="article-list" ng-show="view_mode=='list'">
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-11-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/NewIranUpdate-square-1300-1-1024x1024.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-11-2026', 'Iran Update, November 11, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af50d537f96d', slug:'iran-update-november-11-2026', title:'Iran Update, November 11, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-11-2026">Iran Update, November 11, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kelly-campa-662997ae1f31a" class="author-name">Kelly Campa</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-schmida" class="author-name">Ben Schmida</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-rezaei" class="author-name"> Ben Rezaei</a>
+			</span>
+
+		<span class="article-recency">
+			20 minutes ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-10-2026-6af496163efe2'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-10-2026-1.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-10-2026-6af496163efe2', 'Russian Offensive Campaign Assessment, November 10, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af495f980982', slug:'russian-offensive-campaign-assessment-november-10-2026-6af496163efe2', title:'Russian Offensive Campaign Assessment, November 10, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-10-2026-6af496163efe2">Russian Offensive Campaign Assessment, November 10, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/christina-harward" class="author-name">Christina Harward</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/alexander-neuman" class="author-name">Alexander Neuman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jacob-spencer" class="author-name">Jacob Spencer</a>
+			</span>
+
+		<span class="article-recency">
+			8 hours ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-10-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-10-2026-1.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-10-2026', 'Iran Update, November 10, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af3bbd0728b8', slug:'iran-update-november-10-2026', title:'Iran Update, November 10, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-10-2026">Iran Update, November 10, 2026</a></h3>
+
+
+		<span class="article-recency">
+			1 day ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-09-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-09-2026', 'Iran Update: November 09, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af27ba89b2c9', slug:'iran-update-november-09-2026', title:'Iran Update: November 09, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-09-2026">Iran Update: November 09, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/annika-ganzeveld" class="author-name">Annika Ganzeveld</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/parker-hempel" class="author-name">Parker Hempel</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kinser-rafert" class="author-name">Kinser Rafert</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ria-reddy" class="author-name">Ria Reddy</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nidal-morrison" class="author-name">Nidal Morrison</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/adham-fattah" class="author-name">Adham Fattah</a>
+			</span>
+
+		<span class="article-recency">
+			1 day ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-9-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-9-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-9-2026', 'Russian Offensive Campaign Assessment, November 9, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af278e6f1fb6', slug:'russian-offensive-campaign-assessment-november-9-2026', title:'Russian Offensive Campaign Assessment, November 9, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-9-2026">Russian Offensive Campaign Assessment, November 9, 2026</a></h3>
+
+
+		<span class="article-recency">
+			1 day ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-8-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-8-2026-1.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-8-2026', 'Russian Offensive Campaign Assessment, November 8, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af1196a546bf', slug:'russian-offensive-campaign-assessment-november-8-2026', title:'Russian Offensive Campaign Assessment, November 8, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-8-2026">Russian Offensive Campaign Assessment, November 8, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kateryna-stepanenko" class="author-name">Kateryna Stepanenko</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/alexander-neuman" class="author-name">Alexander Neuman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/samuel-frykholm" class="author-name">Samuel Frykholm</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/grace-mappes" class="author-name">Grace Mappes</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+
+		<span class="article-recency">
+			3 days ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-8-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-8-2026-1.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-8-2026', 'Iran Update, November 8, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6af0e23aefe48', slug:'iran-update-november-8-2026', title:'Iran Update, November 8, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-8-2026">Iran Update, November 8, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/annika-ganzeveld" class="author-name">Annika Ganzeveld</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ria-reddy" class="author-name">Ria Reddy</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nidal-morrison" class="author-name">Nidal Morrison</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+
+		<span class="article-recency">
+			3 days ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-7-2026-6aefc4cc503e5'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-7-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-7-2026-6aefc4cc503e5', 'Russian Offensive Campaign Assessment, November 7, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aefc49ad08cb', slug:'russian-offensive-campaign-assessment-november-7-2026-6aefc4cc503e5', title:'Russian Offensive Campaign Assessment, November 7, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-7-2026-6aefc4cc503e5">Russian Offensive Campaign Assessment, November 7, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kateryna-stepanenko" class="author-name">Kateryna Stepanenko</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christina-harward" class="author-name">Christina Harward</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kateryna-shymkiv" class="author-name">Kateryna Shymkiv</a>
+			</span>
+
+		<span class="article-recency">
+			4 days ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-7-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-7-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-7-2026', 'Iran Update, November 7, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aef9209c656f', slug:'iran-update-november-7-2026', title:'Iran Update, November 7, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-7-2026">Iran Update, November 7, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/annika-ganzeveld" class="author-name">Annika Ganzeveld</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-rezaei" class="author-name"> Ben Rezaei</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+
+		<span class="article-recency">
+			4 days ago
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-6-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-6-2026-819x1024.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-6-2026', 'Russian Offensive Campaign Assessment, November 6, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aee7a4d1d956', slug:'russian-offensive-campaign-assessment-november-6-2026', title:'Russian Offensive Campaign Assessment, November 6, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-6-2026">Russian Offensive Campaign Assessment, November 6, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/frederick-w-kagan" class="author-name">Frederick W. Kagan</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kateryna-shymkiv" class="author-name">Kateryna Shymkiv</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/mason-clark" class="author-name">Mason Clark</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/emily-hebel-6aee7b827dc01" class="author-name">Emily Hebel</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/veronica-iredale" class="author-name">Veronica Iredale</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christina-harward" class="author-name">Christina Harward</a>
+			</span>
+
+		<span class="article-recency">
+			November 06, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-6-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/NewIranUpdate-square-1300-1-1024x1024.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-6-2026', 'Iran Update, November 6, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aee749053201', slug:'iran-update-november-6-2026', title:'Iran Update, November 6, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-6-2026">Iran Update, November 6, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/annika-ganzeveld" class="author-name">Annika Ganzeveld</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-rezaei" class="author-name"> Ben Rezaei</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/shealtiel-kiser-6aee761910cfb" class="author-name">Shealtiel Kiser</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kinser-rafert" class="author-name">Kinser Rafert</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/william-doran" class="author-name">William Doran</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/parker-hempel" class="author-name">Parker Hempel</a>
+			</span>
+
+		<span class="article-recency">
+			November 06, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-05-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-05-2026', 'Iran Update: November 05, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aed457ce68f5', slug:'iran-update-november-05-2026', title:'Iran Update: November 05, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-05-2026">Iran Update: November 05, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kelly-campa-662997ae1f31a" class="author-name">Kelly Campa</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ria-reddy" class="author-name">Ria Reddy</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kinser-rafert" class="author-name">Kinser Rafert</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/parker-hempel" class="author-name">Parker Hempel</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+
+		<span class="article-recency">
+			November 05, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-5-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-5-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-5-2026', 'Russian Offensive Campaign Assessment, November 5, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aed1b54935ca', slug:'russian-offensive-campaign-assessment-november-5-2026', title:'Russian Offensive Campaign Assessment, November 5, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-5-2026">Russian Offensive Campaign Assessment, November 5, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/karolina-hird" class="author-name">Karolina Hird</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/alexander-neuman" class="author-name">Alexander Neuman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kateryna-shymkiv" class="author-name">Kateryna Shymkiv</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/samuel-frykholm" class="author-name">Samuel Frykholm</a>
+			</span>
+
+		<span class="article-recency">
+			November 05, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russia-rsf-saf-sudan-tplf-eritrea-ethiopia'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Africa-File-Web-Bar.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russia-rsf-saf-sudan-tplf-eritrea-ethiopia', 'Russia-Africa Summit; Sudan’s Drone War Intensifies: Africa File, November 5, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aecff3e8a424', slug:'russia-rsf-saf-sudan-tplf-eritrea-ethiopia', title:'Russia-Africa Summit; Sudan’s Drone War Intensifies: Africa File, November 5, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russia-rsf-saf-sudan-tplf-eritrea-ethiopia">Russia-Africa Summit; Sudan’s Drone War Intensifies: Africa File, November 5, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/michael-deangelo" class="author-name">Michael DeAngelo</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/liam-karr" class="author-name">Liam Karr</a>
+			</span>
+
+		<span class="article-recency">
+			November 05, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-04-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-04-2026', 'Iran Update: November 04, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aebe88cc3132', slug:'iran-update-november-04-2026', title:'Iran Update: November 04, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-04-2026">Iran Update: November 04, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/brian-carter" class="author-name">Brian Carter</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/parker-hempel" class="author-name">Parker Hempel</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nidal-morrison" class="author-name">Nidal Morrison</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-rezaei" class="author-name"> Ben Rezaei</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/adham-fattah" class="author-name">Adham Fattah</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/william-doran" class="author-name">William Doran</a>
+			</span>
+
+		<span class="article-recency">
+			November 04, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-4-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-4-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-4-2026', 'Russian Offensive Campaign Assessment, November 4, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aebaa3098cbd', slug:'russian-offensive-campaign-assessment-november-4-2026', title:'Russian Offensive Campaign Assessment, November 4, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-4-2026">Russian Offensive Campaign Assessment, November 4, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/christina-harward" class="author-name">Christina Harward</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/alexander-neuman" class="author-name">Alexander Neuman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kateryna-shymkiv" class="author-name">Kateryna Shymkiv</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+
+		<span class="article-recency">
+			November 04, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-3-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-3-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-3-2026', 'Russian Offensive Campaign Assessment, November 3, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aeaaa08a3215', slug:'russian-offensive-campaign-assessment-november-3-2026', title:'Russian Offensive Campaign Assessment, November 3, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-3-2026">Russian Offensive Campaign Assessment, November 3, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kateryna-stepanenko" class="author-name">Kateryna Stepanenko</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/tetiana-trach" class="author-name">Tetiana Trach</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/christian-peasley" class="author-name">Christian Peasley</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jakub-kostka" class="author-name">Jakub Kostka</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/kateryna-shymkiv" class="author-name">Kateryna Shymkiv</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nikolai-sundstrom-69d594bd8b01e" class="author-name">Nikolai Sundstrom</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jacob-spencer" class="author-name">Jacob Spencer</a>
+			</span>
+
+		<span class="article-recency">
+			November 03, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-3-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-3-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-3-2026', 'Iran Update, November 3, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6aea7e2adf664', slug:'iran-update-november-3-2026', title:'Iran Update, November 3, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-3-2026">Iran Update, November 3, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kelly-campa-662997ae1f31a" class="author-name">Kelly Campa</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/will-doran" class="author-name">Will Doran</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-rezaei" class="author-name"> Ben Rezaei</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+
+		<span class="article-recency">
+			November 03, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/iran-update-november-2-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Assessed-Control-of-Terrain-in-Taiz-and-Lahij-Governorates-as-of-November-2-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/iran-update-november-2-2026', 'Iran Update, November 2, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6ae8fdaf98010', slug:'iran-update-november-2-2026', title:'Iran Update, November 2, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/iran-update-november-2-2026">Iran Update, November 2, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kelly-campa-662997ae1f31a" class="author-name">Kelly Campa</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nidal-morrison" class="author-name">Nidal Morrison</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ria-reddy" class="author-name">Ria Reddy</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/katherine-wells" class="author-name">Katherine Wells</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/bailey-pasternak" class="author-name">Bailey Pasternak</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/adham-fattah" class="author-name">Adham Fattah</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/carolyn-moorman" class="author-name">Carolyn Moorman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/ben-schmida" class="author-name">Ben Schmida</a>
+			</span>
+
+		<span class="article-recency">
+			November 02, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+		<article ng-click="console.log('stuff')">
+	<div class="article-image" onclick="location.href = '/analysis/russian-offensive-campaign-assessment-november-2-2026'"  style="background-image: url('https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-2-2026.png'); background-position:center center;">
+		<span class="share-menu">
+			<ul class="plain">
+				<li><a href="javascript:void(0);" ng-click="socialShare('facebook')"><i class="facebook-square"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="socialShare('twitter', '/analysis/russian-offensive-campaign-assessment-november-2-2026', 'Russian Offensive Campaign Assessment, November 2, 2026')"><i class="twitter-square"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></i></a></li>
+				<li><a href="javascript:void(0);" ng-click="addBookmark($event,{ label:'ANALYSIS', id:'ana_6ae8fd02f2325', slug:'russian-offensive-campaign-assessment-november-2-2026', title:'Russian Offensive Campaign Assessment, November 2, 2026' })"><i class="bookmark-square"><img src="/assets/flag-icon-square-7154709f24f59fc92e454a86f4db6ad314da2ce2f9dc93835856a226a8fac41c.png" alt="Feed Icon" title="Feed Link"></i></a></li>
+			</ul>
+		</span>
+	</div>
+	<div class="article-meta">
+		<h3><a href="/analysis/russian-offensive-campaign-assessment-november-2-2026">Russian Offensive Campaign Assessment, November 2, 2026</a></h3>
+
+			<span class="article-author">
+				<a href="/team/kateryna-stepanenko" class="author-name">Kateryna Stepanenko</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/jennie-olmsted" class="author-name">Jennie Olmsted</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/alexander-neuman" class="author-name">Alexander Neuman</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/arielle-sher" class="author-name">Arielle Sher</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/nikolai-sundstrom-69d594bd8b01e" class="author-name">Nikolai Sundstrom</a>
+			</span>
+			<span class="article-author">
+				<a href="/team/samuel-frykholm" class="author-name">Samuel Frykholm</a>
+			</span>
+
+		<span class="article-recency">
+			November 02, 2026
+		</span>
+
+		<span class="article-category">
+			ANALYSIS
+		</span>
+
+			<p></p>
+
+	</div>
+</article>
+
+</div>
+
+<div class="article-grid" ng-show="view_mode=='grid'">
+	<section class="grid grid_1">
+
+
+			<div class="grid-row">
+
+
+				<div class="cell tall">
+
+					<a href="/analysis/iran-update-november-11-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 11, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">20 minutes ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/NewIranUpdate-square-1300-1-1024x1024.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-10-2026-6af496163efe2" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 10, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">8 hours ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-10-2026-1.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-10-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 10, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">1 day ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-10-2026-1.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-09-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update: November 09, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">1 day ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-9-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 9, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">1 day ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-9-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-8-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 8, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">3 days ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-8-2026-1.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-8-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 8, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">3 days ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-8-2026-1.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-7-2026-6aefc4cc503e5" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 7, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">4 days ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-7-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-7-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 7, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">4 days ago</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-7-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-6-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 6, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 06, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-6-2026-819x1024.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-6-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 6, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 06, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/NewIranUpdate-square-1300-1-1024x1024.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-05-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update: November 05, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 05, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-5-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 5, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 05, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-5-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russia-rsf-saf-sudan-tplf-eritrea-ethiopia" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russia-Africa Summit; Sudan’s Drone War Intensifies: Africa File, November 5, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 05, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Africa-File-Web-Bar.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-04-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update: November 04, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 04, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/NewIranUpdateWebbar-2023-1-5.jpg);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell tall">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-4-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 4, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 04, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-4-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell tall">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-3-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 3, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 03, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-3-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell tall">
+
+					<a href="/analysis/iran-update-november-3-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 3, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 03, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Daily-Iran-Update-Horizontal-Graphic-November-3-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+			<div class="grid-row">
+
+
+				<div class="cell half">
+
+					<a href="/analysis/iran-update-november-2-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Iran Update, November 2, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 02, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Assessed-Control-of-Terrain-in-Taiz-and-Lahij-Governorates-as-of-November-2-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+				<div class="cell half">
+
+					<a href="/analysis/russian-offensive-campaign-assessment-november-2-2026" class="editorial">
+	<article>
+
+			<span class="article-category">
+					article
+			</span>
+
+		<h3>Russian Offensive Campaign Assessment, November 2, 2026</h3>
+		<span class="article-author">
+			<span class="author-name">November 02, 2026</span>
+		</span>
+	</article>
+	<div class="article-image" style="background-image: url(https://www.criticalthreats.org/wp-content/uploads/Russo-Ukrainian-War-November-2-2026.png);background-position:center center;"></div>
+	<div class="article-overlay"></div>
+</a>
+
+
+				</div>
+
+
+			</div>
+
+
+</section>
+
+</div>
+
+<div style="clear:both;"></div>
+
+
+	</section>
+</div>
+
+				<div style="clear:both;"></div>
+			</main>
+
+			<footer id="site-footer">
+	<div class="container">
+		<span id="footer-menus">
+			<nav class="social-menu">
+				<ul>
+					<li><a href="https://www.facebook.com/criticalthreats" target="_blank"><img src="/assets/facebook-icon-4957db69edb838fe271c046f17dcd54d6bee4790459c4474e442029d59f62a84.png" alt="Facebook Icon" title="Facebook Link"></a></li>
+					<li><a href="http://www.twitter.com/criticalthreats" target="_blank"><img src="/assets/twitter-icon-26e75e6260695aba5c3efcb988753c9fc2d911244b67a2b6a724adf97604c81d.png" alt="Twitter Icon" title="Twitter Link"></a></li>
+					<!-- <li><a href="javascript:void(0);"><i class="feed-square"><img src="/assets/feed-icon-600f7bdacc174f33bcfb1118b3b9bab5b25417e9cdf680988e8ae88f6c00f12d.png" alt="Feed Icon" title="Feed Link"></i></a></li> -->
+				</ul>
+			</nav>
+			<nav class="legal-menu">
+				<ul>
+					<li><a href="/terms">Terms of Service</a></li>
+					<li><a href="/privacy">Privacy Policy</a></li>
+					<li><a href="javascript:void(0);" ng-click="contact()">Contact</a></li>
+				</ul>
+			</nav>
+		</span>
+		<span id="footer-logo">
+			<h1>
+				<a href="/">
+				<img src="/assets/logo-1c0fcaa5fd597ee743f639c53504d0ff68a5d28fc95bfcdbb21948faf4a98bbe.png" alt="Critical Threats Logo" title="Critical Threats" />
+</a>			</h1>
+			A Project of the American Enterprise Institute
+		</span>
+		<span id="footer-copyright">
+			<a href="http://www.aei.org/"><img src="/assets/aei-logo-8e371ccbdc5cc65beaa84a155a0939b2ee42b6529a0d5d592503a49d2af8ec73.png" alt="AEI Logo" title="AEI Logo" /></a>
+
+			<div class="copyright">
+				Copyright, Critical Threats Project, 2026 <br><br>
+				<a href="https://neo4j.com/" target="_blank">Powered by Neo4j</a>
+			</div>
+		</span>
+	</div>
+</footer>
+
+
+<bookmarkmodal forgotpassword="/webusers/password/new" signedin="signed_in" signedname="signed_in_name" visible="addBookmarkVisible" content="addBookmarkContent"></bookmarkmodal>
+<removebookmarkmodal visible="removeBookmarkVisible" content="removeBookmarkContent"></removebookmarkmodal>
+
+<subscriptionmodal forgotpassword="/webusers/password/new" signedin="signed_in" signedname="signed_in_name" visible="addSubscriptionVisible" content="addSubscriptionContent"></subscriptionmodal>
+<updatesubscriptionmodal visible="updateSubscriptionVisible" content="updateSubscriptionContent"></updatesubscriptionmodal>
+<removesubscriptionmodal visible="removeSubscriptionVisible" content="removeSubscriptionContent"></removesubscriptionmodal>
+<lightbox visible="lightbox_delegate.isOpen()" content="lightbox_delegate.image"></lightbox>
+
+<contactmodal visible="contactVisible"></contactmodal>
+<loginmodal visible="loginVisible"></loginmodal>
+
+
+<usernotes target=".allow-usernotes" isauth="false"></usernotes>
+
+		</div>
+
+		<script src="/assets/analysis-footer-2bc990e1bf33b4aa10b07e2096e3f3f1aaf9cf69fe90ef0181942b911fe60423.js"></script>
+		<script src="/assets/tracking-6aaf5e8c032461240bec4e95ed4293be9018b4336cbb68465edf4c0ca5337072.js"></script>
+
+	</body>
+</html>

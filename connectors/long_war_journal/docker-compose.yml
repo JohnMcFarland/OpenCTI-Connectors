@@ -1,0 +1,43 @@
+# FDD's Long War Journal OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  long-war-journal:
+    build: .
+    container_name: opencti-connector-long-war-journal
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=FDD's Long War Journal
+      - CONNECTOR_SCOPE=long_war_journal
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - LONG_WAR_JOURNAL_FEED_URL=https://www.longwarjournal.org/feed
+      - LONG_WAR_JOURNAL_POLL_INTERVAL=1800
+      - LONG_WAR_JOURNAL_REQUEST_DELAY=10
+      - LONG_WAR_JOURNAL_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - LONG_WAR_JOURNAL_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - LONG_WAR_JOURNAL_RENDER_RETRIES=3
+      - LONG_WAR_JOURNAL_PDF_RENDER_TIMEOUT=120
+      - LONG_WAR_JOURNAL_CONFIDENCE=50
+      - LONG_WAR_JOURNAL_REPORT_TYPE=open-source-reporting
+      - LONG_WAR_JOURNAL_TLP=TLP:CLEAR
+      - LONG_WAR_JOURNAL_AUTHOR_NAME=FDD's Long War Journal
+    restart: always

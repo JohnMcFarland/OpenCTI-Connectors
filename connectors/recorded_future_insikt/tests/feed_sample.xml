@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Recorded Future</title>
+        <link>https://www.recordedfuture.com</link>
+        <description>Strengthen Your Defenses with Threat Intelligence</description>
+        <lastBuildDate>Wed, 11 Nov 2026 14:59:12 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>Recorded Future, Inc.</generator>
+        <language>en</language>
+        <copyright>Copyright &#169; 2026 Recorded Future, Inc.</copyright>
+        <atom:link href="https://www.recordedfuture.com/feed" rel="self" type="application/rss+xml"/>
+        <item>
+            <title><![CDATA[AI Is Both Target and Tool for Threat Actors]]></title>
+            <link>https://www.recordedfuture.com/research/ai-cyber-threat-trends-2026</link>
+            <guid isPermaLink="false">https://www.recordedfuture.com/research/ai-cyber-threat-trends-2026</guid>
+            <pubDate>Wed, 11 Nov 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Discover 2026 trends in AI-enabled cyber threats, supply-chain vulnerabilities, state-sponsored agentic attacks, and key mitigations.]]></description>
+            <content:encoded><![CDATA[
+        <h2>Summary</h2>
+        <ul>
+          <li><strong>Artificial intelligence (AI)-enabled attacks are accelerating, with AI as both a target and a force multiplier.</strong> Of the 103 AI-enabled incidents analyzed for this report, most involve AI accelerating familiar attack types (supply-chain compromise, phishing, extortion) and making them more convincing. The use of AI is evident throughout the attack lifecycle, though full automation remains rare. <em>Note: The period of analysis for this report is between July 31, 2025 and July 31, 2026.</em></li>
+          <li><strong>Developer tools are a prime target.</strong> Because AI coding assistants and proxy packages often have privileged access to credentials and code, threat actors use them as footholds for mass credential theft and lateral movement across downstream environments.</li>
+          <li><strong>State-sponsored actors are beginning to experiment with agentic capabilities.</strong> Most of the state-sponsored activity in this report falls within Recorded Future&#8217;s AI Malware Maturity Model Level 2&#8211;3 (AI-assisted malware development), with one notable exception: a campaign against Taiwanese government entities that employed up to eight AI agents with limited human intervention.</li>
+          <li><strong>Fully autonomous attacks remain rare, likely for both maturity and operational-risk reasons.</strong> Human oversight still appears necessary for reliable outcomes, which may limit the full automation of cyberattacks, especially in sensitive operations where an agent's error can have outsized consequences.</li>
+          <li><strong>This restraint is unlikely to hold.</strong> As agentic techniques mature and diffuse across the threat landscape, autonomous and orchestrated campaigns are likely to become more frequent, alongside a growing underground market for illicit access to commercial models and rising "noise" from low-level automated intrusions that complicate the detection of serious threats.</li>
+        </ul>
+        <div>
+          <div>
+            <div>
+              <img loading="lazy" alt="Infographic titled &quot;Key Trends in Offensive AI&quot; outlining five trends including developer tools, AI hype, state-sponsored use, fraud, and automation." src="https://www.recordedfuture.com/media_13081698d39a8b35101c52643b7618430a6e3c007.png?width=750&amp;format=png&amp;optimize=medium" width="821" height="373" />
+            </div>
+          </div>
+          <div>
+            <div><strong>Figure 1:</strong> Five trends in offensive use of AI (Source: Recorded Future)</div>
+          </div>
+        </div>
+      ]]></content:encoded>
+            <category>Research (Insikt)</category>
+            <enclosure length="0" type="image/jpg" url="https://www.recordedfuture.com/research/media_10ab3623395b57654cd3bac59db7ee5f85c5f8d0a.gif?width=1200&amp;format=pjpg&amp;optimize=medium"/>
+        </item>
+        <item>
+            <title><![CDATA[DoppelCart Fraud Network Grows to More Than 250,000 Domains]]></title>
+            <link>https://www.recordedfuture.com/blog/doppelcart-fraud-network-grows-domains</link>
+            <guid isPermaLink="false">https://www.recordedfuture.com/blog/doppelcart-fraud-network-grows-domains</guid>
+            <pubDate>Tue, 10 Nov 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Explore DoppelCart, a 260K+ domain shopping fraud network impersonating global brands, utilizing shared infrastructure and Medusa.]]></description>
+            <content:encoded><![CDATA[
+        <h2>Summary</h2>
+        <p>This article examines DoppelCart, a large-scale shopping fraud network encompassing approximately 261,700 suspected domains identified by Recorded Future. These fraudulent storefronts copy legitimate retailers&#8217; branding and product listings to deceive shoppers into disclosing personal and payment information, with some also capturing bank-issued verification codes to authorize fraudulent transactions. This research highlights the network&#8217;s widespread impersonation of US brands, evolving hosting infrastructure, and use of shared payment-routing configurations and the Medusa e-commerce platform. With approximately 40% of observed DoppelCart websites remaining active, understanding these patterns can help retailers identify brand impersonation and help consumers recognize fraudulent shopping sites.</p>
+        <h2>Background</h2>
+        <p>In September 2026, German cybersecurity company <a href="https://nebty-id.com/en/doppelcart-fake-shop-network/">Nebty</a> exposed DoppelCart, a large-scale online shopping fraud network with over 119,000 websites. The fraudulent storefronts copy legitimate retailers&#8217; product listings, images, and descriptions to deceive shoppers into entering payment information.</p>
+        <p>Researchers identified shared website designs, code, and infrastructure across thousands of suspicious storefronts, eventually linking the domains to the DoppelCart cluster. Most websites used <code>.shop</code> web addresses, and many advertised steep discounts, including offers of 65% off, to attract shoppers. Although the websites shared technical characteristics, Nebty cautioned that the findings did not establish whether a single criminal organization operated the entire network.</p>
+        <p>According to subsequent reporting by <a href="https://www.malwarebytes.com/blog/scams/2026/09/more-than-100000-fake-stores-are-out-to-steal-your-card-details">Malwarebytes</a> and <a href="https://www.bleepingcomputer.com/news/security/doppelcart-fraud-network-uses-119-000-fake-shops-to-steal-credit-cards/">BleepingComputer</a>, fraudulent checkout pages transmit shoppers&#8217; personal and payment information to attacker-controlled servers in real time. Some also capture one-time verification codes issued by banks, potentially allowing criminals to authorize transactions while victims believe they are completing legitimate purchases.</p>
+        <h2>Domains Discovered by Recorded Future</h2>
+        <p>Primarily between March and October 2026, Recorded Future used proprietary methods to identify approximately 261,700 unique apex domains that are likely part of the DoppelCart fraud network. Based on our collections, a few thousand DoppelCart detections began appearing in January 2026 and increased during March. Our detections peaked during the months of June and July, with a sharp drop-off in new hosts starting in August.</p>
+        <p>While new host growth mostly plateaued thereafter, a drop-off in new detections is not necessarily an indicator that operations are abating. More likely, it reflects that many previously registered domains remain active, and that operators may have shifted their focus to maintaining existing infrastructure rather than expanding it. Based on data from Recorded Future&#174; Web Scans, approximately 40% of suspect websites in this cluster observed prior to October 17, 2026, remain active.</p>
+        <div>
+          <div>
+            <div>
+              <img loading="lazy" alt="Line chart showing the cumulative growth of DoppelCart domains from January to October 2026, peaking near 261,700 domains." src="https://www.recordedfuture.com/media_1cac33ab17e98b2c2f6e63e44efe224bfa213a4f0.png?width=750&amp;format=png&amp;optimize=medium" width="2048" height="1294" />
+            </div>
+          </div>
+          <div>
+            <div><strong>Figure 1:</strong> Total DoppelCart domains between January 2026 and October 2026, identified via content-based Recorded Future web detections (Source: Recorded Future)</div>
+          </div>
+        </div>
+      ]]></content:encoded>
+            <category>Blog</category>
+            <enclosure length="0" type="image/jpg" url="https://www.recordedfuture.com/blog/media_1db7cac29e2901d052a91fb5af50360e8d2f48109.jpg?width=1200&amp;format=pjpg&amp;optimize=medium"/>
+        </item>
+        <item>
+            <title><![CDATA[GhostFrame: A new ESXi Implant Linked to Settra Ransomware]]></title>
+            <link>https://www.recordedfuture.com/blog/ghostframe-esxi-implant-settra-ransomware</link>
+            <guid isPermaLink="false">https://www.recordedfuture.com/blog/ghostframe-esxi-implant-settra-ransomware</guid>
+            <pubDate>Tue, 10 Nov 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[GhostFrame is a new post-exploitation framework targeting VMware ESXi environments, linked to TAG-218 and Settra ransomware.]]></description>
+            <content:encoded><![CDATA[
+        <h2>Summary</h2>
+        <p>GhostFrame is a previously undocumented post-exploitation framework that gives threat actors extensive control over compromised VMware ESXi environments. Once an attacker gains root-level access to an ESXi host, GhostFrame provides a single interface to access virtual machines running on the hypervisor, harvest credentials, execute commands, and pivot deeper into victim networks. Insikt Group identified GhostFrame being used by TAG-218, a threat activity group whose operations overlap with Settra ransomware.</p>
+        <p>GhostFrame is notable because it allows threat actors to operate from the virtualization layer, where a single compromised ESXi host can provide access to multiple virtual machines and the systems and data they contain. Insikt Group&#8217;s findings demonstrate how attackers can use compromised hypervisors as a centralized platform for post-exploitation activity, potentially expanding access across victim environments without compromising each virtual machine individually. The discovery highlights the importance of treating virtualization infrastructure as a high-value target and monitoring ESXi hosts for signs of unauthorized access and post-exploitation activity.</p>
+      ]]></content:encoded>
+            <category>Blog</category>
+            <enclosure length="0" type="image/jpg" url="https://www.recordedfuture.com/blog/media_1a1bea306b44a6f4debd07c3bc51452bbe6282ff8.jpg?width=1200&amp;format=pjpg&amp;optimize=medium"/>
+        </item>
+</channel>
+</rss>

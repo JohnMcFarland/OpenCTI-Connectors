@@ -1,0 +1,2622 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" prefix="og: https://ogp.me/ns#" class="portal-default theme-uneporg font-heading_roboto font-paragraph_roboto h-100" data-bs-theme="light">
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="UNEP - UN Environment Programme" />
+<meta name="keywords" content="UNEP - UN Environment Programme News, stories &amp; speeches" />
+<link rel="canonical" href="https://www.unep.org/en/whats-new/news-stories-speeches" />
+<meta name="robots" content="index, follow" />
+<meta name="referrer" content="same-origin" />
+<meta property="og:site_name" content="UNEP - UN Environment Programme" />
+<meta property="og:url" content="http://www.unep.org/en/whats-new/news-stories-speeches" />
+<meta property="og:title" content="News, stories &amp; speeches" />
+<meta property="og:description" content="UNEP - UN Environment Programme" />
+<meta property="og:image:alt" content="News, stories &amp; speeches" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:description" content="UNEP - UN Environment Programme" />
+<meta name="twitter:title" content="News, stories &amp; speeches" />
+<meta name="apple-mobile-web-app-title" content="UNEP ORG" />
+<meta name="MobileOptimized" content="width" />
+<meta name="HandheldFriendly" content="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "Organization",
+            "@id": "http://www.unep.org/#organization",
+            "description": "The global authority for the environment with programmes focusing on climate, nature, pollution, sustainable development and more.",
+            "name": "United Nations Environment Programme",
+            "url": "http://www.unep.org",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "http://www.unep.org/themes/custom/unep_corporate/logo.svg"
+            }
+        },
+        {
+            "@type": "WebPage",
+            "@id": "http://www.unep.org/en/whats-new/news-stories-speeches",
+            "description": "UNEP - UN Environment Programme",
+            "publisher": {
+                "@type": "Organization",
+                "@id": "http://www.unep.org/#organization",
+                "name": "United Nations Environment Programme",
+                "url": "http://www.unep.org"
+            }
+        }
+    ]
+}</script>
+<link rel="icon" type="image/png" href="/themes/custom/unep_template/favicons/favicon-96x96.png?toc4bt" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/themes/custom/unep_template/favicons/favicon.svg?toc4bt" />
+<link rel="shortcut icon" href="/themes/custom/unep_template/favicons/favicon.ico?toc4bt" />
+<link rel="apple-touch-icon" sizes="180x180" href="/themes/custom/unep_template/favicons/apple-touch-icon.png?toc4bt" />
+<link rel="manifest" href="/themes/custom/unep_template/favicons/site.webmanifest?toc4bt" />
+
+    <title>News, stories &amp; speeches | UNEP - UN Environment Programme</title>
+    <link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/components/progress.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/components/ajax-progress.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/align.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/container-inline.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/clearfix.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/hidden.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/system/components/js.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/ai/assets/css/ai_global.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/dropbutton/dropbutton.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/leaflet/js/leaflet/dist/leaflet.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/poll/css/poll.base.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/poll/css/poll.theme.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/views/views.module.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/ckeditor_accordion/css/accordion.frontend.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/ckeditor_bootstrap_tabs/css/tabs.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/modules/contrib/extlink/css/extlink.css?toc4bt" />
+<link rel="stylesheet" media="all" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+<link rel="stylesheet" media="all" href="/modules/custom/interactive_map_module/css/leaflet-legend.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/layouts/layout_discovery/onecol/onecol.css?toc4bt" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/icon?family=Material+Icons" />
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/icon?family=Material+Icons+Outlined" />
+<link rel="stylesheet" media="all" href="/core/themes/stable9/css/core/assets/vendor/normalize-css/normalize.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/action-links.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/breadcrumb.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/container-inline.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/details.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/exposed-filters.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/field.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/form.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/icons.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/inline-form.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/item-list.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/links.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/menu.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/more-link.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/pager.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/tabledrag.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/tableselect.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/tablesort.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/textarea.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/ui-dialog.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/messages.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/node.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/progress.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/components/dropbutton.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/css/style.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/bootstrap5/dist/icons/1.11.0/font/bootstrap-icons.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/custom/unep_corporate/css/style.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/custom/unep_template/css/style.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/custom/unep_template/css/components/quicklinks.css?toc4bt" />
+<link rel="stylesheet" media="all" href="/themes/contrib/gin/dist/css/components/ajax.css?toc4bt" />
+
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","pathPrefix":"en\/","currentPath":"node\/1104","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"gtag":{"tagId":"","consentMode":false,"otherIds":[],"events":[],"additionalConfigInfo":[]},"ajaxPageState":{"libraries":"eJxdUV2awiAMvBAtT3sevhRiRQNhSVrXPf2CVbf1JSQz5HcgWohuJp6AzMSsohXKl51A8BC_3eEiA4Gi6J7fKgyid4p53jMJRWBG2WOZAxp_xRCVqwPvuYbI2b698VQ5K-bw_-ud7hQmsd2Y9httqEsBGkPlMi2qnDc4c01A8bc1WkQ5uQAKBHesdo14c7hiVoM_2ga-voo8Q3Nq3eGGwgntzh9vOPVQzMw8E7ZRZjs38xmPcIGfI5hMbBtV8BpXdKntkTgshJYQToQ6EM594TYiL-pCFM8r1rvljJ7JpHbzGoFc9JzlIVAbFT_xltvhYAoTvdbq_tAXEyN3UUybvkvG4tqxCtdWZK_hk-OCWRCqP9vtcbWpUdHrxrdKhT5Su_xH8nuJ_rp1PxJ6xoSuY6ZLIg9hZNzu8gfstAVm","theme":"unep_corporate","theme_token":null},"ajaxTrustedUrl":{"\/404":true},"gtm":{"tagId":null,"settings":{"data_layer":"dataLayer","include_classes":false,"allowlist_classes":"","blocklist_classes":"","include_environment":false,"environment_id":"","environment_token":""},"tagIds":["GTM-KGV3SQ"]},"customDatalayer":{"viewData":{"event":"custom_view_data","ep_view_name":"News, stories \u0026 speeches","ep_breadcrumb_lvl_1":"Home","ep_breadcrumb_lvl_2":"What\u0027s new","ep_breadcrumb_lvl_3":"News, stories \u0026 speeches","ep_breadcrumb_lvl_4":"","ep_breadcrumb_lvl_5":""}},"interactive_map_module":{"legendTitle":"Legend","labelsByIconName":{"pin_drop":"Location","person_outline":"People","outlined_flag":"Country"},"defaultMarkerLabel":"Location","showDefaultIconInLegend":true},"data":{"extlink":{"extTarget":true,"extTargetAppendNewWindowDisplay":true,"extTargetAppendNewWindowLabel":"(opens in a new window)","extTargetNoOverride":false,"extNofollow":false,"extTitleNoOverride":false,"extNoreferrer":true,"extFollowNoOverride":false,"extClass":"ext","extLabel":"(link is external)","extImgClass":false,"extSubdomains":false,"extExclude":"","extInclude":"","extCssExclude":"","extCssInclude":"","extCssExplicit":"","extAlert":false,"extAlertText":"This link will take you to an external web site. We are not responsible for their content.","extHideIcons":false,"mailtoClass":"mailto","telClass":"tel","mailtoLabel":"(link sends email)","telLabel":"(link is a phone number)","extUseFontAwesome":false,"extIconPlacement":"append","extPreventOrphan":true,"extFaLinkClasses":"fa fa-external-link","extFaMailtoClasses":"fa fa-envelope-o","extAdditionalLinkClasses":"","extAdditionalMailtoClasses":"","extAdditionalTelClasses":"","extFaTelClasses":"fa fa-phone","allowedDomains":[],"extExcludeNoreferrer":""}},"ckeditorAccordion":{"accordionStyle":{"collapseAll":1,"keepRowsOpen":0,"animateAccordionOpenAndClose":1,"openTabsWithHash":0,"allowHtmlInTitles":0}},"user":{"uid":0,"permissionsHash":"7006e50bd57c106b104f7cf28595f2cf67118defd972d63b534fb6ddae3f8e18"}}</script>
+<script src="/core/misc/drupalSettingsLoader.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/google_tag/js/gtag.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/google_tag/js/gtm.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+
+  <script type="2fadef650d6c37dce2a7629f-text/javascript">(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({"gtm.start":new Date().getTime(),event:"gtm.js"});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!="dataLayer"?"&l="+l:"";j.async=true;j.src="https://www.googletagmanager.com/gtm.js?id="+i+dl;f.parentNode.insertBefore(j,f);})(window,document,"script","dataLayer","GTM-KGV3SQ");</script></head>
+  <body class="page-route-entity-node-canonical content-type-landing path-node page-node-type-landing   d-flex flex-column h-100">
+        <div class="visually-hidden-focusable skip-link p-3 container g-lg-0">
+      <a href="#main-content" class="p-2">
+        Skip to main content
+      </a>
+    </div>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KGV3SQ"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+      <div class="dialog-off-canvas-main-canvas d-flex flex-column h-100" data-off-canvas-main-canvas>
+    
+
+<header
+	role="banner" class="header">
+
+		
+											<div class="site-topbar collapse d-lg-block js-mobile-nav">
+				  <div class="region region-header-uneporg-topbar">
+    <nav role="navigation" aria-labelledby="block-unep-corporate-unep-corporate-utility-menu" id="block-unep-corporate-unep-corporate-utility">
+            
+  <h2 class="visually-hidden" id="block-unep-corporate-unep-corporate-utility-menu">Utility</h2>
+  
+
+        
+                    <ul data-block="header_uneporg_topbar" class="nav navbar-nav">
+    
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="https://wedocs.unep.org/home" class="secondary-menu-element nav-link" id="knowledge_repository">Knowledge repository</a>
+
+                      </li>
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="https://wesr.unep.org/" class="secondary-menu-element nav-link" id="data_and_apps">Data and apps</a>
+
+                      </li>
+        </ul>
+  
+
+
+  </nav>
+<div id="block-unep-corporate-unep-corporate-dropdownlanguage" class="block block-dropdown-language block-dropdown-languagelanguage-interface">
+  
+    
+        <div class="dropbutton-wrapper" data-drupal-ajax-container><div class="dropdown lang-switcher"><button class="nav-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><span class="lang-label">
+              Language
+          </span></button><ul class="dropdown-menu dropdown-menu-end"><li><span class="language-link active-language dropdown-item">English</span></li><li><a href="/es/novedades/noticias-y-reportajes" class="language-link dropdown-item" hreflang="es">Español</a></li><li><a href="/fr/nouveautes/actualites-et-recits" class="language-link dropdown-item" hreflang="fr">Français</a></li><li><a href="/ru/chto-novogo/novosti-istorii-i-vystupleniya" class="language-link dropdown-item" hreflang="ru">Русский</a></li><li><a href="/ar/ahdth-almstjdat/alakhbar-walqss" class="language-link dropdown-item" hreflang="ar">العربية</a></li><li><a href="/zh-hans/zuixindongtai/xinwenyuziyuan" class="language-link dropdown-item" hreflang="zh-hans">简体中文</a></li></ul></div></div>
+  </div>
+<div id="mobileSearch" class="collapse d-xl-block js-mobile-search">
+	<form class="simple-search-form js-unep-opensearch-redirect" data-drupal-selector="simple-search-form" data-unep-opensearch-url="https://unep.org/resources/filter/keywords=" action="/404" method="get" id="simple-search-form" accept-charset="UTF-8">
+  <div class="js-form-item form-item js-form-type-search form-type-search js-form-item-text form-item-text">
+      <label for="edit-text">Search</label>
+        
+  <input placeholder="Search" class="form-search form-control" data-drupal-selector="edit-text" type="search" id="edit-text" name="text" value="" size="60" maxlength="128" />
+
+
+        </div>
+
+</form>
+
+</div>
+
+  </div>
+
+			</div>
+			
+
+			<div class="site-header-main uc-header">
+		<div>
+										  <div class="region region-header-uneporg-main">
+    <div id="block-unep-corporate-logo-2" class="block block-block-content block-block-content4a29fb85-e913-43a5-97b2-e694c5747785">
+  
+    
+  	<div class="navbar-brand navbar-uneporg d-flex align-items-center w-100 gap-3">
+		<div class="site-logo-container d-flex align-items-center"> 
+            <a href="/en" title="Home" rel="home noopener noreferrer" class="site-logo d-block">
+                
+            <div class="field field--name-field-color-logo field--type-entity-reference field--label-hidden field__item"><div class="media media--type-svg-image media--view-mode-small ds-1col clearfix">
+
+  
+
+  
+  <div class="field field--name-field-media-svg-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">  <img loading="eager" width="92" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/2026-07/unep_logo_en.svg" alt="unep logo" class="img-fluid" />
+
+</div>
+          </div>
+
+
+</div>
+
+</div>
+      
+            </a>
+		</div>
+		<div class="d-xl-none d-flex align-items-center gap-3 w-100 justify-content-end">
+			<a href="/search" class="navbar-toggler" aria-label="Search">
+				<span class="material-icons">search</span>
+				<span class="visually-hidden">Go to search</span>
+			</a>
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target=".js-mobile-nav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="material-icons icon-menu">menu</span>
+				<span class="material-icons icon-close">close</span>
+				<span class="visually-hidden">Open main menu</span>
+			</button>
+		</div>
+	</div>
+</div>
+<nav role="navigation" aria-labelledby="block-unep-corporate-unep-corporate-mainnavigation-menu" id="block-unep-corporate-unep-corporate-mainnavigation" class="block-menu collapse d-lg-block navbar-collapse js-mobile-nav">
+            
+  <h2 class="visually-hidden" id="block-unep-corporate-unep-corporate-mainnavigation-menu">Main navigation</h2>
+  
+
+        
+						<ul data-block="header_uneporg_main" class="navbar-nav justify-content-end flex-wrap nav-level-0">
+								
+	
+	
+	
+	<li class="nav-item dropdown">
+		                                      <button class="main-menu-element nav-link dropdown-toggle" id="who_we_are" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Expand menu Who we are">Who we are</button>
+      
+													<ul data-block="header_uneporg_main" class="dropdown-menu nav-level-1">
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/about-us" class="main-menu-element dropdown-item" id="who_we_are_about_us" data-drupal-link-system-path="node/34322">About us</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/meetings-and-governance" class="main-menu-element dropdown-item" id="who_we_are_meetings_and_governance" data-drupal-link-system-path="node/203907">Meetings and governance</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/evaluation-policies-and-strategies" class="main-menu-element dropdown-item" id="who_we_are_evaluation_policies_and_strategies" data-drupal-link-system-path="node/203909">Evaluation, policies and strategies</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/funding" class="main-menu-element dropdown-item" id="who_we_are_funding" data-drupal-link-system-path="node/18782">Funding</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/data-hubs" class="main-menu-element dropdown-item" id="who_we_are_data_hubs" data-drupal-link-system-path="node/204319">Data hubs</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/platforms-and-partnerships" class="main-menu-element dropdown-item" id="who_we_are_platforms_and_partnerships" data-drupal-link-system-path="node/204327">Platforms and partnerships</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/who-we-are/contact-us" class="main-menu-element dropdown-item" id="who_we_are_contact_us" data-drupal-link-system-path="node/30010">Contact us</a>
+			</li>
+
+					</ul>
+	
+						</li>
+
+								
+	
+	
+	
+	<li class="nav-item dropdown">
+		                                      <button class="main-menu-element nav-link dropdown-toggle" id="where_we_work" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Expand menu Where we work">Where we work</button>
+      
+													<ul data-block="header_uneporg_main" class="dropdown-menu nav-level-1">
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/africa" class="main-menu-element dropdown-item" id="where_we_work_africa" data-drupal-link-system-path="node/203879">Africa</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/asia-and-pacific" class="main-menu-element dropdown-item" id="where_we_work_asia_and_the_pacific" data-drupal-link-system-path="node/203880">Asia and the Pacific</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/europe" class="main-menu-element dropdown-item" id="where_we_work_europe" data-drupal-link-system-path="node/203878">Europe</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/latin-america-and-caribbean" class="main-menu-element dropdown-item" id="where_we_work_latin_america_and_the_caribbean" data-drupal-link-system-path="node/203893">Latin America and the Caribbean</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/north-america-and-new-york-office" class="main-menu-element dropdown-item" id="where_we_work_north_america_and_new_york_office" data-drupal-link-system-path="node/203894">North America and New York Office</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/where-we-work/west-asia" class="main-menu-element dropdown-item" id="where_we_work_west_asia" data-drupal-link-system-path="node/203895">West Asia</a>
+			</li>
+
+					</ul>
+	
+						</li>
+
+								
+	
+	
+	
+	<li class="nav-item dropdown has-megamenu">
+		                                                        <button class="main-menu-element nav-link dropdown-toggle" id="what_we_do" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Expand menu What we do" data-bs-display="static">What we do</button>
+      
+								<ul class="dropdown-menu megamenu">
+		<li class="megamenu__inner">
+							<div class="megamenu__featured">
+											<a href="/en/what-we-do/climate-action" class="main-menu-element megamenu__featured-link" id="what_we_do_climate_action" data-drupal-link-system-path="node/35534">Climate action</a>
+											<a href="/en/what-we-do/nature-and-land-action" class="main-menu-element megamenu__featured-link" id="what_we_do_nature_and_land_action" data-drupal-link-system-path="node/38285">Nature and land action</a>
+											<a href="/en/what-we-do/chemicals-and-pollution-action" class="main-menu-element megamenu__featured-link" id="what_we_do_chemicals_and_pollution_action" data-drupal-link-system-path="node/35638">Chemicals and pollution action</a>
+									</div>
+						<div class="megamenu__topics">
+									<a href="/en/what-we-do/air-quality" class="main-menu-element megamenu__topic-link" id="what_we_do_air_quality" data-drupal-link-system-path="node/35680">Air quality</a>
+									<a href="/en/what-we-do/biosafety" class="main-menu-element megamenu__topic-link" id="what_we_do_biosafety" data-drupal-link-system-path="node/203897">Biosafety</a>
+									<a href="/en/what-we-do/cities" class="main-menu-element megamenu__topic-link" id="what_we_do_cities" data-drupal-link-system-path="node/35629">Cities</a>
+									<a href="/en/what-we-do/digital-transformations" class="main-menu-element megamenu__topic-link" id="what_we_do_digital_transformations" data-drupal-link-system-path="node/35678">Digital transformations</a>
+									<a href="/en/what-we-do/disasters-and-conflicts" class="main-menu-element megamenu__topic-link" id="what_we_do_disasters_and_conflicts" data-drupal-link-system-path="node/35531">Disasters and conflicts</a>
+									<a href="/en/what-we-do/energy" class="main-menu-element megamenu__topic-link" id="what_we_do_energy" data-drupal-link-system-path="node/35636">Energy</a>
+									<a href="/en/what-we-do/environment-under-review" class="main-menu-element megamenu__topic-link" id="what_we_do_environment_under_review" data-drupal-link-system-path="node/35537">Environment under review</a>
+									<a href="/en/what-we-do/environmental-law-and-governance" class="main-menu-element megamenu__topic-link" id="what_we_do_environmental_law_and_governance" data-drupal-link-system-path="node/35726">Environmental law and governance</a>
+									<a href="/en/what-we-do/extractives" class="main-menu-element megamenu__topic-link" id="what_we_do_extractives" data-drupal-link-system-path="node/37593">Extractives</a>
+									<a href="/en/what-we-do/finance-and-economic-transformations" class="main-menu-element megamenu__topic-link" id="what_we_do_finance_and_economic_transformations" data-drupal-link-system-path="node/37667">Finance and economic transformations</a>
+									<a href="/en/what-we-do/food-systems" class="main-menu-element megamenu__topic-link" id="what_we_do_food_systems" data-drupal-link-system-path="node/37292">Food systems</a>
+									<a href="/en/what-we-do/forests" class="main-menu-element megamenu__topic-link" id="what_we_do_forests" data-drupal-link-system-path="node/35702">Forests</a>
+									<a href="/en/what-we-do/fresh-water" class="main-menu-element megamenu__topic-link" id="what_we_do_fresh_water" data-drupal-link-system-path="node/35703">Fresh water</a>
+									<a href="/en/what-we-do/gender" class="main-menu-element megamenu__topic-link" id="what_we_do_gender" data-drupal-link-system-path="node/35683">Gender</a>
+									<a href="/en/what-we-do/ocean-seas-and-coasts" class="main-menu-element megamenu__topic-link" id="what_we_do_ocean_seas_and_coasts" data-drupal-link-system-path="node/35532">Ocean, seas and coasts</a>
+									<a href="/en/what-we-do/peatlands" class="main-menu-element megamenu__topic-link" id="what_we_do_peatlands" data-drupal-link-system-path="node/38536">Peatlands</a>
+									<a href="/en/what-we-do/unep-and-sustainable-development-goals" class="main-menu-element megamenu__topic-link" id="what_we_do_sustainable_development_goals" data-drupal-link-system-path="node/37949">Sustainable Development Goals</a>
+									<a href="/en/what-we-do/transport" class="main-menu-element megamenu__topic-link" id="what_we_do_transport" data-drupal-link-system-path="node/35661">Transport</a>
+									<a href="/en/what-we-do/youth-education-and-environment" class="main-menu-element megamenu__topic-link" id="what_we_do_youth_education_and_environment" data-drupal-link-system-path="node/35713">Youth, education and environment</a>
+							</div>
+		</li>
+	</ul>
+
+						</li>
+
+								
+	
+	
+	
+	<li class="nav-item dropdown">
+		              <a href="/en" class="main-menu-element nav-link active dropdown-toggle" id="whats_new" data-bs-toggle="dropdown" aria-expanded="false" title="Expand menu What&#039;s new" data-drupal-link-system-path="&lt;front&gt;">What&#039;s new</a>
+      
+													<ul data-block="header_uneporg_main" class="dropdown-menu nav-level-1">
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/whats-new/news-stories-speeches" class="main-menu-element dropdown-item active is-active" id="whats_new_news_stories_speeches" data-drupal-link-system-path="node/1104" aria-current="page">News, stories &amp; speeches</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/whats-new/thematic-feeds" class="main-menu-element dropdown-item" id="whats_new_thematic_feeds" data-drupal-link-system-path="node/42299">Thematic feeds</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/whats-new/publications" class="main-menu-element dropdown-item" id="whats_new_publications" data-drupal-link-system-path="node/203911">Publications</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/whats-new/events" class="main-menu-element dropdown-item" id="whats_new_events" data-drupal-link-system-path="node/203889">Events</a>
+			</li>
+
+								
+	
+	
+	
+	<li class="nav-item">
+					<a href="/en/whats-new/get-involved" class="main-menu-element dropdown-item" id="whats_new_get_involved" data-drupal-link-system-path="node/204223">Get involved</a>
+			</li>
+
+					</ul>
+	
+						</li>
+
+					</ul>
+	
+
+
+
+
+  </nav>
+
+          <a href="/en/what-we-do/unep-and-sustainable-development-goals" class="header-sdg-wheel" id="header_sdg_wheel">
+        <img src="/themes/custom/unep_corporate/assets/images/sdg-wheel.png" width="45" height="45" alt="UNEP and the Sustainable Development Goals"/>
+      </a>
+            <a href="/en/what-we-do/unep-and-sustainable-development-goals" class="header-sdg-mobile collapse js-mobile-nav" id="header_sdg_mobile">
+        <span>Agenda 2030</span>
+        <img src="/themes/custom/unep_corporate/assets/images/sdg-wheel.png" width="30" height="30" alt=""/>
+      </a>
+      </div>
+
+			
+								</div>
+	</div>
+</header>
+
+<main role="main">
+	<a id="main-content" tabindex="-1"></a>
+	
+			
+			
+			<div class="container-fluid px-0 w-100">
+							<div class="w-100">
+					  <div class="region region-breadcrumb">
+    <div id="block-unep-corporate-unep-corporate-breadcrumbs" class="block block-system block-system-breadcrumb-block">
+  
+    
+      <nav aria-label="breadcrumbs">
+   <div class="container-default">
+      <h2 id="system-breadcrumb" class="visually-hidden">Breadcrumb</h2>
+      <ol class="breadcrumb js-breadcrumb breadcrumb--icons">
+                  <li class="breadcrumb-item" >
+                  <a href="/en">Home</a>
+                  </li>
+                  <li class="breadcrumb-item" >
+                  <a href="https://www.unep.org/en/whats-new">What&#039;s new</a>
+                  </li>
+                  <li class="breadcrumb-item"  aria-current="page" >
+                  News, stories &amp; speeches
+                  </li>
+               </ol>
+   </div>
+</nav>
+
+  </div>
+
+  </div>
+
+				</div>
+			
+							<div class="w-100">
+					  <div class="region region-content">
+    <div data-drupal-messages-fallback class="hidden"></div>
+<article class="node node--type-landing node--promoted node--view-mode-full">
+
+  
+    
+
+  
+  <div class="node__content">
+    
+<div class="layout layout--section w-100 container-fluid g-0">
+    <div class="layout__region layout__region--content section-content">
+      
+
+
+
+      
+      
+            
+    
+            
+  
+    
+                        
+      
+            
+    
+            
+  
+    
+        
+      
+            
+    
+            
+  
+    
+        
+      
+            
+    
+            
+  
+    
+  
+<section class="block hero-banner-featured container-wide" role="region" aria-label="Hero banner featured">
+  
+  <div class="hero-banner-featured__container">
+    <div class="hero-banner-featured__grid">
+      <div class="hero-banner-featured__col hero-banner-featured__col--left">
+                                                                                    <article class="hero-banner-featured-card hero-banner-featured-card--node hero-banner-featured-card--slot-1">
+    
+            <div class="field field--name-field-item-1-node field--type-entity-reference field--label-hidden field__item"><div class="layout layout--container">
+  <div class="container">
+    <div class="layout__region layout__region--content">
+      
+            <div class="field field--name-field-content-type field--type-entity-reference field--label-hidden field__item">Press release</div>
+      
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-hero-wide image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/5_2_1800x720_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=xn_kck70 1x" media="all and (min-width: 1300px)" type="image/webp" width="1800" height="720"/>
+              <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/5_2_1300x520_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=m3jtq8Eh 1x" media="all and (min-width: 1000px)" type="image/webp" width="1300" height="520"/>
+              <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/5_2_1000x400_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=Hw0K6DKt 1x" media="all and (min-width: 700px)" type="image/webp" width="1000" height="400"/>
+              <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/16_9_704x396_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=ix1jgrx5 1x" media="all and (min-width: 500px)" type="image/webp" width="704" height="396"/>
+                  <img loading="eager" width="512" height="288" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/16_9_512x288_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=VwZPfk4O" alt="Mangrove forest located in the Mida Creek - Malindi" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Timothy K/ unsplash</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+      
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h1 class="h3">
+  As world heads for overshoot of 1.5°C, adaptation is too slow
+</h1><div class="mt-3"><a class="btn btn-primary" href="&#x2F;en&#x2F;news-and-stories&#x2F;press-release&#x2F;world-heads-overshoot-15degc-adaptation-too-slow">Read more</a></div>
+</div>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+      
+  </article>
+
+                                    </div>
+
+      <div class="hero-banner-featured__col hero-banner-featured__col--right">
+                
+                
+                      </div>
+    </div>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+    </div>
+</div>
+<div class="section-spacing-top-md section-spacing-bottom-md layout layout--section w-100 container-fluid g-0">
+    <div class="layout__region layout__region--content section-content">
+      
+
+<div class="block quicklinks-wrapper container-default">
+                                                                                                                                      
+      <div class="field field__items field--name-field-component-quicklinks-item">
+                                                                        <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/press-release">
+                    <h3 class="quicklinks-item__title">Press releases</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/story">
+                    <h3 class="quicklinks-item__title">Stories</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/speeches">
+                    <h3 class="quicklinks-item__title">Speeches</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/statements">
+                    <h3 class="quicklinks-item__title">Statements</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                  </div>
+    
+</div>
+
+
+<div class="block quicklinks-wrapper container-default">
+                                                                                                                                      
+      <div class="field field__items field--name-field-component-quicklinks-item">
+                                                                        <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-stories-speeches/interactive-features">
+                    <h3 class="quicklinks-item__title">Interactive features</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/series">
+                    <h3 class="quicklinks-item__title">Series</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/audio-video">
+                    <h3 class="quicklinks-item__title">Audio/Video</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                                                                                <div class="field__item">
+            <div class="quicklinks-item">
+                            <div class="quicklinks-item__content">
+                <div class="quicklinks-item__title-wrapper">
+                  <a href="/en/news-and-stories/technical-highlight">
+                    <h3 class="quicklinks-item__title">Technical highlights</h3>
+                  </a>
+                </div>
+                              </div>
+            </div>
+          </div>
+                  </div>
+    
+</div>
+
+    </div>
+</div>
+<div class="neutral-bg-100 section-spacing-top-md section-spacing-bottom-md layout layout--section w-100 container-fluid g-0">
+    <div class="layout__region layout__region--content section-content">
+      <div class="views-element-container block block-views block-views-blockpromoted-news-news-page">
+  
+      <h2>Latest Highlights</h2>
+    
+      <div><div class="overviews-content view view-promoted-news view-id-promoted_news view-display-id-news_page js-view-dom-id-61203501de847d01997b456edf6d6e54971dce129e019d3535943314c28a1baf">
+  
+    
+      
+      <div class="view-content">
+          <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Blog</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/20250723_CTCN_Early%20Warning%20Forest%20Fire%20Detection%20System_Georgia_Miranda%20Rikki%20Tasker71%20%281%29.jpg.webp?h=a7d791a9&amp;itok=8oUdKccb 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/20250723_CTCN_Early%20Warning%20Forest%20Fire%20Detection%20System_Georgia_Miranda%20Rikki%20Tasker71%20%281%29.jpg.webp?h=a7d791a9&amp;itok=b-P_5I51 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/20250723_CTCN_Early%20Warning%20Forest%20Fire%20Detection%20System_Georgia_Miranda%20Rikki%20Tasker71%20%281%29.jpg.webp?h=a7d791a9&amp;itok=Wt0JieNm 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/20250723_CTCN_Early%20Warning%20Forest%20Fire%20Detection%20System_Georgia_Miranda%20Rikki%20Tasker71%20%281%29.jpg.webp?h=a7d791a9&amp;itok=8oUdKccb" alt="Four firefighters pose for a picture" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item"><span target="_blank">Miranda Rikki Tasker/CTCN </span></div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-09T19:16:06+03:00" title="9 Nov 2026" class="datetime">9 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/blog/climate-technology-already-changing-lives-why-isnt-it-reaching-more-people" hreflang="en">Climate technology is already changing lives. Why isn’t it reaching more people? </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">As climate change intensifies, technology is vital for protecting lives and livelihoods in the developing world, says Ariesta Ningrum, head of the UN’s Climate Technology Centre and Network.  </div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/kv1_343.jpg.webp?h=c5df8e20&amp;itok=J2eawWka 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/kv1_343.jpg.webp?h=c5df8e20&amp;itok=-9aSOlwc 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/kv1_343.jpg.webp?h=c5df8e20&amp;itok=96Gou9V8 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/kv1_343.jpg.webp?h=c5df8e20&amp;itok=J2eawWka" alt="Banner" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: REMA</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-05T14:42:12+03:00" title="5 Nov 2026" class="datetime">5 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/ozone-protection-sustainable-cooling-shaping-next-chapter" hreflang="en">From ozone protection to sustainable cooling: shaping the next chapter</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Elizabeth Mrema, UNEP Deputy Executive Director, said the Montreal Protocol proves world cooperation works, urging ambition, funding and action on sustainable cooling</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Story</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/Digital%20Product%20Passport.jpg.webp?h=188f9fdc&amp;itok=VjY5Mdgh 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/Digital%20Product%20Passport.jpg.webp?h=188f9fdc&amp;itok=4YsTgGOc 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/Digital%20Product%20Passport.jpg.webp?h=188f9fdc&amp;itok=jZgX4JEB 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/Digital%20Product%20Passport.jpg.webp?h=188f9fdc&amp;itok=VjY5Mdgh" alt="A closeup of a mobile phone" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Justin Jin/UNEP </div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-05T10:53:59+03:00" title="5 Nov 2026" class="datetime">5 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/story/whats-inside-things-you-buy-how-digital-passports-could-help-reveal-answer" hreflang="en">What&#039;s inside the things you buy? How digital passports could help reveal the answer.</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Digital product information systems can help make supply chains more transparent, giving companies the information they need to reduce hazardous chemicals and support circularity.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/Copy%20of%20COP31.png.webp?h=dfba89c9&amp;itok=xxy_YtPy 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/Copy%20of%20COP31.png.webp?h=dfba89c9&amp;itok=yWZT9Pxs 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/Copy%20of%20COP31.png.webp?h=dfba89c9&amp;itok=PY_fh8fp 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/Copy%20of%20COP31.png.webp?h=dfba89c9&amp;itok=xxy_YtPy" alt="Banner" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-04T17:19:25+03:00" title="4 Nov 2026" class="datetime">4 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/unep-executive-director-media-statement-adaptation-gap-report-2026" hreflang="en">UNEP Executive Director media statement for the Adaptation Gap Report 2026 </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, says the world is not ready for worsening climate impacts and must rapidly scale adaptation finance to build resilience and save lives.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Press release</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=navAy7Z5 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=_L0zUF28 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=CbCN5ZbV 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/timothy-k-1CiE1x4dHIY-unsplash.jpg.webp?h=e5aec6c8&amp;itok=navAy7Z5" alt="Mangrove forest located in the Mida Creek - Malindi" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Timothy K/ unsplash</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-04T13:59:09+03:00" title="4 Nov 2026" class="datetime">4 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/press-release/world-heads-overshoot-15degc-adaptation-too-slow" hreflang="en">As world heads for overshoot of 1.5°C, adaptation is too slow</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">With global warming set to exceed 1.5°C, adaptation finance falls far short of needs, implementation is constrained by institutional barriers, and losses and damages are mounting, according to new report from the United Nations Environment Programme (UNEP).</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Story</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/AMR%20and%20Climate%20Change-Header%20banner-DRAFT%202.png.webp?h=4f45f30c&amp;itok=tr971qJh 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-11/AMR%20and%20Climate%20Change-Header%20banner-DRAFT%202.png.webp?h=4f45f30c&amp;itok=PyTLMqxq 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-11/AMR%20and%20Climate%20Change-Header%20banner-DRAFT%202.png.webp?h=4f45f30c&amp;itok=Em0qhPlF 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-11/AMR%20and%20Climate%20Change-Header%20banner-DRAFT%202.png.webp?h=4f45f30c&amp;itok=tr971qJh" alt="AMR" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Beverley McDonald/UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-11-04T08:21:55+03:00" title="4 Nov 2026" class="datetime">4 Nov 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/story/climate-change-propelling-rise-superbugs" hreflang="en">Is climate change propelling the rise of superbugs? </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Experts fear climate change may be fueling the rise of superbugs, adding to a global crisis of antimicrobial resistance.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A2661%281%29.jpg.webp?h=06ac0d8c&amp;itok=aKB0PTMi 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/1W9A2661%281%29.jpg.webp?h=06ac0d8c&amp;itok=3R2fmSxi 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/1W9A2661%281%29.jpg.webp?h=06ac0d8c&amp;itok=aALx4Ysn 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A2661%281%29.jpg.webp?h=06ac0d8c&amp;itok=aKB0PTMi" alt="Yerevan, Armenia" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-31T17:32:33+03:00" title="31 Oct 2026" class="datetime">31 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/unep-executive-director-statement-closing-cop17-yerevan-armenia" hreflang="en">UNEP Executive Director statement on the closing of COP17 in Yerevan, Armenia.</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">The world has already agreed a global plan to safeguard nature. This COP was about accelerating implementation of the Kunming-Montreal Global Biodiversity Framework (KMGBF), and turning those targets into decisive, real-world action.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/55615458086_cd461e82da_k.jpg.webp?h=a1e1a043&amp;itok=sfMWcN4F 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/55615458086_cd461e82da_k.jpg.webp?h=a1e1a043&amp;itok=WPGzbIRS 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/55615458086_cd461e82da_k.jpg.webp?h=a1e1a043&amp;itok=aYzj23-_ 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/55615458086_cd461e82da_k.jpg.webp?h=a1e1a043&amp;itok=sfMWcN4F" alt="COP 17" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-30T21:37:37+03:00" title="30 Oct 2026" class="datetime">30 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/laying-down-law-biodiversity" hreflang="en">Laying down the law on biodiversity</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, said courts and judges are vital to closing biodiversity implementation gaps and advancing environmental rule of law today.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A8255_2.jpg.webp?h=37759da8&amp;itok=PxzCCSby 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/1W9A8255_2.jpg.webp?h=37759da8&amp;itok=iuXxyhI6 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/1W9A8255_2.jpg.webp?h=37759da8&amp;itok=SFcTFj8K 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A8255_2.jpg.webp?h=37759da8&amp;itok=PxzCCSby" alt="Yerevan, Armenia" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-30T21:39:19+03:00" title="30 Oct 2026" class="datetime">30 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/new-platform-healthy-mountain-ecosystems" hreflang="en">A new platform for healthy mountain ecosystems</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, called for global backing of the Yerevan Platform to protect mountain and freshwater ecosystems and boost biodiversity action.  </div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Technical highlight</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/Picture1%20%282%29.jpg.webp?h=73ff08d3&amp;itok=-ztMl8-n 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/Picture1%20%282%29.jpg.webp?h=73ff08d3&amp;itok=wNwWcy7n 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/Picture1%20%282%29.jpg.webp?h=73ff08d3&amp;itok=Wlihj_EX 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/Picture1%20%282%29.jpg.webp?h=73ff08d3&amp;itok=-ztMl8-n" alt="An aerial view of a fork in a river. " class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Nuocheng Zhang </div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-30T08:02:39+03:00" title="30 Oct 2026" class="datetime">30 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/technical-highlight/why-nature-based-solutions-cities-are-future-urban-resilience" hreflang="en">Why nature-based solutions for cities are the future of urban resilience </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Discover how 24 cities in 19 countries are using nature-based solutions to fight climate change, restore ecosystems and build urban resilience.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/IMG-7503.jpg.webp?h=086327a6&amp;itok=LiDDC_R_ 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/IMG-7503.jpg.webp?h=086327a6&amp;itok=l3hOKQV7 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/IMG-7503.jpg.webp?h=086327a6&amp;itok=sUlU0Yvj 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/IMG-7503.jpg.webp?h=086327a6&amp;itok=LiDDC_R_" alt="Launch of the Model Framework Forest Act " class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-29T18:15:46+03:00" title="29 Oct 2026" class="datetime">29 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/new-model-forest-act-can-help-halt-and-reverse-deforestation" hreflang="en">New model forest act can help halt and reverse deforestation</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, called for stronger laws and action to halt deforestation, keep forests standing and advance global biodiversity, climate and restoration goals.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Press release</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20260705_UNEP%20Decade%20on%20Ecosystem%20Restoration_%20Barranquilla_Todd%20Brown_71.jpg.webp?h=b443c3c5&amp;itok=mQ_QpmOx 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20260705_UNEP%20Decade%20on%20Ecosystem%20Restoration_%20Barranquilla_Todd%20Brown_71.jpg.webp?h=b443c3c5&amp;itok=SRwZfDO3 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20260705_UNEP%20Decade%20on%20Ecosystem%20Restoration_%20Barranquilla_Todd%20Brown_71.jpg.webp?h=b443c3c5&amp;itok=QyOeKH0o 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20260705_UNEP%20Decade%20on%20Ecosystem%20Restoration_%20Barranquilla_Todd%20Brown_71.jpg.webp?h=b443c3c5&amp;itok=mQ_QpmOx" alt="Barranquilla" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Todd Brown/UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-29T09:00:13+03:00" title="29 Oct 2026" class="datetime">29 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/press-release/nature-making-comeback-world-must-move-faster-meet-restoration" hreflang="en">Nature is making a comeback, but the world must move faster to meet restoration targets – UN Report</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">A UN report published today finds that 252 million hectares (ha) across 149 countries are being restored, creating more than one million green jobs – the largest documented global restoration effort to date</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Story</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/snow_leopard_credit_Philippe_Matheini_and_Michael_Booth%20%282%29.jpg.webp?h=f13a1200&amp;itok=KGOb7y8n 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/snow_leopard_credit_Philippe_Matheini_and_Michael_Booth%20%282%29.jpg.webp?h=f13a1200&amp;itok=sCp54hn8 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/snow_leopard_credit_Philippe_Matheini_and_Michael_Booth%20%282%29.jpg.webp?h=f13a1200&amp;itok=onaJGIsk 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/snow_leopard_credit_Philippe_Matheini_and_Michael_Booth%20%282%29.jpg.webp?h=f13a1200&amp;itok=KGOb7y8n" alt="Snow leopard" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Philippe Matheini and Michael Booth </div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-29T08:45:44+03:00" title="29 Oct 2026" class="datetime">29 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/story/un-report-shows-nature-being-restored-unprecedented-scale" hreflang="en">UN report shows nature is being restored at an unprecedented scale</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">The Restoration Progress Report: Nature’s Comeback, released on 29 October, says an area of land and sea the size of Kazakhstan is now being repaired.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Press release</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/getty-images-suhi2UFNuXM-unsplash.jpg.webp?h=8a8eaa32&amp;itok=Uv-owktm 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/getty-images-suhi2UFNuXM-unsplash.jpg.webp?h=8a8eaa32&amp;itok=g4kDbtPs 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/getty-images-suhi2UFNuXM-unsplash.jpg.webp?h=8a8eaa32&amp;itok=FrH46wDP 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/getty-images-suhi2UFNuXM-unsplash.jpg.webp?h=8a8eaa32&amp;itok=Uv-owktm" alt="Aerial view of Anini and Kalihiwai beaches on the north coast of Kauai" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Getty Images/Unsplash +</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-28T15:14:18+03:00" title="28 Oct 2026" class="datetime">28 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/press-release/un-report-urges-investment-ocean-carbon-intelligence-safeguard" hreflang="en">UN report urges investment in Ocean Carbon Intelligence to safeguard the ocean&#039;s climate role </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">The world must strengthen its understanding of the ocean&#039;s carbon system if it is to safeguard one of the planet&#039;s most important climate allies, according to the UN’s 2026 Climate Technology Progress Report released today.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Press release</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/cop17%20mountain%20day.jpg.webp?h=7ae75982&amp;itok=o5LmUAhI 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/cop17%20mountain%20day.jpg.webp?h=7ae75982&amp;itok=vHNUXb60 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/cop17%20mountain%20day.jpg.webp?h=7ae75982&amp;itok=PMwcDilA 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/cop17%20mountain%20day.jpg.webp?h=7ae75982&amp;itok=o5LmUAhI" alt="CBD COP17" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-28T09:59:15+03:00" title="28 Oct 2026" class="datetime">28 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/press-release/armenia-partnership-unep-launches-global-initiative-drive-action" hreflang="en">Armenia, in partnership with UNEP, launches global initiative to drive action on mountain and related freshwater ecosystems</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">The Republic of Armenia, in its capacity as Convention on Biological Diversity (CBD) COP17 Presidency, in partnership with the UN Environment Programme (UNEP), launched a new initiative to accelerate global efforts to conserve and restore mountains and their related freshwater ecosystems that supply clean water, food and stable climates to over a billion people around the world. </div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_KBF%20Projects%20Press%20Conference%20_FF.jpg.webp?h=7e287452&amp;itok=VGLp0nIX 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_KBF%20Projects%20Press%20Conference%20_FF.jpg.webp?h=7e287452&amp;itok=cRT_lmM0 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_KBF%20Projects%20Press%20Conference%20_FF.jpg.webp?h=7e287452&amp;itok=hMi8RTfY 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_KBF%20Projects%20Press%20Conference%20_FF.jpg.webp?h=7e287452&amp;itok=VGLp0nIX" alt="Press conference" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T12:06:55+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/kunming-biodiversity-fund-unep-executive-director-press-statement" hreflang="en">Kunming Biodiversity Fund, UNEP Executive Director Press Statement</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, said the Kunming Biodiversity Fund is fast-tracking finance for developing nations to scale nature action and achieve GBF goals.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Technical highlight</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/qTUuKoet_0.jpeg.webp?h=2d58cfd9&amp;itok=mhawXr0o 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/qTUuKoet_0.jpeg.webp?h=2d58cfd9&amp;itok=OknEe8z3 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/qTUuKoet_0.jpeg.webp?h=2d58cfd9&amp;itok=Ec9wUm-F 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/qTUuKoet_0.jpeg.webp?h=2d58cfd9&amp;itok=mhawXr0o" alt="Two people holding files" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Florian Fussstetter/UNEP </div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T17:45:25+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/technical-highlight/european-commission-and-unep-reaffirm-commitment-global" hreflang="en">European Commission and UNEP reaffirm commitment to global environmental action and multilateralism  </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">The agreement calls for mutual cooperation on the environment in response to today’s global challenges.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Technical highlight</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20230916_UNEP_Champs%202023_Blue%20Circle_China_Justin%20Jin_0098_JIN1717_AL1%20justin%20jin%20%281%29.jpg.webp?h=cb8938f5&amp;itok=EIKNUf_F 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20230916_UNEP_Champs%202023_Blue%20Circle_China_Justin%20Jin_0098_JIN1717_AL1%20justin%20jin%20%281%29.jpg.webp?h=cb8938f5&amp;itok=D31HTGfv 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20230916_UNEP_Champs%202023_Blue%20Circle_China_Justin%20Jin_0098_JIN1717_AL1%20justin%20jin%20%281%29.jpg.webp?h=cb8938f5&amp;itok=_foBUrrx 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20230916_UNEP_Champs%202023_Blue%20Circle_China_Justin%20Jin_0098_JIN1717_AL1%20justin%20jin%20%281%29.jpg.webp?h=cb8938f5&amp;itok=EIKNUf_F" alt="A woman holding plastic pellets " class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Justin Jin/UNEP </div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T18:08:35+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/technical-highlight/why-circular-economy-increasingly-crucial-and-profitable" hreflang="en">Why a circular economy is increasingly crucial and profitable </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">As biodiversity plummets, circular approaches to business offer a way to conserve natural resources while still turning a profit. </div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A7651_.jpg.webp?h=bbacefec&amp;itok=oXiMKIIq 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/1W9A7651_.jpg.webp?h=bbacefec&amp;itok=KbXh_THQ 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/1W9A7651_.jpg.webp?h=bbacefec&amp;itok=IbeEhP43 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/1W9A7651_.jpg.webp?h=bbacefec&amp;itok=oXiMKIIq" alt="COP17 HLS opening statement" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T14:49:31+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/picking-pace-biodiversity-action" hreflang="en">Picking up the pace on biodiversity action</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">UNEP Executive Director Inger Andersen urged nations to accelerate transformative action, finance and cooperation to achieve biodiversity goals and halt and reverse nature loss.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_second%20week%20opening%20press%20conference_FF_0.jpg.webp?h=a28f3f37&amp;itok=UtT_-Fne 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_second%20week%20opening%20press%20conference_FF_0.jpg.webp?h=a28f3f37&amp;itok=ziD0eqGa 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_second%20week%20opening%20press%20conference_FF_0.jpg.webp?h=a28f3f37&amp;itok=wJUUZ57Q 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_second%20week%20opening%20press%20conference_FF_0.jpg.webp?h=a28f3f37&amp;itok=UtT_-Fne" alt="CBD COP17" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T11:53:06+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/cbd-cop17-press-conference-unep-executive-director-press-statement" hreflang="en">CBD COP17 Press conference, UNEP Executive Director Press Statement</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">UNEP Executive Director Inger Andersen: COP17 must deliver a strong Yerevan Pathway through cooperation, finance and biodiversity action to implement global goals on.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/Image1.jpg.webp?h=2b4aef38&amp;itok=v8gUmqC3 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/Image1.jpg.webp?h=2b4aef38&amp;itok=gW6ay8iR 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/Image1.jpg.webp?h=2b4aef38&amp;itok=L8_9Hn40 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/Image1.jpg.webp?h=2b4aef38&amp;itok=v8gUmqC3" alt="CBD COP 17 conference" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-27T15:37:35+03:00" title="27 Oct 2026" class="datetime">27 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/turning-ambition-nature-economic-action" hreflang="en">Turning ambition on nature into economic action</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, pressed on finance leaders to align public and private finance with nature, accelerate biodiversity action, reform harmful subsidies and mobilize greater investment to achieve global biodiversity goals.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_Tropical%20Forests%20Forever%20Facility%20%28TFFF%29.jpg.webp?h=328dbe35&amp;itok=tTH6vRAT 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_Tropical%20Forests%20Forever%20Facility%20%28TFFF%29.jpg.webp?h=328dbe35&amp;itok=EotI6HQ2 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_Tropical%20Forests%20Forever%20Facility%20%28TFFF%29.jpg.webp?h=328dbe35&amp;itok=ttXnc8Fl 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261026_CBD_COP17_Yerevan_Inger%20Andersen_Tropical%20Forests%20Forever%20Facility%20%28TFFF%29.jpg.webp?h=328dbe35&amp;itok=tTH6vRAT" alt="CBD COP 17" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-26T14:37:43+03:00" title="26 Oct 2026" class="datetime">26 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/getting-tropical-forest-forever-facility-flying-start" hreflang="en">Getting the Tropical Forest Forever Facility off to a flying start</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, said the Tropical Forest Forever Facility (TFFF) is a timely financing mechanism that rewards verified forest protection, attracts large-scale investment, and supports biodiversity, climate stability, livelihoods, and ecosystem services. She called for the facility’s swift finalization, stronger financial commitments, and readiness for future investments.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Speech</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261025_UNEP_CBD_COP17_Yerevan.jpg.webp?h=78aab1d8&amp;itok=pMzP78_y 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/20261025_UNEP_CBD_COP17_Yerevan.jpg.webp?h=78aab1d8&amp;itok=etn4kTxq 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/20261025_UNEP_CBD_COP17_Yerevan.jpg.webp?h=78aab1d8&amp;itok=Yt51jgZ_ 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/20261025_UNEP_CBD_COP17_Yerevan.jpg.webp?h=78aab1d8&amp;itok=pMzP78_y" alt="CBD COP - Yerevan, Armenia" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: UNEP</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-26T10:24:38+03:00" title="26 Oct 2026" class="datetime">26 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/speech/putting-private-finance-tools-work-biodiversity" hreflang="en">Putting private finance tools to work for biodiversity</a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item">Inger Andersen, UNEP Executive Director, says finance now recognizes nature, but biodiversity remains underfunded; governments must unlock private investment.</div>
+      
+</div>
+
+</div>
+    <div class="views-row">                                                <div class="node node--type-news node--view-mode-card ds-1col clearfix">
+
+  
+          
+      <div class="card__tag">Story</div>
+      
+  
+
+
+            <div class="field field--name-field-main-image field--type-entity-reference field--label-hidden field__item">
+
+<div class="media media--type-image media--view-mode-_-3-medium image_block_caption">
+				<div class="image_block_caption-image">
+							
+  <div class="field field--name-field-media-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">    <picture>
+                  <source srcset="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/DSCF9109_edited.jpg.webp?h=dcb27c7c&amp;itok=IT6ga6_h 500w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_600x450_focal_point_webp/public/2026-10/DSCF9109_edited.jpg.webp?h=dcb27c7c&amp;itok=NS43ui4U 600w, https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_720x540_focal_point_webp/public/2026-10/DSCF9109_edited.jpg.webp?h=dcb27c7c&amp;itok=4xykYWiV 720w" media="all and (min-width: 500px)" type="image/webp" sizes="100vw" width="720" height="540"/>
+                  <img loading="lazy" width="500" height="375" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/styles/4_3_500x375_focal_point_webp/public/2026-10/DSCF9109_edited.jpg.webp?h=dcb27c7c&amp;itok=IT6ga6_h" alt="A female driver drives a Transjakarta electric bus" class="img-fluid" />
+
+  </picture>
+
+</div>
+          </div>
+
+					</div>
+
+				
+					<div class="image_block_caption-section">
+				
+									<div class="image_block_caption-section-credit">
+						
+  <div class="field field--name-field-image-credit field--type-link field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image credit</div>
+              <div class="field__item">Credit: Transjakarta</div>
+          </div>
+
+					</div>
+							</div>
+		
+	</div>
+</div>
+          <div class="card__meta">
+      
+            <div class="field field--name-published-at field--type-published-at field--label-hidden field__item"><time datetime="2026-10-23T16:55:05+03:00" title="23 Oct 2026" class="datetime">23 Oct 2026</time>
+</div>
+          </div>
+    
+            <div class="field field--name-node-title field--type-ds field--label-hidden field__item"><h3>
+  <a href="/en/news-and-stories/story/how-women-are-steering-asias-shift-electric-buses" hreflang="en">How women are steering Asia&#039;s shift to electric buses </a>
+</h3>
+</div>
+          
+            <div class="field field--name-field-summary field--type-string-long field--label-hidden field__item"> From Jakarta to Hanoi, women are driving Asia&#039;s shift to electric buses—proving a UNEP-led project can cut emissions and close the transport gender gap at once. </div>
+      
+</div>
+
+</div>
+
+    </div>
+  
+            <div class="view-footer">
+      <div class="view-footer-see-all"><a class="btn btn-secondary" href="/resources/filter/page=0/langcode=en/sort_by=publication_date/sort_order=desc/items_per_page=20/content_type=Press%20release,Statements,Speech,News,Story,Video,Blogpost,Technical%20Highlight">Read more</a></div>
+    </div>
+    </div>
+</div>
+
+  </div>
+
+    </div>
+</div>
+  </div>
+
+</article>
+
+  </div>
+
+				</div>
+			
+					</div>
+	
+</main>
+
+<footer
+	role="contentinfo" class="footer">
+		
+			
+				<div class="footer-links">
+			  <div class="region region-footer-links">
+    <nav role="navigation" aria-labelledby="block-unep-corporate-unep-corporate-footer-menu" id="block-unep-corporate-unep-corporate-footer">
+            
+  <h2 class="visually-hidden" id="block-unep-corporate-unep-corporate-footer-menu">Footer</h2>
+  
+
+        <nav class="container-wide" aria-label="Footer navigation">
+  <div class="footer-links-grid footer-links-grid--uc">
+          <div class="footer-links-grid__item">
+                                  <p class="footer-element footer-links-title" id="about_us">About us</p>
+        
+                  <ul class="footer-links-list list-unstyled">
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/about-us/unep-50-years-environmental-milestones" class="footer-element footer-link" id="about_us_history" data-drupal-link-system-path="node/204166">History</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/about-us/our-people" class="footer-element footer-link" id="about_us_structure_and_leadership" data-drupal-link-system-path="node/203901">Structure and leadership</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/funding" class="footer-element footer-link" id="about_us_funding" data-drupal-link-system-path="node/18782">Funding</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/about-us/faqs" class="footer-element footer-link" id="about_us_faqs" data-drupal-link-system-path="node/34321">FAQs</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/contact-us" class="footer-element footer-link" id="about_us_contact_us" data-drupal-link-system-path="node/30010">Contact us</a>
+              </li>
+                      </ul>
+              </div>
+          <div class="footer-links-grid__item">
+                                  <p class="footer-element footer-links-title" id="meetings_and_governance">Meetings and governance</p>
+        
+                  <ul class="footer-links-list list-unstyled">
+                                        <li class="footer-links-item">
+                <a href="https://www.unep.org/environmentassembly/" class="footer-element footer-link" id="meetings_and_governance_un_environment_assembly">UN Environment Assembly</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/cpr" class="footer-element footer-link" id="meetings_and_governance_committee_of_permanent_representatives" data-drupal-link-system-path="node/8165">Committee of Permanent Representatives</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/inc-plastic-pollution" class="footer-element footer-link" id="meetings_and_governance_intergovernmental_negotiating_committee_on_plastic_pollution" data-drupal-link-system-path="node/34694">Intergovernmental Negotiating Committee on Plastic Pollution</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/meetings-and-governance/secretariats-and-conventions" class="footer-element footer-link" id="meetings_and_governance_secretariats_and_conventions" data-drupal-link-system-path="node/18405">Secretariats and conventions</a>
+              </li>
+                      </ul>
+              </div>
+          <div class="footer-links-grid__item">
+                                  <p class="footer-element footer-links-title" id="resources">Resources</p>
+        
+                  <ul class="footer-links-list list-unstyled">
+                                        <li class="footer-links-item">
+                <a href="https://wedocs.unep.org/home" class="footer-element footer-link" id="resources_knowledge_repository">Knowledge repository</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/publications/report/annual-report-2025" class="footer-element footer-link" id="resources_annual_report" data-drupal-link-system-path="node/42779">Annual Report</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/publication-series/unep-medium-term-strategy" class="footer-element footer-link" id="resources_medium_term_strategy" data-drupal-link-system-path="taxonomy/term/34839">Medium-term Strategy</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="https://wesr.unep.org/environmentgpt/" class="footer-element footer-link" id="resources_environmentgpt">EnvironmentGPT</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/what-we-do/unep-and-sustainable-development-goals" class="footer-element footer-link" id="resources_unep_and_the_sustainable_development_goals" data-drupal-link-system-path="node/37949">UNEP and the Sustainable Development Goals</a>
+              </li>
+                      </ul>
+              </div>
+          <div class="footer-links-grid__item">
+                                  <p class="footer-element footer-links-title" id="media">Media</p>
+        
+                  <ul class="footer-links-list list-unstyled">
+                                        <li class="footer-links-item">
+                <a href="/en/media-centre" class="footer-element footer-link" id="media_media_centre" data-drupal-link-system-path="node/27163">Media Centre</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/whats-new/news-stories-speeches" class="footer-element footer-link is-active" id="media_news_stories_and_speeches" data-drupal-link-system-path="node/1104" aria-current="page">News, stories and speeches</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/whats-new/thematic-feeds" class="footer-element footer-link" id="media_thematic_feeds" data-drupal-link-system-path="node/42299">Thematic feeds</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/social-media" class="footer-element footer-link" id="media_social_media" data-drupal-link-system-path="node/31396">Social media</a>
+              </li>
+                      </ul>
+              </div>
+          <div class="footer-links-grid__item">
+                                  <p class="footer-element footer-links-title" id="get_involved">Get involved</p>
+        
+                  <ul class="footer-links-list list-unstyled">
+                                        <li class="footer-links-item">
+                <a href="/en/whats-new/events" class="footer-element footer-link" id="get_involved_events" data-drupal-link-system-path="node/203889">Events</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/civil-society-engagement" class="footer-element footer-link" id="get_involved_civil_society_engagement" data-drupal-link-system-path="node/21407">Civil society engagement</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/whats-new/get-involved" class="footer-element footer-link" id="get_involved_advocacy_and_campaigns" data-drupal-link-system-path="node/204223">Advocacy and campaigns</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/about-us/call-proposals" class="footer-element footer-link" id="get_involved_call_for_proposals">Call for proposals</a>
+              </li>
+                                        <li class="footer-links-item">
+                <a href="/en/who-we-are/about-us/work-us" class="footer-element footer-link" id="get_involved_vacancies" data-drupal-link-system-path="node/203890">Vacancies</a>
+              </li>
+                      </ul>
+              </div>
+      </div>
+</nav>
+
+  </nav>
+
+  </div>
+
+		</div>
+	
+		<div class="footer-main w-100">
+		<div class="container-wide">
+			<div class="row align-items-stretch flex-wrap flex-md-nowrap">
+				<div class="col-12 col-md position-relative">
+					  <div class="region region-footer-uneporg-left">
+    <div class="views-element-container block block-views block-views-blocksocial-media-social-media-block" id="block-unep-corporate-unep-corporate-views-block-social-media-social-media-block">
+  
+      <h2>Social media</h2>
+    
+      <div data-block="footer_uneporg_left"><div class="view view-social-media view-id-social_media view-display-id-social_media_block js-view-dom-id-4aa557736339bfbfd7e71061ffb6bc0db3cf5ab39e60a055d09f93add33870ed">
+  
+    
+      
+      <div class="view-content">
+          <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-facebook" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.facebook.com/unep" class="footer-element" id="footer_social_media_facebook">https://www.facebook.com/unep</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-x-twitter" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://x.com/UNEP" class="footer-element" id="footer_social_media_x">https://x.com/UNEP</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-linkedin" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.linkedin.com/company/unep/" class="footer-element" id="footer_social_media_linkedin">https://www.linkedin.com/company/unep/</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-instagram" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.instagram.com/unep/" class="footer-element" id="footer_social_media_instagram">https://www.instagram.com/unep/</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-threads" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.threads.com/@unep" class="footer-element" id="footer_social_media_threads">https://www.threads.com/@unep</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-youtube" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.youtube.com/unenvironmentprogramme" class="footer-element" id="footer_social_media_youtube">https://www.youtube.com/unenvironmentprogramme</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-tiktok" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.tiktok.com/@unep?lang=en" class="footer-element" id="footer_social_media_tiktok">https://www.tiktok.com/@unep?lang=en</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-tumblr" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.tumblr.com/unep/" class="footer-element" id="footer_social_media_tumblr">https://www.tumblr.com/unep/</a></div></div></div>
+
+      </div>
+      </div>
+</div>
+    <div class="views-row">
+
+
+  
+    
+  
+  <div class="container-fluid layout layout--onecol g-0">
+          <div  class="layout__region layout__region--content">
+        <div class="field field--name-field-social-media-fa-icon field--label-hidden"><div class="fontawesome-icons">
+      <div class="fontawesome-icon">
+  <i class="fa-brands fa-weibo" data-fa-transform="" data-fa-mask="" style="--fa-primary-color: #000000; --fa-secondary-color: #000000;"></i>
+</div>
+
+  </div>
+</div>
+<div class="field field--name-field-link field--label-hidden"><div class="link-item"><div class="link-url"><a href="https://www.weibo.com/unepandyou?is_hot=1" class="footer-element" id="footer_social_media_weibo">https://www.weibo.com/unepandyou?is_hot=1</a></div></div></div>
+
+      </div>
+      </div>
+
+</div>
+
+    </div>
+  
+          </div>
+</div>
+
+  </div>
+<nav role="navigation" aria-labelledby="block-unep-corporate-unep-corporate-legal-menu" id="block-unep-corporate-unep-corporate-legal">
+      
+  <h2 id="block-unep-corporate-unep-corporate-legal-menu">Legal Notices</h2>
+  
+
+        
+                    <ul data-block="footer_uneporg_left" class="nav navbar-nav">
+    
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="/en/terms-use" class="footer-element nav-link" id="terms_of_use" data-drupal-link-system-path="node/18424">Terms of use</a>
+
+                      </li>
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="/en/privacy-policy" class="footer-element nav-link" id="privacy_policy" data-drupal-link-system-path="node/28178">Privacy policy</a>
+
+                      </li>
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="/en/who-we-are/about-us/environmental-and-social-sustainability-framework" class="footer-element nav-link" id="stakeholder_response_mechanism" data-drupal-link-system-path="node/204165">Stakeholder response mechanism</a>
+
+                      </li>
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="/en/who-we-are/evaluation-policies-and-strategies/policies-and-strategies/reporting-potential-scam" class="footer-element nav-link" id="report_scam" data-drupal-link-system-path="node/31534">Report scam</a>
+
+                      </li>
+          
+            
+            <li class="nav-item">
+
+                        
+        <a href="/en/sitemap" class="footer-element nav-link" id="site_map" data-drupal-link-system-path="sitemap">Site map</a>
+
+                      </li>
+        </ul>
+  
+
+
+  </nav>
+
+  </div>
+
+				</div>
+				<div class="col-12 col-md-auto position-relative">
+					<div class="footer-divider d-none d-md-block" aria-hidden="true"></div>
+					<div class="region region--footer-uneporg-right position-relative">
+          <div class="footer-divider d-none d-md-block" aria-hidden="true"></div>
+
+<div class="block block-system-branding-block branding--uneporg-childsites-footer d-flex align-items-center">
+
+  <div id="block-unep-corporate-logo" class="block block-block-content block-block-content4a29fb85-e913-43a5-97b2-e694c5747785">
+  
+    
+      <a href="/en" title="Home" rel="home" class="site-logo d-inline-block">
+        
+            <div class="field field--name-field-white-logo field--type-entity-reference field--label-hidden field__item"><div class="media media--type-svg-image media--view-mode-small ds-1col clearfix">
+
+  
+
+  
+  <div class="field field--name-field-media-svg-image field--type-image field--label-visually_hidden">
+    <div class="field__label visually-hidden">Image</div>
+              <div class="field__item">  <img loading="eager" width="92" src="https://s3.eu-west-1.amazonaws.com/cdn.unenvironment.org/unepcorporaterevamp_prod/s3fs-public/2026-07/unep_logo_en_white.svg" alt="unep logo" class="img-fluid" />
+
+</div>
+          </div>
+
+
+</div>
+
+</div>
+      
+    </a>
+</div>
+
+
+  
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="footer-meta mt-2">
+              <div class="block block--footer-manager">
+          <p class="site-manager mb-1">© 2026 UNEP</p>
+        </div>
+                    <div class="block block--footer-contact">
+          <p class="contact-us mb-0">
+           <a href="/subscribe" class="footer-element" id="footer_subscribe_to_our_newsletter">Subscribe to our newsletter</a>
+          </p>
+        </div>
+          </div>
+  </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  </div>
+
+    
+    <script src="/core/assets/vendor/jquery/jquery.min.js?v=4.0.0" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/assets/vendor/once/once.min.js?v=1.0.1" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/drupal.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/drupal.init.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/themes/contrib/bootstrap5/dist/bootstrap/5.3.8/dist/js/bootstrap.bundle.js?v=5.3.8" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/assets/vendor/tabbable/index.umd.min.js?v=6.3.0" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/ai/assets/js/ai_global.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/ckeditor_accordion/js/accordion.frontend.min.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/ckeditor_bootstrap_tabs/js/tabs.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/dropbutton/dropbutton.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/custom/custom_datalayer/js/custom-datalayer-view.js?v=1.x" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/extlink/js/extlink.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/progress.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/assets/vendor/loadjs/loadjs.min.js?v=4.3.0" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/debounce.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/announce.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/message.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/themes/claro/js/ajax.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/core/misc/ajax.js?v=11.3.21" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/google_tag/js/gtag.ajax.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/contrib/leaflet/js/leaflet/dist/leaflet.js?v=1.9.4" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/custom/interactive_map_module/js/leaflet-legend.js?v=1.x" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/themes/custom/unep_corporate/js/unep_corporate.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/modules/custom/unep_opensearch/js/search-redirect.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+<script src="/themes/custom/unep_template/js/unep_template.js?toc4bt" type="2fadef650d6c37dce2a7629f-text/javascript"></script>
+
+  <script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="2fadef650d6c37dce2a7629f-|49" defer></script><script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a591be89bf3a7c96',t:'MTc5NDQ0Njc0Mg=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a591be89bf3a7c96',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

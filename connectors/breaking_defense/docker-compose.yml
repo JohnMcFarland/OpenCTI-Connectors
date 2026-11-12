@@ -1,0 +1,43 @@
+# Breaking Defense OpenCTI connector - GitHub template compose file.
+# Contains NO credentials, tokens, UUIDs, or instance-specific values.
+# The local docker-compose.override.yml supplies real values and is never
+# committed.
+version: '3'
+services:
+  breaking-defense:
+    build: .
+    container_name: opencti-connector-breaking-defense
+    volumes:
+      # Shared microservices/ package (pdf-renderer client and Crucible
+      # classifier), read-only, at /microservices. Required.
+      - ../microservices:/microservices:ro
+    environment:
+      # --- OpenCTI platform connection ---
+      - OPENCTI_URL=
+      - OPENCTI_TOKEN=
+      # --- Connector identity ---
+      - CONNECTOR_ID=            # generate once: uuidgen
+      - CONNECTOR_TYPE=EXTERNAL_IMPORT
+      - CONNECTOR_NAME=Breaking Defense
+      - CONNECTOR_SCOPE=breaking_defense
+      - CONNECTOR_LOG_LEVEL=info
+      # --- PDF render service (house client in microservices/make_pdf.py) ---
+      - PDF_RENDERER_URL=http://pdf-renderer:8000
+      # --- Report type (Crucible Collector /classify) ---
+      # Set the URL in docker-compose.override.yml. Blank = standalone: no
+      # call is made and every Report gets the default report_type.
+      - CRUCIBLE_COLLECTOR_URL=
+      - CRUCIBLE_CLASSIFY_TIMEOUT=30    # seconds per /classify call
+      # --- Source / behaviour (non-sensitive; defaults shown) ---
+      - BREAKING_DEFENSE_FEED_URL=https://breakingdefense.com/full-rss-feed/?v=2
+      - BREAKING_DEFENSE_POLL_INTERVAL=1800
+      - BREAKING_DEFENSE_REQUEST_DELAY=3
+      - BREAKING_DEFENSE_MAX_REPORTS=0           # 0 = unlimited; 3 for a bounded test
+      - BREAKING_DEFENSE_MAX_AGE_DAYS=30            # skip items older than this (0 = no limit)
+      - BREAKING_DEFENSE_RENDER_RETRIES=3
+      - BREAKING_DEFENSE_PDF_RENDER_TIMEOUT=120
+      - BREAKING_DEFENSE_CONFIDENCE=50
+      - BREAKING_DEFENSE_REPORT_TYPE=open-source-reporting
+      - BREAKING_DEFENSE_TLP=TLP:CLEAR
+      - BREAKING_DEFENSE_AUTHOR_NAME=Breaking Defense
+    restart: always

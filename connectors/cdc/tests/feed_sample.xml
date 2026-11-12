@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0">
+<channel>
+<title>MMWR (Journal)</title>
+<googleplay:author>imtech@cdc.gov</googleplay:author>
+<googleplay:email>imtech@cdc.gov</googleplay:email>
+<googleplay:description>This Week&#39;s Issue of MMWR.  Also includes the latest MMWR Recommendations and Reports and MMWR Surveillance Summaries.</googleplay:description>
+<description>This Week&#39;s Issue of MMWR.  Also includes the latest MMWR Recommendations and Reports and MMWR Surveillance Summaries.</description>
+<language>en</language>
+<pubDate>Thu, 15 Oct 2026 16:17:00 GMT</pubDate>
+<lastBuildDate>Thu, 15 Oct 2026 16:16:04 GMT</lastBuildDate>
+<link>https://www.cdc.gov/mmwr/</link>
+<atom:link href="https://www.cdc.gov/mmwr/" rel="self" type="application/rss+xml" />
+<copyright>Centers for Disease Control and Prevention (CDC)</copyright>
+<webMaster>imtech@cdc.gov (imtech@cdc.gov)</webMaster>
+<category>MMWR</category>
+<category>MobileApp MMWR</category>
+<item>
+<title>Hantavirus Outbreak Caused by Andes Virus Linked to International Cruise Ship Travel - United States, 2026</title>
+<description>This report describes cases of hantavirus among people on a cruise ship in the Atlantic Ocean.</description>
+<link>https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766795</link>
+<guid isPermaLink="true">https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766795&amp;_=747F6E2A9885226C163B3314B8B6B03242611CF51B5B6154BC3D36E2D3BDB6F3</guid>
+<pubDate>Thu, 05 Nov 2026 18:00:00 GMT</pubDate>
+<category>MMWR</category>
+<category>Morbidity &amp; Mortality Weekly Report</category>
+<media:content url="https://www.cdc.gov/mmwr/mobile_app_images/generic_mmwr_logo_750x393.png" type="image/png" height="393" width="750" />
+</item>
+<item>
+<title>Cutaneous Aspergillosis Among Extremely Preterm Neonates in Neonatal Intensive Care Units - Michigan and New York, 2023-2024</title>
+<description>This report describes two clusters of cutaneous aspergillosis in neonatal intensive care units in Michigan and New York.</description>
+<link>https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766797</link>
+<guid isPermaLink="true">https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766797&amp;_=981C2037E07195FE8937A17556A25C730047B646C6D18EAF520662352DEA0735</guid>
+<pubDate>Thu, 05 Nov 2026 18:00:00 GMT</pubDate>
+<category>MMWR</category>
+<category>Morbidity &amp; Mortality Weekly Report</category>
+<media:content url="https://www.cdc.gov/mmwr/mobile_app_images/generic_mmwr_logo_750x393.png" type="image/png" height="393" width="750" />
+</item>
+<item>
+<title>Notes from the Field: Use of Enhanced Surveillance to Detect Severe Group A Streptococcus Infections Among Persons Experiencing Homelessness - Missoula County, Montana, July 2024-September 2025</title>
+<description>This report describes enhanced surveillance to detect invasive group A Streptococcus infections among people experiencing homelessness.</description>
+<link>https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766762</link>
+<guid isPermaLink="true">https://tools.cdc.gov/api/embed/downloader/download.asp?m=132599&amp;c=766762&amp;_=6E1F9212865EB2219486747A0AAA3E65242762CADA5E36129B1B069B1E1D2BF7</guid>
+<pubDate>Thu, 29 Oct 2026 17:25:00 GMT</pubDate>
+<category>MMWR</category>
+<category>Morbidity &amp; Mortality Weekly Report</category>
+<media:content url="https://www.cdc.gov/mmwr/mobile_app_images/generic_mmwr_logo_750x393.png" type="image/png" height="393" width="750" />
+</item>
+</channel>
+</rss>

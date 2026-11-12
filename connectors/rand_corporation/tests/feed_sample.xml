@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>New RAND Publications</title>
+  <link rel="self" href="https://www.rand.org/pubs/new.xml"/>
+  <updated>2026-11-11T08:09:37Z</updated>
+  <link rel="alternate" type="text/html" hreflang="en" href="https://www.rand.org/pubs/new.html" />
+  <rights>Copyright (c) 2026, The RAND Corporation</rights>
+  <author>
+    <name>RAND Corporation</name>
+  </author>
+  <id>https://www.rand.org/pubs/new.html</id>
+ 
+          <entry>
+            <id>https://www.rand.org/pubs/research_reports/RRA5389-1.html</id>
+            <title type="html">Trust Unpacked</title>
+            <author><name>Richard Milne</name></author><author><name>Manpreet Bhangal</name></author><author><name>Tara Zammit</name></author><author><name>Daniel Lee</name></author><author><name>Rebecca Mead</name></author><author><name>Hannah Behrendt</name></author>
+            <published>2026-11-11T04:00:00Z</published>
+            <updated>2026-11-11T04:00:00Z</updated>
+            <summary type="html">Trust Unpacked presents a conceptual and methodological foundation for understanding and assessing institutional trustworthiness.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/research_reports/RRA5389-1.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/research_reports/RRA4565-1.html</id>
+            <title type="html">The Life of the Party(-State)</title>
+            <author><name>Nathan Waechter</name></author><author><name>Scott W. Harold</name></author><author><name>Guoguang Wu</name></author><author><name>Shea Henderson</name></author>
+            <published>2026-11-10T08:15:00Z</published>
+            <updated>2026-11-10T08:15:00Z</updated>
+            <summary type="html">China&#8217;s political cycle and bureaucratic rhythms have shifted under Xi Jinping, affecting how the United States engages with China. RAND researchers examine these changes shaping China&#8217;s foreign relations and what they mean for U.S.-China relations.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/research_reports/RRA4565-1.html"/>
+            
+          </entry>
+          
+          <entry>
+            <id>https://www.rand.org/pubs/research_reports/RRA4368-1.html</id>
+            <title type="html">The U.S. Mobile Network Industrial Base</title>
+            <author><name>Timothy M. Bonds</name></author><author><name>Mary Lee</name></author><author><name>Tom Lagerman</name></author><author><name>Nicholas A. O'Donoughue</name></author><author><name>Grant Ellison</name></author>
+            <published>2026-11-10T08:00:00Z</published>
+            <updated>2026-11-10T08:00:00Z</updated>
+            <summary type="html">This assessment of the U.S. mobile network industrial base identifies a strategy to leverage U.S. strengths to build an advanced 6G ecosystem by establishing a public-private partnership between the U.S. government and the private sector.</summary>
+            <link rel="alternate" type="text/xhtml" hreflang="en" title="Read More" href="https://www.rand.org/pubs/research_reports/RRA4368-1.html"/>
+            
+          </entry>
+</feed>

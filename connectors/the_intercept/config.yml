@@ -1,0 +1,24 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'The Intercept'
+  scope: 'the_intercept'
+  log_level: 'info'
+the_intercept:
+  feed_url: 'https://theintercept.com/feed/'
+  poll_interval: 1800         # seconds between feed polls
+  request_delay: 3           # seconds between articles (and retry backoff base)
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  max_age_days: 30             # skip feed items older than this (0 = no limit)
+  render_retries: 3
+  pdf_render_timeout: 120     # seconds, enforced by pdf-renderer
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'The Intercept'

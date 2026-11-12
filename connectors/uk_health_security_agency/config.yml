@@ -1,0 +1,24 @@
+# Structure-documenting defaults only. Real platform credentials and instance
+# values are supplied by docker-compose.override.yml (env vars), which is never
+# committed. Environment variables take precedence over anything set here.
+opencti:
+  url: ''
+  token: ''
+connector:
+  id: ''
+  type: 'EXTERNAL_IMPORT'
+  name: 'UK Health Security Agency'
+  scope: 'uk_health_security_agency'
+  log_level: 'info'
+uk_health_security_agency:
+  feed_url: 'https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=uk-health-security-agency,https://www.gov.uk/search/research-and-statistics.atom?content_store_document_type=research&organisations%5B%5D=uk-health-security-agency'
+  poll_interval: 1800         # seconds between feed polls
+  request_delay: 2           # seconds between articles (and retry backoff base)
+  max_reports: 0              # 0 = unlimited; set to 3 for a bounded test
+  max_age_days: 30             # skip feed items older than this (0 = no limit)
+  render_retries: 3
+  pdf_render_timeout: 120     # seconds, enforced by pdf-renderer
+  confidence: 50
+  report_type: 'open-source-reporting'
+  tlp: 'TLP:CLEAR'
+  author_name: 'UK Health Security Agency'

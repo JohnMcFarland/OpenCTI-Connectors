@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0" xml:base="https://www.fierce-network.com/">
+  <channel>
+    <title>Fierce Network</title>
+    <link>https://www.fierce-network.com/</link>
+    <description>a feed of the latest articles on our website</description>
+    <language>en</language>
+    
+    <item>
+  <title><a href="/wireless/after-qualcomm-who-else-might-get-piece-starlink-mobiles-5g-network" hreflang="en">After Qualcomm, who else might get a piece of Starlink Mobile&#8217;s 5G network?</a></title>
+  <link>https://www.fierce-network.com/wireless/after-qualcomm-who-else-might-get-piece-starlink-mobiles-5g-network</link>
+  <description>Qualcomm will power Starlink Mobile's 5G macro sites, but analysts say SpaceX may skip the usual RAN vendors.</description>
+  <pubDate>Nov 11, 2026 1:11pm</pubDate>
+    <dc:creator><a href="/person/monica-alleven-0" hreflang="en">Monica Alleven</a></dc:creator>
+    <guid isPermaLink="true">https://www.fierce-network.com/d30d81e2-0bb7-4e82-be1b-ab6f6c7b0d90</guid>
+    </item>
+<item>
+  <title><a href="/cloud/aws-wants-put-ai-agents-layer-7-leash" hreflang="en">AWS wants to put AI agents on a Layer 7 leash</a></title>
+  <link>https://www.fierce-network.com/cloud/aws-wants-put-ai-agents-layer-7-leash</link>
+  <description>Networks were built to trust humans. AWS VP Rob Kennedy says that won't work for AI agents that treat restrictions as obstacles.</description>
+  <pubDate>Nov 11, 2026 12:39pm</pubDate>
+    <dc:creator><a href="/person/diana-goovaerts-2" hreflang="en">Diana Goovaerts</a></dc:creator>
+    <guid isPermaLink="true">https://www.fierce-network.com/6903d186-e649-424d-a94f-25486b9e933a</guid>
+    </item>
+<item>
+  <title><a href="/broadband/starlinks-us-broadband-users-are-moving-beyond-rural-america-ookla" hreflang="en">Starlink&#8217;s US broadband users are moving beyond rural America: Ookla</a></title>
+  <link>https://www.fierce-network.com/broadband/starlinks-us-broadband-users-are-moving-beyond-rural-america-ookla</link>
+  <description>Urban users grew faster than rural users in every state but Alaska and Hawaii in the first half of 2026 according to a new Ookla Speedtest report.</description>
+  <pubDate>Nov 11, 2026 12:43pm</pubDate>
+    <dc:creator><a href="/person/elizabeth-coyne" hreflang="en">Elizabeth Coyne</a></dc:creator>
+    <guid isPermaLink="true">https://www.fierce-network.com/74d59323-99a2-48b1-946a-c77d7c61a214</guid>
+    </item>
+</channel>
+</rss>

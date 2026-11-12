@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="/css/rss.xsl" type="text/xsl"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <!-- 
+        If you're seeing this, you've clicked on a link for ESA's RSS feeds. 
+        This file is not meant to be read by a Web browser directly. 
+        Instead you're meant to copy the URL for the file, and paste it into your favorite RSS reader.
+    -->
+
+    <channel>
+        <title>ESA Space News</title>
+        <description>ESA Space News</description>
+                    <link>https://www.esa.int/search?subjects=2716</link>
+        
+        <atom:link href="https://www.esa.int/rss/news.en.rss" rel="self" type="application/rss+xml" />
+        <pubDate>Thu, 12 Nov 2026 01:01:19 +0100</pubDate>
+        <lastBuildDate>Thu, 12 Nov 2026 01:01:19 +0100</lastBuildDate>
+        <docs>http://blogs.law.harvard.edu/tech/rss</docs> 
+
+        <category>space</category>
+        <language>en</language>
+
+        <ttl>600</ttl>
+        <copyright>Copyright European Space Agency</copyright>
+        <managingEditor>rss@esa.int (ESA rss manager)</managingEditor>
+
+                    <item>
+                <title><![CDATA[European orbiter detects hints of volcanic activity on Mars ]]></title>
+                <link>https://www.esa.int/articles/news-media/news/european-orbiter-detects-hints-of-volcanic-activity-on-mars</link>
+                <guid isPermaLink="false">dataobject_161295</guid>
+                <description><![CDATA[New evidence from gas seeping above volcanic rifts suggests Mars is not geologically dead deep inside, but merely sleeping. ]]></description>
+                <pubDate>Tue, 10 Nov 2026 12:02:37 +0000</pubDate>
+            </item>
+                    <item>
+                <title><![CDATA[Key outcomes of the 350th ESA Council meeting]]></title>
+                <link>https://www.esa.int/articles/news-media/news/key-outcomes-of-the-350th-esa-council-meeting</link>
+                <guid isPermaLink="false">dataobject_161121</guid>
+                <description><![CDATA[ESA Member States advanced key strategic priorities for Europe&#8217;s space ambitions, with discussions spanning space exploration, ESA-EU relations and preparations for upcoming ministerial meetings.]]></description>
+                <pubDate>Sat, 31 Oct 2026 00:38:14 +0000</pubDate>
+            </item>
+                    <item>
+                <title><![CDATA[Euclid discovers new comet]]></title>
+                <link>https://www.esa.int/articles/about-us/directorates/science/euclid/euclid-discovers-new-comet</link>
+                <guid isPermaLink="false">dataobject_160946</guid>
+                <description><![CDATA[The European Space Agency&#8217;s Euclid space telescope has discovered its first previously unknown comet, in images taken between 16 and 24 September 2026.]]></description>
+                <pubDate>Fri, 06 Nov 2026 08:24:42 +0000</pubDate>
+            </item>
+</channel>
+</rss>

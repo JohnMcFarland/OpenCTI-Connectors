@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>The Strategist</title>
+	<atom:link href="https://www.aspistrategist.org.au/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.aspistrategist.org.au/</link>
+	<description>ASPI&#039;s analysis and commentary site</description>
+	<lastBuildDate>Thu, 12 Nov 2026 00:12:42 +0000</lastBuildDate>
+	<language>en-AU</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	
+	<item>
+		<title>Fault Lines &#8211; China&#8217;s navy mobilises, Marines in Manila, PNG&#8217;s LNG</title>
+		<link>https://www.aspistrategist.org.au/fault-lines-chinas-navy-mobilises-marines-in-manila-pngs-lng/</link>
+		
+		<dc:creator><![CDATA[ASPI Defence Strategy Staff]]></dc:creator>
+		<pubDate>Thu, 12 Nov 2026 00:00:02 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[Northeast Asia]]></category>
+		<category><![CDATA[Oceania]]></category>
+		<category><![CDATA[Philippines]]></category>
+		<category><![CDATA[Southeast Asia]]></category>
+		<category><![CDATA[Taiwan]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102463</guid>
+
+					<description><![CDATA[Welcome to the latest edition of ASPI&#8217;s Fault Lines. Every fortnight, ASPI&#8217;s Defence Strategy Program monitors the actions and developments shaping the regional order and Australia&#8217;s security. This edition covers the period 30 October 2026 ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Xi&#8217;s solution to PLA&#8217;s intangible faults: more political indoctrination</title>
+		<link>https://www.aspistrategist.org.au/xis-solution-to-plas-intangible-faults-more-political-indoctrination/</link>
+		
+		<dc:creator><![CDATA[Colin Karotam]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 19:00:01 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[China]]></category>
+		<category><![CDATA[PLA]]></category>
+		<category><![CDATA[Xi Jinping]]></category>
+		<category><![CDATA[corruption]]></category>
+		<category><![CDATA[deterrence]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102461</guid>
+
+					<description><![CDATA[President Xi Jinping and the Chinese Communist Party understand the professional shortcomings of the People&#8217;s Liberation Army, but they don&#8217;t have the right solution for them. They&#8217;re openly critical of corruption, poor leadership, stove-piped training ...]]></description>
+		
+		
+		
+			</item>
+		<item>
+		<title>Institutions: the tools for keeping vital relations stable amid domestic upheaval</title>
+		<link>https://www.aspistrategist.org.au/fitriani-bassi-institutions/</link>
+		
+		<dc:creator><![CDATA[Fitriani and Justin Bassi]]></dc:creator>
+		<pubDate>Wed, 11 Nov 2026 04:30:33 +0000</pubDate>
+				<category><![CDATA[General]]></category>
+		<category><![CDATA[ASEAN]]></category>
+		<category><![CDATA[Indo-Pacific]]></category>
+		<category><![CDATA[Philippines]]></category>
+		<category><![CDATA[Quad]]></category>
+		<category><![CDATA[election]]></category>
+		<guid isPermaLink="false">https://www.aspistrategist.org.au/?p=102462</guid>
+
+					<description><![CDATA[The US midterm elections offer Australia a timely reminder that political alignments can change quickly but national interests endure. Australia can be confident in its alliance with the United States, regardless of domestic political change ...]]></description>
+		
+		
+		
+			</item>
+</channel>
+</rss>
