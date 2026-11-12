@@ -222,6 +222,7 @@ HIDE_SELECTORS = [
     ".gem-c-feedback",                   # is this page useful widget
     ".published-dates-button-group",     # Sign up for emails / print buttons
     ".govuk-visually-hidden",            # screen-reader-only labels
+    ".gem-c-metadata--border-top",       # Page history (published/updated dates, Show all updates)
 ]
 
 # Elasticsearch / storage guards. (Article text for the classifier is sent in

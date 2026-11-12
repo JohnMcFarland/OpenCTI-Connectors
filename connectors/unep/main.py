@@ -209,6 +209,8 @@ HIDE_SELECTORS = [
     ".field--name-field-sdg-tags",       # SDG goal icon links
     ".uc-news-section-right",            # Further resources link rail
     ".visually-hidden",                  # Drupal hidden field labels (Title/Body/Main image)
+    ".field--name-field-content-type",   # Category label
+    ".field--name-field-primary-topics", # Topics labels
 ]
 
 # Elasticsearch / storage guards. (Article text for the classifier is sent in
