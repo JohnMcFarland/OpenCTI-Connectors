@@ -1647,7 +1647,7 @@ malwarebytes_labs:
   report_type: open-source-reporting
 netscout_asert:
   name: NETSCOUT ASERT
-  enabled: true
+  enabled: false
   author_name: NETSCOUT ASERT
   author_description: NETSCOUT ASERT - NETSCOUT's Arbor Security Engineering & Response Team, researching
     DDoS, botnets and internet-scale threats.
@@ -2432,7 +2432,7 @@ stimson_center:
   report_type: open-source-reporting
 stronger_by_science:
   name: Stronger By Science
-  enabled: true
+  enabled: false
   author_name: Stronger By Science
   author_description: Stronger By Science - evidence-based articles on strength training, hypertrophy
     and nutrition research.
@@ -2838,7 +2838,7 @@ the_space_review:
   report_type: open-source-reporting
 trend_micro_research:
   name: Trend Micro Research
-  enabled: true
+  enabled: false
   author_name: Trend Micro Research
   author_description: Trend Micro Research - threat research, news and perspectives from Trend Micro (now
     branded TrendAI).
