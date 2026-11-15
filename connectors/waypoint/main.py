@@ -71,6 +71,12 @@ def build(helper, settings):
         status.set_state(slug, "invalid", err)
     workers = {}
     for slug, profile in sorted(profiles.items()):
+        # WAYPOINT-STATE-SUMMARY-V1: name and host for the published summary.
+        entry = status.entry(slug)
+        entry["name"] = getattr(profile, "name", slug)
+        hosts = list(getattr(profile, "allowed_hosts", None) or [])
+        if hosts:
+            entry["host"] = hosts[0]
         if not profile.enabled:
             status.set_state(slug, "disabled")
             continue

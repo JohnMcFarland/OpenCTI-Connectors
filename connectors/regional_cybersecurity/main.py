@@ -12,7 +12,13 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from microservices.classify_report import classify_report
-from microservices.make_pdf import render_page_to_pdf
+# REGIONAL-LIVEPDF-V1: pdf-renderer service client (live PDF, TLP:CLEAR file marking)
+from microservices.make_pdf import (
+    ContentUnavailable,
+    RendererUnavailable,
+    attach_pdf,
+    render_live_pdf,
+)
 
 from sources import SOURCES, AgencySource
 from scrapers import (
@@ -27,7 +33,6 @@ from scrapers import (
 class RegionalCybersecurity:
 
     EARLY_STOP_THRESHOLD = 5
-    BROWSER_RECYCLE_EVERY = 50
 
     def __init__(self):
         config_path = os.path.join(
@@ -195,33 +200,26 @@ class RegionalCybersecurity:
     # Browser & PDF acquisition
     # ------------------------------------------------------------------
 
-    def _maybe_recycle_browser(self):
-        if self._renders_since_recycle >= self.BROWSER_RECYCLE_EVERY:
-            self._browser.close()
-            self._browser = self._pw.chromium.launch(
-                args=["--no-sandbox", "--disable-dev-shm-usage"]
-            )
-            self._renders_since_recycle = 0
+    def _render_live(self, source: AgencySource, url: str, title: str,
+                     published: datetime) -> bytes | None:
+        """Render the live advisory via the pdf-renderer service (REGIONAL-LIVEPDF-V1).
 
-    def _acquire_pdf(self, url: str, pdf_url: str | None = None) -> bytes | None:
-        if pdf_url:
-            try:
-                resp = self.session.get(pdf_url, timeout=30)
-                resp.raise_for_status()
-                if "application/pdf" in resp.headers.get("Content-Type", ""):
-                    return resp.content
-            except Exception as e:
-                self.helper.log_warning(f"PDF download failed: {pdf_url} — {e}")
+        Title is the feed/listing title; the byline carries the agency name and
+        publication date. Extraction is the service's generic (readability) mode.
 
-        self._maybe_recycle_browser()
+        Returns:
+            bytes: PDF, or None when the service reports no usable content
+            (ContentUnavailable): the Report is then created without a PDF.
+        Raises:
+            RendererUnavailable: service unreachable/failed. Raised BEFORE any
+            graph write, so the advisory is retried next poll.
+        """
+        byline = {"publisher": source.name, "published": published.strftime("%Y-%m-%d")}
         try:
-            pdf = render_page_to_pdf(self._browser, url, connector_name="Regional Cybersecurity", nav_timeout_ms=60000)
-            return pdf
-        except Exception as e:
-            self.helper.log_warning(f"PDF render failed: {url} — {e}")
+            return render_live_pdf(url, title or url, connector="Regional Cybersecurity", byline=byline)
+        except ContentUnavailable as exc:
+            self.helper.log_warning(f"[{source.key}] No usable live content for {url}: {exc}; Report kept without PDF")
             return None
-        finally:
-            self._renders_since_recycle += 1
 
     # ------------------------------------------------------------------
     # Helpers
@@ -244,6 +242,16 @@ class RegionalCybersecurity:
         pdf_bytes: bytes | None = None,
         pdf_url: str | None = None,
     ) -> dict:
+        """Render, then create the Report and attach its live PDF (REGIONAL-LIVEPDF-V1).
+
+        The live PDF is rendered BEFORE any graph write: if the renderer is
+        unavailable the RendererUnavailable propagates, nothing is created, and
+        the advisory is retried next poll. pdf_bytes/pdf_url are accepted for
+        call-site compatibility; a CERT's native PDF no longer replaces the
+        rendered one and is not attached.
+        """
+        live_pdf = self._render_live(source, url, title, published)
+
         ext_ref = self.helper.api.external_reference.create(
             source_name=source.name,
             url=url,
@@ -271,22 +279,17 @@ class RegionalCybersecurity:
             update=True,
         )
 
-        if pdf_bytes is None:
-            time.sleep(self.request_delay)
-            pdf_bytes = self._acquire_pdf(url, pdf_url=pdf_url)
-
-        if pdf_bytes:
-            self.helper.api.stix_domain_object.add_file(
-                id=report["id"],
-                file_name=make_pdf_filename(url),
-                data=io.BytesIO(pdf_bytes),
-                mime_type="application/pdf",
-            )
+        if live_pdf:
+            base = make_pdf_filename(url)
+            file_name = (base[:-4] if base.endswith(".pdf") else base) + "-live.pdf"
+            attach_pdf(self.helper, report["id"], file_name, live_pdf, self.marking_id)
+        else:
+            self.helper.log_info(f"[{source.key}] Report created without PDF: {url}")
 
         return report
 
     # ------------------------------------------------------------------
-    # Source processing — feed-based
+    # Source processing - feed-based
     # ------------------------------------------------------------------
 
     def _process_feed_source(
@@ -429,8 +432,7 @@ class RegionalCybersecurity:
     # ------------------------------------------------------------------
 
     def _process(self):
-        from playwright.sync_api import sync_playwright
-
+        """One pass over all enabled sources (REGIONAL-LIVEPDF-V1: no browser here)."""
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "Regional Cybersecurity run"
         )
@@ -439,31 +441,23 @@ class RegionalCybersecurity:
         total_skipped = 0
         total_errors = 0
         seen: set[str] = set()
+        _rcs_results = {}  # REGIONAL-STATE-SUMMARY-V1
 
-        with sync_playwright() as pw:
-            self._pw = pw
-            self._browser = pw.chromium.launch(
-                args=["--no-sandbox", "--disable-dev-shm-usage"]
+        for source in SOURCES:
+            if source.key not in self.enabled_keys:
+                continue
+            self.helper.log_info(
+                f"Processing {source.name} ({source.country})"
             )
-            self._renders_since_recycle = 0
-
-            try:
-                for source in SOURCES:
-                    if source.key not in self.enabled_keys:
-                        continue
-                    self.helper.log_info(
-                        f"Processing {source.name} ({source.country})"
-                    )
-                    ingested, skipped, errors = self._process_source(source, seen)
-                    total_ingested += ingested
-                    total_skipped += skipped
-                    total_errors += errors
-                    self.helper.log_info(
-                        f"[{source.key}] Done: {ingested} new, {skipped} existing, "
-                        f"{errors} errors"
-                    )
-            finally:
-                self._browser.close()
+            ingested, skipped, errors = self._process_source(source, seen)
+            _rcs_results[source.key] = (ingested, skipped, errors)  # REGIONAL-STATE-SUMMARY-V1
+            total_ingested += ingested
+            total_skipped += skipped
+            total_errors += errors
+            self.helper.log_info(
+                f"[{source.key}] Done: {ingested} new, {skipped} existing, "
+                f"{errors} errors"
+            )
 
         msg = (
             f"Complete: {total_ingested} ingested, "
@@ -471,6 +465,44 @@ class RegionalCybersecurity:
         )
         self.helper.api.work.to_processed(work_id, msg)
         self.helper.log_info(msg)
+        self._publish_state(_rcs_results)  # REGIONAL-STATE-SUMMARY-V1
+
+    def _publish_state(self, results):
+        """Publish per-source health to the connector's OpenCTI state.
+
+        REGIONAL-STATE-SUMMARY-V1. One write per run; read by external
+        dashboards through the platform connectors query. Failure is a warning.
+        """
+        from urllib.parse import urlparse
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        try:
+            prev = (self.helper.get_state() or {}).get("regional_status", {}).get("sources", {})
+        except Exception:
+            prev = {}
+        sources = {}
+        for source in SOURCES:
+            enabled = source.key in self.enabled_keys
+            e = {"name": source.name, "country": source.country, "enabled": enabled}
+            if source.feeds:
+                host = urlparse(source.feeds[0].url).hostname
+                if host:
+                    e["host"] = host
+            last_report = (prev.get(source.key) or {}).get("last_report")
+            if source.key in results:
+                ingested, skipped, errors = results[source.key]
+                e.update({"state": "ok" if not errors else "errors", "last_run": now,
+                          "ingested": ingested, "skipped": skipped, "errors": errors})
+                if ingested:
+                    last_report = now
+            else:
+                e["state"] = "disabled" if not enabled else "not-run"
+            if last_report:
+                e["last_report"] = last_report
+            sources[source.key] = e
+        try:
+            self.helper.set_state({"regional_status": {"updated": now, "sources": sources}})
+        except Exception as exc:
+            self.helper.log_warning(f"Could not publish status summary: {exc}")
 
     def run(self):
         self._resolve_graph_references()

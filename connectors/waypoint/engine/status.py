@@ -33,10 +33,14 @@ def from_iso(value):
 class StatusStore:
     """In-memory status, persisted as JSON."""
 
+    # WAYPOINT-STATE-SUMMARY-V1: min seconds between connector-state publishes.
+    PUBLISH_EVERY = 300
+
     def __init__(self, path, log=None):
         self.path = path
         self.log = log
         self.sources = {}
+        self._published = 0.0  # WAYPOINT-STATE-SUMMARY-V1
         self._load()
 
     def _load(self):
@@ -89,3 +93,27 @@ class StatusStore:
         except Exception as exc:
             if self.log:
                 self.log.log_warning(f"Could not write status file {self.path}: {exc}")
+        # WAYPOINT-STATE-SUMMARY-V1: also publish a compact per-source summary.
+        self._publish(now)
+
+    def _publish(self, now):
+        """Publish per-source health to the connector's OpenCTI state (throttled).
+
+        WAYPOINT-STATE-SUMMARY-V1. Read by external dashboards through the
+        platform connectors query. Failure is a warning, never fatal.
+        """
+        if now - self._published < self.PUBLISH_EVERY:
+            return
+        setter = getattr(self.log, "set_state", None)
+        if not callable(setter):
+            return
+        keep = ("name", "host", "state", "reason", "last_poll", "last_outcome",
+                "last_report", "consecutive_failures", "next_due")
+        summary = {slug: {k: e[k] for k in keep if k in e}
+                   for slug, e in self.sources.items()}
+        try:
+            setter({"waypoint_status": {"updated": iso(now), "sources": summary}})
+            self._published = now
+        except Exception as exc:
+            if hasattr(self.log, "log_warning"):
+                self.log.log_warning(f"Could not publish status summary: {exc}")
