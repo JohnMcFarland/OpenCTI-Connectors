@@ -1,0 +1,43 @@
+# UDM connector: sample config.
+# Copy to config.yml (gitignored) OR set the equivalent environment variables.
+# Env vars take precedence over this file.
+
+opencti:
+  url: "http://localhost:8080"
+  token: "ChangeMe"
+
+connector:
+  id: "ChangeMe-uuid"
+  name: "UDM"
+  scope: "incident"
+  duration_period: "PT1H"   # ISO 8601 duration, not seconds
+  log_level: "info"
+
+udm:
+  host: "192.168.0.1"
+  api_key: "ChangeMe"       # UniFi OS > Settings > Control Plane > Integrations
+  site: "default"
+  verify_ssl: false         # the UDM ships a self-signed certificate
+  ca_bundle: ""             # or point at your own CA and set verify_ssl: true
+
+  flows_enabled: true
+  security_enabled: true
+  security_skip_blocked: true  # blocked IPS threats already arrive as SIGNATURE flows
+  admin_enabled: true        # external logins to UniFi Network
+  inventory_enabled: true    # device firmware, re-sent only on change
+  port_forwards_enabled: true  # flag traffic that hit a forwarded service
+
+  initial_lookback_days: 30
+  overlap_minutes: 30
+  page_size: 500
+  max_pages: 200
+
+  wan_ips: ""               # fallback, comma-separated, if stat/device has none
+  internal_subnets: ""      # extra internal ranges beyond private/non-global space
+
+  organization_name: "ChangeMe"   # owner of the Systems (your org)
+  author_name: "UDM Alert"
+  gateway_name: "UDM-WAN"
+  events_per_bundle: 200
+  tlp: "TLP:AMBER+STRICT"
+  confidence: 85

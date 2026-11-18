@@ -1,0 +1,39 @@
+services:
+  connector-udm:
+    build: .
+    container_name: connector-udm
+    restart: always
+    environment:
+      - OPENCTI_URL=http://opencti:8080
+      - OPENCTI_TOKEN=${OPENCTI_TOKEN}
+      - CONNECTOR_ID=${UDM_CONNECTOR_ID}
+      - CONNECTOR_NAME=UDM
+      - CONNECTOR_SCOPE=incident
+      - CONNECTOR_DURATION_PERIOD=PT1H
+      - CONNECTOR_LOG_LEVEL=info
+      # --- UDM Pro local API ---
+      - UDM_HOST=${UDM_HOST}
+      - UDM_API_KEY=${UDM_API_KEY}
+      - UDM_SITE=default
+      - UDM_VERIFY_SSL=false
+      # --- streams ---
+      - UDM_FLOWS_ENABLED=true
+      - UDM_SECURITY_ENABLED=true
+      - UDM_SECURITY_SKIP_BLOCKED=true
+      - UDM_ADMIN_ENABLED=true
+      - UDM_INVENTORY_ENABLED=true
+      - UDM_PORT_FORWARDS_ENABLED=true
+      # --- windowing ---
+      - UDM_INITIAL_LOOKBACK_DAYS=30
+      - UDM_OVERLAP_MINUTES=30
+      - UDM_MAX_PAGES=200
+      # --- network context ---
+      - UDM_WAN_IPS=${UDM_WAN_IPS}
+      - UDM_INTERNAL_SUBNETS=
+      # --- output ---
+      - UDM_ORGANIZATION_NAME=${UDM_ORGANIZATION_NAME}
+      - UDM_AUTHOR_NAME=UDM Alert
+      - UDM_GATEWAY_NAME=UDM-WAN
+      - UDM_EVENTS_PER_BUNDLE=200
+      - UDM_TLP=TLP:AMBER+STRICT
+      - UDM_CONFIDENCE=85
