@@ -104,6 +104,7 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from microservices.classify_report import classify_report
 from microservices.make_pdf import render_page_to_pdf
+from microservices.freshness import is_fresh  # CRUCIBLE-FRESHNESS-V1
 
 # Playwright is imported lazily inside the renderer so a syntax/import check of
 # this module does not require the browser stack to be present.
@@ -734,6 +735,14 @@ class HellenicShippingNewsConnector:
                             stop = True
                             break
 
+                        # CRUCIBLE-FRESHNESS-V1: forward-only gate before dedup and render (undated = skip)
+                        _fresh, _why = is_fresh(self._published_iso(post))
+                        if not _fresh:
+                            excluded += 1
+                            self.helper.log_info(f"Skipping {url}: {_why}")
+                            self._save_cursor(page_num, idx + 1)
+                            continue
+
                         # Dedup BEFORE rendering, keyed on the deterministic Report id.
                         if self.helper.api.report.read(id=self._report_id(url)) is not None:
                             skipped += 1
@@ -794,7 +803,7 @@ class HellenicShippingNewsConnector:
 
         message = (
             f"Run complete: {processed} created, {skipped} already present, "
-            f"{excluded} title-excluded, {failed} failed (render)."
+            f"{excluded} title/freshness-excluded, {failed} failed (render)."
         )
         self.helper.api.work.to_processed(work_id, message)
         self.helper.log_info(message)

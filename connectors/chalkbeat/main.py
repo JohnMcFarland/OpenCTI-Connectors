@@ -80,6 +80,7 @@ from pycti import OpenCTIConnectorHelper, get_config_variable
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from microservices.classify_report import classify_report
 from microservices.make_pdf import render_html_to_pdf
+from microservices.freshness import is_fresh  # CRUCIBLE-FRESHNESS-V1
 
 
 # --------------------------------------------------------------------------- #
@@ -219,6 +220,7 @@ class ChalkbeatConnector:
         """Persist the enumeration offset to connector state."""
         self.helper.set_state({
             "endindex": endindex,
+            "forward_only": True,  # CRUCIBLE-FRESHNESS-V1
         })
 
     # ------------------------------------------------------------------ #
@@ -518,6 +520,15 @@ class ChalkbeatConnector:
         """Run a single enumeration cycle over the Queryly article index."""
         state = self.helper.get_state() or {}
         cursor_offset = max(0, int(state.get("endindex", 0)))
+        # CRUCIBLE-FRESHNESS-V1: one-time jump to the index tail (forward-only, no archive walk)
+        if not state.get("forward_only"):
+            _items, _total = self._fetch_batch(0)
+            if _items is None:
+                self.helper.log_warning("Forward-only jump: index total unavailable; retry next poll.")
+                return
+            cursor_offset = int(_total)
+            self._save_cursor(cursor_offset)
+            self.helper.log_info(f"Forward-only: cursor jumped to index tail endindex={cursor_offset}.")
 
         work_id = self.helper.api.work.initiate_work(
             self.helper.connect_id, "Chalkbeat enumeration run"
@@ -572,6 +583,17 @@ class ChalkbeatConnector:
                         stop = True
                         break
 
+                    # CRUCIBLE-FRESHNESS-V1: pre-fetch gate on the index pubdate (only when it parses)
+                    _pd = item.get("pubdate")
+                    _pre = self._parse_published(_pd) if isinstance(_pd, str) else None
+                    _fresh, _why = is_fresh(_pre) if _pre else (True, "")
+                    if not _fresh:
+                        skipped += 1
+                        self.helper.log_info(f"Skipping {url}: {_why}")
+                        offset += 1
+                        self._save_cursor(offset)
+                        continue
+
                     report_id = self._report_id(url)
 
                     # Graph dedup: skip if Report already exists.
@@ -619,13 +641,14 @@ class ChalkbeatConnector:
                         or item.get("pubdate")
                     )
                     published = self._parse_published(published_raw)
-                    if not published:
-                        published = datetime.now(timezone.utc).strftime(
-                            "%Y-%m-%dT%H:%M:%S+00:00"
-                        )
-                        self.helper.log_warning(
-                            f"No usable date for {url}; using ingestion time."
-                        )
+                    # CRUCIBLE-FRESHNESS-V1: undated or stale articles are skipped, never stamped with ingestion time
+                    _fresh, _why = is_fresh(published)
+                    if not _fresh:
+                        skipped += 1
+                        self.helper.log_info(f"Skipping {url}: {_why}")
+                        offset += 1
+                        self._save_cursor(offset)
+                        continue
 
                     if content is None:
                         failed += 1
