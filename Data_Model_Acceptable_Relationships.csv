@@ -379,3 +379,4 @@ event,located-at,country
 event,located-at,city
 event,located-at,position
 event,derived-from,event
+infrastructure,related-to,individual
