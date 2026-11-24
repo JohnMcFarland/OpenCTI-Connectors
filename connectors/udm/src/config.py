@@ -88,6 +88,8 @@ class Settings(BaseSettings):
     udm_organization_name: str = Field(min_length=1, alias="UDM_ORGANIZATION_NAME")
     udm_tlp: str = Field("TLP:AMBER+STRICT", alias="UDM_TLP")
     udm_confidence: int = Field(85, ge=0, le=100, alias="UDM_CONFIDENCE")
+    # UDM-DRYRUN-V1: build and count bundles, send nothing, save no state.
+    udm_dry_run: bool = Field(False, alias="UDM_DRY_RUN")
 
     @field_validator("udm_internal_subnets")
     @classmethod

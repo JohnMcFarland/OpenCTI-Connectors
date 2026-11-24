@@ -38,7 +38,7 @@ internal-to-internal or internal-to-gateway blocks and honeypot hits, are not im
 
 | Object | Notes |
 |---|---|
-| Sighting | External IP sighted on the System, with UniFi's count and times. Its description is the full event: policy, type, severity, signature, IPS rule set (flagging the reputation lists `ciarmy`, `dshield` and `compromised`), service (SSH, HTTPS, ...), zone/network of each side, CVE, bytes, the port-forward it hit if any, and the UniFi record id. Id keyed on the UniFi record, so a re-read updates it; one per event |
+| Sighting | External IP sighted on the System, with UniFi's count and times. Its description is the full event: policy, type, severity, signature, IPS rule set (flagging the reputation lists `ciarmy`, `dshield` and `compromised`), service (SSH, HTTPS, ...), zone/network of each side, CVE, bytes, the port-forward it hit if any, and the UniFi record id. OpenCTI merges Sightings with the same IP and System whose dates fall inside its sighting dedup window (default +/-30 days), so in practice there is one Sighting per IP -> System pair: `first_seen`..`last_seen` spans every event, `count` is not an event total, and the description reflects the latest event merged. The day containers record which days the pair was active |
 | IPv4/IPv6-Addr | The external side only. No description, no labels |
 | Network-Traffic | The destination port, single `dst_port` only (house rule) |
 | System | Internal host (name pinned per MAC), a UniFi device under its UniFi name, or the gateway `UDM-WAN` (traffic to the WAN address; the UDM's own MAC) |
@@ -121,6 +121,7 @@ Env vars (or `config.yml`, see `config.yml.sample`; env wins).
 | `UDM_AUTHOR_NAME` / `UDM_GATEWAY_NAME` | `UDM Alert` / `UDM-WAN` | kept from v0.4.2 |
 | `UDM_EVENTS_PER_BUNDLE` | `200` | events per bundle (and per cursor save) |
 | `UDM_TLP` / `UDM_CONFIDENCE` | `TLP:AMBER+STRICT` / `85` | |
+| `UDM_DRY_RUN` | `false` | build and count bundles, send nothing, save no state |
 
 **WAN fail-closed:** if no WAN address is known (the gateway's `wan1`/`wan2` in
 `stat/device`, plus `UDM_WAN_IPS`), the run is skipped. Only gateway devices are read:
@@ -169,9 +170,10 @@ Probed with a read-only API key and dry-run (OpenCTI faked, nothing sent):
 
 1. **Day containers accumulate.** Each bundle re-sends the day's container with only
    its own members; OpenCTI should merge them, so the container lists every Sighting.
-2. **Sighting count on re-send.** A record re-read with later activity re-sends its
-   Sighting (same id) with UniFi's cumulative count. Confirm OpenCTI replaces
-   `count` on upsert rather than adding to it.
+2. **Sighting merge (verified 2026-11-24).** OpenCTI merges Sightings per IP -> System
+   within its sighting dedup window: the first live day produced 121 Sightings from
+   ~600 events, one of them absorbing 321 records. `count` is not reliable as an event
+   total. Accepted as the model.
 3. **Country lookups.** Countries are matched by ISO alias, then by English name. If
    your OpenCTI has no location dataset loaded, the edges are simply skipped.
 
@@ -179,7 +181,7 @@ Probed with a read-only API key and dry-run (OpenCTI faked, nothing sent):
 
 - Events with no external address are not imported: on the live UDM that was ~60% of
   blocked flows (internal-to-internal and internal-to-gateway) plus honeypot hits.
-- Sightings still scale with events: ~340 a day on the live UDM (~125k a year).
+- Sightings scale with distinct IP -> System pairs, not events: 121 on the first live day.
 - `UDM_MAX_PAGES` caps a read (default 100k flows). When it is hit, the newest flows
   are imported and the work is marked in error, naming the time range that was not
   read. Raise the cap or shorten the lookback.

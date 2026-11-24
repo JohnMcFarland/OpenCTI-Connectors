@@ -24,6 +24,7 @@ import json
 import time
 import uuid
 from datetime import datetime, timezone
+from collections import Counter  # UDM-DRYRUN-V1
 from itertools import groupby
 
 from .config import Settings
@@ -49,6 +50,12 @@ class UdmConnector:
         self.builder = UdmStixBuilder(helper, settings, self.lookup)
         self._truncated: str | None = None
         self._devices: list[dict] = []
+        # UDM-DRYRUN-V1: no state is saved in a dry run, so the next live run
+        # reads the same window again.
+        if settings.udm_dry_run:
+            self.helper.set_state = lambda _state: None
+            self.log.warning("UDM_DRY_RUN=true: bundles are built and counted; "
+                             "nothing is sent and state is not saved")
 
     # -- scheduling --------------------------------------------------------
 
@@ -240,6 +247,15 @@ class UdmConnector:
         return sent
 
     def _send(self, objects: list[dict], work_id: str) -> None:
+        # UDM-DRYRUN-V1: log what would have been sent, then stop.
+        if self.settings.udm_dry_run:
+            types = Counter(o.get("type") for o in objects)
+            containers = sorted({o.get("name", "") for o in objects
+                                 if o.get("type") == "case-incident"})
+            self.log.info("DRY RUN: bundle not sent",
+                          {"objects": len(objects), "types": dict(types),
+                           "containers": containers})
+            return
         bundle = json.dumps({
             "type": "bundle",
             "id": f"bundle--{uuid.uuid4()}",
